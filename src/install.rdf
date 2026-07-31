@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Legacy manifest. Zotero 7 reads manifest.json and ignores this file; it is
+  kept because every build that installed cleanly contained it, and it costs
+  nothing. Keep the id and version in sync with manifest.json.
+-->
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>abbreviation-helper@cydoimos.github.io</em:id>
+    <em:type>2</em:type>
+    <em:name>Abbreviation Helper</em:name>
+    <em:version>1.2.1</em:version>
+    <em:creator>Cydoimos</em:creator>
+    <em:description>Expands acronyms, initialisms and other abbreviations on hover while reading a PDF.</em:description>
+    <em:bootstrap>true</em:bootstrap>
+    <em:targetApplication>
+      <Description>
+        <em:id>zotero@chnm.gmu.edu</em:id>
+        <em:minVersion>7.0</em:minVersion>
+        <em:maxVersion>9.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+  </Description>
+</RDF>

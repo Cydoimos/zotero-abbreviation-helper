@@ -1,0 +1,1335 @@
+{
+  "_comment": "Abbreviation Helper configuration. The copy in your Zotero data directory (abbreviation-helper/abbreviations.json) is yours to edit; entries there win over these defaults. Sections: userDefs = your own abbreviation -> meaning entries, always shown even if the paper defines the term differently. ignore = abbreviations to never display. databases = lookup links ({q} = token with hyphens removed, {raw} = token as written); if your file defines a non-empty databases list it replaces this one entirely. staticDefs and commonKnownDefs are the curated defaults: staticDefs only normalises definitions a paper already provides, commonKnownDefs is a fallback glossary for well-known abbreviations a paper uses without defining (ambiguity medium/high entries additionally require one of their context words to appear in the document).",
+  "userDefs": {},
+  "ignore": [],
+  "databases": [
+    {
+      "group": "Gene/protein databases",
+      "label": "HGNC",
+      "url": "https://www.genenames.org/tools/search/#!/?query={q}",
+      "enabled": true
+    },
+    {
+      "group": "Gene/protein databases",
+      "label": "UniProt",
+      "url": "https://www.uniprot.org/uniprotkb?query={q}",
+      "enabled": true
+    },
+    {
+      "group": "Gene/protein databases",
+      "label": "GeneCards",
+      "url": "https://www.genecards.org/Search/Keyword?queryString={q}",
+      "enabled": true
+    },
+    {
+      "group": "Gene/protein databases",
+      "label": "NCBI Gene",
+      "url": "https://www.ncbi.nlm.nih.gov/gene/?term={q}",
+      "enabled": true
+    },
+    {
+      "group": "Cell line databases",
+      "label": "Cellosaurus",
+      "url": "https://www.cellosaurus.org/search?input={raw}",
+      "enabled": true
+    },
+    {
+      "group": "Cell line databases",
+      "label": "ATCC",
+      "url": "https://www.atcc.org/search#q={raw}",
+      "enabled": true
+    },
+    {
+      "group": "Chemical/drug databases",
+      "label": "PubChem",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/#query={raw}",
+      "enabled": true
+    }
+  ],
+  "staticDefs": {
+    "ROS": "reactive oxygen species",
+    "NP": "nanoparticle",
+    "NPs": "nanoparticles",
+    "EGFR": "epidermal growth factor receptor",
+    "PEG": "poly(ethylene glycol)",
+    "TEA": "triethylamine",
+    "THF": "tetrahydrofuran",
+    "DCM": "dichloromethane",
+    "DMSO": "dimethylsulfoxide",
+    "EDTA": "ethylenediaminetetraacetic acid",
+    "DTT": "1,4-dithiothreitol",
+    "TCEP": "tris(2-carboxyethyl)phosphine hydrochloride",
+    "DCC": "N,N′-dicyclohexylcarbodiimide",
+    "DMF": "dimethylformamide",
+    "SDS-PAGE": "sodium dodecyl sulfate polyacrylamide gel electrophoresis",
+    "MES": "2-(N-morpholino)-ethanesulfonic acid",
+    "PBS": "phosphate buffered saline",
+    "FBS": "fetal bovine serum",
+    "RT": "room temperature",
+    "NMR": "nuclear magnetic resonance",
+    "DLS": "dynamic light scattering",
+    "PDI": "polydispersity index",
+    "BSA": "bovine serum albumin",
+    "HDL": "high-density lipoprotein",
+    "LDL": "low-density lipoprotein",
+    "PFA": "paraformaldehyde",
+    "RPMI": "Roswell Park Memorial Institute 1640 medium",
+    "P/S": "penicillin and streptomycin",
+    "SD": "standard deviation",
+    "MWCO": "molecular weight cutoff",
+    "RBC": "red blood cells",
+    "ALT": "alanine aminotransferase",
+    "GGT": "gamma glutamyl transferase",
+    "GC": "gas chromatography",
+    "AUC": "areas under the curve",
+    "SEM": "standard error of the mean",
+    "T1D": "type 1 diabetes",
+    "T2D": "type 2 diabetes",
+    "PM": "plasma membrane",
+    "ER": "endoplasmic reticulum",
+    "CVD": "cardiovascular disease",
+    "ROI": "region of interest",
+    "ANOVA": "analysis of variance",
+    "DMEM": "Dulbecco’s Modified Eagle Medium",
+    "WT": "wild-type",
+    "KD": "knockdown",
+    "cryo-EM": "cryo-electron microscopy",
+    "NTD": "N-terminal domain",
+    "TMD": "transmembrane domain",
+    "TMs": "transmembrane helices",
+    "CTD": "C-terminal luminal domain",
+    "RMSD": "root mean square deviation",
+    "HEK": "human embryonic kidney",
+    "DDM": "n-dodecyl-β-D-maltopyranoside",
+    "CTF": "contrast transfer function",
+    "PDB": "Protein Data Bank",
+    "IC50": "median inhibitory concentration"
+  },
+  "commonKnownDefs": {
+    "DNA": [
+      {
+        "term": "deoxyribonucleic acid",
+        "ambiguity": "low"
+      }
+    ],
+    "RNA": [
+      {
+        "term": "ribonucleic acid",
+        "ambiguity": "low"
+      }
+    ],
+    "mRNA": [
+      {
+        "term": "messenger RNA",
+        "ambiguity": "low"
+      }
+    ],
+    "miRNA": [
+      {
+        "term": "microRNA",
+        "ambiguity": "low"
+      }
+    ],
+    "siRNA": [
+      {
+        "term": "small interfering RNA",
+        "ambiguity": "low"
+      }
+    ],
+    "shRNA": [
+      {
+        "term": "short hairpin RNA",
+        "ambiguity": "low"
+      }
+    ],
+    "lncRNA": [
+      {
+        "term": "long non-coding RNA",
+        "ambiguity": "low"
+      }
+    ],
+    "circRNA": [
+      {
+        "term": "circular RNA",
+        "ambiguity": "low"
+      }
+    ],
+    "rRNA": [
+      {
+        "term": "ribosomal RNA",
+        "ambiguity": "low"
+      }
+    ],
+    "tRNA": [
+      {
+        "term": "transfer RNA",
+        "ambiguity": "low"
+      }
+    ],
+    "ncRNA": [
+      {
+        "term": "non-coding RNA",
+        "ambiguity": "low"
+      }
+    ],
+    "PCR": [
+      {
+        "term": "polymerase chain reaction",
+        "ambiguity": "low"
+      }
+    ],
+    "qPCR": [
+      {
+        "term": "quantitative polymerase chain reaction",
+        "ambiguity": "low"
+      }
+    ],
+    "RT-PCR": [
+      {
+        "term": "reverse transcription polymerase chain reaction",
+        "ambiguity": "low"
+      }
+    ],
+    "RT-qPCR": [
+      {
+        "term": "reverse transcription quantitative polymerase chain reaction",
+        "ambiguity": "low"
+      }
+    ],
+    "cDNA": [
+      {
+        "term": "complementary DNA",
+        "ambiguity": "low"
+      }
+    ],
+    "CRISPR": [
+      {
+        "term": "clustered regularly interspaced short palindromic repeats",
+        "ambiguity": "low"
+      }
+    ],
+    "Cas9": [
+      {
+        "term": "CRISPR-associated protein 9",
+        "ambiguity": "low"
+      }
+    ],
+    "SNP": [
+      {
+        "term": "single-nucleotide polymorphism",
+        "ambiguity": "low"
+      }
+    ],
+    "SNPs": [
+      {
+        "term": "single-nucleotide polymorphisms",
+        "ambiguity": "low"
+      }
+    ],
+    "ORF": [
+      {
+        "term": "open reading frame",
+        "ambiguity": "low"
+      }
+    ],
+    "UTR": [
+      {
+        "term": "untranslated region",
+        "ambiguity": "low"
+      }
+    ],
+    "ChIP": [
+      {
+        "term": "chromatin immunoprecipitation",
+        "ambiguity": "low"
+      }
+    ],
+    "RNA-seq": [
+      {
+        "term": "RNA sequencing",
+        "ambiguity": "low"
+      }
+    ],
+    "scRNA-seq": [
+      {
+        "term": "single-cell RNA sequencing",
+        "ambiguity": "low"
+      }
+    ],
+    "NGS": [
+      {
+        "term": "next-generation sequencing",
+        "ambiguity": "low"
+      }
+    ],
+    "ELISA": [
+      {
+        "term": "enzyme-linked immunosorbent assay",
+        "ambiguity": "low"
+      }
+    ],
+    "WB": [
+      {
+        "term": "Western blot",
+        "ambiguity": "medium",
+        "context": [
+          "western",
+          "blot",
+          "immunoblot"
+        ]
+      }
+    ],
+    "IF": [
+      {
+        "term": "immunofluorescence",
+        "ambiguity": "medium",
+        "context": [
+          "immunofluorescence",
+          "staining",
+          "fluorescence"
+        ]
+      }
+    ],
+    "IHC": [
+      {
+        "term": "immunohistochemistry",
+        "ambiguity": "low"
+      }
+    ],
+    "FACS": [
+      {
+        "term": "fluorescence-activated cell sorting",
+        "ambiguity": "low"
+      }
+    ],
+    "FISH": [
+      {
+        "term": "fluorescence in situ hybridization",
+        "ambiguity": "low"
+      }
+    ],
+    "FRET": [
+      {
+        "term": "Förster resonance energy transfer",
+        "ambiguity": "low"
+      }
+    ],
+    "GFP": [
+      {
+        "term": "green fluorescent protein",
+        "ambiguity": "low"
+      }
+    ],
+    "EGFP": [
+      {
+        "term": "enhanced green fluorescent protein",
+        "ambiguity": "low"
+      }
+    ],
+    "RFP": [
+      {
+        "term": "red fluorescent protein",
+        "ambiguity": "low"
+      }
+    ],
+    "YFP": [
+      {
+        "term": "yellow fluorescent protein",
+        "ambiguity": "low"
+      }
+    ],
+    "CFP": [
+      {
+        "term": "cyan fluorescent protein",
+        "ambiguity": "low"
+      }
+    ],
+    "ECM": [
+      {
+        "term": "extracellular matrix",
+        "ambiguity": "medium",
+        "context": [
+          "matrix",
+          "collagen",
+          "fibronectin",
+          "laminin",
+          "tissue",
+          "cell adhesion"
+        ]
+      }
+    ],
+    "EMT": [
+      {
+        "term": "epithelial-to-mesenchymal transition",
+        "ambiguity": "low"
+      }
+    ],
+    "MMP": [
+      {
+        "term": "matrix metalloproteinase",
+        "ambiguity": "low"
+      }
+    ],
+    "MMPs": [
+      {
+        "term": "matrix metalloproteinases",
+        "ambiguity": "low"
+      }
+    ],
+    "VEGF": [
+      {
+        "term": "vascular endothelial growth factor",
+        "ambiguity": "low"
+      }
+    ],
+    "TGF-β": [
+      {
+        "term": "transforming growth factor beta",
+        "ambiguity": "low"
+      }
+    ],
+    "TNF-α": [
+      {
+        "term": "tumor necrosis factor alpha",
+        "ambiguity": "low"
+      }
+    ],
+    "TNF-alpha": [
+      {
+        "term": "tumor necrosis factor alpha",
+        "ambiguity": "low"
+      }
+    ],
+    "TNF-a": [
+      {
+        "term": "tumor necrosis factor alpha",
+        "ambiguity": "low"
+      }
+    ],
+    "IFN-α": [
+      {
+        "term": "interferon alpha",
+        "ambiguity": "low"
+      }
+    ],
+    "IFN-alpha": [
+      {
+        "term": "interferon alpha",
+        "ambiguity": "low"
+      }
+    ],
+    "IFN-a": [
+      {
+        "term": "interferon alpha",
+        "ambiguity": "low"
+      }
+    ],
+    "IFN-β": [
+      {
+        "term": "interferon beta",
+        "ambiguity": "low"
+      }
+    ],
+    "IFN-beta": [
+      {
+        "term": "interferon beta",
+        "ambiguity": "low"
+      }
+    ],
+    "IFN-b": [
+      {
+        "term": "interferon beta",
+        "ambiguity": "low"
+      }
+    ],
+    "IFN-γ": [
+      {
+        "term": "interferon gamma",
+        "ambiguity": "low"
+      }
+    ],
+    "IFN-gamma": [
+      {
+        "term": "interferon gamma",
+        "ambiguity": "low"
+      }
+    ],
+    "IFN-g": [
+      {
+        "term": "interferon gamma",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-1α": [
+      {
+        "term": "interleukin 1 alpha",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-1alpha": [
+      {
+        "term": "interleukin 1 alpha",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-1a": [
+      {
+        "term": "interleukin 1 alpha",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-1β": [
+      {
+        "term": "interleukin 1 beta",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-1beta": [
+      {
+        "term": "interleukin 1 beta",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-1b": [
+      {
+        "term": "interleukin 1 beta",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-2": [
+      {
+        "term": "interleukin 2",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-3": [
+      {
+        "term": "interleukin 3",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-4": [
+      {
+        "term": "interleukin 4",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-5": [
+      {
+        "term": "interleukin 5",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-6": [
+      {
+        "term": "interleukin 6",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-7": [
+      {
+        "term": "interleukin 7",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-8": [
+      {
+        "term": "interleukin 8",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-9": [
+      {
+        "term": "interleukin 9",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-10": [
+      {
+        "term": "interleukin 10",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-11": [
+      {
+        "term": "interleukin 11",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-12": [
+      {
+        "term": "interleukin 12",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-12p35": [
+      {
+        "term": "interleukin 12 p35 subunit",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-12p40": [
+      {
+        "term": "interleukin 12 p40 subunit",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-12p70": [
+      {
+        "term": "interleukin 12 p70",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-13": [
+      {
+        "term": "interleukin 13",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-15": [
+      {
+        "term": "interleukin 15",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-16": [
+      {
+        "term": "interleukin 16",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-17": [
+      {
+        "term": "interleukin 17",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-17A": [
+      {
+        "term": "interleukin 17A",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-17F": [
+      {
+        "term": "interleukin 17F",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-18": [
+      {
+        "term": "interleukin 18",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-21": [
+      {
+        "term": "interleukin 21",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-22": [
+      {
+        "term": "interleukin 22",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-23": [
+      {
+        "term": "interleukin 23",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-27": [
+      {
+        "term": "interleukin 27",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-33": [
+      {
+        "term": "interleukin 33",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-35": [
+      {
+        "term": "interleukin 35",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-36": [
+      {
+        "term": "interleukin 36",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-36α": [
+      {
+        "term": "interleukin 36 alpha",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-36β": [
+      {
+        "term": "interleukin 36 beta",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-36γ": [
+      {
+        "term": "interleukin 36 gamma",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-37": [
+      {
+        "term": "interleukin 37",
+        "ambiguity": "low"
+      }
+    ],
+    "IL-38": [
+      {
+        "term": "interleukin 38",
+        "ambiguity": "low"
+      }
+    ],
+    "MHC": [
+      {
+        "term": "major histocompatibility complex",
+        "ambiguity": "low"
+      }
+    ],
+    "CTL": [
+      {
+        "term": "cytotoxic T lymphocyte",
+        "ambiguity": "low"
+      }
+    ],
+    "CTLs": [
+      {
+        "term": "cytotoxic T lymphocytes",
+        "ambiguity": "low"
+      }
+    ],
+    "NK": [
+      {
+        "term": "natural killer",
+        "ambiguity": "medium",
+        "context": [
+          "immune",
+          "lymphocyte",
+          "cytotoxic",
+          "cell"
+        ]
+      }
+    ],
+    "PBMC": [
+      {
+        "term": "peripheral blood mononuclear cell",
+        "ambiguity": "low"
+      }
+    ],
+    "PBMCs": [
+      {
+        "term": "peripheral blood mononuclear cells",
+        "ambiguity": "low"
+      }
+    ],
+    "HSP": [
+      {
+        "term": "heat shock protein",
+        "ambiguity": "medium",
+        "context": [
+          "heat shock",
+          "stress",
+          "protein"
+        ]
+      }
+    ],
+    "HSPs": [
+      {
+        "term": "heat shock proteins",
+        "ambiguity": "medium",
+        "context": [
+          "heat shock",
+          "stress",
+          "protein"
+        ]
+      }
+    ],
+    "ATP": [
+      {
+        "term": "adenosine triphosphate",
+        "ambiguity": "low"
+      }
+    ],
+    "ADP": [
+      {
+        "term": "adenosine diphosphate",
+        "ambiguity": "low"
+      }
+    ],
+    "AMP": [
+      {
+        "term": "adenosine monophosphate",
+        "ambiguity": "medium",
+        "context": [
+          "adenosine",
+          "nucleotide",
+          "kinase",
+          "energy"
+        ]
+      }
+    ],
+    "GTP": [
+      {
+        "term": "guanosine triphosphate",
+        "ambiguity": "low"
+      }
+    ],
+    "GDP": [
+      {
+        "term": "guanosine diphosphate",
+        "ambiguity": "low"
+      }
+    ],
+    "NADH": [
+      {
+        "term": "nicotinamide adenine dinucleotide",
+        "ambiguity": "low"
+      }
+    ],
+    "ROS": [
+      {
+        "term": "reactive oxygen species",
+        "ambiguity": "low"
+      }
+    ],
+    "RNS": [
+      {
+        "term": "reactive nitrogen species",
+        "ambiguity": "low"
+      }
+    ],
+    "NO": [
+      {
+        "term": "nitric oxide",
+        "ambiguity": "medium",
+        "context": [
+          "nitric",
+          "oxide",
+          "oxidative",
+          "endothelial"
+        ]
+      }
+    ],
+    "EV": [
+      {
+        "term": "extracellular vesicle",
+        "ambiguity": "medium",
+        "context": [
+          "extracellular vesicle",
+          "exosome",
+          "microvesicle",
+          "vesicle"
+        ]
+      }
+    ],
+    "EVs": [
+      {
+        "term": "extracellular vesicles",
+        "ambiguity": "medium",
+        "context": [
+          "extracellular vesicle",
+          "exosome",
+          "microvesicle",
+          "vesicle"
+        ]
+      }
+    ],
+    "MVB": [
+      {
+        "term": "multivesicular body",
+        "ambiguity": "low"
+      }
+    ],
+    "MVBs": [
+      {
+        "term": "multivesicular bodies",
+        "ambiguity": "low"
+      }
+    ],
+    "TSG101": [
+      {
+        "term": "tumor susceptibility gene 101",
+        "ambiguity": "low"
+      }
+    ],
+    "ARRDC1": [
+      {
+        "term": "arrestin domain-containing protein 1",
+        "ambiguity": "low"
+      }
+    ],
+    "ESCRT": [
+      {
+        "term": "endosomal sorting complexes required for transport",
+        "ambiguity": "low"
+      }
+    ],
+    "PBS": [
+      {
+        "term": "phosphate buffered saline",
+        "ambiguity": "low"
+      }
+    ],
+    "TBS": [
+      {
+        "term": "Tris-buffered saline",
+        "ambiguity": "low"
+      }
+    ],
+    "PBST": [
+      {
+        "term": "phosphate buffered saline with Tween",
+        "ambiguity": "low"
+      }
+    ],
+    "DMSO": [
+      {
+        "term": "dimethyl sulfoxide",
+        "ambiguity": "low"
+      }
+    ],
+    "BSA": [
+      {
+        "term": "bovine serum albumin",
+        "ambiguity": "low"
+      }
+    ],
+    "FBS": [
+      {
+        "term": "fetal bovine serum",
+        "ambiguity": "low"
+      }
+    ],
+    "DMEM": [
+      {
+        "term": "Dulbecco’s Modified Eagle Medium",
+        "ambiguity": "low"
+      }
+    ],
+    "RPMI": [
+      {
+        "term": "Roswell Park Memorial Institute medium",
+        "ambiguity": "low"
+      }
+    ],
+    "EDTA": [
+      {
+        "term": "ethylenediaminetetraacetic acid",
+        "ambiguity": "low"
+      }
+    ],
+    "EGTA": [
+      {
+        "term": "ethylene glycol-bis(β-aminoethyl ether)-N,N,N′,N′-tetraacetic acid",
+        "ambiguity": "low"
+      }
+    ],
+    "HEPES": [
+      {
+        "term": "4-(2-hydroxyethyl)-1-piperazineethanesulfonic acid",
+        "ambiguity": "low"
+      }
+    ],
+    "SDS": [
+      {
+        "term": "sodium dodecyl sulfate",
+        "ambiguity": "low"
+      }
+    ],
+    "SDS-PAGE": [
+      {
+        "term": "sodium dodecyl sulfate polyacrylamide gel electrophoresis",
+        "ambiguity": "low"
+      }
+    ],
+    "PAGE": [
+      {
+        "term": "polyacrylamide gel electrophoresis",
+        "ambiguity": "low"
+      }
+    ],
+    "DTT": [
+      {
+        "term": "dithiothreitol",
+        "ambiguity": "low"
+      }
+    ],
+    "PFA": [
+      {
+        "term": "paraformaldehyde",
+        "ambiguity": "low"
+      }
+    ],
+    "PMSF": [
+      {
+        "term": "phenylmethylsulfonyl fluoride",
+        "ambiguity": "low"
+      }
+    ],
+    "P/S": [
+      {
+        "term": "penicillin and streptomycin",
+        "ambiguity": "low"
+      }
+    ],
+    "MOI": [
+      {
+        "term": "multiplicity of infection",
+        "ambiguity": "low"
+      }
+    ],
+    "SEM": [
+      {
+        "term": "standard error of the mean",
+        "ambiguity": "high",
+        "context": [
+          "mean",
+          "means",
+          "error",
+          "data",
+          "statistics",
+          "n ="
+        ]
+      },
+      {
+        "term": "scanning electron microscopy",
+        "ambiguity": "high",
+        "context": [
+          "microscopy",
+          "microscope",
+          "imaging",
+          "electron",
+          "micrograph"
+        ]
+      }
+    ],
+    "TEM": [
+      {
+        "term": "transmission electron microscopy",
+        "ambiguity": "low"
+      }
+    ],
+    "cryo-EM": [
+      {
+        "term": "cryo-electron microscopy",
+        "ambiguity": "low"
+      }
+    ],
+    "AFM": [
+      {
+        "term": "atomic force microscopy",
+        "ambiguity": "low"
+      }
+    ],
+    "NTA": [
+      {
+        "term": "nanoparticle tracking analysis",
+        "ambiguity": "low"
+      }
+    ],
+    "DLS": [
+      {
+        "term": "dynamic light scattering",
+        "ambiguity": "low"
+      }
+    ],
+    "TRPS": [
+      {
+        "term": "tunable resistive pulse sensing",
+        "ambiguity": "low"
+      }
+    ],
+    "FC": [
+      {
+        "term": "flow cytometry",
+        "ambiguity": "medium",
+        "context": [
+          "flow cytometry",
+          "cytometry",
+          "fluorescent markers"
+        ]
+      }
+    ],
+    "MS": [
+      {
+        "term": "mass spectrometry",
+        "ambiguity": "high",
+        "context": [
+          "mass spectrometry",
+          "proteomics",
+          "LC-MS",
+          "GC-MS",
+          "m/z"
+        ]
+      },
+      {
+        "term": "multiple sclerosis",
+        "ambiguity": "high",
+        "context": [
+          "neurodegenerative",
+          "autoimmune",
+          "demyelinating"
+        ]
+      }
+    ],
+    "LC-MS": [
+      {
+        "term": "liquid chromatography–mass spectrometry",
+        "ambiguity": "low"
+      }
+    ],
+    "GC-MS": [
+      {
+        "term": "gas chromatography–mass spectrometry",
+        "ambiguity": "low"
+      }
+    ],
+    "HPLC": [
+      {
+        "term": "high-performance liquid chromatography",
+        "ambiguity": "low"
+      }
+    ],
+    "UPLC": [
+      {
+        "term": "ultra-performance liquid chromatography",
+        "ambiguity": "low"
+      }
+    ],
+    "FPLC": [
+      {
+        "term": "fast protein liquid chromatography",
+        "ambiguity": "low"
+      }
+    ],
+    "SEC": [
+      {
+        "term": "size-exclusion chromatography",
+        "ambiguity": "medium",
+        "context": [
+          "chromatography",
+          "column",
+          "elution",
+          "isolation",
+          "separation"
+        ]
+      },
+      {
+        "term": "standard error of calibration",
+        "ambiguity": "high",
+        "context": [
+          "calibration",
+          "error"
+        ]
+      }
+    ],
+    "NMR": [
+      {
+        "term": "nuclear magnetic resonance",
+        "ambiguity": "low"
+      }
+    ],
+    "FTIR": [
+      {
+        "term": "Fourier-transform infrared spectroscopy",
+        "ambiguity": "low"
+      }
+    ],
+    "XRD": [
+      {
+        "term": "X-ray diffraction",
+        "ambiguity": "low"
+      }
+    ],
+    "SPR": [
+      {
+        "term": "surface plasmon resonance",
+        "ambiguity": "low"
+      }
+    ],
+    "AUC": [
+      {
+        "term": "area under the curve",
+        "ambiguity": "medium",
+        "context": [
+          "curve",
+          "ROC",
+          "trapezoidal",
+          "pharmacokinetic"
+        ]
+      }
+    ],
+    "SD": [
+      {
+        "term": "standard deviation",
+        "ambiguity": "medium",
+        "context": [
+          "mean",
+          "statistics",
+          "data",
+          "error"
+        ]
+      }
+    ],
+    "CI": [
+      {
+        "term": "confidence interval",
+        "ambiguity": "medium",
+        "context": [
+          "confidence",
+          "interval",
+          "95%"
+        ]
+      }
+    ],
+    "ANOVA": [
+      {
+        "term": "analysis of variance",
+        "ambiguity": "low"
+      }
+    ],
+    "ROC": [
+      {
+        "term": "receiver operating characteristic",
+        "ambiguity": "low"
+      }
+    ],
+    "PCA": [
+      {
+        "term": "principal component analysis",
+        "ambiguity": "low"
+      }
+    ],
+    "t-SNE": [
+      {
+        "term": "t-distributed stochastic neighbor embedding",
+        "ambiguity": "low"
+      }
+    ],
+    "UMAP": [
+      {
+        "term": "uniform manifold approximation and projection",
+        "ambiguity": "low"
+      }
+    ],
+    "BMI": [
+      {
+        "term": "body mass index",
+        "ambiguity": "low"
+      }
+    ],
+    "T1D": [
+      {
+        "term": "type 1 diabetes",
+        "ambiguity": "low"
+      }
+    ],
+    "T2D": [
+      {
+        "term": "type 2 diabetes",
+        "ambiguity": "low"
+      }
+    ],
+    "CVD": [
+      {
+        "term": "cardiovascular disease",
+        "ambiguity": "medium",
+        "context": [
+          "cardiovascular",
+          "heart",
+          "vascular",
+          "cholesterol"
+        ]
+      }
+    ],
+    "COPD": [
+      {
+        "term": "chronic obstructive pulmonary disease",
+        "ambiguity": "low"
+      }
+    ],
+    "AD": [
+      {
+        "term": "Alzheimer’s disease",
+        "ambiguity": "high",
+        "context": [
+          "Alzheimer",
+          "amyloid",
+          "tau",
+          "neurodegenerative"
+        ]
+      }
+    ],
+    "PD": [
+      {
+        "term": "Parkinson’s disease",
+        "ambiguity": "high",
+        "context": [
+          "Parkinson",
+          "dopamine",
+          "neurodegenerative"
+        ]
+      }
+    ],
+    "ALS": [
+      {
+        "term": "amyotrophic lateral sclerosis",
+        "ambiguity": "low"
+      }
+    ],
+    "OS": [
+      {
+        "term": "overall survival",
+        "ambiguity": "medium",
+        "context": [
+          "survival",
+          "hazard",
+          "Kaplan",
+          "cancer"
+        ]
+      }
+    ],
+    "PFS": [
+      {
+        "term": "progression-free survival",
+        "ambiguity": "low"
+      }
+    ],
+    "HR": [
+      {
+        "term": "hazard ratio",
+        "ambiguity": "medium",
+        "context": [
+          "hazard",
+          "survival",
+          "confidence interval"
+        ]
+      }
+    ],
+    "OR": [
+      {
+        "term": "odds ratio",
+        "ambiguity": "medium",
+        "context": [
+          "odds",
+          "regression",
+          "confidence interval"
+        ]
+      }
+    ]
+  }
+}

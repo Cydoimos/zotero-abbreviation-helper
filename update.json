@@ -1,0 +1,19 @@
+{
+  "addons": {
+    "abbreviation-helper@cydoimos.github.io": {
+      "updates": [
+        {
+          "version": "1.2.1",
+          "update_link": "https://github.com/Cydoimos/zotero-abbreviation-helper/releases/download/v1.2.1/abbreviation-helper-1.2.1.xpi",
+          "update_hash": "sha256:bbb704491d482150a9bec178136bf52d17011b273a848a2c9ec26472a4fdad51",
+          "applications": {
+            "zotero": {
+              "strict_min_version": "7.0",
+              "strict_max_version": "9.*"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
