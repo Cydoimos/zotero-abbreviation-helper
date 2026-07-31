@@ -361,6 +361,11 @@ var AbbreviationHelper = {
     // but still lets users get database shortcuts for the token under the
     // cursor.
     databaseLinksOnAbbreviations: true,
+    // Master switch for the whole database-link layer. When false, no lookup
+    // links are offered at all and the plugin does nothing but expand
+    // abbreviations. Unchecking every database individually has the same
+    // effect, but this is the switch people look for.
+    databaseLinksEnabled: true,
     lastHoverState: null,
     hoverDocs: [],
     autoScanTimer: null,
@@ -433,6 +438,7 @@ var AbbreviationHelper = {
         this.tooltipModifier = this._getPref('tooltipModifier', this.tooltipModifier);
         this.databaseLinksModifier = this._getPref('databaseLinksModifier', this.databaseLinksModifier);
         this.databaseLinksOnAbbreviations = this._getPref('databaseLinksOnAbbreviations', this.databaseLinksOnAbbreviations);
+        this.databaseLinksEnabled = this._getPref('databaseLinksEnabled', this.databaseLinksEnabled);
         this.tooltipFontSize = this._getPref('tooltipFontSize', this.tooltipFontSize);
         this.tooltipTheme = this._getPref('tooltipTheme', this.tooltipTheme);
     },
@@ -786,8 +792,10 @@ var AbbreviationHelper = {
                 parent.appendChild(menu);
                 return popup;
             };
-            /* A set of radio items sharing one group name. */
+            /* A set of radio items sharing one group name. Returns the items
+             * so a caller can enable or disable them as a block. */
             const radioGroup = (parent, groupName, choices, current, onPick) => {
+                const items = [];
                 for (const choice of choices) {
                     const item = doc.createXULElement('menuitem');
                     item.setAttribute('type', 'radio');
@@ -796,113 +804,99 @@ var AbbreviationHelper = {
                     item.setAttribute('checked', choice.id === current ? 'true' : 'false');
                     item.addEventListener('command', () => onPick(choice.id, item));
                     parent.appendChild(item);
+                    items.push(item);
+                }
+                return items;
+            };
+
+            /* ---------------------------------------------------------------
+             * Layout.
+             *
+             * Ordered by how often something is used, not by how the code is
+             * organised. What you do repeatedly (scan, the two on/off
+             * switches, correcting a wrong detection) stays at the top level;
+             * what you set once and forget (modifier keys, which databases,
+             * tooltip appearance) lives one level down. Separators carry the
+             * grouping, so no bold pseudo-headers are needed out here.
+             *
+             * Every reference to the settings file uses the same words \u2014
+             * "abbreviations file" \u2014 because there is only one of them.
+             * ------------------------------------------------------------- */
+
+            // Collected below, then greyed out together whenever the database
+            // layer is switched off, so no visible control silently does
+            // nothing.
+            const dbDependents = [];
+            const syncDbDependents = () => {
+                for (const el of dbDependents) {
+                    el.setAttribute('disabled', this.databaseLinksEnabled ? 'false' : 'true');
                 }
             };
 
             /* ---- Scan ---- */
-            action(rootPopup, 'abbreviation-helper-scan', 'Scan Current PDF', () => {
+            action(rootPopup, 'abbreviation-helper-scan', 'Scan This PDF and Copy List', () => {
                 this.scanCurrent().catch(err => {
                     this.log('Error during scan: ' + err);
                     Zotero.alert(window, 'Abbreviation Helper', 'An error occurred while scanning the PDF. See the Zotero log for details.');
                 });
             });
 
-            /* ---- Abbreviation meanings ---- */
+            /* ---- What appears on hover ---- */
             sep(rootPopup);
-            header(rootPopup, 'Abbreviation meanings');
-            checkbox(rootPopup, 'abbreviation-helper-hover', 'Show meanings on hover', this.hoverEnabled, (item) => {
-                this.toggleHover(window, item).catch(err => {
-                    this.log('Error toggling hover: ' + err);
-                    Zotero.alert(window, 'Abbreviation Helper', 'Could not enable hover tooltips. See the Zotero log for details.');
+            const hoverItem = checkbox(rootPopup, 'abbreviation-helper-hover',
+                'Show meanings on hover', this.hoverEnabled, (item) => {
+                    this.toggleHover(window, item).catch(err => {
+                        this.log('Error toggling hover: ' + err);
+                        Zotero.alert(window, 'Abbreviation Helper', 'Could not enable hover tooltips. See the Zotero log for details.');
+                    });
                 });
-            });
-            radioGroup(submenu(rootPopup, 'Hold key to show meanings'), 'abbrev-tooltip-mod',
+            const dbEnabledItem = checkbox(rootPopup, 'abbreviation-helper-db-enabled',
+                'Show database links', this.databaseLinksEnabled, (item) => {
+                    this.databaseLinksEnabled = !this.databaseLinksEnabled;
+                    this._setPref('databaseLinksEnabled', this.databaseLinksEnabled);
+                    item.setAttribute('checked', this.databaseLinksEnabled ? 'true' : 'false');
+                    syncDbDependents();
+                    this._refreshHoverFromLastState(doc);
+                });
+
+            // Both modifier settings in one place, so the difference between
+            // them is visible side by side instead of split across two
+            // identical-looking submenus.
+            const whenPopup = submenu(rootPopup, 'When to Show\u2026');
+            header(whenPopup, 'Meanings');
+            radioGroup(whenPopup, 'abbrev-tooltip-mod',
                 this._modifierChoices(), this.tooltipModifier, (id) => {
                     this.tooltipModifier = id;
                     this._setPref('tooltipModifier', id);
                     this._hideHoverTooltip(doc);
                 });
-
-            /* ---- Database links ---- */
-            sep(rootPopup);
-            header(rootPopup, 'Database links');
-            radioGroup(submenu(rootPopup, 'Hold key to show database links'), 'abbrev-db-mod',
+            sep(whenPopup);
+            header(whenPopup, 'Database links');
+            for (const item of radioGroup(whenPopup, 'abbrev-db-mod',
                 this._modifierChoices(), this.databaseLinksModifier, (id) => {
                     this.databaseLinksModifier = id;
                     this._setPref('databaseLinksModifier', id);
                     this._refreshHoverFromLastState(doc);
-                });
-            checkbox(rootPopup, 'abbreviation-helper-db-on-abbr', 'Also show database links for abbreviations',
+                })) dbDependents.push(item);
+            dbDependents.push(checkbox(whenPopup, 'abbreviation-helper-db-on-abbr',
+                'Also show links on defined abbreviations',
                 this.databaseLinksOnAbbreviations, (item) => {
                     this.databaseLinksOnAbbreviations = !this.databaseLinksOnAbbreviations;
                     this._setPref('databaseLinksOnAbbreviations', this.databaseLinksOnAbbreviations);
                     item.setAttribute('checked', this.databaseLinksOnAbbreviations ? 'true' : 'false');
                     this._refreshHoverFromLastState(doc);
-                });
+                }));
 
-            // One checkbox per database, grouped, built from the config file so
-            // databases can be added or removed without touching any code.
-            const dbPopup = submenu(rootPopup, 'Databases');
-            const all = (this.dictionaries && this.dictionaries.databases) || [];
-            const off = this._disabledDatabaseLabels();
-            let firstGroup = true;
-            for (const groupLabel of this._databaseGroups()) {
-                if (!firstGroup) sep(dbPopup);
-                firstGroup = false;
-                header(dbPopup, groupLabel);
-                for (const db of all.filter(d => (d.group || 'Databases') === groupLabel)) {
-                    const on = db.enabled !== false && !off.has(db.label);
-                    checkbox(dbPopup, null, db.label, on, (item) => {
-                        const nowOn = item.getAttribute('checked') !== 'true';
-                        this._setDatabaseEnabled(db.label, nowOn);
-                        item.setAttribute('checked', nowOn ? 'true' : 'false');
-                        this._hideHoverTooltip(doc);
-                    });
-                }
-            }
-            sep(dbPopup);
-            action(dbPopup, null, 'Edit databases in config file\u2026', () => {
-                this._openUserDictionary(window).catch(e => this.log('Open config failed: ' + e));
-            });
-
-            /* ---- Appearance ---- */
+            /* ---- Correcting detections ---- */
             sep(rootPopup);
-            header(rootPopup, 'Appearance');
-            radioGroup(submenu(rootPopup, 'Tooltip text size'), 'abbrev-font',
-                [{ id: 12, label: 'Small' }, { id: 14, label: 'Medium' }, { id: 16, label: 'Large' }],
-                Number(this.tooltipFontSize), (id) => {
-                    this.tooltipFontSize = id;
-                    this._setPref('tooltipFontSize', id);
-                    this._resetHoverTooltips();
-                });
-            radioGroup(submenu(rootPopup, 'Tooltip theme'), 'abbrev-theme',
-                [{ id: 'dark', label: 'Dark' }, { id: 'light', label: 'Light' }],
-                this.tooltipTheme, (id) => {
-                    this.tooltipTheme = id;
-                    this._setPref('tooltipTheme', id);
-                    this._resetHoverTooltips();
-                });
-
-            /* ---- Custom dictionary ---- */
-            sep(rootPopup);
-            header(rootPopup, 'Custom dictionary');
-            action(rootPopup, 'abbreviation-helper-open-dictionary', 'Open custom abbreviations file\u2026', () => {
-                this._openUserDictionary(window).catch(err => {
-                    this.log('Error opening custom dictionary: ' + err);
-                    Zotero.alert(window, 'Abbreviation Helper', 'Could not open the custom dictionary file. See the Zotero log for details.');
-                });
-            });
-            action(rootPopup, 'abbreviation-helper-reload-dictionary', 'Reload custom dictionary', () => {
-                this._reloadDictionaries(window).catch(err => this.log('Error reloading: ' + err));
-            });
-            action(rootPopup, 'abbreviation-helper-ignore', 'Ignore an abbreviation\u2026', () => {
+            action(rootPopup, 'abbreviation-helper-ignore', 'Ignore an Abbreviation\u2026', () => {
                 this._promptIgnoreAbbreviation(window).catch(err => this.log('Ignore failed: ' + err));
             });
             // Built fresh each time it opens, so it always reflects the current
             // list; clicking an entry stops ignoring it.
             const ignoredMenu = doc.createXULElement('menu');
             ignoredMenu.id = 'abbreviation-helper-ignored-menu';
-            ignoredMenu.setAttribute('label', 'Ignored abbreviations');
+            ignoredMenu.setAttribute('label', 'Ignored Abbreviations');
             const ignoredPopup = doc.createXULElement('menupopup');
             ignoredMenu.appendChild(ignoredPopup);
             rootPopup.appendChild(ignoredMenu);
@@ -923,10 +917,94 @@ var AbbreviationHelper = {
                     });
                 }
                 sep(ignoredPopup);
-                action(ignoredPopup, null, 'Stop ignoring all', () => {
+                action(ignoredPopup, null, 'Stop Ignoring All', () => {
                     this._setIgnoreList([]).catch(e => this.log('Clear ignore list failed: ' + e));
                 });
             });
+
+            /* ---- Settings you set once ---- */
+            sep(rootPopup);
+            const dbPopup = submenu(rootPopup, 'Databases');
+            dbDependents.push(dbPopup.parentNode || dbPopup);
+            // Rebuilt on open rather than at startup, so databases added to the
+            // abbreviations file show up as soon as it is reloaded instead of
+            // waiting for a Zotero restart.
+            dbPopup.addEventListener('popupshowing', () => {
+                while (dbPopup.firstChild) dbPopup.removeChild(dbPopup.firstChild);
+                const all = (this.dictionaries && this.dictionaries.databases) || [];
+                const off = this._disabledDatabaseLabels();
+                let firstGroup = true;
+                for (const groupLabel of this._databaseGroups()) {
+                    if (!firstGroup) sep(dbPopup);
+                    firstGroup = false;
+                    header(dbPopup, groupLabel);
+                    for (const db of all.filter(d => (d.group || 'Databases') === groupLabel)) {
+                        const on = db.enabled !== false && !off.has(db.label);
+                        checkbox(dbPopup, null, db.label, on, (item) => {
+                            const nowOn = item.getAttribute('checked') !== 'true';
+                            this._setDatabaseEnabled(db.label, nowOn);
+                            item.setAttribute('checked', nowOn ? 'true' : 'false');
+                            this._hideHoverTooltip(doc);
+                        });
+                    }
+                }
+                if (firstGroup) {
+                    const none = doc.createXULElement('menuitem');
+                    none.setAttribute('label', '(none configured)');
+                    none.setAttribute('disabled', 'true');
+                    dbPopup.appendChild(none);
+                }
+                sep(dbPopup);
+                action(dbPopup, null, 'Edit in Abbreviations File\u2026', () => {
+                    this._openUserDictionary(window).catch(e => this.log('Open file failed: ' + e));
+                });
+            });
+
+            const lookPopup = submenu(rootPopup, 'Tooltip Appearance');
+            header(lookPopup, 'Text size');
+            radioGroup(lookPopup, 'abbrev-font',
+                [{ id: 12, label: 'Small' }, { id: 14, label: 'Medium' }, { id: 16, label: 'Large' }],
+                Number(this.tooltipFontSize), (id) => {
+                    this.tooltipFontSize = id;
+                    this._setPref('tooltipFontSize', id);
+                    this._resetHoverTooltips();
+                });
+            sep(lookPopup);
+            header(lookPopup, 'Theme');
+            radioGroup(lookPopup, 'abbrev-theme',
+                [{ id: 'dark', label: 'Dark' }, { id: 'light', label: 'Light' }],
+                this.tooltipTheme, (id) => {
+                    this.tooltipTheme = id;
+                    this._setPref('tooltipTheme', id);
+                    this._resetHoverTooltips();
+                });
+
+            /* ---- The abbreviations file ---- */
+            sep(rootPopup);
+            action(rootPopup, 'abbreviation-helper-open-dictionary', 'Open Abbreviations File\u2026', () => {
+                this._openUserDictionary(window).catch(err => {
+                    this.log('Error opening abbreviations file: ' + err);
+                    Zotero.alert(window, 'Abbreviation Helper', 'Could not open the abbreviations file. See the Zotero log for details.');
+                });
+            });
+            action(rootPopup, 'abbreviation-helper-reload-dictionary', 'Reload Abbreviations File', () => {
+                this._reloadDictionaries(window).catch(err => this.log('Error reloading: ' + err));
+            });
+
+            // Re-sync on open. Preferences are shared across windows and can
+            // also change when the abbreviations file is reloaded, so the menu
+            // reads its state fresh rather than trusting what it drew at
+            // startup.
+            rootPopup.addEventListener('popupshowing', (event) => {
+                if (event.target !== rootPopup) return;
+                hoverItem.setAttribute('checked', this.hoverEnabled ? 'true' : 'false');
+                dbEnabledItem.setAttribute('checked', this.databaseLinksEnabled ? 'true' : 'false');
+                const n = this._ignoreList().length;
+                ignoredMenu.setAttribute('label',
+                    n ? 'Ignored Abbreviations (' + n + ')' : 'Ignored Abbreviations');
+                syncDbDependents();
+            });
+            syncDbDependents();
 
             toolsPopup.appendChild(rootMenu);
             this.addedElementIDs.push(rootMenu.id);
@@ -2115,13 +2193,19 @@ var AbbreviationHelper = {
      * key Mac users reach for and both are accepted (see _modifierSatisfied).
      * Alt is called Option on macOS.
      */
+    /**
+     * The gating choices, phrased to complete the heading they sit under
+     * ("Meanings: Always" / "Meanings: Only while holding Shift"). The ids are
+     * what gets persisted and must not change.
+     */
     _modifierChoices() {
         const mac = this._isMac();
+        const hold = (key) => 'Only while holding ' + key;
         return [
-            { id: 'none', label: 'No key (always show)' },
-            { id: 'shift', label: 'Shift' },
-            { id: 'ctrl', label: mac ? '\u2318 Command (or Control)' : 'Ctrl' },
-            { id: 'alt', label: mac ? '\u2325 Option' : 'Alt' }
+            { id: 'none', label: 'Always' },
+            { id: 'shift', label: hold('Shift') },
+            { id: 'ctrl', label: hold(mac ? '\u2318 Command (or Control)' : 'Ctrl') },
+            { id: 'alt', label: hold(mac ? '\u2325 Option' : 'Alt') }
         ];
     },
 
@@ -2152,6 +2236,7 @@ var AbbreviationHelper = {
     },
 
     _databaseLinksCurrentlyAllowed() {
+        if (!this.databaseLinksEnabled) return false;
         return this._modifierSatisfied(this.databaseLinksModifier);
     },
 
@@ -2293,6 +2378,9 @@ var AbbreviationHelper = {
     /* ---- External database lookup links ---- */
     /** Databases from the config file, minus any disabled in the menu. */
     _enabledDatabases() {
+        // The master switch short-circuits everything downstream: link lookup,
+        // the tooltip section, and the hover listener's early-out.
+        if (!this.databaseLinksEnabled) return [];
         const all = (this.dictionaries && this.dictionaries.databases) || [];
         const off = this._disabledDatabaseLabels();
         return all.filter(d => d && d.enabled !== false && !off.has(d.label));

@@ -22,7 +22,7 @@ Works on **macOS, Windows and Linux**. Requires **Zotero 7 or newer**
 1. Download `abbreviation-helper-<version>.xpi` from the
    [latest release](https://github.com/Cydoimos/zotero-abbreviation-helper/releases/latest).
 2. In Zotero: **Tools → Add-ons → gear icon → Install Add-on From File…**
-3. Select the `.xpi`.
+3. Select the `.xpi`. No restart needed.
 
 > **Using Firefox?** Right-click the download link and choose **Save Link As…**
 > Firefox recognises the `.xpi` extension and tries to install the file as a
@@ -38,23 +38,29 @@ abbreviation to see its meaning. Everything else lives under
 
 | Menu item | What it does |
 |---|---|
-| Scan Current PDF | Rescan now and copy the full list to the clipboard |
-| Show meanings on hover | Turn tooltips on or off |
-| Hold key to show meanings | None / Shift / Ctrl / Alt before a meaning appears |
-| Hold key to show database links | Same, for the database links (default: Shift) |
-| Also show database links for abbreviations | Whether links appear on defined abbreviations too |
+| Scan This PDF and Copy List | Rescan now and copy the full list to the clipboard |
+| **Show meanings on hover** | Turn tooltips on or off |
+| **Show database links** | Turn the whole lookup-link layer on or off |
+| When to Show… | Whether meanings and links appear always or only while a key is held, set separately |
+| Ignore an Abbreviation… | Suppress a wrong detection |
+| Ignored Abbreviations (n) | Click any entry to stop ignoring it |
 | Databases | Enable or disable each database individually |
-| Tooltip text size / theme | Small–Large, Dark or Light |
-| Open custom abbreviations file… | Opens your personal config |
-| Reload custom dictionary | Apply edits without restarting Zotero |
-| Ignore an abbreviation… | Suppress a wrong detection |
-| Ignored abbreviations | Click any entry to stop ignoring it |
+| Tooltip Appearance | Text size and dark/light theme |
+| Open Abbreviations File… | Opens your settings file |
+| Reload Abbreviations File | Apply edits without restarting Zotero |
+
+The two switches at the top are the ones worth knowing about; everything below
+them is set once and forgotten.
 
 **On macOS the Ctrl setting also accepts ⌘ Command**, and the menu labels it that way. One
 saved preference therefore behaves correctly on every platform, which matters if your
 Zotero profile is synced between machines.
 
-While a tooltip with database links is showing, press **1–7** to open the matching link.
+While a tooltip with database links is showing, press **1–9** to open the matching link.
+
+> **Screenshots:** add `docs/hover.png` and `docs/menu.png` to the repository
+> and reference them here — a single image of a tooltip over a PDF explains this
+> plugin faster than any description.
 
 ## Customising
 
@@ -84,7 +90,7 @@ entries stay easy to find and you still receive improvements to the shipped defa
 }
 ```
 
-Use **Reload custom dictionary** after editing; no restart required.
+Use **Reload Abbreviations File** after editing; no restart required.
 
 ## How detection works
 
@@ -152,6 +158,7 @@ node test/test-prefs.js      # preference persistence
 node test/test-hover.js      # tooltip rendering (mock DOM)
 node test/test-userdict.js   # user dictionary, end to end
 node test/test-features.js   # menu features, modifiers, cross-platform paths
+node test/test-menu.js       # Tools menu structure and wording (fake XUL DOM)
 
 node eval/score.js           # accuracy against the gold standard (needs a corpus)
 node eval/difftest.js A B    # prove a change leaves detection unchanged

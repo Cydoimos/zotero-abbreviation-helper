@@ -139,9 +139,20 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
   H._isMac = () => false;
   let choices = H._modifierChoices();
   check('non-Mac labels the key Ctrl',
-    choices.find(c => c.id === 'ctrl').label === 'Ctrl');
+    /\bCtrl\b/.test(choices.find(c => c.id === 'ctrl').label),
+    choices.find(c => c.id === 'ctrl').label);
   check('non-Mac labels the key Alt',
-    choices.find(c => c.id === 'alt').label === 'Alt');
+    /\bAlt\b/.test(choices.find(c => c.id === 'alt').label),
+    choices.find(c => c.id === 'alt').label);
+  // Labels have to complete the heading they sit under, so the no-key option
+  // must not describe holding one.
+  check('the no-key option does not say "hold"',
+    !/hold/i.test(choices.find(c => c.id === 'none').label),
+    choices.find(c => c.id === 'none').label);
+  check('every key option says "hold"',
+    choices.filter(c => c.id !== 'none').every(c => /holding/.test(c.label)));
+  check('ids are unchanged, so saved preferences still resolve',
+    choices.map(c => c.id).join(',') === 'none,shift,ctrl,alt');
   H._isMac = () => true;
   choices = H._modifierChoices();
   check('macOS label mentions Command',
@@ -192,6 +203,37 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
   const custom = info.groups.flatMap(g => g.links.map(l => l.label));
   check('user database list replaces the defaults', custom.length === 1 && custom[0] === 'PubMed', custom.join(','));
   check('custom group label used', info.groups[0].groupLabel === 'My databases');
+
+  // ---------- 5b. master switch turns the whole layer off ----------
+  ({ H } = makeEnv({}));
+  H.init({ id: 'x', version: '1', rootURI: 'r://' });
+  await H._dictionariesReady;
+  check('database links are on by default', H.databaseLinksEnabled === true);
+  check('and links are offered', !!H._lookupDatabaseLinks('EGFR'));
+
+  H.databaseLinksEnabled = false;
+  check('master off -> no databases enabled', H._enabledDatabases().length === 0);
+  check('master off -> no links looked up', H._lookupDatabaseLinks('EGFR') === null);
+  // Gated regardless of the modifier, including 'none' (which normally means
+  // "always show").
+  H.databaseLinksModifier = 'none';
+  H._updateModifierState({});
+  check('master off -> gate closed even with no modifier required',
+    H._databaseLinksCurrentlyAllowed() === false);
+
+  H.databaseLinksEnabled = true;
+  check('turning it back on restores every database',
+    H._enabledDatabases().length === bundled.databases.length);
+  check('turning it back on restores the gate', H._databaseLinksCurrentlyAllowed() === true);
+
+  // The setting survives a restart.
+  env = makeEnv({});
+  env.H.init({ id: 'x', version: '1', rootURI: 'r://' });
+  env.H.databaseLinksEnabled = false;
+  env.H._setPref('databaseLinksEnabled', false);
+  const revive = makeEnv({}, Object.fromEntries(env.P));
+  revive.H.init({ id: 'x', version: '1', rootURI: 'r://' });
+  check('master switch persists across restarts', revive.H.databaseLinksEnabled === false);
 
   // ---------- 6. stability ----------
   ({ H } = makeEnv({}));

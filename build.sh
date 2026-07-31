@@ -70,7 +70,7 @@ echo "  \"update_hash\": \"sha256:$HASH\""
 # ---- optional verification --------------------------------------------------
 if [ "${1:-}" = "--check" ]; then
   echo
-  for t in test-runaway test-peptides test-prefs test-hover test-userdict test-features; do
+  for t in test-runaway test-peptides test-prefs test-hover test-userdict test-features test-menu; do
     printf '  %-16s ' "$t"
     node "test/$t.js" >/dev/null 2>&1 && echo PASS || { echo FAIL; exit 1; }
   done
