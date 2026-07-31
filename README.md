@@ -54,7 +54,7 @@ abbreviation to see its meaning. Everything else lives under
 saved preference therefore behaves correctly on every platform, which matters if your
 Zotero profile is synced between machines.
 
-While a tooltip with database links is showing, press **1–9** to open the matching link.
+While a tooltip with database links is showing, press **1–7** to open the matching link.
 
 > **Screenshots:** add `docs/hover.png` and `docs/menu.png` to the repository
 > and reference them here — a single image of a tooltip over a PDF explains this
