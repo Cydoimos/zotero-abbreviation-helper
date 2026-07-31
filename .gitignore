@@ -1,0 +1,10 @@
+# Built artefacts — attach these to GitHub Releases instead of committing them
+*.xpi
+
+# Evaluation corpus: extracted text of copyrighted papers. Never commit.
+corpus
+eval/errors.json
+
+# OS noise
+.DS_Store
+Thumbs.db
