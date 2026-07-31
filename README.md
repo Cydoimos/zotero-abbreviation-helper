@@ -19,9 +19,16 @@ Works on **macOS, Windows and Linux**. Requires **Zotero 7 or newer**
 
 ## Install
 
-1. Download `abbreviation-helper-<version>.xpi`.
+1. Download `abbreviation-helper-<version>.xpi` from the
+   [latest release](https://github.com/Cydoimos/zotero-abbreviation-helper/releases/latest).
 2. In Zotero: **Tools → Add-ons → gear icon → Install Add-on From File…**
-3. Select the `.xpi`. No restart needed.
+3. Select the `.xpi`.
+
+> **Using Firefox?** Right-click the download link and choose **Save Link As…**
+> Firefox recognises the `.xpi` extension and tries to install the file as a
+> *Firefox* add-on, which then fails. Saving it to disk first avoids this.
+> Other browsers download it normally, and Zotero's own automatic updates are
+> unaffected.
 
 ## Use
 
