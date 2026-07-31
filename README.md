@@ -56,10 +56,6 @@ Zotero profile is synced between machines.
 
 While a tooltip with database links is showing, press **1–7** to open the matching link.
 
-> **Screenshots:** add `docs/hover.png` and `docs/menu.png` to the repository
-> and reference them here — a single image of a tooltip over a PDF explains this
-> plugin faster than any description.
-
 ## Customising
 
 Your settings live in a JSON file inside your Zotero data directory:
