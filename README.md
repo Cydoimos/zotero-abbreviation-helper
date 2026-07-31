@@ -22,7 +22,7 @@ Works on **macOS, Windows and Linux**. Requires **Zotero 7 or newer**
 1. Download `abbreviation-helper-<version>.xpi` from the
    [latest release](https://github.com/Cydoimos/zotero-abbreviation-helper/releases/latest).
 2. In Zotero: **Tools → Add-ons → gear icon → Install Add-on From File…**
-3. Select the `.xpi`. No restart needed.
+3. Select the `.xpi`.
 
 > **Using Firefox?** Right-click the download link and choose **Save Link As…**
 > Firefox recognises the `.xpi` extension and tries to install the file as a
@@ -56,11 +56,7 @@ them is set once and forgotten.
 saved preference therefore behaves correctly on every platform, which matters if your
 Zotero profile is synced between machines.
 
-While a tooltip with database links is showing, press **1–9** to open the matching link.
-
-> **Screenshots:** add `docs/hover.png` and `docs/menu.png` to the repository
-> and reference them here — a single image of a tooltip over a PDF explains this
-> plugin faster than any description.
+While a tooltip with database links is showing, press **1–7** to open the matching link.
 
 ## Customising
 
