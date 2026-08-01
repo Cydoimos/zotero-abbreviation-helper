@@ -21,7 +21,7 @@ Works on **macOS, Windows and Linux**. Requires **Zotero 7 or newer**
 
 1. Download `abbreviation-helper-<version>.xpi` from the
    [latest release](https://github.com/Cydoimos/zotero-abbreviation-helper/releases/latest).
-2. In Zotero: **Tools → Add-ons → gear icon → Install Add-on From File…**
+2. In Zotero: **Tools → Plugins → gear icon → Install Plugin From File…**
 3. Select the `.xpi`. No restart needed.
 
 > **Using Firefox?** Right-click the download link and choose **Save Link As…**
