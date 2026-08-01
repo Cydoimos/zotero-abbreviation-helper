@@ -3,9 +3,9 @@
     "abbreviation-helper@cydoimos.github.io": {
       "updates": [
         {
-          "version": "1.3.0",
-          "update_link": "https://github.com/Cydoimos/zotero-abbreviation-helper/releases/download/v1.3.0/abbreviation-helper-1.3.0.xpi",
-          "update_hash": "sha256:9223944304d953045529f59770c5609785f855afc09cef9f2cc351ca90465693",
+          "version": "2.0.0",
+          "update_link": "https://github.com/Cydoimos/zotero-abbreviation-helper/releases/download/v2.0.0/abbreviation-helper-2.0.0.xpi",
+          "update_hash": "sha256:7c83b403bd3db01b6260d788a6b46b687406015d989beec47ecadc299d8a894d",
           "applications": {
             "zotero": {
               "strict_min_version": "7.0",
