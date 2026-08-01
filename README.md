@@ -215,13 +215,12 @@ Two things that are easy to get wrong when building the `.xpi`:
 - Zip the files **at the archive root** (`manifest.json` at top level, not inside
   a folder):
 
-  ```
+```
   zip -X -9 abbreviation-helper-<version>.xpi \
-      manifest.json install.rdf bootstrap.js abbreviation.js
-  prefs.js \
+      manifest.json install.rdf bootstrap.js abbreviation.js prefs.js \
       settings.xhtml settings.js settings.css \
       icon32.png icon48.png icon96.png data/abbreviations.json
-  ```
+```
 
 `update.json` in the repo root is what `update_url` points at; bump the version
 and the release link there when you publish a new version.
