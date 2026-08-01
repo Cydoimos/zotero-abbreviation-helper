@@ -7,7 +7,7 @@
 // Without defaults here, a setting the user has never changed has no stored
 // value, so a control in the Settings window bound to it renders blank. The
 // values below mirror the defaults in abbreviation.js and must be kept in
-// step with them; test/test-prefpane.js checks that they agree.
+// step with them; test/test-settings.js checks that they agree.
 
 pref("extensions.abbreviation-helper.hoverEnabled", true);
 pref("extensions.abbreviation-helper.tooltipModifier", "none");
