@@ -70,10 +70,6 @@ Zotero profile is synced between machines.
 
 While a tooltip with database links is showing, press **1–9** to open the matching link.
 
-> **Screenshots:** add `docs/hover.png` and `docs/menu.png` to the repository
-> and reference them here — a single image of a tooltip over a PDF explains this
-> plugin faster than any description.
-
 ## The abbreviations file
 
 Most people will never need this — abbreviations, the ignore list and the databases
