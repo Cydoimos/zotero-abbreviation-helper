@@ -5,6 +5,9 @@
 corpus
 eval/errors.json
 
+# Scratch files
+*.tmp
+
 # OS noise
 .DS_Store
 Thumbs.db
