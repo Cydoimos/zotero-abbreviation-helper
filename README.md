@@ -26,7 +26,7 @@ Works on **macOS, Windows and Linux**. Requires **Zotero 7 or newer**
 
 > **Using Firefox?** Right-click the download link and choose **Save Link As…**
 > Firefox recognises the `.xpi` extension and tries to install the file as a
-> *Firefox* add-on, which then fails. Saving it to disk first avoids this.
+> *Firefox* plugin, which then fails. Saving it to disk first avoids this.
 > Other browsers download it normally, and Zotero's own automatic updates are
 > unaffected.
 
