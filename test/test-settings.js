@@ -354,6 +354,30 @@ const tick = () => new Promise(r => setTimeout(r, 0));
   check('defaults agree with the values in abbreviation.js',
     mismatched.length === 0, mismatched.join(', ') || 'all agree');
 
+  // ---------- 10b. no reference to a file that does not exist ----------
+  // Renaming a file and leaving its old name in a comment is how prefs.js came
+  // to point readers at a test file that no longer existed. Cheap to check,
+  // and it covers every such rename. (Deliberately no exclusion list — a name
+  // written here would have to exist too, so this comment avoids naming one.)
+  const ROOT_DIR = require('path').join(__dirname, '..');
+  const scanned = [
+    ...fs.readdirSync(SRC_DIR).filter(f => /\.(js|xhtml|css)$/.test(f)).map(f => 'src/' + f),
+    ...fs.readdirSync(__dirname).filter(f => /\.js$/.test(f)).map(f => 'test/' + f),
+    'README.md', 'build.sh'
+  ];
+  const missing = [];
+  for (const rel of scanned) {
+    const text = fs.readFileSync(require('path').join(ROOT_DIR, rel), 'utf8');
+    for (const m of text.matchAll(/\b(test-[\w-]+\.js|settings\.(?:js|xhtml|css)|prefs\.js|abbreviation\.js|bootstrap\.js)\b/g)) {
+      const name = m[1];
+      const exists = fs.existsSync(require('path').join(__dirname, name))
+        || fs.existsSync(require('path').join(SRC_DIR, name));
+      if (!exists) missing.push(rel + ' -> ' + name);
+    }
+  }
+  check('every file named in a comment or doc actually exists',
+    missing.length === 0, [...new Set(missing)].join(', ') || 'all resolve');
+
   // ---------- 11. the pane starts without relying on onload ----------
   const paneScript = fs.readFileSync(SRC_DIR + '/settings.js', 'utf8');
   check('the script self-starts rather than trusting the onload attribute',
