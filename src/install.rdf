@@ -10,7 +10,7 @@
     <em:id>abbreviation-helper@cydoimos.github.io</em:id>
     <em:type>2</em:type>
     <em:name>Abbreviation Helper</em:name>
-    <em:version>1.3.0</em:version>
+    <em:version>2.0.0</em:version>
     <em:creator>Cydoimos</em:creator>
     <em:description>Expands acronyms, initialisms and other abbreviations on hover while reading a PDF.</em:description>
     <em:bootstrap>true</em:bootstrap>

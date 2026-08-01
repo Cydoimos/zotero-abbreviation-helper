@@ -40,6 +40,11 @@ async function startup({ id, version, rootURI }) {
     }
     AbbreviationHelper.init({ id, version, rootURI });
 
+    // Settings live in Zotero's Settings window. This is the only place they
+    // can all be changed without the menu closing after each one — on macOS
+    // the Tools menu is a native NSMenu and always dismisses on selection.
+    AbbreviationHelper.registerPreferencePane();
+
     // Listen for new main windows opening so the plugin can insert
     // its menu item automatically. Register this before the first UI
     // injection attempt so restart-time window creation is not missed.
@@ -91,7 +96,10 @@ function shutdown() {
         Services.wm.removeListener(windowListener);
     } catch (e) {}
     if (AbbreviationHelper) {
+        AbbreviationHelper.unregisterPreferencePane();
+        AbbreviationHelper._unwatchPrefs();
         AbbreviationHelper.removeFromAllWindows();
+        try { delete Zotero.AbbreviationHelper; } catch (e) {}
         AbbreviationHelper = undefined;
     }
 }

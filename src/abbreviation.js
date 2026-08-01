@@ -366,6 +366,11 @@ var AbbreviationHelper = {
     // abbreviations. Unchecking every database individually has the same
     // effect, but this is the switch people look for.
     databaseLinksEnabled: true,
+    // Whether the Tools menu mirrors every setting. Off by default: settings
+    // live in the Settings window, and the menu holds actions. Users who
+    // prefer the menu can turn this on — on Windows and Linux the menu even
+    // stays open between changes.
+    advancedMenu: false,
     lastHoverState: null,
     hoverDocs: [],
     autoScanTimer: null,
@@ -406,7 +411,92 @@ var AbbreviationHelper = {
             this.log('Dictionary load failed; using built-in fallback: ' + e);
             return this.dictionaries;
         });
+        // The preference pane runs in the Settings window, a separate document
+        // with no reference to this scope. Zotero is the one object both can
+        // see, so the pane reaches the plugin through it.
+        try { Zotero.AbbreviationHelper = this; } catch (e) {}
+        this._watchPrefs();
         this.initialized = true;
+    },
+
+    /* ---- Preference pane (Zotero 7+) ------------------------------------ */
+    /**
+     * Register the pane in Zotero's Settings window. Optional: if the API is
+     * missing or registration fails, the plugin carries on and the Tools menu
+     * remains the way to change settings.
+     */
+    registerPreferencePane() {
+        try {
+            if (!Zotero.PreferencePanes || !Zotero.PreferencePanes.register) {
+                this.log('PreferencePanes API unavailable; using the Tools menu only');
+                return null;
+            }
+            // Note the filenames: `prefs.js` in the plugin root is reserved by
+            // Zotero for default preferences and is parsed as pref() calls, so
+            // the pane's own script must not be called that.
+            this._prefPaneID = Zotero.PreferencePanes.register({
+                pluginID: this.id,
+                src: 'settings.xhtml',
+                scripts: ['settings.js'],
+                stylesheets: ['settings.css'],
+                label: 'Abbreviation Helper'
+            });
+            return this._prefPaneID;
+        } catch (e) {
+            this.log('Could not register the preference pane: ' + e);
+            return null;
+        }
+    },
+
+    unregisterPreferencePane() {
+        try {
+            if (this._prefPaneID && Zotero.PreferencePanes && Zotero.PreferencePanes.unregister) {
+                Zotero.PreferencePanes.unregister(this._prefPaneID);
+            }
+        } catch (e) {
+            this.log('Could not unregister the preference pane: ' + e);
+        }
+        this._prefPaneID = null;
+    },
+
+    /**
+     * Watch the preference branch so changes made in the Settings window take
+     * effect immediately. Without this the pane would write a preference that
+     * the running plugin only notices at the next restart.
+     */
+    _watchPrefs() {
+        if (this._prefObserver) return;
+        try {
+            if (typeof Services === 'undefined' || !Services.prefs) return;
+            const branch = Services.prefs.getBranch(this.PREF_BRANCH);
+            const self = this;
+            this._prefObserver = {
+                observe(subject, topic, data) {
+                    if (topic !== 'nsPref:changed') return;
+                    try {
+                        self._loadPrefs();
+                        self._resetHoverTooltips();
+                        self._refreshHoverFromLastState(null);
+                    } catch (e) {
+                        self.log('Applying a changed preference failed: ' + e);
+                    }
+                }
+            };
+            branch.addObserver('', this._prefObserver, false);
+            this._prefBranch = branch;
+        } catch (e) {
+            this.log('Could not observe preferences: ' + e);
+        }
+    },
+
+    _unwatchPrefs() {
+        try {
+            if (this._prefBranch && this._prefObserver) {
+                this._prefBranch.removeObserver('', this._prefObserver);
+            }
+        } catch (e) {}
+        this._prefBranch = null;
+        this._prefObserver = null;
     },
 
     // ---- Persistent preferences ------------------------------------------
@@ -439,7 +529,11 @@ var AbbreviationHelper = {
         this.databaseLinksModifier = this._getPref('databaseLinksModifier', this.databaseLinksModifier);
         this.databaseLinksOnAbbreviations = this._getPref('databaseLinksOnAbbreviations', this.databaseLinksOnAbbreviations);
         this.databaseLinksEnabled = this._getPref('databaseLinksEnabled', this.databaseLinksEnabled);
-        this.tooltipFontSize = this._getPref('tooltipFontSize', this.tooltipFontSize);
+        this.advancedMenu = this._getPref('advancedMenu', this.advancedMenu);
+        // A menulist in the preference pane stores its value as a string,
+        // while the menu's radio items store a number. Coerce so both routes
+        // to the same setting produce the same type.
+        this.tooltipFontSize = Number(this._getPref('tooltipFontSize', this.tooltipFontSize)) || 12;
         this.tooltipTheme = this._getPref('tooltipTheme', this.tooltipTheme);
     },
 
@@ -592,8 +686,9 @@ var AbbreviationHelper = {
     _starterUserConfig() {
         return {
             _comment: [
-                'Your Abbreviation Helper settings. Edit, save, then use',
-                'Tools -> Abbreviation Helper -> Custom dictionary -> Reload.',
+                'Your Abbreviation Helper settings. Most of this can be edited in',
+                'Zotero Settings -> Abbreviation Helper. If you edit here instead,',
+                'save the file and then use Reload from file in that pane.',
                 'userDefs:   "ABC": "your meaning"  - always shown, wins over the paper.',
                 'ignore:     ["NEB"]                - never show these.',
                 'databases:  [{"group":"Gene/protein databases","label":"UniProt",',
@@ -608,7 +703,7 @@ var AbbreviationHelper = {
     },
 
     /**
-     * Merge a patch into the user config file on disk and reload. Used by the
+     * Merge a patch into the abbreviations file on disk and reload. Used by the
      * menu actions that edit settings (for example the ignore list).
      */
     async _updateUserConfig(patch, replaceKeys) {
@@ -671,7 +766,7 @@ var AbbreviationHelper = {
             const file = await this._ensureUserDictionaryFile();
             if (!file) {
                 Zotero.alert(window, 'Abbreviation Helper',
-                    'Could not locate the Zotero data directory to create the custom dictionary file.');
+                    'Could not locate the Zotero data directory to create the abbreviations file.');
                 return;
             }
             try {
@@ -687,10 +782,10 @@ var AbbreviationHelper = {
                 this.log('launchFile failed: ' + e);
             }
             Zotero.alert(window, 'Abbreviation Helper',
-                'Your custom abbreviations file is here:\n\n' + file +
-                '\n\nOpen it in any text editor, add entries, then choose "Reload custom dictionary".');
+                'Your abbreviations file is here:\n\n' + file +
+                '\n\nOpen it in any text editor, add entries, then choose "Reload from file" in Settings.');
         } catch (e) {
-            this.log('Could not open user dictionary: ' + e);
+            this.log('Could not open the abbreviations file: ' + e);
         }
     },
 
@@ -704,13 +799,13 @@ var AbbreviationHelper = {
             try { await this._autoScanActiveReader(); } catch (e) {}
             if (window) {
                 Zotero.alert(window, 'Abbreviation Helper',
-                    'Custom dictionary reloaded: ' +
+                    'Abbreviations file reloaded: ' +
                     Object.keys(this.dictionaries.staticDefs).length + ' static and ' +
                     Object.keys(this.dictionaries.commonKnownDefs).length + ' glossary entries.');
             }
         } catch (e) {
             this.log('Reload failed: ' + e);
-            if (window) Zotero.alert(window, 'Abbreviation Helper', 'Could not reload the custom dictionary. See the Zotero log for details.');
+            if (window) Zotero.alert(window, 'Abbreviation Helper', 'Could not reload the abbreviations file. See the Zotero log for details.');
         }
     },
 
@@ -768,10 +863,21 @@ var AbbreviationHelper = {
                 item.setAttribute('style', 'font-weight: bold; opacity: 0.85;');
                 return parent.appendChild(item);
             };
-            const action = (parent, id, label, onCommand) => {
+            /* XUL dismisses the whole menu on every command. Settings are
+             * usually changed several at a time, so anything that toggles a
+             * setting stays open; anything that performs an action (scan, open
+             * a file) still closes, because that is what you expect after
+             * asking for something to happen.
+             *
+             * If a Zotero build ever stops honouring `closemenu`, the menu
+             * simply closes as it used to — nothing breaks. */
+            const keepOpen = (item) => { item.setAttribute('closemenu', 'none'); return item; };
+
+            const action = (parent, id, label, onCommand, stayOpen) => {
                 const item = doc.createXULElement('menuitem');
                 if (id) item.id = id;
                 item.setAttribute('label', label);
+                if (stayOpen) keepOpen(item);
                 item.addEventListener('command', () => onCommand(item));
                 return parent.appendChild(item);
             };
@@ -781,6 +887,7 @@ var AbbreviationHelper = {
                 item.setAttribute('label', label);
                 item.setAttribute('type', 'checkbox');
                 item.setAttribute('checked', checked ? 'true' : 'false');
+                keepOpen(item);
                 item.addEventListener('command', () => onCommand(item));
                 return parent.appendChild(item);
             };
@@ -802,6 +909,7 @@ var AbbreviationHelper = {
                     item.setAttribute('name', groupName);
                     item.setAttribute('label', choice.label);
                     item.setAttribute('checked', choice.id === current ? 'true' : 'false');
+                    keepOpen(item);
                     item.addEventListener('command', () => onPick(choice.id, item));
                     parent.appendChild(item);
                     items.push(item);
@@ -821,7 +929,19 @@ var AbbreviationHelper = {
              *
              * Every reference to the settings file uses the same words \u2014
              * "abbreviations file" \u2014 because there is only one of them.
+             *
+             * Two shapes, chosen by the "Show every setting in the Tools menu"
+             * preference. Simple (the default) is actions only, with settings
+             * in the Settings window — the only place several can be changed
+             * in one visit on macOS. Advanced mirrors every setting here too.
+             *
+             * The menu is rebuilt each time it opens rather than once at
+             * startup, so switching that preference takes effect immediately
+             * and every control reflects current state.
              * ------------------------------------------------------------- */
+            const buildMenu = () => {
+            while (rootPopup.firstChild) rootPopup.removeChild(rootPopup.firstChild);
+            const advanced = !!this.advancedMenu;
 
             // Collected below, then greyed out together whenever the database
             // layer is switched off, so no visible control silently does
@@ -833,6 +953,16 @@ var AbbreviationHelper = {
                 }
             };
 
+            /* ---- Settings ---- */
+            // macOS renders this menu as a native NSMenu, which always closes
+            // on selection — there is no way to keep it open while changing
+            // several settings. The Settings window has no such limit, so it
+            // is the recommended route and sits first.
+            action(rootPopup, 'abbreviation-helper-settings', 'Settings…', () => {
+                this._openSettings(window);
+            });
+            sep(rootPopup);
+
             /* ---- Scan ---- */
             action(rootPopup, 'abbreviation-helper-scan', 'Scan This PDF and Copy List', () => {
                 this.scanCurrent().catch(err => {
@@ -842,15 +972,16 @@ var AbbreviationHelper = {
             });
 
             /* ---- What appears on hover ---- */
+            if (advanced) {
             sep(rootPopup);
-            const hoverItem = checkbox(rootPopup, 'abbreviation-helper-hover',
+            checkbox(rootPopup, 'abbreviation-helper-hover',
                 'Show meanings on hover', this.hoverEnabled, (item) => {
                     this.toggleHover(window, item).catch(err => {
                         this.log('Error toggling hover: ' + err);
                         Zotero.alert(window, 'Abbreviation Helper', 'Could not enable hover tooltips. See the Zotero log for details.');
                     });
                 });
-            const dbEnabledItem = checkbox(rootPopup, 'abbreviation-helper-db-enabled',
+            checkbox(rootPopup, 'abbreviation-helper-db-enabled',
                 'Show database links', this.databaseLinksEnabled, (item) => {
                     this.databaseLinksEnabled = !this.databaseLinksEnabled;
                     this._setPref('databaseLinksEnabled', this.databaseLinksEnabled);
@@ -886,6 +1017,7 @@ var AbbreviationHelper = {
                     item.setAttribute('checked', this.databaseLinksOnAbbreviations ? 'true' : 'false');
                     this._refreshHoverFromLastState(doc);
                 }));
+            } /* end advanced-only: hover and database settings */
 
             /* ---- Correcting detections ---- */
             sep(rootPopup);
@@ -900,7 +1032,10 @@ var AbbreviationHelper = {
             const ignoredPopup = doc.createXULElement('menupopup');
             ignoredMenu.appendChild(ignoredPopup);
             rootPopup.appendChild(ignoredMenu);
-            ignoredPopup.addEventListener('popupshowing', () => {
+            // Rebuilt on open, and again after each removal: the list stays
+            // open so several entries can be cleared in one visit, which means
+            // it has to redraw itself rather than leaving stale rows behind.
+            const buildIgnored = () => {
                 while (ignoredPopup.firstChild) ignoredPopup.removeChild(ignoredPopup.firstChild);
                 const list = this._ignoreList();
                 if (!list.length) {
@@ -913,16 +1048,22 @@ var AbbreviationHelper = {
                 header(ignoredPopup, 'Click to stop ignoring');
                 for (const abbr of list) {
                     action(ignoredPopup, null, abbr, () => {
-                        this._stopIgnoring(abbr).catch(e => this.log('Un-ignore failed: ' + e));
-                    });
+                        this._stopIgnoring(abbr)
+                            .then(() => buildIgnored())
+                            .catch(e => this.log('Un-ignore failed: ' + e));
+                    }, true);
                 }
                 sep(ignoredPopup);
                 action(ignoredPopup, null, 'Stop Ignoring All', () => {
-                    this._setIgnoreList([]).catch(e => this.log('Clear ignore list failed: ' + e));
-                });
-            });
+                    this._setIgnoreList([])
+                        .then(() => buildIgnored())
+                        .catch(e => this.log('Clear ignore list failed: ' + e));
+                }, true);
+            };
+            ignoredPopup.addEventListener('popupshowing', buildIgnored);
 
             /* ---- Settings you set once ---- */
+            if (advanced) {
             sep(rootPopup);
             const dbPopup = submenu(rootPopup, 'Databases');
             dbDependents.push(dbPopup.parentNode || dbPopup);
@@ -932,16 +1073,18 @@ var AbbreviationHelper = {
             dbPopup.addEventListener('popupshowing', () => {
                 while (dbPopup.firstChild) dbPopup.removeChild(dbPopup.firstChild);
                 const all = (this.dictionaries && this.dictionaries.databases) || [];
-                const off = this._disabledDatabaseLabels();
                 let firstGroup = true;
                 for (const groupLabel of this._databaseGroups()) {
                     if (!firstGroup) sep(dbPopup);
                     firstGroup = false;
                     header(dbPopup, groupLabel);
                     for (const db of all.filter(d => (d.group || 'Databases') === groupLabel)) {
-                        const on = db.enabled !== false && !off.has(db.label);
-                        checkbox(dbPopup, null, db.label, on, (item) => {
-                            const nowOn = item.getAttribute('checked') !== 'true';
+                        checkbox(dbPopup, null, db.label, this._isDatabaseOn(db), (item) => {
+                            // Derive the new value from stored state, never from
+                            // the item's `checked` attribute: XUL has already
+                            // flipped that by the time this runs, so reading it
+                            // yields the old value and the click undoes itself.
+                            const nowOn = !this._isDatabaseOn(db);
                             this._setDatabaseEnabled(db.label, nowOn);
                             item.setAttribute('checked', nowOn ? 'true' : 'false');
                             this._hideHoverTooltip(doc);
@@ -963,7 +1106,10 @@ var AbbreviationHelper = {
             const lookPopup = submenu(rootPopup, 'Tooltip Appearance');
             header(lookPopup, 'Text size');
             radioGroup(lookPopup, 'abbrev-font',
-                [{ id: 12, label: 'Small' }, { id: 14, label: 'Medium' }, { id: 16, label: 'Large' }],
+                // Kept in step with the same list in settings.xhtml.
+                [{ id: 10, label: 'Very small' }, { id: 12, label: 'Small' },
+                 { id: 14, label: 'Medium' }, { id: 16, label: 'Large' },
+                 { id: 20, label: 'Very large' }],
                 Number(this.tooltipFontSize), (id) => {
                     this.tooltipFontSize = id;
                     this._setPref('tooltipFontSize', id);
@@ -978,6 +1124,7 @@ var AbbreviationHelper = {
                     this._setPref('tooltipTheme', id);
                     this._resetHoverTooltips();
                 });
+            } /* end advanced-only: databases and appearance */
 
             /* ---- The abbreviations file ---- */
             sep(rootPopup);
@@ -991,25 +1138,52 @@ var AbbreviationHelper = {
                 this._reloadDictionaries(window).catch(err => this.log('Error reloading: ' + err));
             });
 
-            // Re-sync on open. Preferences are shared across windows and can
-            // also change when the abbreviations file is reloaded, so the menu
-            // reads its state fresh rather than trusting what it drew at
-            // startup.
+            // The count is part of the label, so it is set as the menu is
+            // built; every other control was just drawn from current state.
+            const n = this._ignoreList().length;
+            ignoredMenu.setAttribute('label',
+                n ? 'Ignored Abbreviations (' + n + ')' : 'Ignored Abbreviations');
+            syncDbDependents();
+            }; /* end buildMenu */
+
+            // Rebuilding on open replaces the old re-sync patching: settings
+            // are shared between windows and can be changed from the Settings
+            // window at any time, so the menu re-reads preferences and redraws
+            // rather than trusting what it drew at startup. This is also what
+            // makes the advanced toggle take effect without a restart.
             rootPopup.addEventListener('popupshowing', (event) => {
                 if (event.target !== rootPopup) return;
-                hoverItem.setAttribute('checked', this.hoverEnabled ? 'true' : 'false');
-                dbEnabledItem.setAttribute('checked', this.databaseLinksEnabled ? 'true' : 'false');
-                const n = this._ignoreList().length;
-                ignoredMenu.setAttribute('label',
-                    n ? 'Ignored Abbreviations (' + n + ')' : 'Ignored Abbreviations');
-                syncDbDependents();
+                this._loadPrefs();
+                buildMenu();
             });
-            syncDbDependents();
+            buildMenu();
 
             toolsPopup.appendChild(rootMenu);
             this.addedElementIDs.push(rootMenu.id);
         } catch (e) {
             this.log('Failed to add menu item: ' + e);
+        }
+    },
+
+    /**
+     * Open this plugin's pane in Zotero's Settings window. Falls back to
+     * opening Settings at whatever pane it defaults to, which is still more
+     * useful than doing nothing.
+     */
+    _openSettings(window) {
+        try {
+            if (window && typeof window.openPreferences === 'function') {
+                window.openPreferences(this._prefPaneID || undefined);
+                return;
+            }
+            if (Zotero.Utilities && Zotero.Utilities.Internal
+                && Zotero.Utilities.Internal.openPreferences) {
+                Zotero.Utilities.Internal.openPreferences(this._prefPaneID || undefined);
+                return;
+            }
+            this.log('No way to open Settings on this Zotero version');
+        } catch (e) {
+            this.log('Could not open Settings: ' + e);
         }
     },
 
@@ -1027,6 +1201,49 @@ var AbbreviationHelper = {
 
     async _stopIgnoring(abbr) {
         await this._setIgnoreList(this._ignoreList().filter(x => x !== abbr));
+    },
+
+    /* ---- Editing the abbreviations file from the Settings pane ----------
+     * These wrap the abbreviations file so the pane never has to know its shape,
+     * so both routes to a change — pane and hand-edited JSON — end up going
+     * through the same validation. */
+
+    /** Add one short form to the ignore list. */
+    async _ignoreAbbreviation(abbr) {
+        const name = String(abbr || '').trim();
+        if (!name) return false;
+        if (this._ignoreList().indexOf(name) !== -1) return true;
+        await this._setIgnoreList(this._ignoreList().concat([name]));
+        return true;
+    },
+
+    /** The user's own definitions, as a plain {short form: meaning} object. */
+    _userDefinitions() {
+        return Object.assign({}, (this.dictionaries && this.dictionaries.userDefs) || {});
+    },
+
+    /**
+     * Add or replace one of the user's definitions. These are authoritative:
+     * they override whatever the paper says.
+     */
+    async _setUserDefinition(abbr, term) {
+        const name = String(abbr || '').trim();
+        const meaning = String(term || '').trim();
+        if (!name || !meaning) return false;
+        const defs = this._userDefinitions();
+        defs[name] = meaning;
+        await this._updateUserConfig({ userDefs: defs }, ['userDefs']);
+        await this._reloadDictionaries(null);
+        return true;
+    },
+
+    async _removeUserDefinition(abbr) {
+        const defs = this._userDefinitions();
+        if (!Object.prototype.hasOwnProperty.call(defs, abbr)) return false;
+        delete defs[abbr];
+        await this._updateUserConfig({ userDefs: defs }, ['userDefs']);
+        await this._reloadDictionaries(null);
+        return true;
     },
 
     /**
@@ -2376,26 +2593,51 @@ var AbbreviationHelper = {
     },
 
     /* ---- External database lookup links ---- */
-    /** Databases from the config file, minus any disabled in the menu. */
+    /** Databases from the abbreviations file, minus any switched off. */
     _enabledDatabases() {
         // The master switch short-circuits everything downstream: link lookup,
         // the tooltip section, and the hover listener's early-out.
         if (!this.databaseLinksEnabled) return [];
         const all = (this.dictionaries && this.dictionaries.databases) || [];
-        const off = this._disabledDatabaseLabels();
-        return all.filter(d => d && d.enabled !== false && !off.has(d.label));
+        return all.filter(d => d && this._isDatabaseOn(d));
+    },
+
+    /**
+     * Whether one database is currently on. The menu is authoritative: an
+     * explicit choice made there outranks the `enabled` flag in the file, so
+     * a database shipped as `enabled: false` can still be switched on rather
+     * than being a checkbox that does nothing.
+     */
+    _isDatabaseOn(db) {
+        if (!db || !db.label) return false;
+        if (this._disabledDatabaseLabels().has(db.label)) return false;
+        if (this._enabledDatabaseLabels().has(db.label)) return true;
+        return db.enabled !== false;
     },
 
     /** Labels switched off via the Tools menu (persisted as a preference). */
     _disabledDatabaseLabels() {
-        const raw = String(this._getPref('disabledDatabases', '') || '');
+        return this._labelSet('disabledDatabases');
+    },
+
+    /** Labels switched on via the Tools menu, overriding the file's default. */
+    _enabledDatabaseLabels() {
+        return this._labelSet('enabledDatabases');
+    },
+
+    _labelSet(pref) {
+        const raw = String(this._getPref(pref, '') || '');
         return new Set(raw.split('|').map(x => x.trim()).filter(Boolean));
     },
 
     _setDatabaseEnabled(label, enabled) {
+        // Both lists are maintained so the two prefs can never disagree.
         const off = this._disabledDatabaseLabels();
-        if (enabled) off.delete(label); else off.add(label);
+        const on = this._enabledDatabaseLabels();
+        if (enabled) { off.delete(label); on.add(label); }
+        else { on.delete(label); off.add(label); }
         this._setPref('disabledDatabases', [...off].join('|'));
+        this._setPref('enabledDatabases', [...on].join('|'));
     },
 
     /** Distinct group names, in the order they appear in the config. */

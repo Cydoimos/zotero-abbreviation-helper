@@ -1,0 +1,102 @@
+/* Abbreviation Helper settings pane.
+ *
+ * Colours come from Zotero's own theme variables wherever one exists, so the
+ * pane follows light and dark mode instead of pinning its own palette. Only
+ * layout is specified here.
+ */
+
+/* ---- section rhythm ----------------------------------------------------- */
+#abbrev-settings-root > groupbox {
+  margin-block-end: 1.2em;
+}
+
+#abbrev-settings-root .abbrev-settings-hint {
+  opacity: 0.75;
+  margin-block-end: 0.6em;
+  max-width: 46em;
+}
+
+/* Controls that only make sense when the checkbox above them is ticked are
+   indented under it, so the dependency is visible rather than implied. */
+#abbrev-settings-root .abbrev-settings-sub {
+  margin-inline-start: 1.8em;
+  margin-block-start: 0.4em;
+}
+
+#abbrev-settings-root .abbrev-settings-add-row {
+  margin-block-start: 0.5em;
+  gap: 0.4em;
+}
+
+#abbrev-settings-root .abbrev-settings-error:not(:empty) {
+  color: -moz-mac-focusring, #b3261e;
+  margin-block-start: 0.3em;
+}
+
+/* ---- scrolling list boxes ----------------------------------------------
+   Modelled on Zotero's own Style Manager: a bordered box that scrolls once
+   the contents outgrow it, so a long list cannot push the rest of the pane
+   off screen. */
+#abbrev-settings-root .abbrev-settings-listbox {
+  max-height: 190px;
+  overflow-y: auto;
+  border: 1px solid var(--fill-quinary, rgba(128, 128, 128, 0.4));
+  border-radius: 5px;
+  background: var(--material-background, transparent);
+}
+
+#abbrev-settings-root .abbrev-settings-listbox-short {
+  max-height: 130px;
+}
+
+#abbrev-settings-root .abbrev-settings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: inherit;
+}
+
+/* The header stays put while the rows scroll under it. */
+#abbrev-settings-root .abbrev-settings-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-align: start;
+  font-weight: normal;
+  opacity: 0.75;
+  padding: 4px 8px;
+  background: var(--material-toolbar, var(--material-background, Field));
+  border-block-end: 1px solid var(--fill-quinary, rgba(128, 128, 128, 0.35));
+}
+
+#abbrev-settings-root .abbrev-settings-table td {
+  padding: 3px 8px;
+  vertical-align: middle;
+}
+
+#abbrev-settings-root .abbrev-settings-table tbody tr:nth-child(even) {
+  background: var(--fill-quinary, rgba(128, 128, 128, 0.08));
+}
+
+#abbrev-settings-root .abbrev-settings-short {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+#abbrev-settings-root .abbrev-settings-col-short { width: 9em; }
+#abbrev-settings-root .abbrev-settings-col-action { width: 6em; }
+#abbrev-settings-root .abbrev-settings-col-check { width: 2em; }
+
+/* A group heading inside the database list. */
+#abbrev-settings-root .abbrev-settings-group-row td {
+  padding-block-start: 8px;
+  opacity: 0.75;
+}
+
+#abbrev-settings-root .abbrev-settings-empty td {
+  opacity: 0.7;
+  padding: 8px;
+}
+
+/* ---- inputs -------------------------------------------------------------- */
+#abbrev-settings-root .abbrev-settings-short-input { width: 9em; }
+#abbrev-settings-root .abbrev-settings-wide-input { flex: 1; min-width: 12em; }

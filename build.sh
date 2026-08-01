@@ -18,7 +18,11 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 SRC="src"
-FILES=(manifest.json install.rdf bootstrap.js abbreviation.js
+# prefs.js is Zotero's default-preferences file and must sit in the archive
+# root under exactly that name; the Settings pane's own files are settings.*
+# precisely so they do not collide with it.
+FILES=(manifest.json install.rdf bootstrap.js abbreviation.js prefs.js
+       settings.xhtml settings.js settings.css
        icon32.png icon48.png icon96.png data/abbreviations.json)
 
 VERSION=$(node -p "require('./$SRC/manifest.json').version")
@@ -70,7 +74,7 @@ echo "  \"update_hash\": \"sha256:$HASH\""
 # ---- optional verification --------------------------------------------------
 if [ "${1:-}" = "--check" ]; then
   echo
-  for t in test-runaway test-peptides test-prefs test-hover test-userdict test-features test-menu; do
+  for t in test-runaway test-peptides test-prefs test-hover test-userdict test-features test-menu test-settings; do
     printf '  %-16s ' "$t"
     node "test/$t.js" >/dev/null 2>&1 && echo PASS || { echo FAIL; exit 1; }
   done

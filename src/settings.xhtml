@@ -1,0 +1,192 @@
+<vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      id="abbrev-settings-root"
+      onload="AbbrevSettings.init()">
+
+  <groupbox>
+    <label><html:h2>Abbreviation meanings</html:h2></label>
+
+    <checkbox id="abbrev-settings-hover"
+              label="Show meanings on hover"
+              preference="extensions.abbreviation-helper.hoverEnabled"/>
+
+    <hbox align="center" class="abbrev-settings-sub">
+      <label control="abbrev-settings-tooltip-modifier" value="Show meanings:"/>
+      <menulist native="true" id="abbrev-settings-tooltip-modifier"
+                preference="extensions.abbreviation-helper.tooltipModifier">
+        <menupopup/>
+      </menulist>
+    </hbox>
+  </groupbox>
+
+  <groupbox>
+    <label><html:h2>Your abbreviations</html:h2></label>
+
+    <description class="abbrev-settings-hint">
+      Meanings you define here are always used, even when a paper defines the
+      short form differently.
+    </description>
+
+    <html:div class="abbrev-settings-listbox" id="abbrev-settings-def-box">
+      <html:table class="abbrev-settings-table">
+        <html:thead>
+          <html:tr>
+            <html:th class="abbrev-settings-col-short">Short form</html:th>
+            <html:th>Meaning</html:th>
+            <html:th class="abbrev-settings-col-action"/>
+          </html:tr>
+        </html:thead>
+        <html:tbody id="abbrev-settings-def-list"/>
+      </html:table>
+    </html:div>
+
+    <hbox align="center" class="abbrev-settings-add-row">
+      <html:input id="abbrev-settings-def-abbr" type="text"
+                  class="abbrev-settings-short-input" placeholder="Short form"/>
+      <html:input id="abbrev-settings-def-term" type="text"
+                  class="abbrev-settings-wide-input" placeholder="What it means"/>
+      <html:button id="abbrev-settings-def-add">Add</html:button>
+    </hbox>
+    <description id="abbrev-settings-def-error" class="abbrev-settings-error"/>
+  </groupbox>
+
+  <groupbox>
+    <label><html:h2>Ignored abbreviations</html:h2></label>
+
+    <description class="abbrev-settings-hint">
+      Short forms the plugin should never explain — for wrong detections, such
+      as a supplier name that happens to look like an abbreviation.
+    </description>
+
+    <html:div class="abbrev-settings-listbox abbrev-settings-listbox-short"
+              id="abbrev-settings-ignore-box">
+      <html:table class="abbrev-settings-table">
+        <html:thead>
+          <html:tr>
+            <html:th>Short form</html:th>
+            <html:th class="abbrev-settings-col-action"/>
+          </html:tr>
+        </html:thead>
+        <html:tbody id="abbrev-settings-ignore-list"/>
+      </html:table>
+    </html:div>
+
+    <hbox align="center" class="abbrev-settings-add-row">
+      <html:input id="abbrev-settings-ignore-input" type="text"
+                  class="abbrev-settings-short-input" placeholder="Short form"/>
+      <html:button id="abbrev-settings-ignore-add">Ignore</html:button>
+      <spacer flex="1"/>
+      <html:button id="abbrev-settings-ignore-clear">Stop ignoring all</html:button>
+    </hbox>
+    <description id="abbrev-settings-ignore-error" class="abbrev-settings-error"/>
+  </groupbox>
+
+  <groupbox>
+    <label><html:h2>Database links</html:h2></label>
+
+    <description class="abbrev-settings-hint">
+      Optional lookup links for gene, protein, cell line and chemical names
+      under the cursor.
+    </description>
+
+    <checkbox id="abbrev-settings-db-enabled"
+              label="Show database links"
+              preference="extensions.abbreviation-helper.databaseLinksEnabled"/>
+
+    <vbox class="abbrev-settings-sub" id="abbrev-settings-db-dependent">
+      <hbox align="center">
+        <label control="abbrev-settings-db-modifier" value="Show links:"/>
+        <menulist native="true" id="abbrev-settings-db-modifier"
+                  preference="extensions.abbreviation-helper.databaseLinksModifier">
+          <menupopup/>
+        </menulist>
+      </hbox>
+
+      <checkbox id="abbrev-settings-db-on-abbr"
+                label="Also show links on defined abbreviations"
+                preference="extensions.abbreviation-helper.databaseLinksOnAbbreviations"/>
+
+      <html:div class="abbrev-settings-listbox" id="abbrev-settings-db-box">
+        <html:table class="abbrev-settings-table">
+          <html:thead>
+            <html:tr>
+              <html:th class="abbrev-settings-col-check"/>
+              <html:th>Database</html:th>
+            </html:tr>
+          </html:thead>
+          <html:tbody id="abbrev-settings-db-list"/>
+        </html:table>
+      </html:div>
+
+      <hbox class="abbrev-settings-add-row">
+        <html:button id="abbrev-settings-db-edit"
+                     data-search-strings-raw="database, add, remove, url">
+          Add or remove databases…
+        </html:button>
+      </hbox>
+    </vbox>
+  </groupbox>
+
+  <groupbox>
+    <label><html:h2>Tooltip appearance</html:h2></label>
+
+    <hbox align="center">
+      <label control="abbrev-settings-font" value="Text size:"/>
+      <menulist native="true" id="abbrev-settings-font"
+                preference="extensions.abbreviation-helper.tooltipFontSize">
+        <menupopup>
+          <menuitem value="10" label="Very small"/>
+          <menuitem value="12" label="Small"/>
+          <menuitem value="14" label="Medium"/>
+          <menuitem value="16" label="Large"/>
+          <menuitem value="20" label="Very large"/>
+        </menupopup>
+      </menulist>
+    </hbox>
+
+    <hbox align="center">
+      <label control="abbrev-settings-theme" value="Theme:"/>
+      <menulist native="true" id="abbrev-settings-theme"
+                preference="extensions.abbreviation-helper.tooltipTheme">
+        <menupopup>
+          <menuitem value="dark" label="Dark"/>
+          <menuitem value="light" label="Light"/>
+        </menupopup>
+      </menulist>
+    </hbox>
+  </groupbox>
+
+  <groupbox>
+    <label><html:h2>Tools menu</html:h2></label>
+
+    <checkbox id="abbrev-settings-advanced-menu"
+              label="Show every setting in the Tools menu"
+              preference="extensions.abbreviation-helper.advancedMenu"/>
+
+    <description class="abbrev-settings-hint abbrev-settings-sub">
+      Off by default: the Tools menu holds only actions, and settings live
+      here. Turn it on to get every setting in the menu as well. On macOS the
+      menu closes after each change — a system behaviour for native menus that
+      no plugin can override — so this window is the easier place to change
+      several at once.
+    </description>
+  </groupbox>
+
+  <groupbox>
+    <label><html:h2>Advanced</html:h2></label>
+
+    <description class="abbrev-settings-hint">
+      Everything above is stored in one JSON file. Edit it directly if you
+      prefer, then reload.
+    </description>
+
+    <hbox class="abbrev-settings-add-row">
+      <html:button id="abbrev-settings-open-file"
+                   data-search-strings-raw="custom, dictionary, json, file">
+        Open abbreviations file…
+      </html:button>
+      <html:button id="abbrev-settings-reload-file">Reload from file</html:button>
+    </hbox>
+  </groupbox>
+
+</vbox>

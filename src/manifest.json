@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Abbreviation Helper",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "description": "Expands acronyms, initialisms and other abbreviations while you read. Finds where a paper defines each short form and shows the meaning on hover, so PDFs can be skimmed without hunting for the first use. Optional database lookup links for gene, protein, cell line and chemical names.",
   "author": "Cydoimos",
   "homepage_url": "https://github.com/Cydoimos/zotero-abbreviation-helper",

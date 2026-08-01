@@ -3,41 +3,64 @@
 All notable changes to this project are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
-## [1.3.0] — 2026-07-31
+## [2.0.0] — 2026-07-31
+
+Settings move out of the Tools menu and into Zotero's Settings window, where
+your own abbreviations and the ignore list can be edited directly instead of by
+hand in a JSON file.
+
+Versions 1.3–1.8 were development steps toward this and were never released;
+their notes are folded in here.
 
 ### Added
-- **Show database links** — a single checkbox that turns the whole database
-  lookup layer off. Previously the only way to silence it was to uncheck all
-  seven databases one at a time, which worked but was not discoverable. The
-  dependent menu items grey out while it is off, so nothing visible silently
-  does nothing.
-- `test/test-menu.js` — the Tools menu had no test at all, which is how the
-  stale-databases bug below survived. It builds the menu against a fake XUL
-  document and checks structure, wording, and the popupshowing rebuilds.
-
-### Fixed
-- **The Databases submenu was built once at startup.** A database added to the
-  abbreviations file did not appear after *Reload*, only after restarting
-  Zotero. It is now rebuilt each time it opens.
-- **Menu state could go stale.** Preferences are shared between windows, but the
-  checkboxes were drawn once and never re-read. The menu now re-syncs on open.
+- **Settings pane** in Zotero Settings → Abbreviation Helper, covering every
+  option on one page. Changes apply immediately: the plugin watches its
+  preference branch rather than reading it only at startup.
+- **Your abbreviations, editable in place.** Add a short form and its meaning,
+  see everything you have defined, remove entries. No JSON required. Your
+  definitions still override whatever a paper says.
+- **The ignore list, editable in place**, the same way.
+- Both lists, and the databases, are **scrolling tables with sticky headers**,
+  so a long list stays inside its box instead of pushing the pane off screen.
+- **Show database links** — one switch for the whole lookup-link layer.
+  Previously the only way to silence it was to uncheck all seven databases.
+- **Show every setting in the Tools menu** — opt back in to the full menu on
+  any platform.
+- **Very small (10 px) and Very large (20 px)** tooltip sizes.
+- `prefs.js` default preferences, so a setting never changed still has a value
+  for the pane to show.
+- Two new test suites: `test-menu.js` and `test-settings.js`.
 
 ### Changed
-- **Tools menu reorganised**, ordered by how often things are used rather than
-  by how the code is arranged: scanning, the two on/off switches and the ignore
-  controls stay at the top level, while modifier keys, database selection and
-  tooltip appearance moved into submenus. Seventeen top-level rows became ten,
-  and the four bold pseudo-header rows are gone — separators carry the grouping.
-- **One name for the settings file.** It was variously "custom abbreviations
-  file", "custom dictionary" and "config file" — three names for one file, with
-  two separate menu items calling the same function. Everything now says
-  "abbreviations file".
-- The two "Hold key to show…" submenus merged into one **When to Show…**, so the
-  two settings are visible side by side instead of split across the menu.
-- Modifier choices are phrased to complete their heading: "Always" rather than
-  "No key (always show)", "Only while holding Shift" rather than "Shift". The
-  stored values are unchanged, so existing preferences carry over.
-- **Ignored Abbreviations** shows a count in its label.
+- **The Tools menu holds actions only by default**: Settings, Scan, Ignore an
+  Abbreviation, and the two file actions. It is rebuilt each time it opens, so
+  anything changed elsewhere is reflected without restarting Zotero.
+- **One name for the settings file everywhere** — "abbreviations file". It had
+  been variously "custom abbreviations file", "custom dictionary" and "config
+  file", with two menu items calling the same function.
+- Modifier choices read as sentences: "Always", "Only while holding Shift".
+  Stored values are unchanged, so existing preferences carry over.
+- Settings items carry `closemenu="none"`, so on Windows and Linux the menu
+  stays open while several are changed.
+
+### Fixed
+- **Databases could not be switched off from the menu** — unchecking one
+  silently re-enabled it. XUL flips a checkbox menuitem's `checked` attribute
+  before firing its command event, so the handler read the new value and wrote
+  back the old one. Present since databases first became configurable.
+- **The Databases submenu was built once at startup**, so a database added to
+  the file only appeared after restarting Zotero.
+- **Menu checkboxes could show stale state** across windows.
+- A database marked `"enabled": false` in the file **could never be switched on**
+  from the menu.
+- **Form controls now use Zotero's native styling.** Since Firefox 115 a XUL
+  form element needs `native="true"` to be drawn as a platform control.
+
+### Note on macOS
+The Tools menu closes after every selection on macOS. Gecko renders the menu bar
+there as a native `NSMenu`, and macOS dismisses native menus on selection as a
+system behaviour — `closemenu` is only honoured on the XUL popup path. That is
+why settings live in the Settings window, which has no such limit.
 
 ## [1.2.1] — 2026-07-31
 

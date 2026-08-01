@@ -22,7 +22,7 @@ Works on **macOS, Windows and Linux**. Requires **Zotero 7 or newer**
 1. Download `abbreviation-helper-<version>.xpi` from the
    [latest release](https://github.com/Cydoimos/zotero-abbreviation-helper/releases/latest).
 2. In Zotero: **Tools → Add-ons → gear icon → Install Add-on From File…**
-3. Select the `.xpi`.
+3. Select the `.xpi`. No restart needed.
 
 > **Using Firefox?** Right-click the download link and choose **Save Link As…**
 > Firefox recognises the `.xpi` extension and tries to install the file as a
@@ -33,34 +33,54 @@ Works on **macOS, Windows and Linux**. Requires **Zotero 7 or newer**
 ## Use
 
 Open a PDF in the Zotero reader. The plugin scans it in the background; hover over any
-abbreviation to see its meaning. Everything else lives under
-**Tools → Abbreviation Helper**:
+abbreviation to see its meaning.
+
+### Settings
+
+Everything is in **Zotero Settings → Abbreviation Helper** (or **Tools → Abbreviation
+Helper → Settings…**): hover behaviour, modifier keys, which databases are enabled,
+tooltip appearance, and — editable in place, with no JSON to hand-edit — **your own
+abbreviations** and the **ignore list**. Changes apply immediately.
+
+Definitions you add there are authoritative: they are shown even when a paper defines
+the short form differently.
+
+### Tools menu
+
+**Tools → Abbreviation Helper** holds the actions:
 
 | Menu item | What it does |
 |---|---|
+| Settings… | Opens the pane above |
 | Scan This PDF and Copy List | Rescan now and copy the full list to the clipboard |
-| **Show meanings on hover** | Turn tooltips on or off |
-| **Show database links** | Turn the whole lookup-link layer on or off |
-| When to Show… | Whether meanings and links appear always or only while a key is held, set separately |
 | Ignore an Abbreviation… | Suppress a wrong detection |
 | Ignored Abbreviations (n) | Click any entry to stop ignoring it |
-| Databases | Enable or disable each database individually |
-| Tooltip Appearance | Text size and dark/light theme |
 | Open Abbreviations File… | Opens your settings file |
 | Reload Abbreviations File | Apply edits without restarting Zotero |
 
-The two switches at the top are the ones worth knowing about; everything below
-them is set once and forgotten.
+Tick **Show every setting in the Tools menu** in the settings to mirror every
+setting here as well. On Windows and Linux that menu stays open while you change
+several settings; **on macOS it always closes after each one**, because the menu bar
+there is a native `NSMenu` and macOS dismisses those on selection — no plugin can
+override it. That is why settings live in the Settings window.
 
 **On macOS the Ctrl setting also accepts ⌘ Command**, and the menu labels it that way. One
 saved preference therefore behaves correctly on every platform, which matters if your
 Zotero profile is synced between machines.
 
-While a tooltip with database links is showing, press **1–7** to open the matching link.
+While a tooltip with database links is showing, press **1–9** to open the matching link.
 
-## Customising
+> **Screenshots:** add `docs/hover.png` and `docs/menu.png` to the repository
+> and reference them here — a single image of a tooltip over a PDF explains this
+> plugin faster than any description.
 
-Your settings live in a JSON file inside your Zotero data directory:
+## The abbreviations file
+
+Most people will never need this — abbreviations, the ignore list and the databases
+are all editable in the settings pane. It is here for bulk edits, for backing up your
+entries, and for adding lookup databases of your own.
+
+Everything is stored in one JSON file inside your Zotero data directory:
 
 ```
 <Zotero data directory>/abbreviation-helper/abbreviations.json
@@ -86,7 +106,8 @@ entries stay easy to find and you still receive improvements to the shipped defa
 }
 ```
 
-Use **Reload Abbreviations File** after editing; no restart required.
+Use **Reload from file** in the settings pane (or **Reload Abbreviations File** in the
+Tools menu) after editing; no restart required.
 
 ## How detection works
 
@@ -155,6 +176,7 @@ node test/test-hover.js      # tooltip rendering (mock DOM)
 node test/test-userdict.js   # user dictionary, end to end
 node test/test-features.js   # menu features, modifiers, cross-platform paths
 node test/test-menu.js       # Tools menu structure and wording (fake XUL DOM)
+node test/test-settings.js   # Settings pane wiring, parsed from settings.xhtml
 
 node eval/score.js           # accuracy against the gold standard (needs a corpus)
 node eval/difftest.js A B    # prove a change leaves detection unchanged
