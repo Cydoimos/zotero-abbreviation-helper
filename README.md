@@ -216,7 +216,7 @@ Two things that are easy to get wrong when building the `.xpi`:
   a folder):
 
   ```
-zip -X -9 abbreviation-helper-<version>.xpi \
+  zip -X -9 abbreviation-helper-<version>.xpi \
       manifest.json install.rdf bootstrap.js abbreviation.js prefs.js \
       settings.xhtml settings.js settings.css \
       icon32.png icon48.png icon96.png data/abbreviations.json
