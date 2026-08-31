@@ -13,7 +13,7 @@ It also offers optional database lookup links (gene, protein, cell line, chemica
 code-like tokens under the cursor.
 
 Works on **macOS, Windows and Linux**. Requires **Zotero 7 or newer**
-(tested on Zotero 9.0.6).
+(tested on Zotero 10.0.1).
 
 ---
 
