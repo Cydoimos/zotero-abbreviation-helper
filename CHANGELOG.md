@@ -3,6 +3,11 @@
 All notable changes to this project are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [2.1.0] — 2026-08-28
+
+### Added
+- Compatibility for Zotero 10.*.
+
 ## [2.0.0] — 2026-07-31
 
 Settings move out of the Tools menu and into Zotero's Settings window, where
