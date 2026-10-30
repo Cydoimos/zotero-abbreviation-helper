@@ -42,3 +42,4 @@ plugin sees, from Zotero's own PDF worker, unlike the old `pdftotext` corpus.
 | `test-identifiers.txt`, `dev-identifiers.txt` | One DOI or arXiv ID per line, to paste into Zotero |
 | `test-papers.csv`, `dev-papers.csv` | The same papers with field, journal, year and title |
 | `export-from-zotero.js` | Saves the papers' text from Zotero |
+| `attach-missing-pdfs.js` | Attaches open-access PDFs Zotero could not fetch by itself (run before exporting) |
