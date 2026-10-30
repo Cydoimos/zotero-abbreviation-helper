@@ -184,6 +184,7 @@
   "papers": [
     {
       "name": "Micioni Di Bonaventura 2017 - lentil hypocholesterolemic (Mol Nutr Food Res, Wiley)",
+      "doi": "10.1002/mnfr.201700403",
       "file": "corpus/lentil2017.txt",
       "abbreviations": {
         "BAs": "bile acids",
@@ -207,6 +208,7 @@
     },
     {
       "name": "Moreno 2020 - legume protein hydrolysates (Foods, MDPI)",
+      "doi": "10.3390/foods9111678",
       "file": "corpus/legume2020.txt",
       "abbreviations": {
         "A-LPH": "legume protein hydrolyzed with alcalase",
@@ -234,6 +236,7 @@
     },
     {
       "name": "Yuan 2022 - GLUT4 cryo-EM (Nature Communications)",
+      "doi": "10.1038/s41467-022-30235-5",
       "file": "corpus/s41467-022-30235-5.txt",
       "abbreviations": {
         "CCB": "cytochalasin B",
@@ -261,6 +264,7 @@
     },
     {
       "name": "Liu 2021 - ABCA4 structure (Nature Communications)",
+      "doi": "10.1038/s41467-021-24194-6",
       "file": "corpus/s41467-021-24194-6.txt",
       "abbreviations": {
         "ABC": "ATP-binding cassette",
@@ -294,6 +298,7 @@
     },
     {
       "name": "Blombach 2024 - archaeal RNAP elongation (Nucleic Acids Research)",
+      "doi": "10.1093/nar/gkae282",
       "file": "corpus/gkae282.txt",
       "abbreviations": {
         "RNAP": "RNA polymerase",
@@ -327,6 +332,7 @@
     },
     {
       "name": "Kearns 2024 - NusG riboswitch pausing (Nucleic Acids Research)",
+      "doi": "10.1093/nar/gkae981",
       "file": "corpus/gkae981.txt",
       "abbreviations": {
         "NGN": "N-terminal NusG domain",
@@ -356,6 +362,7 @@
     },
     {
       "name": "Hoglund 2023 - crow dosage compensation (PLOS Genetics)",
+      "doi": "10.1371/journal.pgen.1010901",
       "file": "corpus/journal.pgen.1010901.txt",
       "abbreviations": {
         "SRA": "Sequencing Read Archive",
@@ -385,6 +392,7 @@
     },
     {
       "name": "Love 2025 - TCR ITAMs review (Frontiers in Immunology)",
+      "doi": "10.3389/fimmu.2025.1563049",
       "file": "corpus/fimmu-16-1563049.txt",
       "abbreviations": {
         "TCR": "T cell antigen receptor",
@@ -402,6 +410,7 @@
     },
     {
       "name": "Nadel 2023 - JNK cascade apoptosis review (IJMS, MDPI)",
+      "doi": "10.3390/ijms241713527",
       "file": "corpus/ijms-24-13527.txt",
       "abbreviations": {
         "JNK": "cJun-N-terminal Kinase",
@@ -422,6 +431,7 @@
     },
     {
       "name": "Kugel 2024 - Pol II transcription machinery review (Biomolecules, MDPI)",
+      "doi": "10.3390/biom14020176",
       "file": "corpus/biomolecules-14-00176.txt",
       "abbreviations": {
         "GTFs": "general transcription factors",
@@ -452,6 +462,7 @@
     },
     {
       "name": "Replogle 2022 - CRISPRi dual-sgRNA libraries (eLife)",
+      "doi": "10.7554/elife.81856",
       "file": "corpus/elife-81856-v2.txt",
       "abbreviations": {
         "CRISPRi": "CRISPR interference",
@@ -474,6 +485,7 @@
     },
     {
       "name": "Seroussi 2023 - C. elegans argonautes (eLife)",
+      "doi": "10.7554/elife.83853",
       "file": "corpus/elife-83853-v2.txt",
       "abbreviations": {
         "AGO": "Argonaute",
@@ -499,6 +511,7 @@
     },
     {
       "name": "Hebert 2024 - kinase spatiotemporal control review (JBC, ASBMB)",
+      "doi": "10.1016/j.jbc.2024.107846",
       "file": "corpus/PIIS0021925824023482.txt",
       "abbreviations": {
         "CK2": "casein kinase 2",
@@ -518,6 +531,7 @@
     },
     {
       "name": "Goto 2026 - Egr1 memory (BMC Biology)",
+      "doi": "10.1186/s12915-026-02678-5",
       "file": "corpus/s12915-026-02678-5_reference.txt",
       "abbreviations": {
         "AAV": "adeno-associated virus",
@@ -557,6 +571,7 @@
     },
     {
       "name": "Kociper 2025 - PDK1 ambiguity (bioRxiv preprint)",
+      "doi": "10.64898/2025.12.01.691077",
       "file": "corpus/2025.12.01.691077v1.full.txt",
       "abbreviations": {
         "PIP3": "phosphatidylinositol (3,4,5)-trisphosphate",
@@ -573,6 +588,7 @@
     },
     {
       "name": "Shpilka 2024 - mitochondria-nuclear proteostasis (J Cell Biol, Rockefeller)",
+      "doi": "10.1083/jcb.202310005",
       "file": "corpus/jcb_202310005.txt",
       "abbreviations": {
         "OXPHOS": "oxidative phosphorylation",
@@ -600,6 +616,7 @@
     },
     {
       "name": "Sidrauski 2024 - nascent proteome mitochondrial stress (Cell Reports)",
+      "doi": "10.1016/j.celrep.2024.114803",
       "file": "corpus/PIIS2211124724011549.txt",
       "abbreviations": {
         "UPR": "unfolded protein response",
@@ -617,6 +634,7 @@
     },
     {
       "name": "Martens 2025 - transmembrane autophagy receptors (EMBO Journal)",
+      "doi": "10.1038/s44318-025-00615-w",
       "file": "corpus/s44318-025-00615-w.txt",
       "abbreviations": {
         "SARs": "selective autophagy receptors",
@@ -639,6 +657,7 @@
     },
     {
       "name": "Amelogenin 2026 - splicing-derived microRNA (Scientific Reports)",
+      "doi": "10.1038/s41598-026-40706-0",
       "file": "corpus/s41598-026-40706-0.txt",
       "abbreviations": {
         "SRSFs": "Serine/Arginine-rich splicing factors",
@@ -649,6 +668,7 @@
     },
     {
       "name": "Ma 2013 - HR rescues ssDNA gaps (PNAS)",
+      "doi": "10.1073/pnas.1301676110",
       "file": "corpus/ma-et-al-2013-homologous-recombination-rescues-ssdna-gaps-generated-by-nucleotide-excision-repair-and-reduced.txt",
       "abbreviations": {
         "TLS": "translesion DNA synthesis",
@@ -663,6 +683,7 @@
     },
     {
       "name": "Piazza 2023 - homology search expansion (bioRxiv preprint)",
+      "doi": "10.1101/2023.12.01.569403",
       "file": "corpus/2023.12.01.569403v1.full.txt",
       "abbreviations": {
         "NPF": "nucleoprotein filament",
@@ -678,6 +699,7 @@
     },
     {
       "name": "Tulli 2024 - hitchhiker's guide to autophagy (EMBO Journal, News & Views)",
+      "doi": "10.1038/s44318-024-00160-y",
       "file": "corpus/s44318-024-00160-y.txt",
       "abbreviations": {
         "LIRs": "LC3-interacting regions"
