@@ -3,6 +3,51 @@
 All notable changes to this project are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+Bug fixes from a code audit. Abbreviation detection is unchanged: the detector
+code is byte-for-byte the same and gives identical results. Still supports
+Zotero 7.0 to 10.*, with the same settings and the same abbreviations file.
+
+### Fixed
+- **Meanings now come from the paper you are reading.** The plugin looked for
+  the active reader tab in a place Zotero does not provide to plugins, so it
+  always used the item selected in the library instead. With several tabs open,
+  tooltips could show another paper's definitions.
+- **A hand-edited abbreviations file can no longer be wiped.** A file that was
+  not valid JSON (for example one with comments) was silently ignored, and the
+  next change made in Settings replaced it. Now the problem is shown in
+  Settings and when reloading, and the file is never written until it is fixed.
+- Two changes to your definitions or ignore list made in quick succession no
+  longer lose the first one.
+- Database links in a tooltip can be clicked. The tooltip used to let every
+  click through to the page, and it now holds still while the pointer moves
+  onto it. The 1–9 keys still work.
+- On papers with no detected abbreviations, the hover listeners were rebuilt
+  every 2.5 seconds, hiding any database-link tooltip.
+- A tooltip no longer reappears at an old position, over different text,
+  after scrolling or leaving the page and then pressing Shift or changing a
+  setting.
+- A variant spelling of one abbreviation (for example "Ab" made from "Aβ") no
+  longer replaces a different abbreviation of the same paper.
+- Disabling or updating the plugin while a PDF is being scanned no longer
+  leaves the old version's listeners in the reader.
+- "Open Abbreviations File…" falls back correctly when the file cannot be
+  revealed.
+
+### Changed
+- The background scan only reads the PDF open in the active reader tab, and
+  starts as soon as you switch tabs. Clicking through the library no longer
+  scans each selected item's PDF.
+- Changing a setting or your own definitions no longer reads the open PDF
+  again; only the detection is redone.
+- Moving the mouse within a word no longer rebuilds the tooltip.
+- The abbreviations file is written through a temporary file.
+- Removed two fallback text extractors that could not work in any supported
+  Zotero version. `Zotero.PDFWorker.getFullText` is used, as before.
+- New regression tests (`test/test-fixes.js`) and a GitHub workflow that runs
+  every test on each push.
+
 ## [2.1.0] — 2026-08-28
 
 ### Added

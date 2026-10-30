@@ -33,7 +33,8 @@ Works on **macOS, Windows and Linux**. Requires **Zotero 7 or newer**
 ## Use
 
 Open a PDF in the Zotero reader. The plugin scans it in the background; hover over any
-abbreviation to see its meaning.
+abbreviation to see its meaning. Only the PDF in the reader tab you are looking at is
+scanned, and switching tabs switches the meanings with it.
 
 ### Settings
 
@@ -52,7 +53,7 @@ the short form differently.
 | Menu item | What it does |
 |---|---|
 | Settings… | Opens the pane above |
-| Scan This PDF and Copy List | Rescan now and copy the full list to the clipboard |
+| Scan This PDF and Copy List | Copy the full list for the PDF in the reader (or, in the library, the selected item's PDF) to the clipboard |
 | Ignore an Abbreviation… | Suppress a wrong detection |
 | Ignored Abbreviations (n) | Click any entry to stop ignoring it |
 | Open Abbreviations File… | Opens your settings file |
@@ -68,7 +69,8 @@ override it. That is why settings live in the Settings window.
 saved preference therefore behaves correctly on every platform, which matters if your
 Zotero profile is synced between machines.
 
-While a tooltip with database links is showing, press **1–9** to open the matching link.
+While a tooltip with database links is showing, click a link or press **1–9** to open
+the matching one. The tooltip stays put while you move the pointer onto it.
 
 ## The abbreviations file
 
@@ -85,22 +87,25 @@ Everything is stored in one JSON file inside your Zotero data directory:
 It is created empty on first run — the bundled dictionary is *not* copied into it, so your
 entries stay easy to find and you still receive improvements to the shipped defaults.
 
-```jsonc
+```json
 {
-  // Your own definitions. These win over whatever the paper says.
   "userDefs": { "MSA": "Mannitol Salt agar" },
-
-  // Never show a meaning for these.
   "ignore": ["NEB"],
-
-  // Lookup links. {q} = token without hyphens, {raw} = token as written.
-  // A non-empty list here REPLACES the built-in databases.
   "databases": [
     { "group": "Gene/protein databases", "label": "UniProt",
       "url": "https://www.uniprot.org/uniprotkb?query={q}", "enabled": true }
   ]
 }
 ```
+
+- `userDefs`: your own definitions. These win over whatever the paper says.
+- `ignore`: never show a meaning for these.
+- `databases`: lookup links. `{q}` is the token without hyphens, `{raw}` the token as
+  written. A non-empty list here **replaces** the built-in databases.
+
+The file must be valid JSON, so it cannot contain comments. If it has a mistake, the
+plugin says so in the settings pane, leaves the file untouched, and uses only the
+built-in dictionary until you fix it.
 
 Use **Reload from file** in the settings pane (or **Reload Abbreviations File** in the
 Tools menu) after editing; no restart required.
@@ -132,7 +137,9 @@ this one does:
   network activity is Zotero's own periodic check of `update_url`, and a request
   to a database site when *you* click one of its links.
 - The only file it writes is your own settings file, at
-  `<Zotero data directory>/abbreviation-helper/abbreviations.json`.
+  `<Zotero data directory>/abbreviation-helper/abbreviations.json`. It is written
+  through a temporary file in the same folder, so a crash cannot leave it
+  half-written.
 
 ### Dictionary provenance
 
@@ -173,6 +180,7 @@ node test/test-userdict.js   # user dictionary, end to end
 node test/test-features.js   # menu features, modifiers, cross-platform paths
 node test/test-menu.js       # Tools menu structure and wording (fake XUL DOM)
 node test/test-settings.js   # Settings pane wiring, parsed from settings.xhtml
+node test/test-fixes.js      # active tab, settings file safety, background scan, tooltips
 
 node eval/score.js           # accuracy against the gold standard (needs a corpus)
 node eval/difftest.js A B    # prove a change leaves detection unchanged
@@ -204,6 +212,9 @@ into `corpus/` using the filename in the `file` field, then run
 ./build.sh --check   # the above, plus the full test suite and accuracy run
 ```
 
+The same `--check` run happens on GitHub for every push and pull request
+(`.github/workflows/test.yml`). It only tests; it never publishes anything.
+
 ## Packaging notes
 
 Two things that are easy to get wrong when building the `.xpi`:
@@ -223,7 +234,14 @@ Two things that are easy to get wrong when building the `.xpi`:
 ```
 
 `update.json` in the repo root is what `update_url` points at; bump the version
-and the release link there when you publish a new version.
+and the release link there when you publish a new version. Everyone who has the
+plugin installed reads this file from the `main` branch, so change it only when a
+release is actually published.
+
+Take `update_hash` from the exact `.xpi` you upload. The SHA-256 depends on the
+`zip` program that built the archive, so rebuilding the same version on another
+machine gives a different hash, and Zotero refuses an update whose hash does not
+match.
 
 ## Licence
 

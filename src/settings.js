@@ -44,10 +44,33 @@ var AbbrevSettings = {
 
     /** Rebuild everything driven by the abbreviations file. */
     refresh() {
+        this._showFileStatus();
         this._buildDefinitionList();
         this._buildIgnoreList();
         this._buildDatabaseList();
         this._syncDependents();
+    },
+
+    /**
+     * Say so when the abbreviations file cannot be read. The plugin then
+     * leaves the file alone, so your entries are not in use until it is fixed.
+     */
+    _showFileStatus() {
+        const H = this.helper;
+        const problem = H && H.userFileError;
+        this._error('abbrev-settings-file-error', problem
+            ? 'Your abbreviations file could not be read, so your own entries are not in use. '
+                + problem + ' Open it with "Open abbreviations file…" below, correct it, '
+                + 'then press "Reload from file". The plugin will not change the file until then.'
+            : '');
+    },
+
+    /** Why a change was not saved, in the plugin's words when it has them. */
+    _saveError(id, e, what) {
+        this._log('Could not ' + what + ': ' + e);
+        const H = this.helper;
+        this._error(id, (H && H._saveFailedMessage) ? H._saveFailedMessage() : 'Could not save that entry.');
+        this._showFileStatus();
     },
 
     _log(msg) {
@@ -111,8 +134,11 @@ var AbbrevSettings = {
             tr.appendChild(this._cell(defs[abbr]));
             tr.appendChild(this._actionCell('Remove', () => {
                 Promise.resolve(H._removeUserDefinition(abbr))
-                    .then(() => this._buildDefinitionList())
-                    .catch(e => this._log('Could not remove ' + abbr + ': ' + e));
+                    .then(() => {
+                        this._error('abbrev-settings-def-error', '');
+                        this._buildDefinitionList();
+                    })
+                    .catch(e => this._saveError('abbrev-settings-def-error', e, 'remove ' + abbr));
             }));
             body.appendChild(tr);
         }
@@ -138,10 +164,7 @@ var AbbrevSettings = {
                 termEl.value = '';
                 this._buildDefinitionList();
             })
-            .catch(e => {
-                this._log('Could not add ' + abbr + ': ' + e);
-                this._error('abbrev-settings-def-error', 'Could not save that entry.');
-            });
+            .catch(e => this._saveError('abbrev-settings-def-error', e, 'add ' + abbr));
     },
 
     /* ---- ignore list ----------------------------------------------------- */
@@ -162,8 +185,11 @@ var AbbrevSettings = {
             tr.appendChild(this._cell(abbr, 'abbrev-settings-short'));
             tr.appendChild(this._actionCell('Remove', () => {
                 Promise.resolve(H._stopIgnoring(abbr))
-                    .then(() => this._buildIgnoreList())
-                    .catch(e => this._log('Could not un-ignore ' + abbr + ': ' + e));
+                    .then(() => {
+                        this._error('abbrev-settings-ignore-error', '');
+                        this._buildIgnoreList();
+                    })
+                    .catch(e => this._saveError('abbrev-settings-ignore-error', e, 'un-ignore ' + abbr));
             }));
             body.appendChild(tr);
         }
@@ -181,10 +207,7 @@ var AbbrevSettings = {
         this._error('abbrev-settings-ignore-error', '');
         Promise.resolve(H._ignoreAbbreviation(abbr))
             .then(() => { input.value = ''; this._buildIgnoreList(); })
-            .catch(e => {
-                this._log('Could not ignore ' + abbr + ': ' + e);
-                this._error('abbrev-settings-ignore-error', 'Could not save that entry.');
-            });
+            .catch(e => this._saveError('abbrev-settings-ignore-error', e, 'ignore ' + abbr));
     },
 
     /* ---- databases ------------------------------------------------------- */
@@ -282,8 +305,11 @@ var AbbrevSettings = {
         this._onClick('abbrev-settings-ignore-clear', () => {
             if (!H) return;
             Promise.resolve(H._setIgnoreList([]))
-                .then(() => this._buildIgnoreList())
-                .catch(e => this._log('Could not clear the ignore list: ' + e));
+                .then(() => {
+                    this._error('abbrev-settings-ignore-error', '');
+                    this._buildIgnoreList();
+                })
+                .catch(e => this._saveError('abbrev-settings-ignore-error', e, 'clear the ignore list'));
         });
 
         const master = this._byId('abbrev-settings-db-enabled');

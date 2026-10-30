@@ -96,6 +96,9 @@ function shutdown() {
         Services.wm.removeListener(windowListener);
     } catch (e) {}
     if (AbbreviationHelper) {
+        // First, so a scan still waiting on Zotero's PDF worker cannot attach
+        // listeners after everything below has been removed.
+        if (typeof AbbreviationHelper.stop === 'function') AbbreviationHelper.stop();
         AbbreviationHelper.unregisterPreferencePane();
         AbbreviationHelper._unwatchPrefs();
         AbbreviationHelper.removeFromAllWindows();
@@ -142,7 +145,8 @@ var windowListener = {
         // nsIWindowMediator listeners you must query the interface this way.
         let window = xulWindow.docShell.domWindow;
         window.addEventListener("load", function () {
-            if (window.ZoteroPane) {
+            // The plugin may have been disabled while this window loaded.
+            if (AbbreviationHelper && window.ZoteroPane) {
                 AbbreviationHelper.addToWindow(window);
             }
         }, { once: true });

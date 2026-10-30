@@ -1,0 +1,22 @@
+# Runs the full build and test suite on every push and pull request.
+# This only checks the code; it never publishes a release or changes
+# update.json, so it cannot affect anyone who has the plugin installed.
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Build and run every test
+        run: bash build.sh --check

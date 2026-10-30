@@ -386,10 +386,24 @@ var AbbreviationHelper = {
     // the normal transient hover behavior.
     hoverInteractiveTooltip: false,
     activeGeneLinks: [],
-    // Reference to the global scope.  In the bootstrap context
-    // `window` is not automatically bound, so store globalThis here so
-    // helper functions can access global variables like Zotero_Tabs.
-    _global: globalThis,
+    // Extracted text per attachment, so a change to your definitions or the
+    // ignore list can be re-detected without reading the PDF again. Texts are
+    // large, so only a few are kept.
+    textCache: new Map(),
+    TEXT_CACHE_LIMIT: 5,
+    // Set when the plugin shuts down. Work that was already under way (a scan
+    // waiting for Zotero's PDF worker, say) checks it before touching the
+    // reader, so a disabled or updated plugin leaves nothing behind.
+    _stopped: false,
+    // The last abbreviation whose meaning was shown; "Ignore an
+    // Abbreviation…" offers it as the default.
+    lastHoveredToken: '',
+    // Why the abbreviations file could not be read, or null when it is fine.
+    // While it is set, nothing writes to the file.
+    userFileError: null,
+    // How long the pointer may spend heading for a tooltip with links before
+    // the tooltip goes back to following the word under the pointer.
+    CORRIDOR_MS: 350,
 
     /**
      * Initialise the plugin.  Stores metadata and ensures we only
@@ -400,6 +414,10 @@ var AbbreviationHelper = {
         this.id = id;
         this.version = version;
         this.rootURI = rootURI;
+        // Marks the tooltip elements this copy of the plugin creates, so a
+        // tooltip left in a reader page by an earlier version is replaced
+        // rather than reused (see _ensureHoverTooltip).
+        this._instanceToken = 'ah-' + Date.now() + '-' + Math.random().toString(36).slice(2);
         // Restore saved user preferences (hover mode, Shift behavior, enabled
         // database groups) so they persist across Zotero restarts.
         this._loadPrefs();
@@ -472,11 +490,17 @@ var AbbreviationHelper = {
             const self = this;
             this._prefObserver = {
                 observe(subject, topic, data) {
-                    if (topic !== 'nsPref:changed') return;
+                    if (topic !== 'nsPref:changed' || self._stopped) return;
                     try {
                         self._loadPrefs();
                         self._resetHoverTooltips();
+                        if (!self.hoverEnabled) {
+                            self._removeHoverListeners();
+                            return;
+                        }
                         self._refreshHoverFromLastState(null);
+                        // Hover may just have been switched on in Settings.
+                        self._autoScanActiveReader().catch(e => self.log('Auto-scan failed: ' + e));
                     } catch (e) {
                         self.log('Applying a changed preference failed: ' + e);
                     }
@@ -649,33 +673,59 @@ var AbbreviationHelper = {
 
     /**
      * Read the user dictionary at <dataDir>/abbreviation-helper/abbreviations.json,
-     * creating it from the current defaults on first run. Returns parsed
-     * dictionaries or null. All failures are non-fatal.
+     * creating an empty starter file on first run. Returns parsed dictionaries
+     * or null. Throws (after recording userFileError) if the file exists but
+     * cannot be read, so the caller falls back to the bundled defaults.
      */
     async _loadOrCreateUserDictionary(defaults) {
-        let dataDir;
-        try { dataDir = Zotero.DataDirectory && Zotero.DataDirectory.dir; } catch (e) {}
-        if (!dataDir) return null;
-
+        const file = this._userDictionaryPath();
+        if (!file) return null;
         const io = await this._getIOUtils();
-        const dir = this._joinPath(dataDir, 'abbreviation-helper');
-        const file = this._joinPath(dir, 'abbreviations.json');
 
         if (await io.exists(file)) {
-            const text = await io.readUTF8(file);
-            return this._normaliseDictionaries(JSON.parse(text));
+            return this._normaliseDictionaries(this._parseUserConfig(await io.readUTF8(file)));
         }
 
-        // First run: write the current defaults as an editable starter file.
-        try {
-            await io.makeDirectory(dir, { ignoreExisting: true });
-            const starter = this._starterUserConfig();
-            await io.writeUTF8(file, JSON.stringify(starter, null, 2));
-            this.log('Created editable user dictionary at ' + file);
-        } catch (e) {
-            this.log('Could not create user dictionary: ' + e);
-        }
+        // First run: create the empty, editable starter file.
+        this.userFileError = null;
+        await this._ensureUserDictionaryFile();
         return null;
+    },
+
+    /**
+     * Parse the text of the abbreviations file. If it is not a JSON object,
+     * the reason is kept in userFileError (shown in Settings) and this throws,
+     * so nothing ever writes over a file it could not read. An empty file
+     * holds nothing to lose and counts as an empty object.
+     */
+    _parseUserConfig(text) {
+        if (!String(text || '').trim()) {
+            this.userFileError = null;
+            return {};
+        }
+        let raw;
+        try {
+            raw = JSON.parse(text);
+        } catch (e) {
+            const why = String((e && e.message) || e);
+            this.userFileError = 'It is not valid JSON (' + why + '). Comments are not allowed in JSON.';
+            throw new Error('Abbreviations file is not valid JSON: ' + why);
+        }
+        if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+            this.userFileError = 'It must contain a JSON object, starting with { and ending with }.';
+            throw new Error('Abbreviations file does not contain a JSON object');
+        }
+        this.userFileError = null;
+        return raw;
+    },
+
+    /** One sentence saying why a change was not saved, for alerts and the Settings pane. */
+    _saveFailedMessage() {
+        if (this.userFileError) {
+            return 'Nothing was saved, because your abbreviations file could not be read. '
+                + this.userFileError + ' Open the file, correct it, then reload it.';
+        }
+        return 'Could not save the change. See the Zotero log for details.';
     },
 
     /**
@@ -703,30 +753,67 @@ var AbbreviationHelper = {
     },
 
     /**
-     * Merge a patch into the abbreviations file on disk and reload. Used by the
-     * menu actions that edit settings (for example the ignore list).
+     * Merge a patch into the abbreviations file on disk. Arrays are merged
+     * without duplicates, objects are merged, and keys named in replaceKeys
+     * are replaced outright. The caller reloads afterwards.
      */
     async _updateUserConfig(patch, replaceKeys) {
-        const file = await this._ensureUserDictionaryFile();
-        if (!file) return false;
-        const io = await this._getIOUtils();
-        let current = this._starterUserConfig();
-        try { current = Object.assign(current, JSON.parse(await io.readUTF8(file))); } catch (e) {}
         const replace = new Set(replaceKeys || []);
-        for (const [k, v] of Object.entries(patch || {})) {
-            if (replace.has(k)) {
-                current[k] = v;
-            } else if (Array.isArray(v)) {
-                const merged = [].concat(current[k] || [], v);
-                current[k] = merged.filter((x, i) => merged.indexOf(x) === i);
-            } else if (v && typeof v === 'object') {
-                current[k] = Object.assign({}, current[k], v);
-            } else {
-                current[k] = v;
+        return this._editUserConfig((current) => {
+            for (const [k, v] of Object.entries(patch || {})) {
+                if (replace.has(k)) {
+                    current[k] = v;
+                } else if (Array.isArray(v)) {
+                    const merged = [].concat(current[k] || [], v);
+                    current[k] = merged.filter((x, i) => merged.indexOf(x) === i);
+                } else if (v && typeof v === 'object') {
+                    current[k] = Object.assign({}, current[k], v);
+                } else {
+                    current[k] = v;
+                }
             }
+        });
+    },
+
+    /**
+     * Change the abbreviations file. `mutate` receives what is on disk now
+     * (with any missing section filled in) and edits it in place; returning
+     * false means there is nothing to change, and the file is not written.
+     *
+     * Every edit starts from the file rather than from memory, and edits run
+     * one at a time, so two changes made in quick succession both survive. A
+     * file that cannot be parsed is never written: the promise rejects and the
+     * file stays exactly as it was. Resolves false if there is no Zotero data
+     * directory, true once the change is saved.
+     */
+    _editUserConfig(mutate) {
+        const run = async () => {
+            const file = await this._ensureUserDictionaryFile();
+            if (!file) return false;
+            const io = await this._getIOUtils();
+            const current = Object.assign(this._starterUserConfig(),
+                this._parseUserConfig(await io.readUTF8(file)));
+            if (mutate(current) === false) return false;
+            await this._writeUserConfig(io, file, current);
+            return true;
+        };
+        const result = (this._configQueue || Promise.resolve()).then(run, run);
+        this._configQueue = result.catch(() => {});
+        return result;
+    },
+
+    /**
+     * Write the abbreviations file through a temporary file that is then moved
+     * into place, so a crash part-way through cannot leave it half-written.
+     */
+    async _writeUserConfig(io, file, config) {
+        const text = JSON.stringify(config, null, 2);
+        try {
+            await io.writeUTF8(file, text, { tmpPath: file + '.tmp' });
+        } catch (e) {
+            this.log('Safe write failed (' + e + '); writing the file directly');
+            await io.writeUTF8(file, text);
         }
-        await io.writeUTF8(file, JSON.stringify(current, null, 2));
-        return true;
     },
 
     /** Absolute path to the user-editable dictionary, or null if unavailable. */
@@ -770,7 +857,9 @@ var AbbreviationHelper = {
                 return;
             }
             try {
-                Zotero.File.reveal(file);
+                // Asynchronous in every supported Zotero, so it must be awaited
+                // for a failure to reach the fallbacks below.
+                await Zotero.File.reveal(file);
                 return;
             } catch (e) {
                 this.log('reveal failed, trying launchFile: ' + e);
@@ -795,9 +884,16 @@ var AbbreviationHelper = {
             this._dictionariesReady = this._loadDictionaries();
             await this._dictionariesReady;
             try { this.cache.clear(); } catch (e) {}
+            // The PDF text is still cached, so the open paper is re-detected
+            // with the new dictionaries without being read again.
             this._setActiveHoverPairs(null, []);
             try { await this._autoScanActiveReader(); } catch (e) {}
-            if (window) {
+            if (window && this.userFileError) {
+                Zotero.alert(window, 'Abbreviation Helper',
+                    'Your abbreviations file could not be read, so your own entries are not in use.\n\n'
+                    + this.userFileError + '\n\nOpen the file, correct it, then reload it. '
+                    + 'The plugin will not change the file until then.');
+            } else if (window) {
                 Zotero.alert(window, 'Abbreviation Helper',
                     'Abbreviations file reloaded: ' +
                     Object.keys(this.dictionaries.staticDefs).length + ' static and ' +
@@ -1159,7 +1255,7 @@ var AbbreviationHelper = {
             buildMenu();
 
             toolsPopup.appendChild(rootMenu);
-            this.addedElementIDs.push(rootMenu.id);
+            if (this.addedElementIDs.indexOf(rootMenu.id) === -1) this.addedElementIDs.push(rootMenu.id);
         } catch (e) {
             this.log('Failed to add menu item: ' + e);
         }
@@ -1192,15 +1288,25 @@ var AbbreviationHelper = {
         return ((this.dictionaries && this.dictionaries.ignore) || []).slice();
     },
 
-    /** Replace the ignore list on disk and apply it immediately. */
+    /** Replace the ignore list in your file and apply it immediately. */
     async _setIgnoreList(list) {
         const unique = (list || []).filter((x, i, a) => x && a.indexOf(x) === i);
-        await this._updateUserConfig({ ignore: unique }, ['ignore']);
+        await this._editUserConfig((c) => { c.ignore = unique; });
         await this._reloadDictionaries(null);
     },
 
+    /**
+     * Remove one entry from the ignore list in your file. Works on the file's
+     * own list, so entries shipped with the plugin are never copied into it.
+     */
     async _stopIgnoring(abbr) {
-        await this._setIgnoreList(this._ignoreList().filter(x => x !== abbr));
+        await this._editUserConfig((c) => {
+            const before = Array.isArray(c.ignore) ? c.ignore : [];
+            const after = before.filter(x => x !== abbr);
+            if (after.length === before.length) return false;
+            c.ignore = after;
+        });
+        await this._reloadDictionaries(null);
     },
 
     /* ---- Editing the abbreviations file from the Settings pane ----------
@@ -1213,7 +1319,12 @@ var AbbreviationHelper = {
         const name = String(abbr || '').trim();
         if (!name) return false;
         if (this._ignoreList().indexOf(name) !== -1) return true;
-        await this._setIgnoreList(this._ignoreList().concat([name]));
+        await this._editUserConfig((c) => {
+            const list = Array.isArray(c.ignore) ? c.ignore : [];
+            if (list.indexOf(name) !== -1) return false;
+            c.ignore = list.concat([name]);
+        });
+        await this._reloadDictionaries(null);
         return true;
     },
 
@@ -1230,20 +1341,30 @@ var AbbreviationHelper = {
         const name = String(abbr || '').trim();
         const meaning = String(term || '').trim();
         if (!name || !meaning) return false;
-        const defs = this._userDefinitions();
-        defs[name] = meaning;
-        await this._updateUserConfig({ userDefs: defs }, ['userDefs']);
+        await this._editUserConfig((c) => {
+            c.userDefs = this._plainObject(c.userDefs);
+            c.userDefs[name] = meaning;
+        });
         await this._reloadDictionaries(null);
         return true;
     },
 
     async _removeUserDefinition(abbr) {
-        const defs = this._userDefinitions();
-        if (!Object.prototype.hasOwnProperty.call(defs, abbr)) return false;
-        delete defs[abbr];
-        await this._updateUserConfig({ userDefs: defs }, ['userDefs']);
-        await this._reloadDictionaries(null);
-        return true;
+        let removed = false;
+        await this._editUserConfig((c) => {
+            const defs = this._plainObject(c.userDefs);
+            if (!Object.prototype.hasOwnProperty.call(defs, abbr)) return false;
+            delete defs[abbr];
+            c.userDefs = defs;
+            removed = true;
+        });
+        if (removed) await this._reloadDictionaries(null);
+        return removed;
+    },
+
+    /** `v` if it is a plain object, otherwise a new empty one. */
+    _plainObject(v) {
+        return (v && typeof v === 'object' && !Array.isArray(v)) ? v : {};
     },
 
     /**
@@ -1252,7 +1373,8 @@ var AbbreviationHelper = {
      * false positive the user just saw.
      */
     async _promptIgnoreAbbreviation(window) {
-        const suggestion = (this.lastHoverState && this.lastHoverState.token) || '';
+        const suggestion = this.lastHoveredToken
+            || (this.lastHoverState && this.lastHoverState.token) || '';
         const value = { value: suggestion };
         let ok = false;
         try {
@@ -1266,7 +1388,13 @@ var AbbreviationHelper = {
         }
         const abbr = ok && value.value ? String(value.value).trim() : '';
         if (!abbr) return;
-        await this._updateUserConfig({ ignore: [abbr] });
+        try {
+            await this._updateUserConfig({ ignore: [abbr] });
+        } catch (e) {
+            this.log('Could not add to the ignore list: ' + e);
+            Zotero.alert(window, 'Abbreviation Helper', this._saveFailedMessage());
+            return;
+        }
         await this._reloadDictionaries(null);
         Zotero.alert(window, 'Abbreviation Helper', '\u201c' + abbr + '\u201d will no longer be shown.');
     },
@@ -1309,281 +1437,172 @@ var AbbreviationHelper = {
     },
 
     /**
-     * Scan the currently selected or open PDF for abbreviation definitions.
-     * If a reader tab is active it uses that attachment; otherwise it
-     * looks for a selected item and its first PDF attachment.  Results
-     * are cached per item so repeated scans are fast.  Detected pairs
-     * are passed to a dialog for display.
+     * Called first when the plugin shuts down. Marks it stopped, so a scan
+     * still waiting on Zotero's PDF worker does nothing when it finishes, and
+     * stops the background scan and the tab watcher.
+     */
+    stop() {
+        this._stopped = true;
+        this._stopAutoScanTimer();
+        this._clearCorridor();
+        this._cancelHoverHide();
+    },
+
+    /**
+     * Scan a PDF for abbreviation definitions: the one open in the active
+     * reader tab, or, when the library is showing, the first PDF of the
+     * selected item (options.readerOnly skips the library). Unless
+     * options.silent is set, the list is copied to the clipboard and a preview
+     * is shown. Results are cached per item.
      */
     /* ---- Scanning and PDF text extraction ---- */
     async scanCurrent(options) {
         options = options || {};
-        // Determine the attachment file path and item record.
-        const info = await this._getCurrentAttachment();
+        const info = await this._getCurrentAttachment({ readerOnly: !!options.readerOnly });
         if (!info) {
-            Zotero.alert(null, 'Abbreviation Helper', 'Please open a PDF in the Zotero reader or select an item with a PDF attachment.');
+            if (!options.silent) {
+                Zotero.alert(null, 'Abbreviation Helper', 'Please open a PDF in the Zotero reader or select an item with a PDF attachment.');
+            }
             return;
         }
-        const { item, path } = info;
         // Ensure the full dictionary has loaded before detecting so results and
         // the per-item cache are computed with the complete dictionary.
         try { await this._dictionariesReady; } catch (e) {}
-        // Check cache first to avoid reprocessing the same PDF.
-        if (this.cache.has(item.id)) {
-            const cached = this.cache.get(item.id);
-            this._setActiveHoverPairs(item.id, cached);
-            if (this.hoverEnabled) this._installHoverForAllWindows();
-            if (!options.silent) this._showDialog(cached);
-            return cached;
-        }
-        // Extract text from the PDF using the most appropriate method for
-        // the current Zotero version.  We first attempt to use
-        // Zotero.PDFWorker.getFullText, which is available in Zotero 8/9
-        // and returns per‑page text separated by form‑feed characters.
-        // If that fails we fall back to reading the file directly via
-        // pdf.js or the pdfWorker.  Any errors are propagated so the
-        // caller can report them to the user.
+        if (this._stopped) return;
         let pairs;
         try {
-            const text = await this._extractTextForItem(item, path);
-            pairs = this._detectAbbreviations(text);
+            pairs = await this._pairsForItem(info.item, info.path);
         } catch (err) {
             this.log('Failed to extract text: ' + err);
             throw err;
         }
-        this._cacheResult(item.id, pairs);
-        this._setActiveHoverPairs(item.id, pairs);
+        if (this._stopped) return pairs;
+        this._setActiveHoverPairs(info.item.id, pairs);
         if (this.hoverEnabled) this._installHoverForAllWindows();
         if (!options.silent) this._showDialog(pairs);
         return pairs;
     },
 
     /**
-     * Attempt to extract text for a given Zotero attachment item.  On
-     * Zotero 8+ the PDFWorker API can return the full text of a PDF
-     * without having to read the file from disk.  We fall back to
-     * reading the file directly if PDFWorker is unavailable or fails.
-     *
-     * @param {_ZoteroTypes.Item} item Attachment item representing the PDF
-     * @param {string} path Filesystem path to the PDF
-     * @returns {Promise<string>} The full extracted text
+     * Detected pairs for an attachment, from the cache when possible. The
+     * extracted text is cached separately (see textCache), so after a change
+     * to the dictionaries only detection runs again, not extraction.
      */
-    async _extractTextForItem(item, path) {
-        // Use Zotero.PDFWorker.getFullText if available.  This returns an
-        // object with a `text` property containing the entire PDF text.
-        try {
-            const worker = Zotero.PDFWorker;
-            if (worker && typeof worker.getFullText === 'function') {
-                const result = await worker.getFullText(item.id);
-                if (result && typeof result.text === 'string' && result.text.trim().length > 0) {
-                    // Replace form‑feed separators with spaces so the
-                    // abbreviation detector sees continuous text.  The
-                    // PDFWorker inserts a form‑feed between pages.
-                    return result.text.replace(/\f/g, ' ');
-                }
-            }
-        } catch (e) {
-            this.log('PDFWorker.getFullText failed: ' + e);
-            // fall through to file‑based extraction
+    async _pairsForItem(item, path) {
+        if (this.cache.has(item.id)) return this.cache.get(item.id);
+        const text = await this._textForItem(item, path);
+        const pairs = this._detectAbbreviations(text);
+        this._cacheResult(item.id, pairs);
+        this.log(`Scanned item ${item.id}: ${pairs.length} abbreviation definitions found.`);
+        return pairs;
+    },
+
+    /** Full text of an attachment, kept for the few most recently used items. */
+    async _textForItem(item, path) {
+        const cached = this.textCache.get(item.id);
+        if (typeof cached === 'string') {
+            // Refresh its place so the least recently used text is evicted first.
+            this.textCache.delete(item.id);
+            this.textCache.set(item.id, cached);
+            return cached;
         }
-        // Fallback to file‑based extraction.  This will use pdf.js or
-        // pdfWorker depending on the Zotero version.
-        return await this._extractText(path);
+        const text = await this._extractTextForItem(item, path);
+        this.textCache.set(item.id, text);
+        while (this.textCache.size > this.TEXT_CACHE_LIMIT) {
+            this.textCache.delete(this.textCache.keys().next().value);
+        }
+        return text;
     },
 
     /**
-     * Determine the currently active PDF attachment and return its path and
-     * associated Zotero item.  First tries the active reader tab, then
-     * falls back to the selected item in the library pane.
+     * Extract the full text of a PDF attachment with Zotero's own PDF worker.
+     * `Zotero.PDFWorker.getFullText(itemID)` exists in every supported version
+     * (7.0 to 10) and returns { text, ... } with a form feed between pages.
+     * A PDF with no text layer gives an empty string, which simply yields no
+     * abbreviations.
+     *
+     * @param {_ZoteroTypes.Item} item Attachment item representing the PDF
+     * @returns {Promise<string>} The full extracted text
+     */
+    async _extractTextForItem(item) {
+        const worker = Zotero.PDFWorker;
+        if (!worker || typeof worker.getFullText !== 'function') {
+            throw new Error('Zotero.PDFWorker.getFullText is not available');
+        }
+        const result = await worker.getFullText(item.id);
+        const text = (result && typeof result.text === 'string') ? result.text : '';
+        // The detector expects continuous text, so page breaks become spaces.
+        return text.replace(/\f/g, ' ');
+    },
+
+    /**
+     * Item id of the attachment open in the selected reader tab, or null when
+     * the library (or anything other than a reader) is selected.
+     *
+     * Zotero_Tabs belongs to the main window. A plugin's own scope is a
+     * sandbox that does not contain it, so it is read from the window.
+     */
+    _activeReaderItemID() {
+        let win = null;
+        try { win = Zotero.getMainWindow ? Zotero.getMainWindow() : null; } catch (e) {}
+        const tabs = win && win.Zotero_Tabs;
+        if (!tabs || tabs.selectedType !== 'reader') return null;
+        const reader = (Zotero.Reader && typeof Zotero.Reader.getByTabID === 'function')
+            ? Zotero.Reader.getByTabID(tabs.selectedID) : null;
+        return (reader && reader.itemID) || null;
+    },
+
+    /**
+     * Find the PDF to work on and return { item, path }, or null.
+     *
+     * The PDF open in the active reader tab comes first. Otherwise (the
+     * library is showing, or the reader holds something other than a PDF)
+     * the selected item is used, unless options.readerOnly is set: the
+     * attachment itself, or the first PDF of a regular item. The background
+     * scan passes readerOnly, so browsing the library never triggers a scan.
      *
      * @returns {Promise<{ item: _ZoteroTypes.Item, path: string }|null>}
      */
-    async _getCurrentAttachment() {
-        // Attempt to use the currently selected reader tab if present.
+    async _getCurrentAttachment(options) {
+        options = options || {};
         try {
-            const Zotero_Tabs = this._getGlobal('Zotero_Tabs');
-            if (Zotero_Tabs && Zotero_Tabs.selectedType === 'reader') {
-                const reader = Zotero.Reader.getByTabID(Zotero_Tabs.selectedID);
-                if (reader && reader._attachment) {
-                    const attachment = reader._attachment; // _attachment is a Zotero item
-                    // Support both synchronous and asynchronous file path retrieval.
-                    let path;
-                    if (typeof attachment.getFilePath === 'function') {
-                        path = attachment.getFilePath();
-                    }
-                    if (!path && typeof attachment.getFilePathAsync === 'function') {
-                        try {
-                            path = await attachment.getFilePathAsync();
-                        } catch (e) {
-                            // ignore
-                        }
-                    }
-                    if (path) {
-                        return { item: attachment, path };
-                    }
-                }
+            const itemID = this._activeReaderItemID();
+            if (itemID) {
+                const found = await this._pdfAttachmentInfo(await Zotero.Items.getAsync(itemID));
+                if (found) return found;
             }
         } catch (e) {
-            // ignore errors from internal APIs
+            this.log('Could not read the active reader tab: ' + e);
         }
-        // Fallback: use selected item in the library pane
+        if (options.readerOnly) return null;
+
         const pane = Zotero.getActiveZoteroPane();
         if (!pane) return null;
         const sel = pane.getSelectedItems();
         if (!sel || !sel.length) return null;
-        let item = sel[0];
-        // If the selected item is an attachment, use it directly; otherwise
-        // pick the first attachment child.
+        const item = sel[0];
         if (item.isAttachment && item.isAttachment()) {
-            // Determine attachment path using sync or async methods
-            let path;
-            if (typeof item.getFilePath === 'function') {
-                path = item.getFilePath();
-            }
-            if (!path && typeof item.getFilePathAsync === 'function') {
-                try {
-                    path = await item.getFilePathAsync();
-                } catch (e) {}
-            }
-            if (path && item.attachmentMIMEType && item.attachmentMIMEType.includes('pdf')) {
-                return { item, path };
-            }
+            const found = await this._pdfAttachmentInfo(item);
+            if (found) return found;
         }
-        // For a regular item, pick its first PDF attachment
         const attachments = item.getAttachments ? item.getAttachments() : [];
-        for (let id of attachments) {
-            const att = await Zotero.Items.getAsync(id);
-            if (att && att.isAttachment() && att.attachmentMIMEType && att.attachmentMIMEType.includes('pdf')) {
-                // Determine path using sync or async methods
-                let path;
-                if (typeof att.getFilePath === 'function') {
-                    path = att.getFilePath();
-                }
-                if (!path && typeof att.getFilePathAsync === 'function') {
-                    try {
-                        path = await att.getFilePathAsync();
-                    } catch (e) {}
-                }
-                if (path) {
-                    return { item: att, path };
-                }
-            }
+        for (const id of attachments) {
+            const found = await this._pdfAttachmentInfo(await Zotero.Items.getAsync(id));
+            if (found) return found;
         }
         return null;
     },
 
-    /**
-     * Extract text from a PDF at the given file path using Zotero's
-     * bundled copy of pdf.js.  Returns the concatenated text from all
-     * pages.  If pdf.js cannot be loaded an error is thrown.
-     *
-     * @param {string} path Absolute filesystem path to the PDF file
-     * @returns {Promise<string>} Concatenated text
-     */
-    async _extractText(path) {
-        /*
-         * Extract text from a PDF.  On newer versions of Zotero, the bundled
-         * pdf.js library is not always available or may throw errors due to
-         * changes in the browser environment.  As a first attempt we use
-         * Zotero's internal PDF processing worker, which exposes a
-         * `getFulltext` action via a web worker.  If this fails we fall
-         * back to loading pdf.js from the known resource locations.  The
-         * fallback retains the previous behaviour for compatibility with
-         * Zotero 7/8.
-         */
-        // First attempt: use the built‑in pdfWorker to get full text
-        try {
-            // Import IOUtils for reading the file into an ArrayBuffer
-            const { IOUtils } = await ChromeUtils.importESModule('resource://gre/modules/IOUtils.sys.mjs');
-            // Read the file from disk.  `IOUtils.read` returns a Uint8Array.
-            const data = await IOUtils.read(path);
-            // Slice the underlying ArrayBuffer to the actual byte range.
-            const buffer = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
-            const text = await new Promise((resolve, reject) => {
-                // Spawn the Zotero PDF worker.  This worker supports a
-                // `getFulltext` action which returns the extracted text of
-                // a PDF.  See the Chartero plugin for an example of usage.
-                let worker;
-                try {
-                    worker = new Worker('chrome://zotero/content/xpcom/pdfWorker/worker.js');
-                } catch (e) {
-                    reject(e);
-                    return;
-                }
-                worker.onmessage = event => {
-                    try {
-                        // The worker response includes the full text in
-                        // event.data.data.  Resolve with an empty string if
-                        // undefined.
-                        const result = (event.data && event.data.data) || '';
-                        resolve(result);
-                    } finally {
-                        worker.terminate();
-                    }
-                };
-                worker.onerror = err => {
-                    worker.terminate();
-                    reject(err);
-                };
-                // Post message with the file buffer.  Transfer the buffer
-                // so it is not copied.
-                worker.postMessage({ id: 0, action: 'getFulltext', data: { buf: buffer } }, [buffer]);
-            });
-            if (text && typeof text === 'string' && text.trim().length) {
-                return text;
-            }
-            // If worker returns an empty string, fall through to pdf.js.
-        } catch (err) {
-            // Log but ignore the error; we'll try pdf.js next.
-            this.log('pdfWorker extraction failed: ' + err);
+    /** { item, path } for a PDF attachment whose file path is known, else null. */
+    async _pdfAttachmentInfo(att) {
+        if (!att || !att.isAttachment || !att.isAttachment()) return null;
+        if (!att.attachmentMIMEType || !att.attachmentMIMEType.includes('pdf')) return null;
+        let path;
+        if (typeof att.getFilePath === 'function') path = att.getFilePath();
+        if (!path && typeof att.getFilePathAsync === 'function') {
+            try { path = await att.getFilePathAsync(); } catch (e) {}
         }
-        // Second attempt: use the bundled pdf.js library.  We try several
-        // module specifiers because Zotero has moved pdf.js in different
-        // versions.
-        let pdfjsLib;
-        const importErrors = [];
-        const candidates = [
-            'resource://pdf.js/build/pdf.mjs',
-            'resource://zotero/reader/pdf/build/pdf.mjs',
-            'resource://zotero/pdfjs/build/pdf.mjs',
-            'resource://zotero/pdf.js/build/pdf.mjs'
-        ];
-        for (const spec of candidates) {
-            try {
-                const module = await ChromeUtils.importESModule(spec);
-                if (module && module.pdfjsLib) {
-                    pdfjsLib = module.pdfjsLib;
-                    break;
-                }
-            } catch (e) {
-                importErrors.push(e);
-            }
-        }
-        if (!pdfjsLib) {
-            throw new Error('Unable to load pdf.js library. Tried: ' + candidates.join(', '));
-        }
-        // Configure workerSrc.  Without this pdf.js may try to load a worker
-        // from a remote URL, which is disallowed in the Zotero context.
-        try {
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'resource://pdf.js/build/pdf.worker.mjs';
-        } catch (e) {
-            // Non‑fatal; if setting workerSrc fails pdf.js will run in the
-            // main thread.
-        }
-        // Use a file URI for loading the PDF.  `pathToFileURI` handles
-        // platform‑specific encoding.
-        const url = Zotero.File.pathToFileURI(path);
-        const loadingTask = pdfjsLib.getDocument({ url });
-        const pdf = await loadingTask.promise;
-        let text = '';
-        for (let i = 1; i <= pdf.numPages; i++) {
-            const page = await pdf.getPage(i);
-            const content = await page.getTextContent();
-            // Concatenate the strings for the page, separated by spaces.
-            const strings = content.items.map(item => item.str);
-            text += strings.join(' ') + '\n';
-        }
-        return text;
+        return path ? { item: att, path } : null;
     },
 
     /**
@@ -1591,9 +1610,10 @@ var AbbreviationHelper = {
      * abbreviation-definition pairs.  Patterns are designed to catch
      * common academic conventions such as "Full Term (FT)", "Full Term
      * [FT]", "Full Term, hereafter FT" and "Full Term, abbreviated as FT".
-     * Only abbreviations of 2–10 uppercase letters, optionally with
-     * hyphens or numbers, are considered.  Later occurrences of the
-     * same abbreviation are ignored.
+     * Short forms of 2–16 characters are considered, including mixed-case
+     * ones (sgRNA, dCas9) that must align with their long form; the phases
+     * are listed at the top of the function.  Only the first definition of
+     * an abbreviation is kept.
      *
      * @param {string} text Text extracted from the PDF
      * @returns {Array<{ abbr: string, term: string }>}
@@ -2112,9 +2132,8 @@ var AbbreviationHelper = {
     },
 
     /**
-     * Display detected abbreviation pairs in a modal dialog defined by
-     * abbreviation-dialog.xhtml.  If no pairs are detected a simple
-     * notification is shown instead.
+     * Copy the detected pairs to the clipboard and show a preview of the
+     * first 35 in an alert. If nothing was detected, say so instead.
      *
      * @param {Array<{ abbr: string, term: string }> } pairs Array of
      * abbreviation-definition objects
@@ -2161,8 +2180,8 @@ var AbbreviationHelper = {
      * Enable/disable hover tooltips.  Hover integration is intentionally
      * optional because it touches the Zotero reader DOM, which is less stable
      * than the PDF text extraction and menu APIs.  When enabling, we silently
-     * scan the active PDF if needed and then attach mouse listeners to reader
-     * documents that contain PDF.js text-layer spans.
+     * scan the PDF open in the reader and then attach mouse listeners to
+     * reader documents that contain PDF.js text-layer spans.
      */
     /* ---- Hover tooltips in the Zotero reader ---- */
     async toggleHover(window, menuitem) {
@@ -2174,16 +2193,21 @@ var AbbreviationHelper = {
             return;
         }
 
-        // Quietly scan/load the current PDF when hover is turned on. Do not
-        // show a popup here; the scan command still shows the normal dialog.
+        // Quietly scan the PDF open in the reader when hover is turned on. Do
+        // not show a popup here; the scan command still shows the normal one.
         try {
-            await this.scanCurrent({ silent: true });
+            await this.scanCurrent({ silent: true, readerOnly: true });
         } catch (e) {
             this.log('Silent scan while enabling hover failed: ' + e);
         }
         this._installHoverForAllWindows();
     },
 
+    /**
+     * Start the background scan: right away when a reader tab is selected,
+     * plus a check every 2.5 s as a safety net and to attach hover listeners
+     * to reader pages that finish rendering later.
+     */
     _startAutoScanTimer() {
         if (this.autoScanTimer) return;
         this.autoScanTimer = setInterval(() => {
@@ -2196,6 +2220,7 @@ var AbbreviationHelper = {
             this.autoScanFirstRun = null;
             this._autoScanActiveReader().catch(e => this.log('Initial auto-scan failed: ' + e));
         }, 1200);
+        this._watchTabs();
     },
 
     _stopAutoScanTimer() {
@@ -2207,92 +2232,161 @@ var AbbreviationHelper = {
             clearTimeout(this.autoScanFirstRun);
             this.autoScanFirstRun = null;
         }
+        this._unwatchTabs();
         this.autoScanInProgress = false;
+        this._autoScanAgain = false;
     },
 
-    async _autoScanActiveReader() {
-        if (!this.hoverEnabled || this.autoScanInProgress) return;
-        try { await this._dictionariesReady; } catch (e) {}
-        let info = null;
+    /**
+     * Rescan as soon as the user switches to (or loads) a reader tab, so the
+     * meanings shown always belong to the paper on screen. Zotero announces
+     * tab changes through its notifier in every supported version; if this
+     * cannot be set up, the 2.5 s timer still catches up.
+     */
+    _watchTabs() {
+        if (this._tabObserverID) return;
         try {
-            info = await this._getCurrentAttachment();
+            if (!Zotero.Notifier || typeof Zotero.Notifier.registerObserver !== 'function') return;
+            this._tabObserverID = Zotero.Notifier.registerObserver({
+                notify: (event, type) => {
+                    if (this._stopped || type !== 'tab') return;
+                    if (event !== 'select' && event !== 'load') return;
+                    // Read the new tab once Zotero has finished switching to it.
+                    setTimeout(() => {
+                        this._autoScanActiveReader().catch(e => this.log('Auto-scan after a tab change failed: ' + e));
+                    }, 100);
+                }
+            }, ['tab'], 'abbreviationHelper');
         } catch (e) {
-            this.log('Could not inspect active reader for auto-scan: ' + e);
-            return;
+            this._tabObserverID = null;
+            this.log('Could not watch tab changes; relying on the timer: ' + e);
         }
-        if (!info || !info.item) return;
+    },
 
-        const itemID = info.item.id;
-        if (itemID === this.activeHoverItemID && this.activeHoverMap && this.activeHoverMap.size) {
-            if (!this.hoverDocs || !this.hoverDocs.length) this._installHoverForAllWindows();
-            return;
-        }
-
-        this.autoScanInProgress = true;
+    _unwatchTabs() {
         try {
-            let pairs;
-            if (this.cache.has(itemID)) {
-                pairs = this.cache.get(itemID);
-            } else {
-                const text = await this._extractTextForItem(info.item, info.path);
-                pairs = this._detectAbbreviations(text);
-                this._cacheResult(itemID, pairs);
-                this.log(`Auto-scanned item ${itemID}: ${pairs.length} abbreviation definitions found.`);
+            if (this._tabObserverID && Zotero.Notifier && Zotero.Notifier.unregisterObserver) {
+                Zotero.Notifier.unregisterObserver(this._tabObserverID);
             }
+        } catch (e) {}
+        this._tabObserverID = null;
+    },
+
+    /**
+     * Make sure the meanings in use belong to the PDF open in the active
+     * reader tab. Only the reader counts: browsing the library never starts a
+     * scan. Called by the timer, on tab changes and after settings change.
+     */
+    async _autoScanActiveReader() {
+        if (this._stopped || !this.hoverEnabled) return;
+        // One scan at a time; a request that arrives meanwhile (a quick second
+        // tab switch, say) runs once the current scan has finished.
+        if (this.autoScanInProgress) {
+            this._autoScanAgain = true;
+            return;
+        }
+        this.autoScanInProgress = true;
+        let itemID = null;
+        try {
+            try { await this._dictionariesReady; } catch (e) {}
+            if (this._stopped) return;
+            let info = null;
+            try {
+                info = await this._getCurrentAttachment({ readerOnly: true });
+            } catch (e) {
+                this.log('Could not inspect active reader for auto-scan: ' + e);
+                return;
+            }
+            if (this._stopped || !info || !info.item) return;
+
+            itemID = info.item.id;
+            if (itemID === this.activeHoverItemID) {
+                // Already showing this paper (even if it defines nothing).
+                // Only attach listeners to reader pages rendered since.
+                this._installHoverForAllWindows();
+                return;
+            }
+            // A PDF that just failed (no file yet, password, …) is retried
+            // after 30 s rather than on every tick.
+            const failed = this._lastAutoScanFailure;
+            if (failed && failed.itemID === itemID && Date.now() - failed.time < 30000) return;
+
+            const pairs = await this._pairsForItem(info.item, info.path);
+            if (this._stopped) return;
+            this._lastAutoScanFailure = null;
             this._setActiveHoverPairs(itemID, pairs);
             this._installHoverForAllWindows();
         } catch (e) {
+            if (itemID != null) this._lastAutoScanFailure = { itemID, time: Date.now() };
             this.log('Auto-scan extraction/detection failed: ' + e);
         } finally {
             this.autoScanInProgress = false;
+            if (this._autoScanAgain && !this._stopped) {
+                this._autoScanAgain = false;
+                this._autoScanActiveReader().catch(e => this.log('Auto-scan failed: ' + e));
+            }
         }
     },
 
     _setActiveHoverPairs(itemID, pairs) {
         this.activeHoverItemID = itemID;
         this.activeHoverMap = this._buildHoverMap(pairs || []);
+        // The meanings changed, so the next mouse move redraws the tooltip.
+        this._renderedSig = null;
+        this._mapGeneration = (this._mapGeneration || 0) + 1;
     },
 
     _buildHoverMap(pairs) {
         const map = new Map();
+        const entries = [];
         for (let pair of pairs || []) {
             if (!pair || !pair.abbr || !pair.term) continue;
             const abbr = String(pair.abbr).trim();
             const term = String(pair.term).trim();
             if (!abbr || !term) continue;
-            map.set(abbr, term);
+            entries.push([abbr, term]);
+        }
+        // Every short form exactly as detected goes in first, so a variant
+        // made from one entry can never replace another entry of the paper:
+        // the "Ab" variant of "Aβ" must not overwrite "Ab = antibody".
+        for (const [abbr, term] of entries) map.set(abbr, term);
+        const addVariant = (key, term) => {
+            if (key && !map.has(key)) map.set(key, term);
+        };
+        for (const [abbr, term] of entries) {
             // Common PDF extraction/reader variants
-            map.set(abbr.replace(/β/g, 'b').replace(/Β/g, 'B'), term);
-            map.set(abbr.replace(/-/g, '‑'), term);
-            map.set(abbr.replace(/‑/g, '-'), term);
+            addVariant(abbr.replace(/β/g, 'b').replace(/Β/g, 'B'), term);
+            addVariant(abbr.replace(/-/g, '‑'), term);
+            addVariant(abbr.replace(/‑/g, '-'), term);
             // Plural handling: academic papers often define only one number
             // but use both forms while reading, e.g. “extracellular vesicles
             // (EVs)” followed by “EV”, or “extracellular vesicle (EV)”
             // followed by “EVs”.  Add both aliases to the hover map without
             // changing the detected/displayed entry.
-            const singular = (typeof this.singularShortForm === 'function') ? this.singularShortForm(abbr) : '';
-            if (singular && !map.has(singular)) map.set(singular, term);
+            addVariant(this.singularShortForm(abbr), term);
             if (!abbr.endsWith('s')) {
-                for (const plural of [abbr + 's', abbr + 'S']) {
-                    if (!map.has(plural)) map.set(plural, term);
-                }
+                addVariant(abbr + 's', term);
+                addVariant(abbr + 'S', term);
             }
         }
         return map;
     },
 
+    /** The same rule the detector uses (see the singularShortForm function above). */
     singularShortForm(abbr) {
-        if (!abbr || !String(abbr).endsWith('s')) return '';
-        const base = String(abbr).slice(0, -1);
-        if (/[a-z]$/.test(String(abbr)) && /[A-Z]/.test(base)) return base;
-        if (/^[A-Z0-9\-\/]{2,}$/.test(String(abbr)) && /^[A-Z0-9\-\/]{2,}$/.test(base)) return base;
-        return '';
+        return singularShortForm(String(abbr || ''));
     },
 
+    /**
+     * Attach hover listeners to every reader page that shows PDF text and does
+     * not have them yet. Listeners stay attached while the meanings change
+     * (they always read the current map), so this never tears anything down
+     * and is cheap to call often.
+     */
     _installHoverForAllWindows() {
-        this._removeHoverListeners();
-        if (!this.hoverEnabled) return;
+        if (this._stopped || !this.hoverEnabled) return;
         if ((!this.activeHoverMap || !this.activeHoverMap.size) && !this._enabledDatabases().length) return;
+        this._pruneHoverDocs();
         let windows = [];
         try { windows = Zotero.getMainWindows(); } catch (e) { windows = []; }
         for (let win of windows) {
@@ -2304,28 +2398,38 @@ var AbbreviationHelper = {
         const docs = this._getReaderDocuments(window);
         for (let doc of docs) {
             if (!doc || !doc.body) continue;
+            if (this.hoverDocs.some(rec => rec.doc === doc)) continue;
             // Avoid attaching to Zotero chrome documents without PDF text.
             // PDF.js pages usually expose .textLayer; Zotero reader builds may
             // vary, so we also accept documents with many text-layer-ish spans.
             const hasTextLayer = !!doc.querySelector('.textLayer, .page .textLayer, [class*="textLayer"]');
             if (!hasTextLayer) continue;
             const move = (event) => this._onReaderMouseMove(doc, event);
-            const out = () => this._hideHoverTooltip(doc);
-            const scroll = () => this._hideHoverTooltip(doc);
+            const out = (event) => this._onReaderMouseLeave(doc, event);
+            const scroll = () => this._forgetHover(doc);
             const click = (event) => this._onReaderClick(doc, event);
             const keydown = (event) => this._onReaderKeyDown(doc, event);
             const keyup = (event) => this._onReaderKeyUp(doc, event);
             const blur = () => this._onReaderBlur(doc);
+            // Key-up is listened for on the window only: it sees every key-up
+            // the document does, so listening on both ran the handler twice.
+            const keyTarget = doc.defaultView || doc;
             doc.addEventListener('mousemove', move, true);
             doc.addEventListener('mouseleave', out, true);
             doc.addEventListener('scroll', scroll, true);
             doc.addEventListener('click', click, true);
             doc.addEventListener('keydown', keydown, true);
-            doc.addEventListener('keyup', keyup, true);
-            try { if (doc.defaultView) doc.defaultView.addEventListener('keyup', keyup, true); } catch (e) {}
+            keyTarget.addEventListener('keyup', keyup, true);
             try { if (doc.defaultView) doc.defaultView.addEventListener('blur', blur, true); } catch (e) {}
-            this.hoverDocs.push({ doc, move, out, scroll, click, keydown, keyup, blur });
+            this.hoverDocs.push({ doc, move, out, scroll, click, keydown, keyup, keyTarget, blur });
         }
+    },
+
+    /** Forget reader pages that have gone away (a closed tab, a reloaded PDF). */
+    _pruneHoverDocs() {
+        this.hoverDocs = (this.hoverDocs || []).filter(rec => {
+            try { return !!(rec.doc && rec.doc.defaultView); } catch (e) { return false; }
+        });
     },
 
     _getReaderDocuments(window) {
@@ -2359,20 +2463,54 @@ var AbbreviationHelper = {
                 rec.doc.removeEventListener('scroll', rec.scroll, true);
                 if (rec.click) rec.doc.removeEventListener('click', rec.click, true);
                 if (rec.keydown) rec.doc.removeEventListener('keydown', rec.keydown, true);
-                if (rec.keyup) rec.doc.removeEventListener('keyup', rec.keyup, true);
-                try { if (rec.doc.defaultView && rec.keyup) rec.doc.defaultView.removeEventListener('keyup', rec.keyup, true); } catch (e) {}
+                if (rec.keyup) (rec.keyTarget || rec.doc).removeEventListener('keyup', rec.keyup, true);
                 try { if (rec.doc.defaultView && rec.blur) rec.doc.defaultView.removeEventListener('blur', rec.blur, true); } catch (e) {}
                 this._hideHoverTooltip(rec.doc);
+                // Take the tooltip out of the page too, so nothing of the
+                // plugin is left behind once hover is off or it is disabled.
+                const tip = rec.doc.getElementById('abbreviation-helper-tooltip');
+                if (tip && tip.parentNode) tip.parentNode.removeChild(tip);
             } catch (e) {}
         }
         this.hoverDocs = [];
+        this.lastHoverState = null;
     },
 
     _onReaderMouseMove(doc, event) {
-        if (!this.hoverEnabled) return;
+        if (!this.hoverEnabled || this._stopped) return;
         this._updateModifierState(event);
+        const x = event.clientX, y = event.clientY;
 
-        const token = this._wordAtPoint(doc, event.clientX, event.clientY, event.target);
+        // Over the tooltip itself. Only a tooltip with database links can be
+        // under the pointer (a plain one lets the mouse pass through), and it
+        // stays open so the links can be clicked.
+        if (this._eventInTooltip(doc, event)) {
+            this._cancelHoverHide();
+            this._clearCorridor();
+            return;
+        }
+        // On the way from the word to a tooltip with links: hold it still for
+        // a moment so the pointer can reach it across other words.
+        if (this._inTooltipCorridor(doc, x, y)) {
+            this._cancelHoverHide();
+            this._pendingHover = { doc, x, y, target: event.target || null };
+            if (!this._corridorTimer) {
+                this._corridorTimer = setTimeout(() => {
+                    this._corridorTimer = null;
+                    const p = this._pendingHover;
+                    this._pendingHover = null;
+                    if (p && !this._stopped) this._hoverAt(p.doc, p.x, p.y, p.target);
+                }, this.CORRIDOR_MS);
+            }
+            return;
+        }
+        this._clearCorridor();
+        this._hoverAt(doc, x, y, event.target || null);
+    },
+
+    /** Show, keep or hide the tooltip for whatever is under (x, y). */
+    _hoverAt(doc, x, y, target) {
+        const token = this._wordAtPoint(doc, x, y, target);
         if (!token) {
             this.lastHoverState = null;
             this._scheduleHoverHide(doc, 120);
@@ -2380,18 +2518,82 @@ var AbbreviationHelper = {
         }
         this._cancelHoverHide();
 
-        const term = (this.activeHoverMap && this.activeHoverMap.size) ? this._lookupHoverTerm(token) : null;
-        const dbToken = this._databaseLookupCandidateAtPoint(doc, event.clientX, event.clientY, event.target, token) || token;
-        this.lastHoverState = {
-            doc,
-            x: event.clientX,
-            y: event.clientY,
-            token,
-            dbToken,
-            term,
-            target: event.target || null
-        };
+        // Still on the word the tooltip already shows: only follow the
+        // pointer, without rebuilding the tooltip. A tooltip with links stays
+        // put so it can be reached.
+        const state = this.lastHoverState;
+        if (state && state.doc === doc && state.token === token && state.target === target
+            && this._renderedSig === this._hoverSignature(token) && this._isHoverTooltipVisible(doc)) {
+            state.x = x;
+            state.y = y;
+            if (!this.hoverInteractiveTooltip) this._moveHoverTooltip(doc, x, y);
+            return;
+        }
+
+        this.lastHoverState = { doc, x, y, token, dbToken: undefined, term: null, target };
         this._renderHoverFromState(this.lastHoverState);
+    },
+
+    /**
+     * The pointer left an element. Only leaving the reader page itself (no
+     * element to go to) closes the tooltip; moving between words, or onto a
+     * tooltip with links, is handled by the mouse-move handler.
+     */
+    _onReaderMouseLeave(doc, event) {
+        if (event && event.relatedTarget) return;
+        this._forgetHover(doc);
+    },
+
+    /**
+     * Hide the tooltip and forget the word it was for, so pressing a modifier
+     * key or changing a setting later cannot bring it back at a stale place.
+     */
+    _forgetHover(doc) {
+        this.lastHoverState = null;
+        this._hideHoverTooltip(doc);
+    },
+
+    _eventInTooltip(doc, event) {
+        try {
+            const tip = doc.getElementById('abbreviation-helper-tooltip');
+            return !!(tip && event && event.target && tip.contains(event.target));
+        } catch (e) {
+            return false;
+        }
+    },
+
+    /**
+     * True when (x, y) lies on the way from the hovered word to a visible
+     * tooltip with links: inside the triangle from the point where the word
+     * was hovered to the tooltip's near edge, widened by 24 px on each side.
+     */
+    _inTooltipCorridor(doc, x, y) {
+        if (!this.hoverInteractiveTooltip || this.hoverPinnedDoc !== doc) return false;
+        const a = this.hoverAnchor, b = this._tipBox;
+        if (!a || !b || b.doc !== doc || !this._isHoverTooltipVisible(doc)) return false;
+        const edgeY = (b.top >= a.y) ? b.top : b.top + b.height;
+        const left = b.left - 24, right = b.left + b.width + 24;
+        const side = (px, py, qx, qy, rx, ry) => (px - rx) * (qy - ry) - (qx - rx) * (py - ry);
+        const d1 = side(x, y, a.x, a.y, left, edgeY);
+        const d2 = side(x, y, left, edgeY, right, edgeY);
+        const d3 = side(x, y, right, edgeY, a.x, a.y);
+        const hasNeg = d1 < 0 || d2 < 0 || d3 < 0;
+        const hasPos = d1 > 0 || d2 > 0 || d3 > 0;
+        return !(hasNeg && hasPos);
+    },
+
+    _clearCorridor() {
+        if (this._corridorTimer) {
+            clearTimeout(this._corridorTimer);
+            this._corridorTimer = null;
+        }
+        this._pendingHover = null;
+    },
+
+    /** What the visible tooltip depends on besides position. */
+    _hoverSignature(token) {
+        const m = this.modifierState || {};
+        return [token, !!m.shift, !!m.ctrl, !!m.alt, !!m.meta, this._mapGeneration || 0].join('|');
     },
 
     /** True on macOS; used only to label keys the way the platform names them. */
@@ -2461,30 +2663,46 @@ var AbbreviationHelper = {
         if (!state || !state.doc || !state.token) return;
         const doc = state.doc;
         const token = state.token;
-        const term = state.term;
 
         if (!this._modifierSatisfied(this.tooltipModifier)) {
             this._hideHoverTooltip(doc);
             return;
         }
 
+        // Looked up now rather than when the mouse moved, so a tooltip redrawn
+        // later (a modifier key pressed, a setting changed) uses the current
+        // meanings.
+        const term = (this.activeHoverMap && this.activeHoverMap.size) ? this._lookupHoverTerm(token) : null;
+        state.term = term;
+
+        // The multi-word database phrase is only worked out when links may
+        // actually be shown, then remembered for this word.
         const dbAllowed = this._databaseLinksCurrentlyAllowed();
-        const lookupToken = state.dbToken || token;
-        const dbInfo = dbAllowed ? this._lookupDatabaseLinks(lookupToken) : null;
+        let dbInfo = null;
+        if (dbAllowed) {
+            if (state.dbToken === undefined) {
+                state.dbToken = this._databaseLookupCandidateAtPoint(doc, state.x, state.y, state.target, token) || token;
+            }
+            dbInfo = this._lookupDatabaseLinks(state.dbToken || token);
+        }
         const includeDbWithAbbr = !!(term && dbInfo && this.databaseLinksOnAbbreviations);
 
         if (term) {
+            this.lastHoveredToken = token;
             this._showHoverTooltip(doc, state.x, state.y, token, term,
                 { groups: includeDbWithAbbr ? dbInfo.groups : null });
+            this._renderedSig = this._hoverSignature(token);
             return;
         }
 
         if (!dbInfo) {
+            this._renderedSig = null;
             this._scheduleHoverHide(doc, 120);
             return;
         }
 
         this._showDatabaseTooltip(doc, state.x, state.y, dbInfo);
+        this._renderedSig = this._hoverSignature(token);
     },
 
     _refreshHoverFromLastState(docHint) {
@@ -2526,16 +2744,8 @@ var AbbreviationHelper = {
             const cleanBase = this._cleanDatabaseLookupToken(baseToken, 64);
             if (!cleanBase) return '';
 
-            const bioHeadNouns = this._bioLookupHeadNouns().join('|');
-            // Keep phrase lookup narrow.  The previous version allowed normal
-            // lowercase words before and after the biological phrase, so hovering
-            // near "HMG CoA synthase" could produce "enzyme HMG CoA synthase
-            // in the".  Here the phrase must start with a code-like/biochemical
-            // anchor and end at a biological head noun.  This catches terms such
-            // as "HMG CoA synthase" without swallowing surrounding prose.
-            const anchorWord = '(?:[A-Z]{2,10}|[A-Z]+\\d+[A-Za-z0-9]*|[A-Z][a-z]{1,4}[A-Z][A-Za-z0-9]{0,8}|[A-Z]{1,4}[αβγδκ][A-Za-z0-9-]*|[αβγδκ][A-Za-z0-9-]*|CoA|NADH?|NADPH?|FADH?|ATP|ADP|AMP|GTP|GDP|cAMP|cGMP)';
-            const midWord = '(?:' + anchorWord + '|[A-Z][a-z]{1,20}|[a-z]{2,20})';
-            const re = new RegExp('\\b' + anchorWord + '(?:[ \\-]+(?:' + midWord + ')){0,4}[ \\-]+(?:' + bioHeadNouns + ')\\b', 'g');
+            const re = this._dbPhraseRegex();
+            re.lastIndex = 0;
             let m;
             while ((m = re.exec(text))) {
                 const phrase = String(m[0] || '').replace(/\s+/g, ' ').trim();
@@ -2545,6 +2755,36 @@ var AbbreviationHelper = {
             }
         } catch (e) {}
         return '';
+    },
+
+    /**
+     * The multi-word lookup phrase pattern, built once.
+     *
+     * Keep phrase lookup narrow.  The previous version allowed normal
+     * lowercase words before and after the biological phrase, so hovering
+     * near "HMG CoA synthase" could produce "enzyme HMG CoA synthase
+     * in the".  Here the phrase must start with a code-like/biochemical
+     * anchor and end at a biological head noun.  This catches terms such
+     * as "HMG CoA synthase" without swallowing surrounding prose.
+     *
+     * It has the g flag, so callers reset lastIndex before using it.
+     */
+    _dbPhraseRegex() {
+        if (!this._dbPhraseRe) {
+            const bioHeadNouns = this._bioLookupHeadNouns().join('|');
+            const anchorWord = '(?:[A-Z]{2,10}|[A-Z]+\\d+[A-Za-z0-9]*|[A-Z][a-z]{1,4}[A-Z][A-Za-z0-9]{0,8}|[A-Z]{1,4}[αβγδκ][A-Za-z0-9-]*|[αβγδκ][A-Za-z0-9-]*|CoA|NADH?|NADPH?|FADH?|ATP|ADP|AMP|GTP|GDP|cAMP|cGMP)';
+            const midWord = '(?:' + anchorWord + '|[A-Z][a-z]{1,20}|[a-z]{2,20})';
+            this._dbPhraseRe = new RegExp('\\b' + anchorWord + '(?:[ \\-]+(?:' + midWord + ')){0,4}[ \\-]+(?:' + bioHeadNouns + ')\\b', 'g');
+        }
+        return this._dbPhraseRe;
+    },
+
+    /** Whole-word match for a biological head noun, built once. */
+    _bioNounRegex() {
+        if (!this._bioNounRe) {
+            this._bioNounRe = new RegExp('^(?:' + this._bioLookupHeadNouns().join('|') + ')$', 'i');
+        }
+        return this._bioNounRe;
     },
 
     _bioLookupHeadNouns() {
@@ -2581,8 +2821,7 @@ var AbbreviationHelper = {
 
         // Biological head nouns. The phrase should end at the head noun, again
         // to avoid swallowing nearby lowercase text after the useful term.
-        const nounRe = new RegExp('^(?:' + this._bioLookupHeadNouns().join('|') + ')$', 'i');
-        if (!nounRe.test(parts[parts.length - 1])) return false;
+        if (!this._bioNounRegex().test(parts[parts.length - 1])) return false;
 
         // Require the phrase to include at least one lowercase-containing word
         // or a biochemical cofactor. This filters out runs of pure capitals.
@@ -2946,6 +3185,9 @@ var AbbreviationHelper = {
         const groups = (options && options.groups) || null;
         const interactive = !!(groups && groups.length);
         tip.dataset.abbreviationHelperInteractive = interactive ? 'true' : 'false';
+        // A tooltip with links must receive clicks; a plain one must not, so
+        // it never gets in the way of hovering or selecting the text below.
+        tip.style.pointerEvents = interactive ? 'auto' : 'none';
         this.hoverInteractiveTooltip = interactive;
         for (const g of groups || []) this._appendDatabaseLinks(doc, tip, g);
 
@@ -2966,6 +3208,7 @@ var AbbreviationHelper = {
         main.appendChild(doc.createTextNode(' \u2014 ' + (info.note || 'possible database match')));
         tip.appendChild(main);
         tip.dataset.abbreviationHelperInteractive = 'true';
+        tip.style.pointerEvents = 'auto';
         this.hoverInteractiveTooltip = true;
         for (const g of groups) this._appendDatabaseLinks(doc, tip, g);
         this._positionHoverTooltip(doc, tip, x, y);
@@ -3006,6 +3249,13 @@ var AbbreviationHelper = {
 
     _ensureHoverTooltip(doc) {
         let tip = doc.getElementById('abbreviation-helper-tooltip');
+        // A tooltip made by another copy of the plugin (an earlier version
+        // still open in a reader tab after an update) carries that copy's
+        // event handlers and look, so it is replaced rather than reused.
+        if (tip && tip.dataset && tip.dataset.abbreviationHelperOwner !== this._instanceToken) {
+            if (tip.parentNode) tip.parentNode.removeChild(tip);
+            tip = null;
+        }
         if (!tip) {
             tip = doc.createElement('div');
             tip.id = 'abbreviation-helper-tooltip';
@@ -3024,10 +3274,13 @@ var AbbreviationHelper = {
                 + '"Segoe UI", Cantarell, Ubuntu, "Liberation Sans", "DejaVu Sans", sans-serif';
             tip.style.lineHeight = '1.35';
             tip.style.boxShadow = '0 2px 8px rgba(0,0,0,.35)';
-            // Links need to be clickable.  Mousemove handling explicitly keeps
-            // the tooltip visible while the cursor is over it.
+            // The mouse passes through by default. A tooltip with database
+            // links switches this to 'auto' when shown (see _showHoverTooltip)
+            // so its links can be clicked; the handlers below then keep it
+            // open while the pointer is over it.
             tip.style.pointerEvents = 'none';
             tip.style.whiteSpace = 'normal';
+            tip.dataset.abbreviationHelperOwner = this._instanceToken;
             tip.addEventListener('mouseenter', () => {
                 this._cancelHoverHide();
             });
@@ -3055,6 +3308,34 @@ var AbbreviationHelper = {
         if (rect.bottom > vh - 8) top = Math.max(8, y - rect.height - margin);
         tip.style.left = left + 'px';
         tip.style.top = top + 'px';
+        // Remembered so the tooltip can follow the pointer without measuring
+        // it again, and so the way to a tooltip with links can be recognised.
+        this._tipBox = { doc, left, top, width: rect.width, height: rect.height };
+        this.hoverAnchor = { x, y };
+    },
+
+    /**
+     * Follow the pointer across the same word, using the size measured when
+     * the tooltip was drawn, so no layout has to be recalculated.
+     */
+    _moveHoverTooltip(doc, x, y) {
+        const b = this._tipBox;
+        if (!b || b.doc !== doc) return;
+        let tip = null;
+        try { tip = doc.getElementById('abbreviation-helper-tooltip'); } catch (e) {}
+        if (!tip) return;
+        const margin = 14;
+        const vw = doc.defaultView ? doc.defaultView.innerWidth : 1000;
+        const vh = doc.defaultView ? doc.defaultView.innerHeight : 800;
+        let left = x + margin;
+        let top = y + margin;
+        if (left + b.width > vw - 8) left = Math.max(8, x - b.width - margin);
+        if (top + b.height > vh - 8) top = Math.max(8, y - b.height - margin);
+        tip.style.left = left + 'px';
+        tip.style.top = top + 'px';
+        b.left = left;
+        b.top = top;
+        this.hoverAnchor = { x, y };
     },
 
     _isHoverTooltipVisible(doc) {
@@ -3079,7 +3360,7 @@ var AbbreviationHelper = {
         // Clicking anywhere else dismisses interactive link tooltips.  This is
         // what prevents sticky gene/protein tooltips from lingering forever,
         // while abbreviation-only hover tooltips keep their normal behavior.
-        if (this.hoverInteractiveTooltip) this._hideHoverTooltip(doc);
+        if (this.hoverInteractiveTooltip) this._forgetHover(doc);
     },
 
     _onReaderKeyDown(doc, event) {
@@ -3093,7 +3374,7 @@ var AbbreviationHelper = {
             return;
         }
         if (event.key === 'Escape') {
-            this._hideHoverTooltip(doc);
+            this._forgetHover(doc);
             return;
         }
 
@@ -3181,30 +3462,19 @@ var AbbreviationHelper = {
 
     _hideHoverTooltip(doc) {
         this._cancelHoverHide();
+        this._clearCorridor();
         this.hoverPinnedDoc = null;
         this.hoverInteractiveTooltip = false;
         this.activeGeneLinks = [];
+        this._renderedSig = null;
+        this.hoverAnchor = null;
         try {
             const tip = doc.getElementById('abbreviation-helper-tooltip');
             if (tip) {
                 tip.style.display = 'none';
+                tip.style.pointerEvents = 'none';
                 tip.dataset.abbreviationHelperInteractive = 'false';
             }
         } catch (e) {}
-    },
-
-
-    /**
-     * Retrieve a global value from the current context.  This helper
-     * function avoids errors if the global is undefined.
-     */
-    _getGlobal(name) {
-        // Retrieve a property from the stored global.  Fall back
-        // gracefully if it is undefined.
-        try {
-            return this._global && this._global[name];
-        } catch (e) {
-            return undefined;
-        }
     }
 };
