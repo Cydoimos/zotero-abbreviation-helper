@@ -23,9 +23,12 @@ folder holds only the paper lists, the export script and, later, the labels.
    paste all of `test-identifiers.txt` and press Enter. Zotero adds the papers
    and their PDFs. Do the same for the dev collection with
    `dev-identifiers.txt`, then drag in your own dev papers.
-3. Tools → Developer → Run JavaScript, paste `export-from-zotero.js`, press Run.
-   The texts are saved in `<Zotero data directory>/abbreviation-benchmark/` and
-   the folder opens. Papers without a PDF are listed; for those, right-click →
+3. Tools → Developer → Run JavaScript, paste `export-from-zotero.js`, keep
+   "Run as async function" ticked, press Run. When it has finished, the result
+   appears in the "Return value" box (if no collection matched, it lists your
+   collection names). The texts are saved in
+   `<Zotero data directory>/abbreviation-benchmark/` and the folder opens in the
+   Finder. Papers without a PDF are listed; for those, right-click →
    Find Full Text (or download the PDF in your browser and drag it onto the
    paper), then run the script again.
 
