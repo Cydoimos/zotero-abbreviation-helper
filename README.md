@@ -34,7 +34,8 @@ Works on **macOS, Windows and Linux**. Requires **Zotero 7 or newer**
 
 Open a PDF in the Zotero reader. The plugin scans it in the background; hover over any
 abbreviation to see its meaning. Only the PDF in the reader tab you are looking at is
-scanned, and switching tabs switches the meanings with it.
+scanned, and switching tabs switches the meanings with it. Tooltips also work in Zotero
+10's Reading Mode for PDFs, which shows the same paper as reflowed text.
 
 ### Settings
 
@@ -128,9 +129,14 @@ abbreviations:
 
 Before that, reference-list lines are dropped one by one, so Methods sections placed
 after the references are still read. Running page headers and footers are removed too,
-so a definition split across two pages is still found. A curated glossary supplies
-well-known abbreviations that a paper uses at least twice but never defines. Ambiguous
-entries need contextual support.
+so a definition split across two pages is still found.
+
+A curated glossary supplies well-known abbreviations that a paper uses at least twice
+but never defines. A definition the paper gives always wins. Entries whose meaning
+depends on the field (EM, NTA, MHC, ER, TCA) appear only when words from their field
+occur in the paper. They never appear where the paper defines the abbreviation itself,
+even when that definition cannot be read, unless the paper also writes the glossary
+meaning out.
 
 Everything runs locally. No network requests are made except when you click a database
 link.
@@ -155,8 +161,10 @@ this one does:
 The bundled dictionary in `data/abbreviations.json` was written by hand for this
 project. It is not extracted from, derived from, or a copy of any external
 abbreviation database, and carries no third-party licence obligations. It holds
-common scientific abbreviations (DNA, PCR, ELISA and similar) plus a small set
-of terms used only to normalise definitions a paper already provides.
+common scientific abbreviations (DNA, PCR, ELISA and similar). Each is marked as
+unambiguous across fields or as field-dependent, with the words that identify its
+field. A small set of other terms is used only to normalise definitions a paper
+already provides.
 
 The detection method extends the published Schwartz–Hearst algorithm, cited
 above; the implementation here is original.
@@ -169,16 +177,16 @@ Measured with the benchmark in `eval/benchmark/`, which has its own labelling ru
 
 | | dev (36 papers) | test (39 papers) |
 |---|---|---|
-| Defined abbreviations found | 87.3 % | 84.8 % |
-| Meaning correct, when found | 95.6 % | 96.7 % |
-| Undefined ones found through the glossary | 63.4 % | 45.9 % |
-| Outputs that are right (precision) | 99.9 % | 94.6 % |
+| Defined abbreviations found | 88.6 % | 86.7 % (82.8–90.4) |
+| Meaning correct, when found | 96.7 % | 96.6 % (94.5–98.3) |
+| Undefined ones found through the glossary | 91.6 % | 53.5 % (39.2–67.1) |
+| Outputs that are right (precision) | 99.9 % | 94.1 % (90.4–96.8) |
 
-The previous detector (2.1.0) scored 82.6 %, 95.0 %, 42.9 % and 98.7 % on the test set.
-One caveat applies to the comparison. Each set's labels were checked once against a
-detector's output, then corrected where the text showed the labels were wrong. Dev was
-checked against this detector and test against the previous one. That checking flatters
-precision for whichever detector it was done with.
+The ranges are 95 % intervals from resampling papers. Version 2.1.0 scored 82.6 %, 95.0 %,
+42.9 % and 98.7 % on the test set. The dev figures flatter this version: the glossary
+additions were chosen from dev misses, and the dev labels were checked against this
+detector's output. The test labels were checked against 2.1.0's output instead, which
+flatters 2.1.0's precision there.
 
 Known limitations: long forms that do not contain the short form's letters in order
 ("dissociation constant (KD)", "NRF2 (NFE2L2)"), definitions that only describe ("a
@@ -200,6 +208,7 @@ node test/test-settings.js   # Settings pane wiring, parsed from settings.xhtml
 node test/test-fixes.js      # active tab, settings file safety, background scan, tooltips
 
 node eval/benchmark/score.js dev <dir>   # accuracy on the benchmark (needs the texts)
+node eval/benchmark/intervals.js dev <dir>   # 95 % intervals, and old-vs-new differences
 node eval/score.js           # accuracy against the older gold standard (needs a corpus)
 node eval/difftest.js A B    # prove a change leaves detection unchanged
 ```

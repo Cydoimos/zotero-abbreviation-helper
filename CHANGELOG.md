@@ -31,13 +31,43 @@ file.
   handled by the same rules ("IC50", "dCas9", "Pol II", "I/R"). Panel ranges,
   catalogue numbers, units, version numbers and author initials are not taken
   for abbreviations.
-- Uses inside compounds now count towards the glossary's "used at least
-  twice" rule ("ATP-dependent" uses ATP, "LC-MS/MS" uses LC-MS).
-- Measured on the new benchmark (`eval/benchmark/`): on 39 test papers not used
-  for tuning, defined abbreviations found rose from 82.6 % to 84.8 %, with the
-  meaning correct in 96.7 % (was 95.0 %). Undefined ones found through the
-  glossary rose from 42.9 % to 45.9 %. Precision is 94.6 % (was 98.7 %),
-  against labels that were checked only against the previous detector's output.
+- More ways of defining are read: "(TBST: 20 mM Tris, …)", "upstream open
+  reading frames, or uORFs", figure-legend keys such as "Eco: Escherichia coli,
+  Bsu: Bacillus subtilis", and abbreviation lists that continue on the next
+  page. A dictionary meaning written out in full is preferred to a shorter
+  alignment ("half maximal inhibitory concentration (IC50)").
+- Uses inside compounds count towards the glossary's "used at least twice"
+  rule ("ATP-dependent" uses ATP, "LC-MS/MS" uses LC-MS), except in compounds
+  the paper defines itself ("6HBC-PBS", where PBS is not phosphate-buffered
+  saline).
+
+### Glossary
+- 73 standard abbreviations added (PDB, WT, dsDNA, IgG, UV, HIV, TAE, FWHM,
+  PI3K and others). Each is marked as unambiguous across fields, or as
+  field-dependent with the words that identify its field (EM, ESI, LB, TCA,
+  ER and others).
+- A definition the paper gives always wins over the glossary. A field-dependent
+  meaning is now also withheld where the paper defines the abbreviation itself
+  in words the detector cannot read, unless the paper writes that meaning out.
+- Eleven existing entries that depend on the field are no longer treated as
+  unambiguous. MMP is matrix metalloproteinase only in papers about the
+  matrix (in mitochondrial papers it is the membrane potential). MHC can also
+  be myosin heavy chain, NTA nitrilotriacetic acid, NGS normal goat serum and
+  SNP sodium nitroprusside, and CTL often means "control". The others are GDP,
+  ALS, CTLs, MMPs and SNPs.
+
+### Reading Mode
+- Tooltips work in Zotero 10's Reading Mode for PDFs, which shows the paper as
+  reflowed text in a page of its own. Reading Mode for web snapshots is left
+  alone, since the meanings come from a PDF.
+
+### Measured
+- On the new benchmark (`eval/benchmark/`), on 39 test papers not used for
+  tuning: defined abbreviations found rose from 82.6 % to 86.7 % (+4.0 points,
+  95 % interval 0.8 to 7.2), with the meaning correct in 96.6 % (was 95.0 %).
+  Undefined ones found through the glossary rose from 42.9 % to 53.5 %.
+  Precision is 94.1 % (was 98.7 %), against labels that were checked only
+  against the previous detector's output.
 
 ### Fixed
 - **Meanings now come from the paper you are reading.** The plugin looked for

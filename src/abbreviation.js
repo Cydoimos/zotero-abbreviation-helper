@@ -294,7 +294,12 @@ function longFormChars(words) {
 /** Every way one short-form unit can be matched in the long-form characters. */
 function unitMatches(unit, chars, words) {
     const out = [];
-    const at = (p, len, base, initial) => out.push({ p, len, base, initial, word: chars[p].word });
+    // A letter inside an optional bracketed group is weaker evidence than one
+    // in the running text, so ties go to the running text.
+    const at = (p, len, base, initial) => out.push({
+        p, len, initial, word: chars[p].word,
+        base: base - (words[chars[p].word].optional ? ALIGN_IN_BRACKETS : 0)
+    });
     const startsWith = (p, s) => {
         const ch = chars[p];
         return ch.wordText.slice(ch.offset).toLowerCase().startsWith(s);
@@ -334,6 +339,7 @@ var ALIGN_UNMATCHED_WORD = 2;     // a word of the long form that supplies no le
 var ALIGN_COMMA = 1;              // a comma crossed inside the long form
 var ALIGN_SKIPPED_NUMBER = 0.5;   // a number of the short form with nothing to match
 var ALIGN_SPAN_WORD = 0.1;        // every content word of the span: shorter spans win ties
+var ALIGN_IN_BRACKETS = 0.25;     // a letter found inside an optional bracketed group
 
 /**
  * Best alignment of a short form with long-form words.
@@ -489,7 +495,7 @@ function renderLongForm(words, { firstWord: first, lastWord: last, usedGroups, t
     }
     let out = parts.join(' ');
     // Quotes and trailing punctuation are typography, not part of the term.
-    out = out.replace(/^[\s"“”‘’'«»,;:]+|[\s"“”‘’'«»,;:.]+$/g, '');
+    out = out.replace(/^[\s"“”‘’'«»,;:=]+|[\s"“”‘’'«»,;:.=]+$/g, '');
     // Unbalanced brackets at the edges: "(Tumor Necrosis" -> "Tumor Necrosis".
     const opens = (out.match(/[([]/g) || []).length, closes = (out.match(/[)\]]/g) || []).length;
     if (opens > closes) out = out.replace(/^[([]\s*/, '');
@@ -527,7 +533,8 @@ var BREAK = '\u2029';
 /**
  * Running headers and footers ("ACCEPTED MANUSCRIPT", "Page 3 of 12") sit
  * next to page breaks (form feeds) and interrupt sentences that run across
- * pages. A short line found near three or more page breaks is one.
+ * pages. A line (up to a long licence footer) found near three or more page
+ * breaks is one.
  */
 function dropRunningHeaders(lines) {
     const NEAR = 4;                     // non-empty lines on either side of a break
@@ -541,11 +548,9 @@ function dropRunningHeaders(lines) {
     });
     const count = new Map();
     for (const i of near) count.set(shape(lines[i]), (count.get(shape(lines[i])) || 0) + 1);
-    return lines.filter((l, i) => {
-        if (!near.has(i)) return true;
-        const s = shape(l);
-        return !(s && s.length <= 80 && count.get(s) >= 3);
-    });
+    const isHeader = (l, i) => near.has(i) && shape(l) && shape(l).length <= 250 && count.get(shape(l)) >= 3;
+    // A removed line keeps its page break, so the break is still seen later.
+    return lines.flatMap((l, i) => !isHeader(l, i) ? [l] : l.includes('\f') ? ['\f'] : []);
 }
 
 /**
@@ -560,8 +565,23 @@ function cleanText(text) {
         .replace(/\ufb00/g, 'ff').replace(/\ufb01/g, 'fi').replace(/\ufb02/g, 'fl')
         .replace(/\ufb03/g, 'ffi').replace(/\ufb04/g, 'ffl').replace(/[\ufb05\ufb06]/g, 'st')
         .normalize('NFC');
-    // Page breaks (form feeds) locate the headers, then become plain spaces.
-    return dropRunningHeaders(cleaned.split('\n')).join('\n').replace(/\f/g, ' ');
+    // Page breaks (form feeds) locate the headers. Then the blank lines around
+    // a page break are dropped, since a list or paragraph continues on the
+    // next page, and the break itself becomes a space.
+    const out = [];
+    let gap = [], gapHasBreak = false;
+    for (const line of dropRunningHeaders(cleaned.split('\n'))) {
+        if (!line.replace(/\f/g, '').trim()) {
+            gap.push(line);
+            gapHasBreak = gapHasBreak || line.includes('\f');
+            continue;
+        }
+        if (!gapHasBreak && !line.includes('\f')) out.push(...gap);
+        gap = [];
+        gapHasBreak = false;
+        out.push(line);
+    }
+    return out.concat(gap).join('\n').replace(/\f/g, ' ');
 }
 
 /**
@@ -588,36 +608,43 @@ function dropReferences(text) {
 }
 
 /**
- * Occurrence counts of every word-like token, computed once per paper. A
- * compound also counts as a use of each run of its parts: "LC-MS/MS" uses
- * LC-MS and MS, "ATP-dependent" uses ATP, "3\u2032UTR" uses UTR. A compound
- * that is an abbreviation in its own right ("SDS-PAGE") is not split.
+ * How often each word-like token occurs, computed once per paper: `alone`
+ * counts tokens as written, `inCompounds` the runs of parts inside compounds
+ * ("LC-MS/MS" contains LC-MS and MS, "ATP-dependent" contains ATP). A
+ * compound is not split when it is an abbreviation in its own right
+ * ("SDS-PAGE"), or when it contains one the paper defines itself
+ * ("6HBC-PBS-mature"): its parts may mean something else there, and the
+ * paper's own definition already explains them.
  */
-function countTokens(text, isAbbreviation) {
-    const counts = new Map();
-    const bump = t => counts.set(t, (counts.get(t) || 0) + 1);
+function countTokens(text, isAbbreviation, isDefinedHere) {
+    const alone = new Map(), inCompounds = new Map();
+    const bump = (map, t) => map.set(t, (map.get(t) || 0) + 1);
     const re = /[\p{L}\p{N}](?:[\p{L}\p{N}\p{M}'\u2019\u2032]|[-\u2010\u2011/.](?=[\p{L}\p{N}]))*/gu;
     let m;
     while ((m = re.exec(text))) {
         const token = m[0];
-        bump(token);
+        bump(alone, token);
         const parts = token.split(/([-\u2010\u2011/'\u2019\u2032])/);
-        if (parts.length < 3 || parts.length > 11 || isAbbreviation(token)) continue;
+        if (parts.length < 3 || parts.length > 11) continue;
+        // Every run of parts: single parts ("ATP") and multi-part runs ("LC-MS").
+        const pieces = [], multi = [];
         for (let i = 0; i < parts.length; i += 2) {
             for (let j = i; j < parts.length; j += 2) {
-                if (i === 0 && j === parts.length - 1) continue;      // the whole token
                 const piece = parts.slice(i, j + 1).join('');
-                if (piece) bump(piece);
+                pieces.push(piece);
+                if (j > i) multi.push(piece);
             }
         }
+        if (isAbbreviation(token) || multi.some(isDefinedHere)) continue;
+        for (const piece of pieces) if (piece && piece !== token) bump(inCompounds, piece);
     }
-    return counts;
+    return { alone, inCompounds };
 }
 
 // ---- finding candidates ------------------------------------------------------------
 
 var LEAD_IN = /^(?:i\.?\s?e\.?|hereafter(?:\s+(?:referred\s+to\s+as|called|termed|named|abbreviated(?:\s+as)?))?|henceforth(?:\s+(?:referred\s+to\s+as|called))?|abbreviated(?:\s+as)?|abbr\.|referred\s+to\s+as|termed|called|named|known\s+as|denoted(?:\s+(?:as|by))?|or|also|short\s+for)\s*[,:]?\s+/i;
-var PHRASE_LINK = /(?:,\s*)?\b(?:hereafter(?:\s+(?:referred\s+to\s+as|called|termed|named|abbreviated(?:\s+as)?))?|henceforth(?:\s+(?:referred\s+to\s+as|called))?|abbreviated(?:\s+as)?|referred\s+to\s+as|termed|denoted\s+(?:as|by))\s+["“‘']?([\p{L}\p{N}][\p{L}\p{N}\-\u2010\u2011/.]{0,18}[\p{L}\p{N}])["”’']?/giu;
+var PHRASE_LINK = /(?:,\s+or(?=\s)|(?:,\s*)?\b(?:hereafter(?:\s+(?:referred\s+to\s+as|called|termed|named|abbreviated(?:\s+as)?))?|henceforth(?:\s+(?:referred\s+to\s+as|called))?|abbreviated(?:\s+as)?|referred\s+to\s+as|termed|denoted\s+(?:as|by)))\s+["“‘']?([\p{L}\p{N}][\p{L}\p{N}\-\u2010\u2011/.]{0,18}[\p{L}\p{N}])["”’']?/giu;
 
 /**
  * The text a long form may come from, ending at `end`: back to the start of
@@ -683,8 +710,9 @@ function bracketCandidates(text, add) {
         const { whole, parts } = splitBracketContent(g.content);
         if (!whole) continue;
         const first = parts[0], last = parts[parts.length - 1];
-        // forward: long form (SF) / (SF, Fig. 1) / (MgAl2O4, PS)
-        const forward = new Set([whole, first]);
+        // forward: long form (SF) / (SF, Fig. 1) / (MgAl2O4, PS) / (SF: ...)
+        // "(SF: 20 mM Tris, ...)" gives the composition after the short form.
+        const forward = new Set([whole, first, first.split(/:\s/)[0]]);
         if (parts.length > 1) forward.add(last);
         let window = null;
         for (const sf of forward) {
@@ -707,7 +735,7 @@ function bracketCandidates(text, add) {
     }
 }
 
-/** "long form, hereafter SF", "... abbreviated as SF", "... termed SF". */
+/** "long form, hereafter SF", "... abbreviated as SF", "... termed SF", "..., or SF". */
 function phraseCandidates(text, add) {
     PHRASE_LINK.lastIndex = 0;
     let m;
@@ -745,51 +773,55 @@ function splitAbbreviationEntries(block) {
     //   "TE: Trolox equivalent; SNP: sodium nitroprusside"  (colon)
     //   "AAV adeno-associated virus, Ab Antibody"           (space)
     //   "circRNAs Circular RNAs\nRBPs RNA-binding proteins" (one per line)
-    // Every layout is parsed and the one with the most plausible entries wins.
+    // Every layout is parsed and the one with the most entries wins. A list
+    // is contiguous: reading stops where two chunks in a row are not entries,
+    // or after an entry that runs on into prose (it is trimmed later).
     const text = String(block || '').trim();
     if (!text) return [];
     const clean = v => String(v || '').replace(/\s+/g, ' ').replace(/^[\s,;:.]+|[\s,;:.]+$/g, '').trim();
     const isEntry = (abbr, term) => looksLikeShortForm(abbr, true) && term.length >= 2 && /\p{L}{2}/u.test(term);
-    const delimited = sep => {
-        const out = [];
-        for (let chunk of text.split(sep)) {
-            chunk = chunk.trim();
-            if (!chunk) continue;
-            const ci = chunk.indexOf(':'), mi = chunk.indexOf(',');
-            if (ci !== -1 && (mi === -1 || ci < mi)) {
-                const re = /(?:^|\s)([\p{L}\p{N}\u0391-\u03c9][\p{L}\p{N}\-\u2010-\u2015/.]{0,23})\s*:\s*/gu;
-                const marks = [];
-                let m;
-                while ((m = re.exec(chunk))) marks.push({ abbr: m[1], start: m.index, end: re.lastIndex });
-                marks.forEach((mk, i) => {
-                    const term = clean(chunk.slice(mk.end, i + 1 < marks.length ? marks[i + 1].start : chunk.length));
-                    if (isEntry(mk.abbr, term)) out.push({ abbr: mk.abbr, term });
-                });
-            } else if (mi !== -1) {
-                const abbr = chunk.slice(0, mi).trim(), term = clean(chunk.slice(mi + 1));
-                if (isEntry(abbr, term)) out.push({ abbr, term });
-            }
+    const entry = (abbr, term) => isEntry(abbr, term) ? [{ abbr, term }] : [];
+    // "SF, long form" or "SF: long form" (several colon entries may share a chunk).
+    const delimited = chunk => {
+        const ci = chunk.indexOf(':'), mi = chunk.indexOf(',');
+        if (ci !== -1 && (mi === -1 || ci < mi)) {
+            const re = /(?:^|\s)([\p{L}\p{N}Α-ω][\p{L}\p{N}\-\u2010-\u2015/.]{0,23})\s*:\s*/gu;
+            const marks = [];
+            let m;
+            while ((m = re.exec(chunk))) marks.push({ abbr: m[1], start: m.index, end: re.lastIndex });
+            return marks.flatMap((mk, i) =>
+                entry(mk.abbr, clean(chunk.slice(mk.end, i + 1 < marks.length ? marks[i + 1].start : chunk.length))));
         }
-        return out;
+        return mi === -1 ? [] : entry(chunk.slice(0, mi).trim(), clean(chunk.slice(mi + 1)));
     };
-    const spaced = sep => {
+    // "SF long form"
+    const spaced = chunk => {
+        const c = chunk.replace(/\s+/g, ' ');
+        const sp = c.indexOf(' ');
+        if (sp < 1) return [];
+        const term = clean(c.slice(sp + 1));
+        return /\p{L}{3}/u.test(term) ? entry(c.slice(0, sp).replace(/[,:]$/, ''), term) : [];
+    };
+    const read = (separator, parse) => {
         const out = [];
-        for (let chunk of text.split(sep)) {
-            chunk = chunk.replace(/\s+/g, ' ').trim();
-            const sp = chunk.indexOf(' ');
-            if (sp < 1) continue;
-            const abbr = chunk.slice(0, sp).replace(/[,:]$/, ''), term = clean(chunk.slice(sp + 1));
-            if (isEntry(abbr, term) && /\p{L}{3}/u.test(term)) out.push({ abbr, term });
+        let misses = 0;
+        for (const raw of text.split(separator)) {
+            const chunk = raw.trim();
+            if (!chunk) continue;
+            const found = parse(chunk);
+            if (found.length) {
+                out.push(...found);
+                misses = 0;
+                if (chunk.length > 200) break;
+            } else if (out.length && ++misses >= 2) break;
         }
         return out;
     };
     const layouts = [
-        delimited(/;+/), delimited(/,\s*(?=[\p{Lu}\p{N}])/u),
-        spaced(/,\s*(?=[\p{L}\p{N}])/u), spaced(/;+/), spaced(/\n+/)
+        read(/;+/, delimited), read(/,\s*(?=[\p{Lu}\p{N}])/u, delimited),
+        read(/,\s*(?=[\p{L}\p{N}])/u, spaced), read(/;+/, spaced), read(/\n+/, spaced)
     ];
-    let best = [];
-    for (const l of layouts) if (l.length > best.length) best = l;
-    return best;
+    return layouts.reduce((best, l) => l.length > best.length ? l : best, []);
 }
 
 /** Bound a long form taken from a list, where it follows the short form. */
@@ -838,19 +870,33 @@ function listCandidates(text, add) {
     }
 }
 
+// Runs of key entries under tables and in figure legends (inlineKeyCandidates).
+var KEY_SF = '[\\p{L}\\p{N}][\\p{L}\\p{N}\\-\\u2010\\u2011/]{0,15}[\\p{L}\\p{N}]?';
+var KEY_RUNS = [
+    // "SF, long form; SF, long form"
+    { re: new RegExp('(?:^|[.;:]\\s|\\n)((?:' + KEY_SF + ',\\s[^;,\\n]{3,80}?;\\s)+' + KEY_SF + ',\\s[^;\\n]{3,80}?)(?=[.;\\n]|$)', 'gu'),
+      entries: /;\s/, link: ', ' },
+    // "SF: long form, SF: long form" (or with ";")
+    { re: new RegExp('(?:^|[.;(]\\s?|\\n)((?:' + KEY_SF + ':\\s[^;,:\\n]{3,80}?[;,]\\s)+' + KEY_SF + ':\\s[^;:\\n]{3,80}?)(?=[.;)\\n]|$)', 'gu'),
+      entries: /[;,]\s(?=[\p{L}\p{N}][^\s:]{0,17}:\s)/u, link: ': ' }
+];
+
 /**
- * A run of "SF, long form;" entries without a heading, as under tables and in
- * figure legends: "INS, insertions; DEL, deletions; CNV, copy-number variants".
+ * A run of key entries without a heading, as under tables and in figure
+ * legends: "INS, insertions; DEL, deletions; CNV, copy-number variants" or
+ * "Bsu: Bacillus subtilis, Mtu: Mycobacterium tuberculosis".
  */
 function inlineKeyCandidates(text, add) {
-    const re = /(?:^|[.;:]\s|\n)((?:[\p{L}\p{N}][\p{L}\p{N}\-\u2010\u2011/]{0,15}[\p{L}\p{N}]?,\s[^;,\n]{3,80}?;\s){1,}[\p{L}\p{N}][\p{L}\p{N}\-\u2010\u2011/]{0,15}[\p{L}\p{N}]?,\s[^;\n]{3,80}?)(?=[.;\n]|$)/gu;
-    let m;
-    while ((m = re.exec(text))) {
-        for (const entry of m[1].split(/;\s/)) {
-            const comma = entry.indexOf(', ');
-            if (comma < 1) continue;
-            const sf = entry.slice(0, comma).trim(), lf = entry.slice(comma + 2).trim();
-            if (looksLikeShortForm(sf)) add(sf, lf, 'start', 'key', m.index);
+    for (const { re, entries, link } of KEY_RUNS) {
+        re.lastIndex = 0;
+        let m;
+        while ((m = re.exec(text))) {
+            for (const entry of m[1].split(entries)) {
+                const at = entry.indexOf(link);
+                if (at < 1) continue;
+                const sf = entry.slice(0, at).trim(), lf = entry.slice(at + link.length).trim();
+                if (looksLikeShortForm(sf)) add(sf, lf, 'start', 'key', m.index);
+            }
         }
     }
 }
@@ -866,6 +912,8 @@ function inlineKeyCandidates(text, add) {
 // contribute nothing are where wrong spans come from. A reverse "SF (text)"
 // is the weakest evidence, because prose often follows a term with a
 // bracketed synonym or example, so it needs a near-perfect multi-word match.
+// One more contributing-nothing word is allowed at 0.5 more quality
+// ("Fragments Per Kilobase per Million mapped reads (FPKM)").
 var ACCEPT = {
     forward: { quality: 1.0, unmatched: 1, words: 1 },
     phrase: { quality: 1.0, unmatched: 1, words: 1 },
@@ -879,8 +927,15 @@ function judgeCandidate(sf, text, mode, kind, known) {
     if (kind === 'list') return text;
     const a = alignLongForm(sf, text, mode);
     const rule = ACCEPT[kind];
-    if (a && a.quality >= rule.quality && a.unmatched <= rule.unmatched && a.words >= rule.words &&
-        !restatesShortForm(sf, a.longForm)) return a.longForm;
+    if (a && a.quality >= rule.quality + (a.unmatched > rule.unmatched ? 0.5 : 0) &&
+        a.unmatched <= rule.unmatched + 1 && a.words >= rule.words &&
+        !restatesShortForm(sf, a.longForm)) {
+        // A dictionary meaning written out here that contains the aligned
+        // span is the fuller reading: "half maximal inhibitory concentration
+        // (IC50)", where the alignment alone finds "inhibitory concentration".
+        const fuller = known ? knownMeaningInText(text, known(sf)) : '';
+        return fuller.length > a.longForm.length && flatten(fuller).includes(flatten(a.longForm)) ? fuller : a.longForm;
+    }
     // A dictionary meaning written out right there counts as alignment: the
     // dictionary normalises definitions the paper provides.
     return known ? knownMeaningInText(text, known(sf)) : '';
@@ -902,10 +957,9 @@ function restatesShortForm(sf, lf) {
 /** The first of `meanings` that the text ends (or starts) with, or ''. */
 function knownMeaningInText(text, meanings) {
     if (!meanings.length) return '';
-    const flat = s => s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
-    const t = flat(text);
+    const t = flatten(text);
     for (const m of meanings) {
-        const f = flat(m);
+        const f = flatten(m);
         if (f.length >= 4 && (t.endsWith(f) || t.startsWith(f))) return m;
     }
     return '';
@@ -924,12 +978,6 @@ function detectAbbreviations(text, dicts) {
     const raw = String(text || '');
     const clean = cleanText(raw);
     const body = dropReferences(clean);
-    const counts = countTokens(body, sf => !!(staticDefs[sf] || glossary[sf]));
-    const countOf = sf => {
-        if (/^[\p{L}\p{N}][\p{L}\p{N}\-\u2010\u2011/.']*$/u.test(sf)) return counts.get(sf) || 0;
-        const re = new RegExp('(?:^|[^\\p{L}\\p{N}])' + escapeRegExp(sf) + '(?=$|[^\\p{L}\\p{N}])', 'gu');
-        return (body.match(re) || []).length;
-    };
     // Every dictionary meaning of a short form (or of its singular).
     const known = sf => [sf, singularShortForm(sf) || sf]
         .flatMap(k => [staticDefs[k], ...(glossary[k] || []).map(o => o.term)]).filter(Boolean);
@@ -941,8 +989,12 @@ function detectAbbreviations(text, dicts) {
     // that are in the author list at the top of the paper.
     const head = raw.slice(0, 4000);
     const isAuthor = lf => /^\p{Lu}[\p{L}'\u2019.-]*(?:\s\p{Lu}[\p{L}'\u2019.-]*){1,3}$/u.test(lf) && head.includes(lf);
+    // Short forms the paper sets out to define, whether or not the definition
+    // could be read. A reverse "SF (...)" does not count: most are not definitions.
+    const attempted = new Set();
     const add = (sf, lfText, mode, kind, pos) => {
         sf = sf.trim();
+        if (kind !== 'reverse') attempted.add(singularShortForm(sf) || sf);
         const term = judgeCandidate(sf, lfText, mode, kind, known);
         if (!term || term.length > 160 || !/\p{L}{3}/u.test(term)) return;
         if (kind === 'key' && isAuthor(term)) return;
@@ -959,22 +1011,42 @@ function detectAbbreviations(text, dicts) {
     bracketCandidates(body, add);
     phraseCandidates(body, add);
 
+    const counts = countTokens(body, t => !!(staticDefs[t] || glossary[t]), t => attempted.has(t));
+    // Uses of a short form written on its own, and inside compounds.
+    const countOf = sf => {
+        if (/^[\p{L}\p{N}][\p{L}\p{N}\-\u2010\u2011/.']*$/u.test(sf)) return counts.alone.get(sf) || 0;
+        const re = new RegExp('(?:^|[^\\p{L}\\p{N}])' + escapeRegExp(sf) + '(?=$|[^\\p{L}\\p{N}])', 'gu');
+        return (body.match(re) || []).length;
+    };
+    const compoundUses = sf => counts.inCompounds.get(sf) || 0;
+
     const pairs = [...accepted.values()]
         .sort((a, b) => a.pos - b.pos)
         .map(p => ({ abbr: p.abbr, term: p.term, source: p.source, confidence: p.rank <= 2 ? 'high' : 'medium' }));
 
-    // 2. Well-known abbreviations the paper uses at least twice but never defines.
+    // 2. Well-known abbreviations the paper uses at least twice but never
+    // defines. A definition the paper gives always wins, so the glossary only
+    // fills gaps; how far it may go depends on how ambiguous the entry is.
     const lowerBody = body.toLowerCase();
+    const flatBody = flatten(body);
     const taken = new Set(accepted.keys());
-    const defined = sf => taken.has(singularShortForm(sf) || sf) || taken.has(sf) ||
-        pluralShortForms(sf).some(p => taken.has(p));
+    const forms = sf => [sf, singularShortForm(sf) || sf, ...pluralShortForms(sf)];
     for (const [abbr, options] of Object.entries(glossary)) {
-        if (!options || !options.length || defined(abbr)) continue;
-        const uses = countOf(abbr) + pluralShortForms(abbr).reduce((n, p) => n + (counts.get(p) || 0), 0);
+        if (!options || !options.length || forms(abbr).some(f => taken.has(f))) continue;
+        const uses = [...new Set(forms(abbr))].reduce((n, f) => n + countOf(f), 0) + compoundUses(abbr);
         if (uses < 2) continue;
+        const selfDefined = forms(abbr).some(f => attempted.has(f));
         const terms = [];
         for (const opt of options) {
-            if (opt.ambiguity !== 'low' && !hasContextSupport(opt, lowerBody)) continue;
+            if (opt.ambiguity === 'low') {
+                if (!terms.includes(opt.term)) terms.push(opt.term);
+                continue;
+            }
+            // A meaning that depends on the field needs the field's words in
+            // the paper, and is never given where the paper defines the short
+            // form itself, unless the paper also writes that meaning out.
+            if (!hasContextSupport(opt, lowerBody)) continue;
+            if (selfDefined && !flatBody.includes(flatten(opt.term))) continue;
             if (!terms.includes(opt.term)) terms.push(opt.term);
         }
         if (!terms.length) continue;
@@ -1007,6 +1079,9 @@ function hasContextSupport(option, lowerBody) {
     for (const c of ctx) if (lowerBody.includes(String(c).toLowerCase())) return true;
     return false;
 }
+
+/** Lowercase letters and digits only, for comparing spellings. */
+function flatten(s) { return String(s).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ''); }
 
 function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
@@ -2554,8 +2629,8 @@ var AbbreviationHelper = {
     },
 
     /**
-     * Attach hover listeners to every reader page that shows PDF text and does
-     * not have them yet. Listeners stay attached while the meanings change
+     * Attach hover listeners to every reader page that shows PDF text (the
+     * PDF view or its Reading Mode) and does not have them yet. Listeners stay attached while the meanings change
      * (they always read the current map), so this never tears anything down
      * and is cheap to call often.
      */
@@ -2575,11 +2650,7 @@ var AbbreviationHelper = {
         for (let doc of docs) {
             if (!doc || !doc.body) continue;
             if (this.hoverDocs.some(rec => rec.doc === doc)) continue;
-            // Avoid attaching to Zotero chrome documents without PDF text.
-            // PDF.js pages usually expose .textLayer; Zotero reader builds may
-            // vary, so we also accept documents with many text-layer-ish spans.
-            const hasTextLayer = !!doc.querySelector('.textLayer, .page .textLayer, [class*="textLayer"]');
-            if (!hasTextLayer) continue;
+            if (!this._showsPdfText(doc)) continue;
             const move = (event) => this._onReaderMouseMove(doc, event);
             const out = (event) => this._onReaderMouseLeave(doc, event);
             const scroll = () => this._forgetHover(doc);
@@ -2598,6 +2669,21 @@ var AbbreviationHelper = {
             keyTarget.addEventListener('keyup', keyup, true);
             try { if (doc.defaultView) doc.defaultView.addEventListener('blur', blur, true); } catch (e) {}
             this.hoverDocs.push({ doc, move, out, scroll, click, keydown, keyup, keyTarget, blur });
+        }
+    },
+
+    /**
+     * Does this document show the text of a PDF? The PDF view has a text
+     * layer. Zotero 10's Reading Mode shows the same paper reflowed as HTML in
+     * a frame of its own: an article#sdt-content with the class sdt-pdf when
+     * it comes from a PDF (Reading Mode for web snapshots lacks that class,
+     * and the meanings found in a PDF do not apply there).
+     */
+    _showsPdfText(doc) {
+        try {
+            return !!doc.querySelector('.textLayer, [class*="textLayer"], #sdt-content.sdt-pdf');
+        } catch (e) {
+            return false;
         }
     },
 

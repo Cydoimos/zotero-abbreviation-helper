@@ -217,13 +217,34 @@
     "SNP": [
       {
         "term": "single-nucleotide polymorphism",
-        "ambiguity": "low"
+        "ambiguity": "medium",
+        "context": [
+          "polymorphism",
+          "genotyp",
+          "allele",
+          "genom"
+        ]
+      },
+      {
+        "term": "sodium nitroprusside",
+        "ambiguity": "medium",
+        "context": [
+          "nitroprusside",
+          "nitric oxide donor",
+          "vasodilat"
+        ]
       }
     ],
     "SNPs": [
       {
         "term": "single-nucleotide polymorphisms",
-        "ambiguity": "low"
+        "ambiguity": "medium",
+        "context": [
+          "polymorphism",
+          "genotyp",
+          "allele",
+          "genom"
+        ]
       }
     ],
     "ORF": [
@@ -259,7 +280,20 @@
     "NGS": [
       {
         "term": "next-generation sequencing",
-        "ambiguity": "low"
+        "ambiguity": "high",
+        "context": [
+          "sequencing",
+          "reads",
+          "library prep"
+        ]
+      },
+      {
+        "term": "normal goat serum",
+        "ambiguity": "high",
+        "context": [
+          "goat serum",
+          "blocking"
+        ]
       }
     ],
     "ELISA": [
@@ -367,13 +401,23 @@
     "MMP": [
       {
         "term": "matrix metalloproteinase",
-        "ambiguity": "low"
+        "ambiguity": "medium",
+        "context": [
+          "metalloproteinase",
+          "extracellular matrix",
+          "collagen"
+        ]
       }
     ],
     "MMPs": [
       {
         "term": "matrix metalloproteinases",
-        "ambiguity": "low"
+        "ambiguity": "medium",
+        "context": [
+          "metalloproteinase",
+          "extracellular matrix",
+          "collagen"
+        ]
       }
     ],
     "VEGF": [
@@ -697,19 +741,44 @@
     "MHC": [
       {
         "term": "major histocompatibility complex",
-        "ambiguity": "low"
+        "ambiguity": "high",
+        "context": [
+          "antigen",
+          "histocompatibility",
+          "t cell",
+          "hla"
+        ]
+      },
+      {
+        "term": "myosin heavy chain",
+        "ambiguity": "high",
+        "context": [
+          "myosin",
+          "muscle",
+          "myofib"
+        ]
       }
     ],
     "CTL": [
       {
         "term": "cytotoxic T lymphocyte",
-        "ambiguity": "low"
+        "ambiguity": "medium",
+        "context": [
+          "cytotoxic",
+          "lymphocyte",
+          "t cell"
+        ]
       }
     ],
     "CTLs": [
       {
         "term": "cytotoxic T lymphocytes",
-        "ambiguity": "low"
+        "ambiguity": "medium",
+        "context": [
+          "cytotoxic",
+          "lymphocyte",
+          "t cell"
+        ]
       }
     ],
     "NK": [
@@ -791,7 +860,13 @@
     "GDP": [
       {
         "term": "guanosine diphosphate",
-        "ambiguity": "low"
+        "ambiguity": "medium",
+        "context": [
+          "guanosine",
+          "gtp",
+          "gtpase",
+          "nucleotide"
+        ]
       }
     ],
     "NADH": [
@@ -1038,7 +1113,23 @@
     "NTA": [
       {
         "term": "nanoparticle tracking analysis",
-        "ambiguity": "low"
+        "ambiguity": "high",
+        "context": [
+          "nanoparticle tracking",
+          "particle size",
+          "vesicle"
+        ]
+      },
+      {
+        "term": "nitrilotriacetic acid",
+        "ambiguity": "high",
+        "context": [
+          "ni-nta",
+          "nickel",
+          "his-tag",
+          "his tag",
+          "nitrilotriacetic"
+        ]
       }
     ],
     "DLS": [
@@ -1288,7 +1379,12 @@
     "ALS": [
       {
         "term": "amyotrophic lateral sclerosis",
-        "ambiguity": "low"
+        "ambiguity": "medium",
+        "context": [
+          "sclerosis",
+          "motor neuron",
+          "neurodegenerat"
+        ]
       }
     ],
     "OS": [
@@ -1328,6 +1424,568 @@
           "odds",
           "regression",
           "confidence interval"
+        ]
+      }
+    ],
+    "PDB": [
+      {
+        "term": "Protein Data Bank",
+        "ambiguity": "low"
+      }
+    ],
+    "WT": [
+      {
+        "term": "wild type",
+        "ambiguity": "low"
+      }
+    ],
+    "dsDNA": [
+      {
+        "term": "double-stranded DNA",
+        "ambiguity": "low"
+      }
+    ],
+    "ssDNA": [
+      {
+        "term": "single-stranded DNA",
+        "ambiguity": "low"
+      }
+    ],
+    "dsRNA": [
+      {
+        "term": "double-stranded RNA",
+        "ambiguity": "low"
+      }
+    ],
+    "ssRNA": [
+      {
+        "term": "single-stranded RNA",
+        "ambiguity": "low"
+      }
+    ],
+    "HIV": [
+      {
+        "term": "human immunodeficiency virus",
+        "ambiguity": "low"
+      }
+    ],
+    "HIV-1": [
+      {
+        "term": "human immunodeficiency virus type 1",
+        "ambiguity": "low"
+      }
+    ],
+    "CMV": [
+      {
+        "term": "cytomegalovirus",
+        "ambiguity": "low"
+      }
+    ],
+    "UV": [
+      {
+        "term": "ultraviolet",
+        "ambiguity": "low"
+      }
+    ],
+    "dNTP": [
+      {
+        "term": "deoxynucleoside triphosphate",
+        "ambiguity": "low"
+      }
+    ],
+    "rNTP": [
+      {
+        "term": "ribonucleoside triphosphate",
+        "ambiguity": "low"
+      }
+    ],
+    "UTP": [
+      {
+        "term": "uridine triphosphate",
+        "ambiguity": "low"
+      }
+    ],
+    "CTP": [
+      {
+        "term": "cytidine triphosphate",
+        "ambiguity": "low"
+      }
+    ],
+    "NAD": [
+      {
+        "term": "nicotinamide adenine dinucleotide",
+        "ambiguity": "low"
+      }
+    ],
+    "NADPH": [
+      {
+        "term": "nicotinamide adenine dinucleotide phosphate (reduced)",
+        "ambiguity": "low"
+      }
+    ],
+    "IgG": [
+      {
+        "term": "immunoglobulin G",
+        "ambiguity": "low"
+      }
+    ],
+    "IgM": [
+      {
+        "term": "immunoglobulin M",
+        "ambiguity": "low"
+      }
+    ],
+    "IgA": [
+      {
+        "term": "immunoglobulin A",
+        "ambiguity": "low"
+      }
+    ],
+    "IgE": [
+      {
+        "term": "immunoglobulin E",
+        "ambiguity": "low"
+      }
+    ],
+    "CFU": [
+      {
+        "term": "colony-forming unit",
+        "ambiguity": "low"
+      }
+    ],
+    "RMSD": [
+      {
+        "term": "root-mean-square deviation",
+        "ambiguity": "low"
+      }
+    ],
+    "RMSF": [
+      {
+        "term": "root-mean-square fluctuation",
+        "ambiguity": "low"
+      }
+    ],
+    "FWHM": [
+      {
+        "term": "full width at half maximum",
+        "ambiguity": "low"
+      }
+    ],
+    "CHAPS": [
+      {
+        "term": "3-[(3-cholamidopropyl)dimethylammonio]-1-propanesulfonate",
+        "ambiguity": "low"
+      }
+    ],
+    "TAE": [
+      {
+        "term": "Tris-acetate-EDTA",
+        "ambiguity": "low"
+      }
+    ],
+    "TBE": [
+      {
+        "term": "Tris-borate-EDTA",
+        "ambiguity": "low"
+      }
+    ],
+    "ACN": [
+      {
+        "term": "acetonitrile",
+        "ambiguity": "low"
+      }
+    ],
+    "pre-mRNA": [
+      {
+        "term": "precursor messenger RNA",
+        "ambiguity": "low"
+      }
+    ],
+    "miR": [
+      {
+        "term": "microRNA",
+        "ambiguity": "low"
+      }
+    ],
+    "piRNA": [
+      {
+        "term": "PIWI-interacting RNA",
+        "ambiguity": "low"
+      }
+    ],
+    "lincRNA": [
+      {
+        "term": "long intergenic non-coding RNA",
+        "ambiguity": "low"
+      }
+    ],
+    "sgRNA": [
+      {
+        "term": "single guide RNA",
+        "ambiguity": "low"
+      }
+    ],
+    "CpG": [
+      {
+        "term": "cytosine-phosphate-guanine dinucleotide",
+        "ambiguity": "low"
+      }
+    ],
+    "5mC": [
+      {
+        "term": "5-methylcytosine",
+        "ambiguity": "low"
+      }
+    ],
+    "LTR": [
+      {
+        "term": "long terminal repeat",
+        "ambiguity": "low"
+      }
+    ],
+    "OMM": [
+      {
+        "term": "outer mitochondrial membrane",
+        "ambiguity": "low"
+      }
+    ],
+    "IMM": [
+      {
+        "term": "inner mitochondrial membrane",
+        "ambiguity": "low"
+      }
+    ],
+    "SH2": [
+      {
+        "term": "Src homology 2",
+        "ambiguity": "low"
+      }
+    ],
+    "SH3": [
+      {
+        "term": "Src homology 3",
+        "ambiguity": "low"
+      }
+    ],
+    "GPCR": [
+      {
+        "term": "G protein-coupled receptor",
+        "ambiguity": "low"
+      }
+    ],
+    "PKA": [
+      {
+        "term": "protein kinase A",
+        "ambiguity": "low"
+      }
+    ],
+    "PKC": [
+      {
+        "term": "protein kinase C",
+        "ambiguity": "low"
+      }
+    ],
+    "PI3K": [
+      {
+        "term": "phosphoinositide 3-kinase",
+        "ambiguity": "low"
+      }
+    ],
+    "MAPK": [
+      {
+        "term": "mitogen-activated protein kinase",
+        "ambiguity": "low"
+      }
+    ],
+    "ERK": [
+      {
+        "term": "extracellular signal-regulated kinase",
+        "ambiguity": "low"
+      }
+    ],
+    "JNK": [
+      {
+        "term": "c-Jun N-terminal kinase",
+        "ambiguity": "low"
+      }
+    ],
+    "TNF": [
+      {
+        "term": "tumor necrosis factor",
+        "ambiguity": "low"
+      }
+    ],
+    "GnRH": [
+      {
+        "term": "gonadotropin-releasing hormone",
+        "ambiguity": "low"
+      }
+    ],
+    "KRAB": [
+      {
+        "term": "Krüppel-associated box",
+        "ambiguity": "low"
+      }
+    ],
+    "BFP": [
+      {
+        "term": "blue fluorescent protein",
+        "ambiguity": "low"
+      }
+    ],
+    "HDL": [
+      {
+        "term": "high-density lipoprotein",
+        "ambiguity": "low"
+      }
+    ],
+    "LDL": [
+      {
+        "term": "low-density lipoprotein",
+        "ambiguity": "low"
+      }
+    ],
+    "SCFA": [
+      {
+        "term": "short-chain fatty acid",
+        "ambiguity": "low"
+      }
+    ],
+    "MS/MS": [
+      {
+        "term": "tandem mass spectrometry",
+        "ambiguity": "low"
+      }
+    ],
+    "pI": [
+      {
+        "term": "isoelectric point",
+        "ambiguity": "low"
+      }
+    ],
+    "NCBI": [
+      {
+        "term": "National Center for Biotechnology Information",
+        "ambiguity": "low"
+      }
+    ],
+    "IC50": [
+      {
+        "term": "half maximal inhibitory concentration",
+        "ambiguity": "low"
+      }
+    ],
+    "EC50": [
+      {
+        "term": "half maximal effective concentration",
+        "ambiguity": "low"
+      }
+    ],
+    "FDR": [
+      {
+        "term": "false discovery rate",
+        "ambiguity": "low"
+      }
+    ],
+    "EM": [
+      {
+        "term": "electron microscopy",
+        "ambiguity": "medium",
+        "context": [
+          "electron micro",
+          "micrograph",
+          "cryo-em"
+        ]
+      }
+    ],
+    "bp": [
+      {
+        "term": "base pair",
+        "ambiguity": "medium",
+        "context": [
+          "dna",
+          "nucleotide",
+          "primer",
+          "sequenc"
+        ]
+      },
+      {
+        "term": "boiling point",
+        "ambiguity": "medium",
+        "context": [
+          "boiling",
+          "distill"
+        ]
+      }
+    ],
+    "nt": [
+      {
+        "term": "nucleotide",
+        "ambiguity": "medium",
+        "context": [
+          "nucleotide",
+          "rna",
+          "dna"
+        ]
+      }
+    ],
+    "kb": [
+      {
+        "term": "kilobase",
+        "ambiguity": "medium",
+        "context": [
+          "dna",
+          "genom",
+          "plasmid",
+          "sequenc"
+        ]
+      }
+    ],
+    "NTP": [
+      {
+        "term": "nucleoside triphosphate",
+        "ambiguity": "medium",
+        "context": [
+          "nucleotide",
+          "polymerase",
+          "transcription"
+        ]
+      },
+      {
+        "term": "normal temperature and pressure",
+        "ambiguity": "medium",
+        "context": [
+          "standard conditions",
+          "gas volume"
+        ]
+      }
+    ],
+    "ESI": [
+      {
+        "term": "electrospray ionization",
+        "ambiguity": "medium",
+        "context": [
+          "mass spectrometr",
+          "m/z",
+          "ionization"
+        ]
+      },
+      {
+        "term": "electronic supplementary information",
+        "ambiguity": "medium",
+        "context": [
+          "electronic supplementary"
+        ]
+      }
+    ],
+    "TMT": [
+      {
+        "term": "tandem mass tag",
+        "ambiguity": "medium",
+        "context": [
+          "mass spectrometr",
+          "proteom",
+          "isobaric"
+        ]
+      }
+    ],
+    "TCA": [
+      {
+        "term": "tricarboxylic acid",
+        "ambiguity": "high",
+        "context": [
+          "tca cycle",
+          "krebs",
+          "citric acid cycle",
+          "mitochondri"
+        ]
+      },
+      {
+        "term": "trichloroacetic acid",
+        "ambiguity": "high",
+        "context": [
+          "trichloroacetic",
+          "precipitat"
+        ]
+      }
+    ],
+    "LB": [
+      {
+        "term": "lysogeny broth",
+        "ambiguity": "medium",
+        "context": [
+          "e. coli",
+          "bacteri",
+          "ampicillin",
+          "kanamycin"
+        ]
+      },
+      {
+        "term": "Langmuir-Blodgett",
+        "ambiguity": "medium",
+        "context": [
+          "langmuir"
+        ]
+      }
+    ],
+    "LC": [
+      {
+        "term": "liquid chromatography",
+        "ambiguity": "medium",
+        "context": [
+          "chromatograph",
+          "mass spectrometr"
+        ]
+      }
+    ],
+    "CTF": [
+      {
+        "term": "contrast transfer function",
+        "ambiguity": "medium",
+        "context": [
+          "cryo-em",
+          "micrograph",
+          "defocus"
+        ]
+      }
+    ],
+    "NLS": [
+      {
+        "term": "nuclear localization signal",
+        "ambiguity": "medium",
+        "context": [
+          "nuclear import",
+          "importin",
+          "nucleus"
+        ]
+      },
+      {
+        "term": "nonlinear least squares",
+        "ambiguity": "medium",
+        "context": [
+          "least squares",
+          "fitting"
+        ]
+      }
+    ],
+    "ER": [
+      {
+        "term": "endoplasmic reticulum",
+        "ambiguity": "high",
+        "context": [
+          "reticulum",
+          "golgi",
+          "er stress",
+          "unfolded protein"
+        ]
+      },
+      {
+        "term": "estrogen receptor",
+        "ambiguity": "high",
+        "context": [
+          "estrogen",
+          "oestrogen",
+          "breast cancer"
         ]
       }
     ]

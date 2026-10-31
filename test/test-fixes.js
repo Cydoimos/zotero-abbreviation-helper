@@ -392,6 +392,28 @@ const visible = (doc) => !!tipOf(doc) && tipOf(doc).style.display !== 'none';
       && !doc.defaultView.listeners.keyup.length);
   }
 
+  {
+    // Zotero 10's Reading Mode shows a PDF reflowed in its own frame, with no
+    // text layer. Its tooltips work like the PDF view's; Reading Mode for a
+    // web snapshot (no sdt-pdf class) is left alone.
+    const env = makeEnv({});
+    const H = await started(env);
+    const page = (...present) => {
+      const doc = makeDoc();
+      doc.querySelector = sel => sel.split(',').some(s => present.includes(s.trim())) ? {} : null;
+      return doc;
+    };
+    const pdfView = page('.textLayer'), readingMode = page('#sdt-content.sdt-pdf'),
+      snapshotMode = page('#sdt-content'), chrome = page();
+    H._getReaderDocuments = () => [pdfView, readingMode, snapshotMode, chrome];
+    H._setActiveHoverPairs(1, [{ abbr: 'GFP', term: 'green fluorescent protein' }]);
+    H._installHoverForAllWindows();
+    const attached = doc => H.hoverDocs.some(rec => rec.doc === doc);
+    check('Reading Mode of a PDF gets tooltips', attached(pdfView) && attached(readingMode));
+    check('Reading Mode of a snapshot and other pages do not', !attached(snapshotMode) && !attached(chrome));
+    H._removeHoverListeners();
+  }
+
   console.log('\n' + (pass ? 'ALL FIX REGRESSION TESTS PASSED' : 'SOME TESTS FAILED'));
   process.exit(pass ? 0 : 1);
 })().catch(e => { console.error(e); process.exit(1); });
