@@ -122,6 +122,62 @@
     "the crystallized dimer"
    ],
    "note": "\"referred to as DCG\"; the letters are never spelled out"
+  },
+  {
+   "sf": "THF",
+   "lf": "tetrahydrofolate",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "TGEV",
+   "lf": "transmissible gastroenteritis coronavirus",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "gRNA",
+   "lf": "genomic RNA",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "sgmRNA",
+   "lf": "subgenomic mRNA",
+   "how": "other",
+   "recon": true,
+   "note": "written out as \"subgenomic N protein mRNA synthesis\" before the short form is used"
+  },
+  {
+   "sf": "NEB",
+   "lf": "New England Biolabs",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "PAGE",
+   "lf": "polyacrylamide gel electrophoresis",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "TBE",
+   "lf": "tris-borate EDTA",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "rRNA",
+   "lf": "ribosomal RNA",
+   "how": "paren",
+   "recon": true,
+   "note": "\"16S ribosomal RNA (rRNA; Fig. 9F)\""
   }
  ],
  "undefined": [
@@ -152,6 +208,16 @@
   {
    "sf": "nt",
    "lf": "nucleotide"
+  },
+  {
+   "sf": "EDTA",
+   "lf": "ethylenediaminetetraacetic acid",
+   "recon": true
+  },
+  {
+   "sf": "mRNA",
+   "lf": "messenger RNA",
+   "recon": true
   }
  ],
  "ignore": [
@@ -239,6 +305,7 @@
   "Y.W.",
   "S1",
   "S2",
-  "S3"
+  "S3",
+  "EMS"
  ]
 }

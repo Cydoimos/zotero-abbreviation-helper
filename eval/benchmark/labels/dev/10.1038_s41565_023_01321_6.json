@@ -151,6 +151,11 @@
   {
    "sf": "nt",
    "lf": "nucleotides"
+  },
+  {
+   "sf": "TEM",
+   "lf": "transmission electron microscopy",
+   "recon": true
   }
  ],
  "ignore": [

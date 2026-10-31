@@ -149,6 +149,11 @@
   {
    "sf": "pI",
    "lf": "isoelectric point"
+  },
+  {
+   "sf": "MS",
+   "lf": "mass spectrometry",
+   "recon": true
   }
  ],
  "ignore": [

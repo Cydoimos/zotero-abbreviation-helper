@@ -171,6 +171,36 @@
   {
    "sf": "SINE",
    "lf": "short interspersed nuclear element"
+  },
+  {
+   "sf": "ANOVA",
+   "lf": "analysis of variance",
+   "recon": true
+  },
+  {
+   "sf": "BSA",
+   "lf": "bovine serum albumin",
+   "recon": true
+  },
+  {
+   "sf": "HEPES",
+   "lf": "4-(2-hydroxyethyl)-1-piperazineethanesulfonic acid",
+   "recon": true
+  },
+  {
+   "sf": "ncRNA",
+   "lf": "non-coding RNA",
+   "recon": true
+  },
+  {
+   "sf": "rRNA",
+   "lf": "ribosomal RNA",
+   "recon": true
+  },
+  {
+   "sf": "tRNA",
+   "lf": "transfer RNA",
+   "recon": true
   }
  ],
  "ignore": [
@@ -338,6 +368,9 @@
   "com/ClaycombLab",
   "dpy-11/EV",
   "ombLab/Seroussi_2022",
-  "pH 8.0"
+  "pH 8.0",
+  "MAPK",
+  "ROI",
+  "siRNA"
  ]
 }

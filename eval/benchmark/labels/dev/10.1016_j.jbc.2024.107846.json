@@ -505,6 +505,12 @@
    "sf": "FUS",
    "lf": "Fused in Sarcoma/Translocated in LipoSarcoma",
    "how": "paren"
+  },
+  {
+   "sf": "LoKI",
+   "lf": "Local kinase inhibitors",
+   "how": "inside",
+   "recon": true
   }
  ],
  "undefined": [

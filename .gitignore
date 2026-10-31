@@ -4,6 +4,8 @@
 # Evaluation corpus: extracted text of copyrighted papers. Never commit.
 corpus
 eval/errors.json
+eval/benchmark/errors-dev.json
+eval/benchmark/errors-test.json
 
 # Scratch files
 *.tmp

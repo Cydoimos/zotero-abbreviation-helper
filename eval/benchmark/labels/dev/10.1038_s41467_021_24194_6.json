@@ -187,6 +187,16 @@
   {
    "sf": "DOPE",
    "lf": "dioleoylphosphatidylethanolamine"
+  },
+  {
+   "sf": "LC-MS",
+   "lf": "liquid chromatography-mass spectrometry",
+   "recon": true
+  },
+  {
+   "sf": "MS",
+   "lf": "mass spectrometry",
+   "recon": true
   }
  ],
  "ignore": [

@@ -106,6 +106,20 @@
    "lf": "polyvinylidene difluoride",
    "how": "paren",
    "note": "the paper's typo for PVDF"
+  },
+  {
+   "sf": "CST",
+   "lf": "Cell Signaling Technology",
+   "how": "other",
+   "recon": true,
+   "note": "table footnote key: \"CST = Cell Signaling Technology (Danvers, MA, USA)\""
+  },
+  {
+   "sf": "TFS",
+   "lf": "Thermo Fisher Scientific",
+   "how": "other",
+   "recon": true,
+   "note": "table footnote key: \"TFS = Thermo Fisher Scientific (Waltham, MA, USA)\""
   }
  ],
  "undefined": [
@@ -136,6 +150,41 @@
   {
    "sf": "MHC",
    "lf": "myosin heavy chain"
+  },
+  {
+   "sf": "ANOVA",
+   "lf": "analysis of variance",
+   "recon": true
+  },
+  {
+   "sf": "BSA",
+   "lf": "bovine serum albumin",
+   "recon": true
+  },
+  {
+   "sf": "EMT",
+   "lf": "epithelial-to-mesenchymal transition",
+   "recon": true
+  },
+  {
+   "sf": "PBS",
+   "lf": "phosphate-buffered saline",
+   "recon": true
+  },
+  {
+   "sf": "WB",
+   "lf": "Western blot",
+   "recon": true
+  },
+  {
+   "sf": "cDNA",
+   "lf": "complementary DNA",
+   "recon": true
+  },
+  {
+   "sf": "lncRNA",
+   "lf": "long non-coding RNA",
+   "recon": true
   }
  ],
  "ignore": [
@@ -288,6 +337,8 @@
   "mim.org/entry/142800",
   "pH 6.8",
   "pH 7.4",
-  "siRNA/shRNA"
+  "siRNA/shRNA",
+  "DAP",
+  "TTFields"
  ]
 }

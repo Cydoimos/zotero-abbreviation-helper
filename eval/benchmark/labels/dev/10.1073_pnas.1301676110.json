@@ -154,6 +154,11 @@
   {
    "sf": "TE",
    "lf": "Tris-EDTA"
+  },
+  {
+   "sf": "SD",
+   "lf": "standard deviation",
+   "recon": true
   }
  ],
  "ignore": [

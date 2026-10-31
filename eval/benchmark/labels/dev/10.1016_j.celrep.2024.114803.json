@@ -275,6 +275,21 @@
   {
    "sf": "HEK293T",
    "lf": "human embryonic kidney 293T"
+  },
+  {
+   "sf": "NADH",
+   "lf": "nicotinamide adenine dinucleotide (reduced)",
+   "recon": true
+  },
+  {
+   "sf": "SDS-PAGE",
+   "lf": "sodium dodecyl sulfate polyacrylamide gel electrophoresis",
+   "recon": true
+  },
+  {
+   "sf": "rRNA",
+   "lf": "ribosomal RNA",
+   "recon": true
   }
  ],
  "ignore": [
@@ -373,6 +388,7 @@
   "2021/40/C/NZ3/00283",
   "MAB/2017/2",
   "START",
-  "ALTF"
+  "ALTF",
+  "SEC"
  ]
 }

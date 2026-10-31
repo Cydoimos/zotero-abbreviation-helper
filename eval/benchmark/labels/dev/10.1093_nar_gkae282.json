@@ -188,6 +188,11 @@
   {
    "sf": "DSIF",
    "lf": "DRB sensitivity-inducing factor"
+  },
+  {
+   "sf": "HEPES",
+   "lf": "4-(2-hydroxyethyl)-1-piperazineethanesulfonic acid",
+   "recon": true
   }
  ],
  "ignore": [

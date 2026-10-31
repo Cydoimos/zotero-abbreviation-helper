@@ -67,6 +67,12 @@
    "sf": "CRISPRa",
    "lf": "CRISPR activation",
    "how": "paren"
+  },
+  {
+   "sf": "FBS",
+   "lf": "fetal bovine serum",
+   "how": "paren",
+   "recon": true
   }
  ],
  "undefined": [
@@ -125,6 +131,16 @@
   {
    "sf": "KRAB",
    "lf": "Krüppel-associated box"
+  },
+  {
+   "sf": "EGFP",
+   "lf": "enhanced green fluorescent protein",
+   "recon": true
+  },
+  {
+   "sf": "RPMI",
+   "lf": "Roswell Park Memorial Institute medium",
+   "recon": true
   }
  ],
  "ignore": [
@@ -268,6 +284,7 @@
   "TS2/16",
   "Tfinal/sgRNA",
   "anti-B2M",
-  "clone TS2/16"
+  "clone TS2/16",
+  "tRNA"
  ]
 }

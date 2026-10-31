@@ -92,6 +92,12 @@
    "sf": "DFP",
    "lf": "deferiprone",
    "how": "paren"
+  },
+  {
+   "sf": "Ub",
+   "lf": "ubiquitin",
+   "how": "paren",
+   "recon": true
   }
  ],
  "undefined": [],

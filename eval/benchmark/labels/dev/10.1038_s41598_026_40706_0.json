@@ -103,6 +103,25 @@
    "sf": "micro-CT",
    "lf": "microcomputed tomography",
    "how": "paren"
+  },
+  {
+   "sf": "Gluc",
+   "lf": "Gaussia luciferase",
+   "how": "paren",
+   "recon": true,
+   "note": "\"secreted Gaussia luciferase (Gluc)\""
+  },
+  {
+   "sf": "SEAP",
+   "lf": "secreted Alkaline Phosphatase",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "dPCR",
+   "lf": "digital PCR",
+   "how": "paren",
+   "recon": true
   }
  ],
  "undefined": [
@@ -161,6 +180,21 @@
   {
    "sf": "HEK293",
    "lf": "human embryonic kidney 293"
+  },
+  {
+   "sf": "DMEM",
+   "lf": "Dulbecco's Modified Eagle Medium",
+   "recon": true
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction",
+   "recon": true
+  },
+  {
+   "sf": "cDNA",
+   "lf": "complementary DNA",
+   "recon": true
   }
  ],
  "ignore": [
@@ -242,6 +276,9 @@
   "mRNAs",
   "RNA-level",
   "AG",
-  "Inc."
+  "Inc.",
+  "IP",
+  "UMIs",
+  "DEJ"
  ]
 }

@@ -117,6 +117,12 @@
    "sf": "CTF",
    "lf": "contrast-transfer-function",
    "how": "paren"
+  },
+  {
+   "sf": "Ab",
+   "lf": "antibody",
+   "how": "paren",
+   "recon": true
   }
  ],
  "undefined": [
