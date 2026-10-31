@@ -1,0 +1,397 @@
+{
+ "doi": "10.1016/j.isci.2025.112363",
+ "title": "GPX4-dependent ferroptosis sensitivity is a fitness trade-off for cell enlargement",
+ "journal": "iScience",
+ "defined": [
+  {
+   "sf": "PC",
+   "lf": "phosphatidylcholine",
+   "how": "list"
+  },
+  {
+   "sf": "PE",
+   "lf": "phosphatidylethanolamine",
+   "how": "list",
+   "alt": [
+    "phosphatidylethanolamines"
+   ]
+  },
+  {
+   "sf": "FFA",
+   "lf": "free fatty acid",
+   "how": "list",
+   "alt": [
+    "free fatty acids"
+   ]
+  },
+  {
+   "sf": "SM",
+   "lf": "sphingomyelin",
+   "how": "list"
+  },
+  {
+   "sf": "Hex2Cer",
+   "lf": "dihexosylceramides",
+   "how": "list"
+  },
+  {
+   "sf": "Cer",
+   "lf": "ceramide",
+   "how": "list",
+   "alt": [
+    "ceramides"
+   ]
+  },
+  {
+   "sf": "TAG",
+   "lf": "triacylglycerol",
+   "how": "list",
+   "alt": [
+    "triacylglycerides"
+   ]
+  },
+  {
+   "sf": "DAG",
+   "lf": "diacylglycerol",
+   "how": "list"
+  },
+  {
+   "sf": "LPE",
+   "lf": "lysophosphatidylethanolamine",
+   "how": "list"
+  },
+  {
+   "sf": "CE",
+   "lf": "cholesteryl ester",
+   "how": "list",
+   "alt": [
+    "collision energy"
+   ]
+  },
+  {
+   "sf": "LPC",
+   "lf": "lysophosphatidylcholine",
+   "how": "list",
+   "alt": [
+    "lipophosphatidylcholine"
+   ]
+  },
+  {
+   "sf": "HexCer",
+   "lf": "hexosylceramide",
+   "how": "list"
+  },
+  {
+   "sf": "PA",
+   "lf": "phosphatidic acid",
+   "how": "list"
+  },
+  {
+   "sf": "PG",
+   "lf": "phosphatidylgylcerol",
+   "how": "list",
+   "alt": [
+    "phosphatidylglycerol"
+   ]
+  },
+  {
+   "sf": "PGP",
+   "lf": "phosphatidylgylcerolphosphate",
+   "how": "list",
+   "alt": [
+    "phosphatidylglycerolphosphate"
+   ]
+  },
+  {
+   "sf": "PI",
+   "lf": "phosphatidylinositol",
+   "how": "list"
+  },
+  {
+   "sf": "PS",
+   "lf": "phosphatidylserine",
+   "how": "list"
+  },
+  {
+   "sf": "ZJU-UoE",
+   "lf": "Zhejiang University-University of Edinburgh",
+   "how": "paren"
+  },
+  {
+   "sf": "MOE",
+   "lf": "Chinese Ministry of Education",
+   "how": "paren",
+   "alt": [
+    "Ministry of Education"
+   ]
+  },
+  {
+   "sf": "GPX4",
+   "lf": "glutathione peroxidase 4",
+   "how": "paren"
+  },
+  {
+   "sf": "DepMap",
+   "lf": "Cancer Dependency Map",
+   "how": "paren"
+  },
+  {
+   "sf": "KO",
+   "lf": "knockout",
+   "how": "paren"
+  },
+  {
+   "sf": "ER",
+   "lf": "endoplasmic reticulum",
+   "how": "paren"
+  },
+  {
+   "sf": "OxPhos",
+   "lf": "oxidative phosphorylation",
+   "how": "paren",
+   "alt": [
+    "mitochondrial oxidative phosphorylation"
+   ]
+  },
+  {
+   "sf": "RPE1",
+   "lf": "retinal pigment epithelium",
+   "how": "paren"
+  },
+  {
+   "sf": "CDK",
+   "lf": "cyclin-dependent kinase",
+   "how": "paren"
+  },
+  {
+   "sf": "EC50",
+   "lf": "effective concentration",
+   "how": "paren"
+  },
+  {
+   "sf": "STLC",
+   "lf": "S-trityl-l-cysteine",
+   "how": "paren"
+  },
+  {
+   "sf": "FBS",
+   "lf": "fetal bovine serum",
+   "how": "paren"
+  },
+  {
+   "sf": "SSC",
+   "lf": "side scatter",
+   "how": "paren"
+  },
+  {
+   "sf": "RNA-seq",
+   "lf": "RNA sequencing",
+   "how": "paren"
+  },
+  {
+   "sf": "FTL",
+   "lf": "ferritin light chain",
+   "how": "paren"
+  },
+  {
+   "sf": "DFOM",
+   "lf": "desferoxamine mesylate",
+   "how": "paren"
+  },
+  {
+   "sf": "SCD1",
+   "lf": "sterol desaturase",
+   "how": "paren"
+  },
+  {
+   "sf": "PLs",
+   "lf": "phospholipids",
+   "how": "paren"
+  },
+  {
+   "sf": "PUFA",
+   "lf": "polyunsaturated",
+   "how": "paren",
+   "alt": [
+    "polyunsaturated fatty acids"
+   ]
+  },
+  {
+   "sf": "MUFA",
+   "lf": "monounsaturated fatty acids",
+   "how": "paren"
+  },
+  {
+   "sf": "OA",
+   "lf": "oleate",
+   "how": "paren",
+   "alt": [
+    "oleic acid"
+   ]
+  },
+  {
+   "sf": "LD",
+   "lf": "lipid depleted serum",
+   "how": "paren",
+   "alt": [
+    "lipid depleted"
+   ]
+  },
+  {
+   "sf": "DIC",
+   "lf": "Differential interference contrast",
+   "how": "paren"
+  },
+  {
+   "sf": "PCNA",
+   "lf": "proliferating cell nuclear antigen",
+   "how": "reverse"
+  },
+  {
+   "sf": "HBSS",
+   "lf": "Hank's balanced salt solution",
+   "how": "paren"
+  },
+  {
+   "sf": "MTBE",
+   "lf": "methyl-tert-butyl ether",
+   "how": "paren"
+  },
+  {
+   "sf": "TEAB",
+   "lf": "triethylammonium bicarbonate",
+   "how": "paren"
+  },
+  {
+   "sf": "DDA",
+   "lf": "data-dependent acquisition",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "ATP",
+   "lf": "adenosine triphosphate"
+  },
+  {
+   "sf": "DMEM",
+   "lf": "Dulbecco's Modified Eagle Medium"
+  },
+  {
+   "sf": "PBS",
+   "lf": "phosphate-buffered saline"
+  },
+  {
+   "sf": "sgRNA",
+   "lf": "single guide RNA"
+  },
+  {
+   "sf": "WB",
+   "lf": "western blotting"
+  },
+  {
+   "sf": "IgG",
+   "lf": "immunoglobulin G"
+  },
+  {
+   "sf": "GEO",
+   "lf": "Gene Expression Omnibus"
+  },
+  {
+   "sf": "CO2",
+   "lf": "carbon dioxide"
+  }
+ ],
+ "ignore": [
+  "TAGs",
+  "PEs",
+  "FFAs",
+  "CNS",
+  "Fer-1",
+  "RSL3",
+  "ML162",
+  "Dox",
+  "CAY",
+  "CAY10566",
+  "TXNRD1",
+  "ACSL4",
+  "IRE1",
+  "LAMP1",
+  "HMGB1",
+  "FUCCI",
+  "RPE1-FUCCI",
+  "Fucci-CA2",
+  "mScarlet-PCNA",
+  "FerroOrange",
+  "FerroFarRed",
+  "SiRhoNox-1",
+  "C11-Bodipy",
+  "Z-VAD-FMK",
+  "Fe2+",
+  "PE-A",
+  "FITC-A",
+  "FSC-A",
+  "ΔEC50",
+  "SD",
+  "DAPI",
+  "PVDF",
+  "HILIC",
+  "NA",
+  "ORF",
+  "TIF",
+  "p21",
+  "p53",
+  "ATP1A1",
+  "IMR-90",
+  "IMR90",
+  "HUVEC",
+  "HepG2",
+  "MDA-MB-231",
+  "CAKI-1",
+  "CAKI1",
+  "A549",
+  "NCI60",
+  "ATCC",
+  "RRID",
+  "Addgene",
+  "Genscript",
+  "Beyotime",
+  "Promega",
+  "Invitrogen",
+  "ThermoFisher",
+  "Thermo-Fisher",
+  "HyClone",
+  "SigmaAldrich",
+  "Costar",
+  "Cellvis",
+  "Dojindo",
+  "GlpBio",
+  "Yeasen",
+  "Yokogawa",
+  "Illumina",
+  "Ensembl",
+  "Salmon",
+  "GOrilla",
+  "ggplot2",
+  "ggpubr",
+  "SC-Track",
+  "MetaMorph",
+  "Fiji",
+  "DepMap_ID",
+  "GSE261028",
+  "STAR",
+  "S2A",
+  "S2B",
+  "S6A",
+  "OKO",
+  "PHI",
+  "UHPLC",
+  "MS2",
+  "TrypLE",
+  "SurePAGE",
+  "QuickBlock",
+  "Trizol",
+  "TruSeq",
+  "cBot"
+ ]
+}

@@ -1,0 +1,59 @@
+{
+ "doi": "10.1515/nanoph-2024-0580",
+ "title": "Enhanced photoluminescence of strongly coupled single molecule‐plasmonic nanocavity: analysis of spectral modifications using nonlocal response theory",
+ "journal": "Nanophotonics",
+ "defined": [
+  {
+   "sf": "RS",
+   "lf": "Rabi splitting",
+   "how": "paren"
+  },
+  {
+   "sf": "PL",
+   "lf": "photoluminescence",
+   "how": "paren"
+  },
+  {
+   "sf": "LSPR",
+   "lf": "Localized surface plasmon resonance",
+   "how": "paren"
+  },
+  {
+   "sf": "OLEDs",
+   "lf": "organic light-emitting diodes",
+   "how": "paren"
+  },
+  {
+   "sf": "ET",
+   "lf": "energy transparency",
+   "how": "paren"
+  },
+  {
+   "sf": "LSP",
+   "lf": "localized surface plasmon",
+   "how": "paren"
+  }
+ ],
+ "undefined": [],
+ "ignore": [
+  "RISA",
+  "RS-like",
+  "ΔB",
+  "NaCl",
+  "eV",
+  "meV",
+  "YT",
+  "MT",
+  "HI",
+  "TY",
+  "ACS",
+  "JST",
+  "JSPS",
+  "KAKENHI",
+  "SPRING",
+  "Eout",
+  "Ein",
+  "Sinc",
+  "ε0χmet"
+ ]
+}

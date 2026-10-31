@@ -1,0 +1,84 @@
+{
+ "doi": "10.2196/73373",
+ "title": "The Development and Growth of the English National Real-Time Syndromic Surveillance Program: Key Developments and Lessons Learned From the First Two Decades",
+ "journal": "Journal of Medical Internet Research",
+ "defined": [
+  {
+   "sf": "GPs",
+   "lf": "general practitioners",
+   "how": "paren"
+  },
+  {
+   "sf": "EDs",
+   "lf": "emergency departments",
+   "how": "paren"
+  },
+  {
+   "sf": "UKHSA",
+   "lf": "UK Health Security Agency",
+   "how": "paren",
+   "alt": [
+    "United Kingdom Health Security Agency"
+   ]
+  },
+  {
+   "sf": "NHS",
+   "lf": "National Health Service",
+   "how": "paren"
+  },
+  {
+   "sf": "ReSST",
+   "lf": "Real-time Syndromic Surveillance Team",
+   "how": "paren"
+  },
+  {
+   "sf": "RCGP",
+   "lf": "Royal College of General Practitioners",
+   "how": "paren"
+  },
+  {
+   "sf": "RCEM",
+   "lf": "Royal College of Emergency Medicine",
+   "how": "paren"
+  }
+ ],
+ "undefined": [],
+ "ignore": [
+  "EDSSS",
+  "TPP",
+  "ORCHID",
+  "NIHR",
+  "HPRU",
+  "NIHR HPRU",
+  "GES",
+  "NRJ",
+  "AJE",
+  "RAM",
+  "HEH",
+  "RAMMIE",
+  "MBBS",
+  "PhD",
+  "MPH",
+  "UK",
+  "WHO",
+  "MMWR",
+  "URL",
+  "DOCX",
+  "KB-Multimedia",
+  "H1N1",
+  "JOURNAL",
+  "OF",
+  "MEDICAL",
+  "INTERNET",
+  "RESEARCH",
+  "Real-Time",
+  "AJ",
+  "HE",
+  "SE",
+  "RA",
+  "GE",
+  "DL",
+  "VA",
+  "TC"
+ ]
+}

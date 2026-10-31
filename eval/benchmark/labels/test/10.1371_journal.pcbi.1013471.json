@@ -1,0 +1,81 @@
+{
+ "doi": "10.1371/journal.pcbi.1013471",
+ "title": "EFMouse: A toolbox to model stimulation-induced electric fields in the mouse brain",
+ "journal": "PLOS Computational Biology",
+ "defined": [
+  {
+   "sf": "tDCS",
+   "lf": "transcranial direct current stimulation",
+   "how": "paren"
+  },
+  {
+   "sf": "EFMouse",
+   "lf": "mouse electric field model",
+   "how": "paren"
+  },
+  {
+   "sf": "FEM",
+   "lf": "finite element method",
+   "how": "paren"
+  },
+  {
+   "sf": "eMag",
+   "lf": "electric field magnitude",
+   "how": "paren"
+  },
+  {
+   "sf": "ROI",
+   "lf": "region of interest",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "tES",
+   "lf": "transcranial electrical stimulation"
+  },
+  {
+   "sf": "CSF",
+   "lf": "cerebrospinal fluid"
+  }
+ ],
+ "ignore": [
+  "S/m",
+  "V/m",
+  "mA",
+  "eX",
+  "eY",
+  "eZ",
+  "eX_n",
+  "eY_n",
+  "eZ_n",
+  "CT",
+  "PET",
+  "MATLAB",
+  "R2023a",
+  "FSL",
+  "NIfTI",
+  "GetDP",
+  "GETDP",
+  "ROAST",
+  "SimNIBS",
+  "GitHub",
+  "INIT",
+  "MESH",
+  "EXPORT",
+  "ATLAS",
+  "Digimouse",
+  "C57BL/6",
+  "EMBC",
+  "IEEE",
+  "TMS",
+  "DC",
+  "PLOS",
+  "PLoS",
+  "PMID",
+  "NeuroImage",
+  "eLife",
+  "NINDS",
+  "Back"
+ ]
+}

@@ -1,0 +1,338 @@
+{
+ "doi": "10.1021/acscentsci.5c00939",
+ "title": "A Potent Oral Sialylation Inhibitor Augments the Immunotherapy in Pancreatic Ductal Adenocarcinoma",
+ "journal": "ACS Central Science",
+ "defined": [
+  {
+   "sf": "PDAC",
+   "lf": "Pancreatic ductal adenocarcinoma",
+   "how": "paren"
+  },
+  {
+   "sf": "ICB",
+   "lf": "immune checkpoint blockade",
+   "how": "paren"
+  },
+  {
+   "sf": "Siglecs",
+   "lf": "sialic acid-binding immunoglobulin-type lectins",
+   "how": "paren"
+  },
+  {
+   "sf": "STs",
+   "lf": "sialyltransferases",
+   "how": "paren"
+  },
+  {
+   "sf": "TCGA",
+   "lf": "The Cancer Genome Atlas",
+   "how": "paren"
+  },
+  {
+   "sf": "SA",
+   "lf": "sialic acid",
+   "how": "paren",
+   "alt": [
+    "fluorescent sialic acid"
+   ]
+  },
+  {
+   "sf": "CPS-SI",
+   "lf": "Cell-based Phenotypic Screening for Sialylation Inhibitors",
+   "how": "paren"
+  },
+  {
+   "sf": "MALII",
+   "lf": "Maackia Amurensis Lectin II",
+   "how": "paren"
+  },
+  {
+   "sf": "α-2,3SA",
+   "lf": "α-2,3-linked sialic acid",
+   "how": "paren"
+  },
+  {
+   "sf": "α-2,6SA",
+   "lf": "α2,6-linked sialic acid",
+   "how": "paren"
+  },
+  {
+   "sf": "βGal",
+   "lf": "galactose",
+   "how": "paren",
+   "alt": [
+    "terminal galactose"
+   ]
+  },
+  {
+   "sf": "PNA",
+   "lf": "Peanut Agglutinin",
+   "how": "paren"
+  },
+  {
+   "sf": "SNA",
+   "lf": "Sambucus nigra lectin",
+   "how": "paren"
+  },
+  {
+   "sf": "SPR",
+   "lf": "Surface plasmon resonance",
+   "how": "paren"
+  },
+  {
+   "sf": "Co-IP",
+   "lf": "Coimmunoprecipitation",
+   "how": "paren"
+  },
+  {
+   "sf": "MOA",
+   "lf": "Mode of action",
+   "how": "paren"
+  },
+  {
+   "sf": "SAR",
+   "lf": "structure-activity relationship",
+   "how": "paren"
+  },
+  {
+   "sf": "TGI",
+   "lf": "tumor growth inhibition",
+   "how": "paren"
+  },
+  {
+   "sf": "dLNs",
+   "lf": "draining lymph nodes",
+   "how": "paren"
+  },
+  {
+   "sf": "NK",
+   "lf": "natural killer",
+   "how": "paren",
+   "alt": [
+    "natural killer cells"
+   ]
+  },
+  {
+   "sf": "PM",
+   "lf": "peritoneal macrophages",
+   "how": "paren"
+  },
+  {
+   "sf": "BMDM",
+   "lf": "bone marrow-derived macrophages",
+   "how": "paren"
+  },
+  {
+   "sf": "CI",
+   "lf": "combination index",
+   "how": "paren"
+  },
+  {
+   "sf": "PTC",
+   "lf": "premature termination codons",
+   "how": "paren"
+  },
+  {
+   "sf": "DMEM",
+   "lf": "Dulbecco's Modified Eagle Medium",
+   "how": "paren"
+  },
+  {
+   "sf": "FBS",
+   "lf": "fetal bovine serum",
+   "how": "paren"
+  },
+  {
+   "sf": "P/S",
+   "lf": "penicillin/streptomycin",
+   "how": "paren"
+  },
+  {
+   "sf": "CDS",
+   "lf": "coding sequence",
+   "how": "reverse"
+  },
+  {
+   "sf": "AF",
+   "lf": "asialofetuin",
+   "how": "paren"
+  },
+  {
+   "sf": "MD",
+   "lf": "Molecular Dynamics",
+   "how": "paren"
+  },
+  {
+   "sf": "PBS",
+   "lf": "phosphate-buffered saline",
+   "how": "paren"
+  },
+  {
+   "sf": "PBST",
+   "lf": "PBS containing 0.1% Tween-20",
+   "how": "reverse"
+  },
+  {
+   "sf": "IACUC",
+   "lf": "Institutional Animal Care and Use Committee",
+   "how": "paren"
+  },
+  {
+   "sf": "KM",
+   "lf": "Kaplan-Meier",
+   "how": "paren"
+  },
+  {
+   "sf": "SIMM",
+   "lf": "Shanghai Institute of Materia Medica, Chinese Academy of Sciences",
+   "how": "paren",
+   "alt": [
+    "Shanghai Institute of Materia Medica"
+   ]
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "ANOVA",
+   "lf": "analysis of variance"
+  },
+  {
+   "sf": "DMSO",
+   "lf": "dimethyl sulfoxide"
+  },
+  {
+   "sf": "NMR",
+   "lf": "nuclear magnetic resonance"
+  },
+  {
+   "sf": "mRNA",
+   "lf": "messenger RNA"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "RT-qPCR",
+   "lf": "reverse transcription quantitative polymerase chain reaction"
+  }
+ ],
+ "ignore": [
+  "sLeA",
+  "sLeX",
+  "sTn",
+  "CA19−9",
+  "Sia",
+  "Gal",
+  "GalNAc",
+  "GlcNAc",
+  "Neu5Ac",
+  "P-3Fax-Neu5Ac",
+  "P3Fax-Neu5Ac",
+  "CMP-SA",
+  "Cy5-CMP-SA",
+  "Cy5",
+  "ST3Gal",
+  "ST6Gal",
+  "ST6GalNAc",
+  "ST8Sia",
+  "ST3Gal1",
+  "ST3Gal2",
+  "ST6Gal1",
+  "ST6Gal2",
+  "ST6GalNAc2",
+  "ST6GAL1",
+  "Y-320",
+  "Y320",
+  "Y-320-Biotin",
+  "BY-001",
+  "BY-004",
+  "BY-007",
+  "BY-020",
+  "BY-021",
+  "IC50",
+  "EC50",
+  "KD",
+  "Kd",
+  "G290",
+  "Δ45",
+  "Δ131",
+  "NPT",
+  "SP",
+  "PDF",
+  "SD",
+  "SEM",
+  "CD4",
+  "CD8",
+  "CD3ε",
+  "CD28",
+  "PD-1",
+  "anti-PD-1",
+  "αPD-1",
+  "anti-CD4",
+  "anti-CD8",
+  "anti-Asialo-GM1",
+  "IFN-γ",
+  "INF-γ",
+  "TNF-α",
+  "IL-2",
+  "IL-4",
+  "IL-15",
+  "M-CSF",
+  "LPS",
+  "M1",
+  "M2",
+  "CFSE",
+  "DAPI",
+  "FLAG",
+  "His-MBP",
+  "MBP",
+  "DE3",
+  "IPTG",
+  "OD600",
+  "HEK",
+  "SPF",
+  "HRMS",
+  "qPCR",
+  "QPCR",
+  "cDNA",
+  "RT",
+  "CO2",
+  "NaCl",
+  "mM",
+  "pH",
+  "GL",
+  "CM5",
+  "RPMI1640",
+  "PANC-1",
+  "PaCa-2",
+  "MIA",
+  "CT26",
+  "MC38",
+  "Pan-02",
+  "Pan02",
+  "BALB/c",
+  "C57BL/6",
+  "ATCC",
+  "BNCC",
+  "BeNa",
+  "UniProt",
+  "AlphaFold",
+  "ChimeraX",
+  "Biacore",
+  "GraphPad",
+  "Operetta",
+  "NovoCyte",
+  "NovoExpress",
+  "Maestro",
+  "Sitemap",
+  "ACS",
+  "S1B",
+  "S2B",
+  "S3B",
+  "S4B",
+  "S7A",
+  "S8K-L",
+  "Basel"
+ ]
+}

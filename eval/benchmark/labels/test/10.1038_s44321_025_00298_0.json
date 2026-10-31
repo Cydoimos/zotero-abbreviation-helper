@@ -1,0 +1,257 @@
+{
+ "doi": "10.1038/s44321-025-00298-0",
+ "title": "Pyrin inflammasome-driven erosive arthritis caused by unprenylated RHO GTPase signaling",
+ "journal": "EMBO Molecular Medicine",
+ "defined": [
+  {
+   "sf": "GGTase-I",
+   "lf": "geranylgeranyl transferase I",
+   "how": "paren",
+   "alt": [
+    "geranylgeranyltransferase-I"
+   ]
+  },
+  {
+   "sf": "FPP",
+   "lf": "farnesyl pyrophosphate",
+   "how": "paren"
+  },
+  {
+   "sf": "GGPP",
+   "lf": "geranylgeranyl pyrophosphate",
+   "how": "paren"
+  },
+  {
+   "sf": "FTase-I",
+   "lf": "Farnesyltransferase-I",
+   "how": "paren"
+  },
+  {
+   "sf": "IL",
+   "lf": "interleukin",
+   "how": "paren"
+  },
+  {
+   "sf": "TNF",
+   "lf": "tumor necrosis factor",
+   "how": "paren"
+  },
+  {
+   "sf": "GSDMD",
+   "lf": "Gasdermin D",
+   "how": "paren"
+  },
+  {
+   "sf": "BMDMs",
+   "lf": "bone marrow-derived macrophages",
+   "how": "paren"
+  },
+  {
+   "sf": "LPS",
+   "lf": "lipopolysaccharide",
+   "how": "paren"
+  },
+  {
+   "sf": "siRNA",
+   "lf": "small interfering RNA",
+   "how": "paren"
+  },
+  {
+   "sf": "IL-1R",
+   "lf": "interleukin-1 receptor",
+   "how": "paren",
+   "alt": [
+    "IL-1 receptor"
+   ]
+  },
+  {
+   "sf": "CASP1",
+   "lf": "caspase-1",
+   "how": "paren"
+  },
+  {
+   "sf": "PKC",
+   "lf": "protein kinase C",
+   "how": "paren"
+  },
+  {
+   "sf": "AA",
+   "lf": "arachidonic acid",
+   "how": "paren"
+  },
+  {
+   "sf": "BST",
+   "lf": "bryostatin",
+   "how": "paren"
+  },
+  {
+   "sf": "IQGAP1",
+   "lf": "IQ motif-containing GTPase-activating protein 1",
+   "how": "paren"
+  },
+  {
+   "sf": "IP",
+   "lf": "Immunoprecipitation",
+   "how": "paren"
+  },
+  {
+   "sf": "DAMPs",
+   "lf": "danger-associated molecular patterns",
+   "how": "paren"
+  },
+  {
+   "sf": "ELISA",
+   "lf": "enzyme-linked immunosorbent assay",
+   "how": "paren"
+  },
+  {
+   "sf": "POM",
+   "lf": "progenitor outgrowth medium",
+   "how": "paren"
+  },
+  {
+   "sf": "Il-1r1",
+   "lf": "IL-1 receptor 1",
+   "how": "paren",
+   "alt": [
+    "interleukin-1 receptor 1"
+   ]
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "ANOVA",
+   "lf": "analysis of variance"
+  },
+  {
+   "sf": "LDH",
+   "lf": "lactate dehydrogenase"
+  },
+  {
+   "sf": "GM-CSF",
+   "lf": "granulocyte-macrophage colony-stimulating factor"
+  },
+  {
+   "sf": "FACS",
+   "lf": "fluorescence-activated cell sorting"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "mtDNA",
+   "lf": "mitochondrial DNA"
+  },
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "ESCRT",
+   "lf": "endosomal sorting complex required for transport"
+  }
+ ],
+ "ignore": [
+  "Mefv",
+  "Pycard",
+  "Pggt1b",
+  "Pggt1bfl",
+  "Pggt1bFL",
+  "Casp1",
+  "Casp8",
+  "Ripk3",
+  "Ripk1",
+  "RIPK1",
+  "RIPK3",
+  "Nlrp3",
+  "NLRP3",
+  "Myd88",
+  "MyD88",
+  "Il1r1",
+  "Il1r",
+  "Iqgap1",
+  "Gsdmd",
+  "Asc",
+  "ASC",
+  "RHO",
+  "RHOA",
+  "RAC1",
+  "RAS",
+  "RAB",
+  "CDC42",
+  "GTP",
+  "GDP",
+  "GTPase",
+  "GTPases",
+  "GTP-bound",
+  "GDP-bound",
+  "RAC1-GTP",
+  "RHOA-GTP",
+  "CDC42-GTP",
+  "IL-1β",
+  "IL-1",
+  "IL-6",
+  "IL-18",
+  "pro-IL-1β",
+  "proIL-1β",
+  "bioactive-IL-1β",
+  "active-CASP1",
+  "GSDMD-dependent",
+  "GSDMD-mediated",
+  "GSDMD-induced",
+  "LPS-stimulated",
+  "LPS-induced",
+  "LPS-treated",
+  "MyD88-dependent",
+  "cGAS-STING",
+  "TcdA",
+  "TcdB",
+  "HoxB8",
+  "LysM-Cre",
+  "Lysozyme-M-Cre",
+  "Fntb",
+  "Pyrin",
+  "S205",
+  "p20",
+  "p38",
+  "EHT1864",
+  "CCG1423",
+  "SB203580",
+  "G418",
+  "C3915",
+  "RPMI",
+  "FCS",
+  "PBS",
+  "SD",
+  "SEM",
+  "FMF",
+  "EV1",
+  "EV2",
+  "EV3",
+  "EV7",
+  "GAA",
+  "IDT",
+  "VIB",
+  "EMBO",
+  "Sigma",
+  "Tocris",
+  "Invivogen",
+  "BioLegend",
+  "Roche",
+  "Cytiva",
+  "Abcam",
+  "Abnova",
+  "Adipogen",
+  "Millipore",
+  "Promega",
+  "Cytoskeleton",
+  "ProSci",
+  "Bodinco",
+  "Thermofischer",
+  "FWO",
+  "ERC",
+  "BOF",
+  "WGF2021-0085"
+ ]
+}

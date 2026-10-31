@@ -1,0 +1,123 @@
+{
+ "doi": "10.3390/molecules29050999",
+ "title": "Antimicrobial Activity of Syzygium aromaticum Essential Oil in Human Health Treatment",
+ "journal": "Molecules",
+ "defined": [
+  {
+   "sf": "MDR",
+   "lf": "multidrug-resistant",
+   "how": "paren"
+  },
+  {
+   "sf": "EO",
+   "lf": "essential oil",
+   "how": "paren",
+   "alt": [
+    "Clove essential oil"
+   ]
+  },
+  {
+   "sf": "UAE",
+   "lf": "Ultrasonic-assisted extraction",
+   "how": "paren"
+  },
+  {
+   "sf": "MAE",
+   "lf": "microwave-assisted extraction",
+   "how": "paren"
+  },
+  {
+   "sf": "SFE",
+   "lf": "supercritical fluid extraction",
+   "how": "paren"
+  },
+  {
+   "sf": "ROS",
+   "lf": "reactive oxygen species",
+   "how": "paren"
+  },
+  {
+   "sf": "COX-2",
+   "lf": "cyclooxygenase-2",
+   "how": "paren"
+  },
+  {
+   "sf": "TRPV1",
+   "lf": "transient receptor potential cation channel V1",
+   "how": "paren"
+  },
+  {
+   "sf": "GABA",
+   "lf": "gamma-aminobutyric acid",
+   "how": "paren",
+   "note": "extracted text reads \"gammaaminobutyric\""
+  },
+  {
+   "sf": "MIC",
+   "lf": "Minimal Inhibitory Concentration",
+   "how": "paren"
+  },
+  {
+   "sf": "MBC",
+   "lf": "minimum bactericidal concentration",
+   "how": "paren"
+  },
+  {
+   "sf": "BV",
+   "lf": "bacterial vaginosis",
+   "how": "paren"
+  },
+  {
+   "sf": "VVC",
+   "lf": "vulvovaginal candidiasis",
+   "how": "paren"
+  },
+  {
+   "sf": "PGPB",
+   "lf": "Plant Growth Promoter Bacteria",
+   "how": "inside"
+  },
+  {
+   "sf": "VOCs",
+   "lf": "volatile organic compounds",
+   "how": "paren"
+  },
+  {
+   "sf": "RAPD",
+   "lf": "Random Amplified Polymorphic DNA",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "rRNA",
+   "lf": "ribosomal RNA"
+  }
+ ],
+ "ignore": [
+  "L.",
+  "pH",
+  "NF-kB",
+  "AP-1",
+  "E2",
+  "EO-loaded",
+  "Anti-Giardia",
+  "BioRender",
+  "withBioRender",
+  "ISCPMS",
+  "CrossRef",
+  "PubMed",
+  "MDPI",
+  "CC BY",
+  "KS",
+  "USA",
+  "A.N.",
+  "R.F.",
+  "F.F.",
+  "E.G."
+ ]
+}

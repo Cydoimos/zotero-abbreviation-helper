@@ -1,0 +1,238 @@
+{
+ "doi": "10.1103/w4p6-b9mp",
+ "title": "Bond-Network Entropy Governs Heat Transport in Coordination-Disordered Solids",
+ "journal": "Physical Review X",
+ "defined": [
+  {
+   "sf": "MD",
+   "lf": "molecular dynamics",
+   "how": "paren"
+  },
+  {
+   "sf": "GAP",
+   "lf": "Gaussian approximation potential",
+   "how": "paren"
+  },
+  {
+   "sf": "LAEs",
+   "lf": "local atomic environments",
+   "how": "paren"
+  },
+  {
+   "sf": "BNE",
+   "lf": "bond-network entropy",
+   "how": "paren"
+  },
+  {
+   "sf": "VDOS",
+   "lf": "vibrational density of states",
+   "how": "paren"
+  },
+  {
+   "sf": "DSF",
+   "lf": "dynamical structure factor",
+   "how": "paren"
+  },
+  {
+   "sf": "WTE",
+   "lf": "Wigner transport equation",
+   "how": "paren"
+  },
+  {
+   "sf": "FWHM",
+   "lf": "full width at half maximum",
+   "how": "paren"
+  },
+  {
+   "sf": "AF",
+   "lf": "Allen-Feldman",
+   "how": "paren"
+  },
+  {
+   "sf": "CDC",
+   "lf": "carbide-derived carbon",
+   "how": "paren"
+  },
+  {
+   "sf": "VPC",
+   "lf": "Variable-porosity carbon",
+   "how": "paren"
+  },
+  {
+   "sf": "AC",
+   "lf": "Amorphous carbon",
+   "how": "paren"
+  },
+  {
+   "sf": "IRG",
+   "lf": "Irradiated graphite",
+   "how": "paren"
+  },
+  {
+   "sf": "PSP",
+   "lf": "phase-separated phase",
+   "how": "paren"
+  },
+  {
+   "sf": "NPC",
+   "lf": "nanoporous carbon",
+   "how": "paren"
+  },
+  {
+   "sf": "SRO",
+   "lf": "short-range order",
+   "how": "paren"
+  },
+  {
+   "sf": "MRO",
+   "lf": "medium-range order",
+   "how": "paren"
+  },
+  {
+   "sf": "C-PDOS",
+   "lf": "coordination-resolved partial VDOS",
+   "how": "paren",
+   "alt": [
+    "coordination-resolved partial vibrational density of states"
+   ]
+  },
+  {
+   "sf": "BTE",
+   "lf": "Boltzmann transport equation",
+   "how": "paren",
+   "alt": [
+    "Peierls-Boltzmann transport equation"
+   ]
+  },
+  {
+   "sf": "PDC",
+   "lf": "perturbatively disordered crystal",
+   "how": "paren"
+  },
+  {
+   "sf": "MFP",
+   "lf": "mean free path",
+   "how": "paren"
+  },
+  {
+   "sf": "EDG",
+   "lf": "explicitly disordered glass",
+   "how": "paren"
+  },
+  {
+   "sf": "UOC",
+   "lf": "unperturbed ordered crystal",
+   "how": "paren"
+  },
+  {
+   "sf": "DR",
+   "lf": "density reduction",
+   "how": "paren"
+  },
+  {
+   "sf": "UOCG",
+   "lf": "unperturbed ordered crystalline graphite",
+   "how": "paren"
+  },
+  {
+   "sf": "GK",
+   "lf": "Green-Kubo",
+   "how": "paren"
+  },
+  {
+   "sf": "MSD",
+   "lf": "mean squared deviation",
+   "how": "paren",
+   "note": "a figure caption sits between the long form and \"(MSD)\" in the extracted text"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "PDOS",
+   "lf": "partial density of states"
+  }
+ ],
+ "ignore": [
+  "CDC1200",
+  "CDC800",
+  "ann-CDC1200",
+  "C-H1-PDOS",
+  "C3-H1-PDOS",
+  "C3-PDOS",
+  "C3-H1",
+  "rWTE",
+  "κAF",
+  "κAF-corrected",
+  "κPDC",
+  "DPDC",
+  "DEDG",
+  "DAF",
+  "gEDG",
+  "gUOC",
+  "gPDC",
+  "gDR",
+  "gCx",
+  "ρEDG",
+  "ρUOC",
+  "Λ0",
+  "Γqs",
+  "Γqs0",
+  "Γs0",
+  "πΥ2",
+  "Υ2",
+  "VNc",
+  "Nat",
+  "kB",
+  "CV",
+  "mK",
+  "W=mK",
+  "BNEsat",
+  "2BNE",
+  "2LAE",
+  "δH11",
+  "H11",
+  "IRG T2",
+  "PDC-EDG",
+  "SNSF",
+  "EPSRC",
+  "HPC",
+  "DOI",
+  "ACS",
+  "arXiv",
+  "PYTHON",
+  "PYTORCH",
+  "SCIPY1",
+  "OF",
+  "THERMAL",
+  "TRANSPORT",
+  "CONDUCTIVITY",
+  "DISORDERED",
+  "IWANOWSKI",
+  "CS",
+  "NYI",
+  "SIMONCELLI",
+  "PHYS",
+  "REV",
+  "BOND-NETWORK",
+  "ENTROPY",
+  "GOVERNS",
+  "HEAT",
+  "IN",
+  "AND",
+  "EXPLICITLY",
+  "GLASS",
+  "ON",
+  "FROM",
+  "DETERMINATION",
+  "THE",
+  "Bose-Einstein",
+  "Allen-Feldman",
+  "Ioffe-Regel",
+  "Suarez-Martinez",
+  "McGaughey",
+  "El-Azab",
+  "CA",
+  "USA",
+  "NY"
+ ]
+}

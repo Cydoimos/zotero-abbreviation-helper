@@ -1,0 +1,168 @@
+{
+ "doi": "10.1088/1367-2630/ad5d86",
+ "title": "The Rosenzweig–Porter model revisited for the three Wigner–Dyson symmetry classes",
+ "journal": "New Journal of Physics",
+ "defined": [
+  {
+   "sf": "WD",
+   "lf": "Wigner–Dyson",
+   "how": "paren"
+  },
+  {
+   "sf": "KL",
+   "lf": "Kullback–Leibler",
+   "how": "paren"
+  },
+  {
+   "sf": "RMT",
+   "lf": "Random matrix theory",
+   "how": "paren"
+  },
+  {
+   "sf": "BGS",
+   "lf": "Bohigas–Giannoni–Schmit",
+   "how": "paren"
+  },
+  {
+   "sf": "GOE",
+   "lf": "Gaussian orthogonal ensemble",
+   "how": "paren"
+  },
+  {
+   "sf": "GUE",
+   "lf": "Gaussian unitary ensemble",
+   "how": "paren"
+  },
+  {
+   "sf": "GSE",
+   "lf": "Gaussian symplectic ensemble",
+   "how": "paren"
+  },
+  {
+   "sf": "RP",
+   "lf": "Rosenzweig–Porter",
+   "how": "paren",
+   "alt": [
+    "Rosenzweig–Porter model"
+   ]
+  },
+  {
+   "sf": "gRP",
+   "lf": "generalized Rosenzweig–Porter",
+   "how": "paren"
+  },
+  {
+   "sf": "PNs",
+   "lf": "participation numbers",
+   "how": "paren",
+   "alt": [
+    "generalized participation numbers"
+   ]
+  },
+  {
+   "sf": "FSS",
+   "lf": "finite size scaling",
+   "how": "paren"
+  },
+  {
+   "sf": "LM",
+   "lf": "Levenberg–Marquardt",
+   "how": "paren"
+  },
+  {
+   "sf": "MC",
+   "lf": "Monte–Carlo",
+   "how": "paren"
+  },
+  {
+   "sf": "AGP",
+   "lf": "adiabatic gauge potential",
+   "how": "paren"
+  }
+ ],
+ "undefined": [],
+ "ignore": [
+  "IBS",
+  "IBS-R024-D1",
+  "UST",
+  "Auto.",
+  "γEM",
+  "ND",
+  "KA",
+  "KE",
+  "Kl",
+  "ΓN",
+  "Σ2",
+  "2F2",
+  "Nγ/2",
+  "2βN",
+  "limN",
+  "logN",
+  "3X3",
+  "2Λ2",
+  "Λ2",
+  "2Λ",
+  "dE1",
+  "dE2",
+  "Hnm",
+  "H0nn",
+  "LMFIT",
+  "FAPESP",
+  "ICTP-SAIFR",
+  "Harish-Chandra",
+  "PAPER",
+  "OPEN",
+  "ACCESS",
+  "A10",
+  "A11",
+  "A12",
+  "A13",
+  "A14",
+  "A15",
+  "A16",
+  "A17",
+  "A18",
+  "A19",
+  "A20",
+  "A21",
+  "A22",
+  "A23",
+  "A24",
+  "A25",
+  "A26",
+  "A27",
+  "A28",
+  "A29",
+  "A30",
+  "A31",
+  "A32",
+  "A33",
+  "A34",
+  "A35",
+  "A36",
+  "A37",
+  "A38",
+  "A39",
+  "A40",
+  "A41",
+  "A42",
+  "A43",
+  "A44",
+  "A45",
+  "A46",
+  "A47",
+  "A48",
+  "A49",
+  "A50",
+  "A51",
+  "A52",
+  "A53",
+  "A54",
+  "A55",
+  "A56",
+  "A57",
+  "A58",
+  "A59",
+  "A60"
+ ]
+}

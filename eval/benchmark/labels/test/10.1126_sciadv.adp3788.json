@@ -1,0 +1,122 @@
+{
+ "doi": "10.1126/sciadv.adp3788",
+ "title": "Preserving surface strain in nanocatalysts via morphology control",
+ "journal": "Science Advances",
+ "defined": [
+  {
+   "sf": "4D-STEM",
+   "lf": "four-dimensional scanning transmission electron microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "NPs",
+   "lf": "nanoparticles",
+   "how": "paren"
+  },
+  {
+   "sf": "ADF-STEM",
+   "lf": "annular darkfield scanning transmission electron microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "EMPAD",
+   "lf": "electron microscope pixel array detector",
+   "how": "paren"
+  },
+  {
+   "sf": "EWPC",
+   "lf": "exit-wave power-cepstrum",
+   "how": "paren"
+  },
+  {
+   "sf": "SI",
+   "lf": "sharpness index",
+   "how": "paren"
+  },
+  {
+   "sf": "MD",
+   "lf": "molecular dynamics",
+   "how": "paren"
+  },
+  {
+   "sf": "PVBA",
+   "lf": "trans-2-phenylvinylboronic acid",
+   "how": "paren",
+   "note": "extracted text reads \"trans2-phenylvinylboronic acid\""
+  },
+  {
+   "sf": "UV-vis",
+   "lf": "ultraviolet-visible",
+   "how": "paren"
+  },
+  {
+   "sf": "DPBT",
+   "lf": "trans,trans-1,4-diphenyl-1,3-butadiene",
+   "how": "paren"
+  },
+  {
+   "sf": "AA",
+   "lf": "l-ascorbic acid",
+   "how": "paren"
+  },
+  {
+   "sf": "MCH",
+   "lf": "methylcyclohexene",
+   "how": "paren"
+  },
+  {
+   "sf": "CTAB",
+   "lf": "Hexadecyltrimethylammonium bromide",
+   "how": "paren"
+  },
+  {
+   "sf": "CTAC",
+   "lf": "hexadecyltrimethylammonium chloride",
+   "how": "paren"
+  },
+  {
+   "sf": "OD",
+   "lf": "optical density",
+   "how": "paren"
+  }
+ ],
+ "undefined": [],
+ "ignore": [
+  "4d-STeM",
+  "eWPc",
+  "nP",
+  "nPs",
+  "Si",
+  "γ0",
+  "HAuCl4",
+  "NaBH4",
+  "AgNO3",
+  "PdCl2",
+  "KBr",
+  "K2CO3",
+  "H2PdCl4",
+  "HCl",
+  "H2O",
+  "Au3+",
+  "Au0",
+  "Au3",
+  "eMc",
+  "nSF",
+  "dFG",
+  "mM",
+  "TX",
+  "uSA",
+  "S12",
+  "S19",
+  "AdvAnceS",
+  "ReSeARch",
+  "ReSouRce",
+  "MATERIALS",
+  "AND",
+  "ACS",
+  "cc BY-nc",
+  "CC BY-NC",
+  "Y.h.",
+  "M.R.J."
+ ]
+}

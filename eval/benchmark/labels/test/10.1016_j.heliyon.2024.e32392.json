@@ -1,0 +1,83 @@
+{
+ "doi": "10.1016/j.heliyon.2024.e32392",
+ "title": "Long-term in situ straw returning increased soil aggregation and aggregate associated organic carbon fractions in a paddy soil",
+ "journal": "Heliyon",
+ "defined": [
+  {
+   "sf": "OC",
+   "lf": "organic carbon",
+   "how": "paren"
+  },
+  {
+   "sf": "TOC",
+   "lf": "total organic carbon",
+   "how": "paren",
+   "alt": [
+    "total OC"
+   ]
+  },
+  {
+   "sf": "DOC",
+   "lf": "dissolved organic carbon",
+   "how": "paren",
+   "alt": [
+    "dissolved OC"
+   ]
+  },
+  {
+   "sf": "ROC",
+   "lf": "resistant organic carbon",
+   "how": "paren",
+   "alt": [
+    "resistant OC"
+   ]
+  },
+  {
+   "sf": "EOC",
+   "lf": "easily oxidative organic carbon",
+   "how": "paren",
+   "alt": [
+    "easily oxidative OC"
+   ]
+  },
+  {
+   "sf": "CK",
+   "lf": "no straw returning plus no fertilization",
+   "how": "paren"
+  },
+  {
+   "sf": "SF",
+   "lf": "straw returning plus conventional fertilization",
+   "how": "paren"
+  },
+  {
+   "sf": "SDF",
+   "lf": "straw returning plus 80 % conventional fertilization",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "SOC",
+   "lf": "soil organic carbon"
+  }
+ ],
+ "ignore": [
+  "F",
+  "SD",
+  "C/N",
+  "pH",
+  "mL",
+  "HCl",
+  "Fe/Al",
+  "ANOVA",
+  "SPSS",
+  "PTFE",
+  "N–P–K",
+  "IBM",
+  "USA",
+  "NY",
+  "MA",
+  "P"
+ ]
+}

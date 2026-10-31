@@ -1,0 +1,122 @@
+{
+ "doi": "10.1109/ACCESS.2024.3487851",
+ "title": "A Data-Centric Approach to Investigate the Feasibility of Utilizing Animal Medical Data as a Solution for Human Medical Data Scarcity",
+ "journal": "IEEE Access",
+ "defined": [
+  {
+   "sf": "RBC",
+   "lf": "Red Blood Cells",
+   "how": "paren"
+  },
+  {
+   "sf": "WBC",
+   "lf": "White Blood Cells",
+   "how": "paren"
+  },
+  {
+   "sf": "TL",
+   "lf": "Transfer Learning",
+   "how": "paren"
+  },
+  {
+   "sf": "AI",
+   "lf": "Artificial Intelligence",
+   "how": "paren"
+  },
+  {
+   "sf": "ROI",
+   "lf": "Regions of Interest",
+   "how": "paren"
+  },
+  {
+   "sf": "CNN",
+   "lf": "Convolutional Neural Network",
+   "how": "paren"
+  },
+  {
+   "sf": "AUC",
+   "lf": "Area Under the Curve",
+   "how": "paren"
+  },
+  {
+   "sf": "RNA",
+   "lf": "Ribonucleic Acid",
+   "how": "paren"
+  },
+  {
+   "sf": "SSD",
+   "lf": "Single Shot Detector",
+   "how": "paren"
+  },
+  {
+   "sf": "FMs",
+   "lf": "Foundation Models",
+   "how": "paren"
+  },
+  {
+   "sf": "CENPARMI",
+   "lf": "Centre for Pattern Recognition and Machine Intelligence",
+   "how": "paren"
+  },
+  {
+   "sf": "VGG16",
+   "lf": "Visual Geometry Group",
+   "how": "paren"
+  },
+  {
+   "sf": "MAD",
+   "lf": "Mean absolute Deviation",
+   "how": "paren"
+  }
+ ],
+ "undefined": [],
+ "ignore": [
+  "IEEE",
+  "NSERC",
+  "CGS D",
+  "ELFRWL",
+  "BIBM",
+  "IAPR",
+  "ICDAR",
+  "ICPRAI",
+  "IWFHR",
+  "ICFHR",
+  "ITAC",
+  "ImageNet",
+  "IMAGENET",
+  "DS",
+  "FS",
+  "YS",
+  "XS",
+  "FT",
+  "DT",
+  "YT",
+  "B12",
+  "E100",
+  "QC",
+  "Al-Qudah",
+  "AL-QUDAH",
+  "RABIAH",
+  "CHING",
+  "SUEN",
+  "AND",
+  "THE",
+  "TO",
+  "BETWEEN",
+  "VOLUME",
+  "DATASETS",
+  "DATASET",
+  "HUMAN",
+  "RETICULOCYTE",
+  "FELINE",
+  "DATA",
+  "TRANSFER",
+  "LEARNING",
+  "EXPERIMENTS",
+  "RESULTS",
+  "NY",
+  "USA",
+  "arXiv",
+  "Editor-in-Chief"
+ ]
+}

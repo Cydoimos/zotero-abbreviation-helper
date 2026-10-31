@@ -1,0 +1,321 @@
+{
+ "doi": "10.1177/20503121241229847",
+ "title": "Neuroinvasion of emerging and re-emerging arboviruses: A scoping review",
+ "journal": "SAGE Open Medicine",
+ "defined": [
+  {
+   "sf": "PNS",
+   "lf": "peripheral nervous system",
+   "how": "paren"
+  },
+  {
+   "sf": "TLR-3",
+   "lf": "toll-like receptor-3",
+   "how": "paren"
+  },
+  {
+   "sf": "CCL5",
+   "lf": "chemokine (C-C motif) ligand 5",
+   "how": "paren"
+  },
+  {
+   "sf": "NS5",
+   "lf": "non-structural protein 5",
+   "how": "paren"
+  },
+  {
+   "sf": "PRISMA-ScR",
+   "lf": "Preferred Reporting Items for Systematic Reviews and Meta-Analyses for scoping reviews",
+   "how": "paren"
+  },
+  {
+   "sf": "WNV",
+   "lf": "West Nile virus",
+   "how": "paren"
+  },
+  {
+   "sf": "PRES",
+   "lf": "posterior reversible encephalopathy syndrome",
+   "how": "paren"
+  },
+  {
+   "sf": "CSF",
+   "lf": "cerebrospinal fluid",
+   "how": "paren"
+  },
+  {
+   "sf": "IgM",
+   "lf": "Immunoglobulin M",
+   "how": "paren"
+  },
+  {
+   "sf": "MRI",
+   "lf": "Magnetic resonance imaging",
+   "how": "paren"
+  },
+  {
+   "sf": "IVIG",
+   "lf": "intravenous immunoglobulin",
+   "how": "paren"
+  },
+  {
+   "sf": "GBS",
+   "lf": "Guillain-Barré syndrome",
+   "how": "paren"
+  },
+  {
+   "sf": "BBB",
+   "lf": "blood-brain barrier",
+   "how": "paren"
+  },
+  {
+   "sf": "ZIKV",
+   "lf": "Zika virus",
+   "how": "paren"
+  },
+  {
+   "sf": "WHO",
+   "lf": "World Health Organization",
+   "how": "paren"
+  },
+  {
+   "sf": "NAATs",
+   "lf": "nucleic acid amplification tests",
+   "how": "paren"
+  },
+  {
+   "sf": "CHIKV",
+   "lf": "Chikungunya virus",
+   "how": "paren"
+  },
+  {
+   "sf": "JEV",
+   "lf": "Japanese encephalitis virus",
+   "how": "paren"
+  },
+  {
+   "sf": "JE",
+   "lf": "Japanese encephalitis",
+   "how": "paren"
+  },
+  {
+   "sf": "SLE",
+   "lf": "St. Louis Encephalitis",
+   "how": "paren"
+  },
+  {
+   "sf": "TBEV-Eu",
+   "lf": "European virus",
+   "how": "paren"
+  },
+  {
+   "sf": "TBEV-Fe",
+   "lf": "Far Eastern virus",
+   "how": "paren"
+  },
+  {
+   "sf": "TBEV-Sib",
+   "lf": "Siberian virus",
+   "how": "paren"
+  },
+  {
+   "sf": "TBE",
+   "lf": "tick-borne encephalitis",
+   "how": "paren"
+  },
+  {
+   "sf": "POWV",
+   "lf": "Powassan virus",
+   "how": "paren"
+  },
+  {
+   "sf": "YFV",
+   "lf": "yellow fever virus",
+   "how": "paren"
+  },
+  {
+   "sf": "IFN-γ",
+   "lf": "interferon-gamma",
+   "how": "paren",
+   "note": "extracted text reads \"IFN- γ\""
+  },
+  {
+   "sf": "VAERS",
+   "lf": "Vaccine Adverse Events Reporting System",
+   "how": "paren",
+   "alt": [
+    "National Vaccine Adverse Events Reporting System"
+   ]
+  },
+  {
+   "sf": "MAYV",
+   "lf": "Mayaro virus",
+   "how": "paren"
+  },
+  {
+   "sf": "EEE",
+   "lf": "Eastern Equine Encephalitis",
+   "how": "paren"
+  },
+  {
+   "sf": "PCR",
+   "lf": "Polymerase chain reaction",
+   "how": "paren"
+  },
+  {
+   "sf": "RVFV",
+   "lf": "Rift Valley fever virus",
+   "how": "paren"
+  },
+  {
+   "sf": "DV",
+   "lf": "Dengue virus",
+   "how": "list"
+  },
+  {
+   "sf": "SEV",
+   "lf": "St. Louis encephalitis virus",
+   "how": "list"
+  },
+  {
+   "sf": "TBEV",
+   "lf": "Tick borne encephalitis virus",
+   "how": "list"
+  },
+  {
+   "sf": "ADEM",
+   "lf": "acute disseminated encephalomyelitis",
+   "how": "list"
+  },
+  {
+   "sf": "CCR5",
+   "lf": "C-C chemokine receptor type 5",
+   "how": "list"
+  },
+  {
+   "sf": "Tyk2",
+   "lf": "tyrosine kinase 2",
+   "how": "list"
+  },
+  {
+   "sf": "AXL",
+   "lf": "tyrosine-protein kinase receptor UFO",
+   "how": "list"
+  },
+  {
+   "sf": "VP7",
+   "lf": "viral envelope protein",
+   "how": "list"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "CNS",
+   "lf": "central nervous system"
+  },
+  {
+   "sf": "IgG",
+   "lf": "immunoglobulin G"
+  },
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "CN",
+   "lf": "cranial nerve"
+  },
+  {
+   "sf": "SIADH",
+   "lf": "syndrome of inappropriate antidiuretic hormone secretion"
+  },
+  {
+   "sf": "ICU",
+   "lf": "intensive care unit"
+  },
+  {
+   "sf": "EEEV",
+   "lf": "Eastern equine encephalitis virus"
+  },
+  {
+   "sf": "RVF",
+   "lf": "Rift Valley fever"
+  },
+  {
+   "sf": "ELISA",
+   "lf": "enzyme-linked immunosorbent assay"
+  },
+  {
+   "sf": "CT",
+   "lf": "computed tomography"
+  },
+  {
+   "sf": "FLAIR",
+   "lf": "fluid-attenuated inversion recovery"
+  },
+  {
+   "sf": "T2WI",
+   "lf": "T2-weighted imaging"
+  }
+ ],
+ "ignore": [
+  "TLR3",
+  "NS1",
+  "NS",
+  "ASM",
+  "DC-SIGN",
+  "DC SIGN",
+  "RhoGDL",
+  "RhoGDI",
+  "Tyro3",
+  "VLDLR",
+  "CCL2",
+  "CCL3",
+  "CXCL10",
+  "CXCL11",
+  "IL-6",
+  "IL-8",
+  "IL-12",
+  "IL-15",
+  "CD4",
+  "C-C",
+  "ZIKVBR",
+  "HSS",
+  "MIF",
+  "DEET",
+  "AOR",
+  "CI",
+  "T2/FLAIR",
+  "DWI",
+  "VirScan",
+  "BioRender",
+  "QCRI",
+  "Rayyan",
+  "OSF",
+  "IO/GRKHA",
+  "PubMed",
+  "ScienceDirect",
+  "SAGE",
+  "DOI",
+  "PLoS",
+  "BMC",
+  "BMJ",
+  "JAMA",
+  "AJNR",
+  "MMWR",
+  "MR",
+  "MA",
+  "USA",
+  "UK",
+  "Guillain-Barr",
+  "Guillain-Barre",
+  "McMahon",
+  "V.K.",
+  "B.S.S.",
+  "S.Z."
+ ]
+}

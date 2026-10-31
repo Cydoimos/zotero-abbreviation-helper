@@ -1,0 +1,152 @@
+{
+ "doi": "10.1039/D4RA03518F",
+ "title": "Master equation modeling of water dissociation in small ionic water clusters: Ag+ (H2 O) n  , n = 4–6",
+ "journal": "RSC Advances",
+ "defined": [
+  {
+   "sf": "BIRD",
+   "lf": "blackbody infrared radiative dissociation",
+   "how": "paren"
+  },
+  {
+   "sf": "MEM",
+   "lf": "master equation modeling",
+   "how": "paren"
+  },
+  {
+   "sf": "RRKM",
+   "lf": "Rice–Ramsperger–Kassel–Marcus",
+   "how": "paren"
+  },
+  {
+   "sf": "RAC",
+   "lf": "rigid activated complex",
+   "how": "paren"
+  },
+  {
+   "sf": "PSL",
+   "lf": "phase space limit",
+   "how": "paren"
+  },
+  {
+   "sf": "AWATAR",
+   "lf": "All Wells and Transition States Are Relevant",
+   "how": "paren"
+  },
+  {
+   "sf": "CID",
+   "lf": "collision-induced dissociation",
+   "how": "paren"
+  },
+  {
+   "sf": "DFT",
+   "lf": "density functional theory",
+   "how": "paren",
+   "alt": [
+    "four-component relativistic density functional theory"
+   ]
+  },
+  {
+   "sf": "IRMPD",
+   "lf": "Infrared multiple photon dissociation",
+   "how": "paren"
+  },
+  {
+   "sf": "ESI",
+   "lf": "Electronic supplementary information",
+   "how": "paren"
+  },
+  {
+   "sf": "GA",
+   "lf": "genetic algorithm",
+   "how": "paren"
+  },
+  {
+   "sf": "CBS",
+   "lf": "complete basis set",
+   "how": "paren"
+  },
+  {
+   "sf": "IVR",
+   "lf": "intramolecular vibrational redistribution",
+   "how": "paren"
+  },
+  {
+   "sf": "TS",
+   "lf": "transition state",
+   "how": "paren"
+  },
+  {
+   "sf": "MD",
+   "lf": "molecular dynamics",
+   "how": "paren"
+  },
+  {
+   "sf": "SW",
+   "lf": "single-well",
+   "how": "other",
+   "note": "table caption: \"SW/MW indicates the single-well and multiple-well MEM approach, respectively\""
+  },
+  {
+   "sf": "MW",
+   "lf": "multiple-well",
+   "how": "other",
+   "note": "same caption as SW"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "IR",
+   "lf": "infrared"
+  },
+  {
+   "sf": "ICR",
+   "lf": "ion cyclotron resonance"
+  },
+  {
+   "sf": "FT-ICR",
+   "lf": "Fourier transform ion cyclotron resonance"
+  }
+ ],
+ "ignore": [
+  "K-rotor",
+  "J-rotor",
+  "EA",
+  "DH",
+  "DHA",
+  "NI",
+  "3II",
+  "4I",
+  "4II",
+  "4III",
+  "4IV",
+  "4VI",
+  "5IV",
+  "B3LYP",
+  "BLYP",
+  "BLYP/def2SVP",
+  "CCSD",
+  "CCSD(T)",
+  "def2SVP",
+  "aug-cc-pVTZ-PP",
+  "augcc-pVTZ-PP",
+  "aug-cc-pVXZ-PP",
+  "MOLPRO",
+  "ABIN",
+  "FWF",
+  "MH",
+  "GS",
+  "MO",
+  "MS",
+  "MKB",
+  "RT",
+  "kJ",
+  "NaCl",
+  "AgCl",
+  "H2O",
+  "Zn2",
+  "DOI",
+  "RSC",
+  "Gas-Phase"
+ ]
+}

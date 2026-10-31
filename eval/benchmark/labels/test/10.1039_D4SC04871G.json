@@ -1,0 +1,137 @@
+{
+ "doi": "10.1039/D4SC04871G",
+ "title": "Monitoring electrophilic intermediates in reactions of thiols in aqueous solution directly with19 F NMR",
+ "journal": "Chemical Science",
+ "defined": [
+  {
+   "sf": "ESI",
+   "lf": "Electronic supplementary information",
+   "how": "paren"
+  },
+  {
+   "sf": "TEG",
+   "lf": "tetraethylene glycol",
+   "how": "paren"
+  },
+  {
+   "sf": "NDPO2",
+   "lf": "endoperoxide of sodium naphthalene-1,4-dipropionate",
+   "how": "paren"
+  },
+  {
+   "sf": "Prx",
+   "lf": "peroxiredoxins",
+   "how": "paren"
+  },
+  {
+   "sf": "IEFPCM",
+   "lf": "polarizable continuum model using the integral equation formalism",
+   "how": "paren"
+  },
+  {
+   "sf": "TFE",
+   "lf": "2,2,2-trifluoroethanol",
+   "how": "paren",
+   "note": "extracted text reads \"2,2,2triuoroethanol\" (the fl ligature is lost)"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "TS",
+   "lf": "transition state"
+  },
+  {
+   "sf": "HRMS",
+   "lf": "high-resolution mass spectrometry"
+  },
+  {
+   "sf": "EI",
+   "lf": "electron ionization"
+  },
+  {
+   "sf": "HPLC",
+   "lf": "high-performance liquid chromatography"
+  },
+  {
+   "sf": "NMR",
+   "lf": "nuclear magnetic resonance"
+  },
+  {
+   "sf": "THF",
+   "lf": "tetrahydrofuran"
+  },
+  {
+   "sf": "DMPU",
+   "lf": "N,N′-dimethylpropyleneurea"
+  }
+ ],
+ "ignore": [
+  "RSOH",
+  "RSCl",
+  "RSO2H",
+  "RSO3H",
+  "RSOOH",
+  "RS",
+  "RSH",
+  "RS−",
+  "RSOOc",
+  "RSO2",
+  "ROOH",
+  "OOH",
+  "HOCl",
+  "1O2",
+  "3O2",
+  "H2O2",
+  "H2O",
+  "D2O",
+  "CD3OD",
+  "CDCl3",
+  "C6D6",
+  "MeOH",
+  "EtOAc",
+  "nBuLi",
+  "NaOCl",
+  "NaOH",
+  "HCl",
+  "MgSO4",
+  "K2HPO4",
+  "Fe2",
+  "ESI+",
+  "ESI−",
+  "SET",
+  "HAT",
+  "DCE",
+  "NHE",
+  "CBS-QB3",
+  "pD",
+  "pH",
+  "pKa",
+  "pKas",
+  "DG",
+  "mM",
+  "mL",
+  "MHz",
+  "M–H",
+  "OAc",
+  "1-Cys",
+  "THF/H2O",
+  "D2O/THF",
+  "H2O/THF",
+  "D2O/H2O",
+  "CD3OD/H2O",
+  "MeOH/CHCl3",
+  "MeOH/CH2Cl2",
+  "CHCl3",
+  "CH2Cl2",
+  "DOI",
+  "Miura18",
+  "TpSMe18",
+  "10-Fluoro-9",
+  "C21H13Br2FS",
+  "C36H45FNaO10S",
+  "C36H45FNaO11S",
+  "C36H44FO12S",
+  "C36H44FO13S",
+  "Ferrer-Sueta"
+ ]
+}

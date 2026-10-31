@@ -1,0 +1,117 @@
+{
+ "doi": "10.1101/2025.03.02.25323178",
+ "title": "A Five-Year Review of the Rates and Indications for Caesarean Section at Mbale Regional Referral Hospital: A Cross Sectional Study",
+ "journal": "Sexual and Reproductive Health",
+ "defined": [
+  {
+   "sf": "CS",
+   "lf": "Caesarean Section",
+   "how": "paren"
+  },
+  {
+   "sf": "MRRH",
+   "lf": "Mbale Regional Referral Hospital",
+   "how": "paren"
+  },
+  {
+   "sf": "WHO",
+   "lf": "World Health Organization",
+   "how": "paren"
+  },
+  {
+   "sf": "AARI",
+   "lf": "average annual rate of increase",
+   "how": "paren"
+  },
+  {
+   "sf": "DET",
+   "lf": "Data Extraction Table",
+   "how": "paren"
+  },
+  {
+   "sf": "NRH",
+   "lf": "national referral hospitals",
+   "how": "paren"
+  },
+  {
+   "sf": "FSB",
+   "lf": "fresh Still Birth",
+   "how": "paren"
+  },
+  {
+   "sf": "MSB",
+   "lf": "Macerated Still Birth",
+   "how": "paren"
+  },
+  {
+   "sf": "PI",
+   "lf": "principal investigator",
+   "how": "paren"
+  },
+  {
+   "sf": "ToL",
+   "lf": "trial of labour",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "CSR",
+   "lf": "caesarean section rate"
+  },
+  {
+   "sf": "RRH",
+   "lf": "Regional Referral Hospital"
+  },
+  {
+   "sf": "PNW",
+   "lf": "postnatal ward"
+  },
+  {
+   "sf": "HMIS",
+   "lf": "Health Management Information System"
+  },
+  {
+   "sf": "SVDs",
+   "lf": "spontaneous vaginal deliveries"
+  },
+  {
+   "sf": "APH",
+   "lf": "antepartum haemorrhage"
+  },
+  {
+   "sf": "ANC",
+   "lf": "antenatal care"
+  },
+  {
+   "sf": "CPD",
+   "lf": "cephalopelvic disproportion"
+  },
+  {
+   "sf": "HIV",
+   "lf": "human immunodeficiency virus"
+  },
+  {
+   "sf": "C/S",
+   "lf": "caesarean section"
+  }
+ ],
+ "ignore": [
+  "AJMN",
+  "CC-BY",
+  "medRxiv",
+  "C-section",
+  "MAT",
+  "Mat",
+  "Obs",
+  "Gynae",
+  "TOTAL",
+  "DELIVERIES",
+  "NORMAL",
+  "YEAR",
+  "Non-Obstetric",
+  "p25",
+  "p75",
+  "N"
+ ]
+}

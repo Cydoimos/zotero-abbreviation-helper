@@ -1,0 +1,108 @@
+{
+ "doi": "10.3389/fmicb.2025.1704146",
+ "title": "Differences in abundance and functional intensity of characteristic microorganisms of tea plant rhizosphere soils contribute to the differentiation of tea quality in different rocky zones",
+ "journal": "Frontiers in Microbiology",
+ "defined": [
+  {
+   "sf": "ZY",
+   "lf": "authentic rocky zone",
+   "how": "paren"
+  },
+  {
+   "sf": "BY",
+   "lf": "semi-rock zone",
+   "how": "paren"
+  },
+  {
+   "sf": "ZC",
+   "lf": "continent zone",
+   "how": "paren"
+  },
+  {
+   "sf": "HPLC",
+   "lf": "High performance liquid chromatography",
+   "how": "paren"
+  },
+  {
+   "sf": "LEfSe",
+   "lf": "linear discriminant analysis effect size",
+   "how": "paren"
+  },
+  {
+   "sf": "OPLS-DA",
+   "lf": "Orthogonal Partial Least Squares Discriminant Analysis",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "OTUs",
+   "lf": "operational taxonomic units"
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "rDNA",
+   "lf": "ribosomal DNA"
+  },
+  {
+   "sf": "BSA",
+   "lf": "bovine serum albumin"
+  },
+  {
+   "sf": "SHAP",
+   "lf": "SHapley Additive exPlanations"
+  },
+  {
+   "sf": "LDA",
+   "lf": "linear discriminant analysis"
+  },
+  {
+   "sf": "VIP",
+   "lf": "variable importance in projection"
+  },
+  {
+   "sf": "PLS-SEM",
+   "lf": "partial least squares structural equation modeling"
+  },
+  {
+   "sf": "PD",
+   "lf": "phylogenetic diversity"
+  }
+ ],
+ "ignore": [
+  "AcSIR",
+  "CC BY",
+  "means±SD",
+  "SD",
+  "R2Y",
+  "UNITE",
+  "UPARSE",
+  "BLAST",
+  "FUNGuild",
+  "FAPROTAX",
+  "QIIME1",
+  "UCHIME",
+  "AI",
+  "MS",
+  "pH",
+  "NaOH",
+  "Na2CO3",
+  "mL",
+  "GB/T 18745-2006",
+  "Kruskal-Wallis",
+  "ITS1",
+  "ITS2",
+  "Wang2",
+  "PUBLISHED",
+  "C/30",
+  "Shannon-Wiener",
+  "Chao1"
+ ]
+}

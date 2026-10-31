@@ -1,0 +1,391 @@
+{
+ "doi": "10.1016/j.xcrm.2024.101849",
+ "title": "A glucocorticoid spike derails muscle repair to heterotopic ossification after spinal cord injury",
+ "journal": "Cell Reports Medicine",
+ "defined": [
+  {
+   "sf": "NHOs",
+   "lf": "neurogenic heterotopic ossifications",
+   "how": "paren",
+   "alt": [
+    "neurogenic heterotopic ossification"
+   ]
+  },
+  {
+   "sf": "SCIs",
+   "lf": "spinal cord injuries",
+   "how": "paren",
+   "alt": [
+    "severe spinal cord injuries"
+   ]
+  },
+  {
+   "sf": "APHP",
+   "lf": "Assistance Publique Hopitaux de Paris",
+   "how": "paren"
+  },
+  {
+   "sf": "CNS",
+   "lf": "central nervous system",
+   "how": "paren"
+  },
+  {
+   "sf": "SCI",
+   "lf": "spinal cord injury",
+   "how": "paren"
+  },
+  {
+   "sf": "GC",
+   "lf": "glucocorticoid",
+   "how": "paren",
+   "alt": [
+    "synthetic glucocorticoid"
+   ]
+  },
+  {
+   "sf": "GR",
+   "lf": "glucocorticoid receptor",
+   "how": "paren",
+   "alt": [
+    "receptor"
+   ]
+  },
+  {
+   "sf": "SCs",
+   "lf": "satellite cells",
+   "how": "paren"
+  },
+  {
+   "sf": "MPCs",
+   "lf": "mesenchymal progenitor cells",
+   "how": "paren"
+  },
+  {
+   "sf": "FAPs",
+   "lf": "fibro-adipogenic progenitors",
+   "how": "paren"
+  },
+  {
+   "sf": "TNF",
+   "lf": "tumor necrosis factor",
+   "how": "paren"
+  },
+  {
+   "sf": "TBI",
+   "lf": "traumatic brain injury",
+   "how": "paren"
+  },
+  {
+   "sf": "CDTX",
+   "lf": "cardiotoxin",
+   "how": "paren"
+  },
+  {
+   "sf": "CORT",
+   "lf": "corticosterone",
+   "how": "paren"
+  },
+  {
+   "sf": "DCORT",
+   "lf": "11b-deoxycorticosterone",
+   "how": "paren"
+  },
+  {
+   "sf": "OSM",
+   "lf": "oncostatin M",
+   "how": "paren"
+  },
+  {
+   "sf": "GCs",
+   "lf": "glucocorticoids",
+   "how": "paren",
+   "alt": [
+    "adrenal glucocorticoids"
+   ]
+  },
+  {
+   "sf": "HOs",
+   "lf": "heterotopic ossifications",
+   "how": "paren",
+   "alt": [
+    "heterotopic ossification"
+   ]
+  },
+  {
+   "sf": "Cort",
+   "lf": "corticosterone",
+   "how": "paren"
+  },
+  {
+   "sf": "Veh",
+   "lf": "vehicle",
+   "how": "paren"
+  },
+  {
+   "sf": "Dex",
+   "lf": "dexamethasone",
+   "how": "paren"
+  },
+  {
+   "sf": "RT-PCR",
+   "lf": "reverse-transcription PCR",
+   "how": "paren"
+  },
+  {
+   "sf": "qRT-PCR",
+   "lf": "Quantitative RT-PCR",
+   "how": "paren",
+   "alt": [
+    "quantitative reverse-transcription PCR"
+   ]
+  },
+  {
+   "sf": "mCT",
+   "lf": "micro-computed tomography",
+   "how": "paren"
+  },
+  {
+   "sf": "FDR",
+   "lf": "false discovery rate",
+   "how": "paren"
+  },
+  {
+   "sf": "FC",
+   "lf": "fold change",
+   "how": "paren"
+  },
+  {
+   "sf": "DAVID",
+   "lf": "Database for Annotation, Visualization, and Integrated Discovery",
+   "how": "paren"
+  },
+  {
+   "sf": "GSEA",
+   "lf": "gene set expression analysis",
+   "how": "paren",
+   "alt": [
+    "gene set enrichment analysis"
+   ]
+  },
+  {
+   "sf": "KEGG",
+   "lf": "Kyoto Encyclopedia of Genes and Genomes",
+   "how": "paren"
+  },
+  {
+   "sf": "BMP",
+   "lf": "bone morphogenetic protein",
+   "how": "paren"
+  },
+  {
+   "sf": "RU-486",
+   "lf": "mifepristone",
+   "how": "reverse"
+  },
+  {
+   "sf": "PGR",
+   "lf": "progesterone receptor",
+   "how": "paren"
+  },
+  {
+   "sf": "BMS",
+   "lf": "Basso Mouse Scale",
+   "how": "paren"
+  },
+  {
+   "sf": "NSAID",
+   "lf": "non-steroid anti-inflammatory drug",
+   "how": "paren"
+  },
+  {
+   "sf": "GIOP",
+   "lf": "GC-induced osteoporosis",
+   "how": "paren",
+   "alt": [
+    "glucocorticoid-induced osteoporosis"
+   ]
+  },
+  {
+   "sf": "Sal",
+   "lf": "saline",
+   "how": "paren"
+  },
+  {
+   "sf": "VEH",
+   "lf": "vehicle",
+   "how": "paren"
+  },
+  {
+   "sf": "MIF",
+   "lf": "mifepristone",
+   "how": "paren"
+  },
+  {
+   "sf": "AnnV",
+   "lf": "annexin V",
+   "how": "paren"
+  },
+  {
+   "sf": "7AAD",
+   "lf": "7-aminoactinomycin D",
+   "how": "paren"
+  },
+  {
+   "sf": "REL",
+   "lf": "relacorilant",
+   "how": "paren"
+  },
+  {
+   "sf": "LPS",
+   "lf": "lipopolysaccharide",
+   "how": "paren"
+  },
+  {
+   "sf": "NHMRC",
+   "lf": "National Health and Medical Research Council of Australia",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "HO",
+   "lf": "heterotopic ossification"
+  },
+  {
+   "sf": "NHO",
+   "lf": "neurogenic heterotopic ossification"
+  },
+  {
+   "sf": "WT",
+   "lf": "wild-type"
+  },
+  {
+   "sf": "ANOVA",
+   "lf": "analysis of variance"
+  },
+  {
+   "sf": "SD",
+   "lf": "standard deviation"
+  },
+  {
+   "sf": "PBS",
+   "lf": "phosphate-buffered saline"
+  },
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "mRNA",
+   "lf": "messenger RNA"
+  },
+  {
+   "sf": "CPM",
+   "lf": "counts per million"
+  }
+ ],
+ "ignore": [
+  "Nr3c1",
+  "Nr3c1D/D",
+  "ROSA26CreERT2/WT",
+  "ROSA26CrerERT2/WT",
+  "Adgre1",
+  "Fcgr1",
+  "CD64",
+  "F4/80",
+  "Cd3d",
+  "Cd8b1",
+  "Cd4",
+  "Trbc2",
+  "Cd8a",
+  "Cd5",
+  "Lck",
+  "Tgtp2",
+  "Cd3e",
+  "Cd3g",
+  "Itk",
+  "Il2rb",
+  "Cr2",
+  "Ighg2b",
+  "Iglc3",
+  "Cd19",
+  "Cd79a/b",
+  "Ighd",
+  "Blk",
+  "Ikzf3",
+  "Cd22",
+  "Pax5",
+  "Klra9",
+  "Klre1",
+  "Klrk1",
+  "Nkg7",
+  "Ncr1",
+  "Cd44",
+  "Tnfrsf12a",
+  "Cdh2",
+  "Itgav",
+  "CD51",
+  "Adam12",
+  "Timp1",
+  "Lox",
+  "Vcan",
+  "Spp1",
+  "Tnfrsf11b",
+  "Eln",
+  "Thbs1",
+  "Suco",
+  "Ddr2",
+  "Wnt7b",
+  "Wnt10a",
+  "Gdf5",
+  "Gfd6",
+  "BMP13",
+  "Fgf2",
+  "Ccn1",
+  "Ccn2",
+  "Ccn4",
+  "Tnc",
+  "Acvr1",
+  "Acvr2a",
+  "Acvr2b",
+  "Bmpr1a",
+  "Myog",
+  "Mstn",
+  "Tgfb3",
+  "Pgr",
+  "Hsd11b2",
+  "Csf1",
+  "Chil3",
+  "Cd163",
+  "Ccl2",
+  "CD45",
+  "CD31",
+  "Sca1",
+  "CD34",
+  "Lin",
+  "CORT125134",
+  "GDF-5",
+  "WISP1",
+  "TWEAK",
+  "C57BL/6",
+  "SHAM",
+  "K.A.A.",
+  "J.-P.L.",
+  "H.-W.T.",
+  "M.J.R.",
+  "S.B.",
+  "F.G.",
+  "W81XWH-15-1-0606",
+  "WFLAU-19/17",
+  "S1",
+  "S2",
+  "S4",
+  "S7",
+  "S8A",
+  "S8B"
+ ]
+}

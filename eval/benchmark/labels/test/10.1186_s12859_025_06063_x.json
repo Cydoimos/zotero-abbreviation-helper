@@ -1,0 +1,242 @@
+{
+ "doi": "10.1186/s12859-025-06063-x",
+ "title": "AMEND 2.0: module identification and multi-omic data integration with multiplex-heterogeneous graphs",
+ "journal": "BMC Bioinformatics",
+ "defined": [
+  {
+   "sf": "PTM",
+   "lf": "post-translational modifications",
+   "how": "paren"
+  },
+  {
+   "sf": "PPI",
+   "lf": "protein–protein interaction",
+   "how": "paren"
+  },
+  {
+   "sf": "MMI",
+   "lf": "metabolite-metabolite interaction",
+   "how": "paren"
+  },
+  {
+   "sf": "RWR-MH",
+   "lf": "Random Walk with Restart for Multiplex-Heterogeneous Graphs",
+   "how": "paren"
+  },
+  {
+   "sf": "TCGA-KIRC",
+   "lf": "The Cancer Genome Atlas renal cell carcinoma project",
+   "how": "paren"
+  },
+  {
+   "sf": "OGT",
+   "lf": "O-GlcNAc Transferase",
+   "how": "paren"
+  },
+  {
+   "sf": "RW",
+   "lf": "Random Walks",
+   "how": "paren"
+  },
+  {
+   "sf": "RWR",
+   "lf": "Random Walk with Restart",
+   "how": "paren"
+  },
+  {
+   "sf": "BRW",
+   "lf": "biased random walk",
+   "how": "paren"
+  },
+  {
+   "sf": "B-RWR",
+   "lf": "Biased Random Walk with Restart",
+   "how": "paren"
+  },
+  {
+   "sf": "SDS",
+   "lf": "Stationary Distribution Scaling",
+   "how": "paren"
+  },
+  {
+   "sf": "BS",
+   "lf": "Bistochastic Scaling",
+   "how": "paren"
+  },
+  {
+   "sf": "IN",
+   "lf": "Inflation-Normalization",
+   "how": "paren"
+  },
+  {
+   "sf": "NISE",
+   "lf": "Network of Interactors and Substrates",
+   "how": "paren"
+  },
+  {
+   "sf": "DE",
+   "lf": "differential expression",
+   "how": "paren"
+  },
+  {
+   "sf": "ORA",
+   "lf": "Over-representation analysis",
+   "how": "paren"
+  },
+  {
+   "sf": "DO",
+   "lf": "disease ontology",
+   "how": "paren"
+  },
+  {
+   "sf": "AMI",
+   "lf": "active module identification",
+   "how": "paren"
+  },
+  {
+   "sf": "RDPN",
+   "lf": "random degree-preserving networks",
+   "how": "paren"
+  },
+  {
+   "sf": "IPF",
+   "lf": "Iterative Proportional Fitting",
+   "how": "paren",
+   "note": "extracted text reads \"Pro portional\""
+  },
+  {
+   "sf": "NOI",
+   "lf": "nodes of interest",
+   "how": "paren"
+  },
+  {
+   "sf": "AMENDRWR",
+   "lf": "AMEND with RWR",
+   "how": "paren"
+  },
+  {
+   "sf": "AMENDB-RWR",
+   "lf": "AMEND with B-RWR",
+   "how": "paren"
+  },
+  {
+   "sf": "TCGA",
+   "lf": "The Cancer Genome Atlas",
+   "how": "paren"
+  },
+  {
+   "sf": "RCC",
+   "lf": "renal cell carcinoma",
+   "how": "paren"
+  },
+  {
+   "sf": "TME",
+   "lf": "tumor microenvironment",
+   "how": "paren"
+  },
+  {
+   "sf": "OGA",
+   "lf": "O-GlcNAcase",
+   "how": "paren"
+  },
+  {
+   "sf": "KO",
+   "lf": "knockdown",
+   "how": "paren"
+  },
+  {
+   "sf": "ECI",
+   "lf": "equivalent change index",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "GO",
+   "lf": "Gene Ontology"
+  },
+  {
+   "sf": "NCBI",
+   "lf": "National Center for Biotechnology Information"
+  },
+  {
+   "sf": "miRNA",
+   "lf": "microRNA"
+  },
+  {
+   "sf": "mRNA",
+   "lf": "messenger RNA"
+  },
+  {
+   "sf": "RNA-seq",
+   "lf": "RNA sequencing"
+  }
+ ],
+ "ignore": [
+  "TCGA KIRC",
+  "QOC",
+  "NCI",
+  "NIH",
+  "ICAM-1",
+  "AMEND",
+  "AMEND-DIABLO",
+  "DIABLO",
+  "KEGG",
+  "GEO",
+  "STRING",
+  "STITCH",
+  "MultiXrank",
+  "NetCore",
+  "DOSE",
+  "miRTarBase",
+  "Reactome",
+  "GDAC",
+  "miRNA-seq",
+  "mRNA-seq",
+  "BH-adjusted",
+  "OGT-KO",
+  "post-KO",
+  "O-GlcNAc",
+  "O-GlcNAcylation",
+  "VEGFA",
+  "HIF1A",
+  "VIM",
+  "ACOX1",
+  "ACOX3",
+  "CRAT",
+  "ECI1",
+  "ECI2",
+  "DECR1",
+  "ACSF2",
+  "ALDH3A2",
+  "CD2",
+  "CD86",
+  "JAK3",
+  "TGFBI",
+  "ICAM1",
+  "miR-122",
+  "miR-155",
+  "miR-210",
+  "miR-200c",
+  "miR-141",
+  "pT",
+  "uT",
+  "MH",
+  "BMC",
+  "KS",
+  "USA",
+  "NY",
+  "PLoS",
+  "SB",
+  "JT",
+  "CS",
+  "AL",
+  "SS",
+  "JA",
+  "ME",
+  "GSE112680",
+  "GSE30219",
+  "GSE75214",
+  "GSE3790"
+ ]
+}

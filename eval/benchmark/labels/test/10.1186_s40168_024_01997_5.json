@@ -1,0 +1,332 @@
+{
+ "doi": "10.1186/s40168-024-01997-5",
+ "title": "Salivary proteomics and metaproteomics identifies distinct molecular and taxonomic signatures of type-2 diabetes",
+ "journal": "Microbiome",
+ "defined": [
+  {
+   "sf": "ACN",
+   "lf": "Acetonitrile",
+   "how": "list"
+  },
+  {
+   "sf": "BMI",
+   "lf": "Body mass index",
+   "how": "list"
+  },
+  {
+   "sf": "DIA",
+   "lf": "Data-independent acquisition",
+   "how": "list"
+  },
+  {
+   "sf": "FA",
+   "lf": "Formic acid",
+   "how": "list"
+  },
+  {
+   "sf": "FDR",
+   "lf": "False discovery rate",
+   "how": "list"
+  },
+  {
+   "sf": "FLC",
+   "lf": "Free light chain",
+   "how": "list"
+  },
+  {
+   "sf": "GAPDH",
+   "lf": "Glyceraldehyde 3-phosphate dehydrogenase",
+   "how": "list"
+  },
+  {
+   "sf": "HC",
+   "lf": "Healthy control",
+   "how": "list",
+   "alt": [
+    "healthy controls"
+   ]
+  },
+  {
+   "sf": "LC/MS",
+   "lf": "Liquid chromatography/mass spectrometry",
+   "how": "list"
+  },
+  {
+   "sf": "LC-MS/MS",
+   "lf": "Liquid chromatography/tandem mass spectrometry",
+   "how": "list"
+  },
+  {
+   "sf": "MS",
+   "lf": "Mass spectrometry",
+   "how": "list",
+   "alt": [
+    "mass-spectrometry"
+   ]
+  },
+  {
+   "sf": "OGTT",
+   "lf": "Oral glucose tolerance test",
+   "how": "list"
+  },
+  {
+   "sf": "OPMD",
+   "lf": "Oral potentially malignant disorders",
+   "how": "list"
+  },
+  {
+   "sf": "PCA",
+   "lf": "Principal component analysis",
+   "how": "list"
+  },
+  {
+   "sf": "ROS",
+   "lf": "Reactive oxygen species",
+   "how": "list"
+  },
+  {
+   "sf": "SD",
+   "lf": "Standard deviation",
+   "how": "list"
+  },
+  {
+   "sf": "T2D",
+   "lf": "Type-2 diabetes",
+   "how": "list"
+  },
+  {
+   "sf": "TFA",
+   "lf": "Trifluoroacetic acid",
+   "how": "list"
+  },
+  {
+   "sf": "16S rRNA",
+   "lf": "16S ribosomal ribonucleic acid sequencing",
+   "how": "list",
+   "alt": [
+    "16S ribosomal ribonucleic acid"
+   ]
+  },
+  {
+   "sf": "WHO",
+   "lf": "World Health Organization",
+   "how": "list"
+  },
+  {
+   "sf": "HOMD",
+   "lf": "Human Oral Microbiome Database",
+   "how": "paren"
+  },
+  {
+   "sf": "GSIS",
+   "lf": "glucose-stimulated insulin secretion",
+   "how": "paren"
+  },
+  {
+   "sf": "KRBH",
+   "lf": "Krebs-Ringer's-bicarbonate HEPES",
+   "how": "paren",
+   "alt": [
+    "Krebs-Ringer's-bicarbonateHEPES"
+   ]
+  },
+  {
+   "sf": "FBS",
+   "lf": "fetal bovine serum",
+   "how": "paren"
+  },
+  {
+   "sf": "LFQ",
+   "lf": "label-free quantitation",
+   "how": "inside",
+   "alt": [
+    "label-free quantitation values"
+   ]
+  },
+  {
+   "sf": "PC1",
+   "lf": "component 1",
+   "how": "paren",
+   "alt": [
+    "principal component 1"
+   ]
+  },
+  {
+   "sf": "PC2",
+   "lf": "component 2",
+   "how": "paren",
+   "alt": [
+    "principal component 2"
+   ]
+  },
+  {
+   "sf": "EFSD",
+   "lf": "European Foundation for the Study of Diabetes",
+   "how": "paren"
+  },
+  {
+   "sf": "PRI",
+   "lf": "Proteomics Research Infrastructure",
+   "how": "paren"
+  },
+  {
+   "sf": "NNF",
+   "lf": "Novo Nordisk Foundation",
+   "how": "paren"
+  },
+  {
+   "sf": "HMT-id",
+   "lf": "reference protein IDs",
+   "how": "paren",
+   "unclear": true,
+   "note": "the paper only writes \"all corresponding reference protein IDs (HMT-id)\"; the intended expansion is not given"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction"
+  },
+  {
+   "sf": "rRNA",
+   "lf": "ribosomal ribonucleic acid"
+  },
+  {
+   "sf": "MS/MS",
+   "lf": "tandem mass spectrometry"
+  },
+  {
+   "sf": "LC",
+   "lf": "liquid chromatography"
+  },
+  {
+   "sf": "HbA1c",
+   "lf": "hemoglobin A1c"
+  },
+  {
+   "sf": "HEPES",
+   "lf": "4-(2-hydroxyethyl)-1-piperazineethanesulfonic acid"
+  }
+ ],
+ "ignore": [
+  "DIA-PASEF",
+  "diaPASEF",
+  "directDIA",
+  "TIMS",
+  "timsTOF",
+  "SWATH-MS",
+  "MRM",
+  "NADPH",
+  "NADP",
+  "NAD",
+  "ASV",
+  "ELISA",
+  "BSA",
+  "C18",
+  "SDC",
+  "TCEP",
+  "CAA",
+  "NaCl",
+  "KCl",
+  "CaCl2",
+  "KH2PO4",
+  "MgSO4",
+  "NaHCO3",
+  "CO2",
+  "mM",
+  "pH",
+  "RPMI-1640",
+  "GlutaMAX",
+  "INS-1",
+  "Evotips",
+  "Evosep",
+  "NanoDrop",
+  "Spectronaut",
+  "FactoMineR",
+  "BLASTp",
+  "NCBI",
+  "UniProt",
+  "Swiss-Prot",
+  "FASTA",
+  "RStudio",
+  "dada2",
+  "eHOMD",
+  "ADDITION",
+  "ADDITION-PRO",
+  "ADDITION-Europe",
+  "P-Glucose",
+  "T0",
+  "RBP4",
+  "KRT4",
+  "KRT6A",
+  "KRT13",
+  "KRT78",
+  "ANXA1",
+  "ANXA2",
+  "IGKC",
+  "IGHA1",
+  "UBR4",
+  "ADPRS",
+  "NDUFB10",
+  "PTPRJ",
+  "PYGL",
+  "PTPRC",
+  "CAP1",
+  "LTA4H",
+  "ITGAM",
+  "CD14",
+  "LGALS3BP",
+  "S100P",
+  "S100A4",
+  "CALU",
+  "ACTN1",
+  "PFN1",
+  "GSN",
+  "MSN",
+  "SCEL",
+  "RPS16",
+  "SH3GLB2",
+  "SPTAN1",
+  "CILK1",
+  "PPP2R1A",
+  "NAGK",
+  "MUC7",
+  "APOE",
+  "APOB",
+  "APOA4",
+  "PSMA2",
+  "PSMA3",
+  "PSMA4",
+  "PSMA6",
+  "PSMB1",
+  "PSME2",
+  "IGHV3-64",
+  "IGHV1-69",
+  "IGHV3-43",
+  "IGLV3-19",
+  "IGHG3",
+  "IGKV4-1",
+  "IGLV1-51",
+  "IGLV2-8",
+  "C3",
+  "C5",
+  "CFH",
+  "CFB",
+  "APCS",
+  "A2M",
+  "CP",
+  "AbpA",
+  "TmpC",
+  "AhpD-like",
+  "EG.Cscore",
+  "tOGTT",
+  "FDR-corrected",
+  "DE",
+  "USA",
+  "JA"
+ ]
+}

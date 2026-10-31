@@ -1,0 +1,167 @@
+{
+ "doi": "10.1093/braincomms/fcae152",
+ "title": "Spike-induced cytoarchitectonic changes in epileptic human cortex are reduced via MAP2K inhibition",
+ "journal": "Brain Communications",
+ "defined": [
+  {
+   "sf": "ADHD",
+   "lf": "attention-deficit hyperactivity disorder",
+   "how": "paren"
+  },
+  {
+   "sf": "ASD",
+   "lf": "autism spectrum disorder",
+   "how": "paren"
+  },
+  {
+   "sf": "TeNT",
+   "lf": "tetanus toxin",
+   "how": "paren"
+  },
+  {
+   "sf": "IRB",
+   "lf": "Institutional Review Board",
+   "how": "paren"
+  },
+  {
+   "sf": "ECoG",
+   "lf": "electrocorticography",
+   "how": "paren",
+   "alt": [
+    "subdural electrocorticography"
+   ]
+  },
+  {
+   "sf": "CB",
+   "lf": "calbindin",
+   "how": "paren"
+  },
+  {
+   "sf": "SST",
+   "lf": "somatostatin",
+   "how": "paren"
+  },
+  {
+   "sf": "PV",
+   "lf": "parvalbumin",
+   "how": "paren"
+  },
+  {
+   "sf": "ROIs",
+   "lf": "regions of interest",
+   "how": "paren"
+  },
+  {
+   "sf": "UIC",
+   "lf": "University of Illinois Chicago",
+   "how": "paren"
+  },
+  {
+   "sf": "EDF",
+   "lf": "European Data Format",
+   "how": "paren"
+  },
+  {
+   "sf": "PFA",
+   "lf": "paraformaldehyde",
+   "how": "paren"
+  },
+  {
+   "sf": "PBS",
+   "lf": "phosphate-buffered saline",
+   "how": "paren"
+  },
+  {
+   "sf": "TBS",
+   "lf": "Tris-buffered saline",
+   "how": "paren"
+  },
+  {
+   "sf": "ROUT",
+   "lf": "robust regression and outlier removal",
+   "how": "paren"
+  },
+  {
+   "sf": "TBI",
+   "lf": "traumatic brain injury",
+   "how": "paren"
+  },
+  {
+   "sf": "ASMs",
+   "lf": "Anti-seizure medications",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "EEG",
+   "lf": "electroencephalography"
+  },
+  {
+   "sf": "AP",
+   "lf": "anteroposterior"
+  },
+  {
+   "sf": "ML",
+   "lf": "mediolateral"
+  }
+ ],
+ "ignore": [
+  "NeuN",
+  "MEK",
+  "MAP2K",
+  "MAP2K1/2",
+  "MAPK",
+  "MAPK1/2",
+  "ERK1/2",
+  "CREB",
+  "GFAP",
+  "Iba-1",
+  "Iba1",
+  "cAMP",
+  "KCNQ",
+  "Kv7",
+  "OCT",
+  "CI-1040",
+  "ANOVA",
+  "ANOVAs",
+  "SEM",
+  "ACC",
+  "L2",
+  "EEGs",
+  "H2O2",
+  "mL",
+  "AT2",
+  "MAB337",
+  "VECTASTAIN",
+  "GraphPad",
+  "TeNT-injected",
+  "TeNT-specific",
+  "BRAIN",
+  "COMMUNICATIONS",
+  "IL",
+  "USA",
+  "J.A.L.",
+  "R.A.S.",
+  "CA",
+  "KJ",
+  "FE",
+  "BR",
+  "JR",
+  "AE",
+  "TM",
+  "MI",
+  "GL",
+  "PP",
+  "RC",
+  "JA",
+  "SN",
+  "JM",
+  "DT",
+  "AA",
+  "PM",
+  "AK",
+  "SA",
+  "Lenck-Santini"
+ ]
+}

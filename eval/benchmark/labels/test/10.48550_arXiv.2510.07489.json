@@ -1,0 +1,101 @@
+{
+ "doi": "10.48550/arXiv.2510.07489",
+ "title": "Evaluation of LLMs for Process Model Analysis and Optimization",
+ "journal": "arXiv",
+ "defined": [
+  {
+   "sf": "NL",
+   "lf": "natural language",
+   "how": "paren"
+  },
+  {
+   "sf": "LLM",
+   "lf": "Large Language Model",
+   "how": "paren"
+  },
+  {
+   "sf": "AI",
+   "lf": "artificial intelligence",
+   "how": "paren"
+  },
+  {
+   "sf": "NLP",
+   "lf": "natural language processing",
+   "how": "paren"
+  },
+  {
+   "sf": "NNs",
+   "lf": "neural networks",
+   "how": "paren"
+  },
+  {
+   "sf": "GPTs",
+   "lf": "Generative Pre-trained Transformers",
+   "how": "paren",
+   "note": "extracted text reads \"Gener ative\""
+  },
+  {
+   "sf": "DSR",
+   "lf": "Design Science Research",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "BPMN",
+   "lf": "Business Process Model and Notation"
+  },
+  {
+   "sf": "XOR",
+   "lf": "exclusive OR"
+  },
+  {
+   "sf": "ID",
+   "lf": "identifier"
+  }
+ ],
+ "ignore": [
+  "ChatGPT",
+  "o3",
+  "model o3",
+  "GPT-3",
+  "T1",
+  "T2",
+  "T3",
+  "T4",
+  "T5",
+  "T6",
+  "T7",
+  "T8",
+  "T9",
+  "T10",
+  "T11",
+  "T12",
+  "T13",
+  "T14",
+  "TI1",
+  "TI2",
+  "TI3",
+  "TI4",
+  "TI5",
+  "TI1-TI5",
+  "S-1",
+  "S-2",
+  "S-3",
+  "S-4",
+  "S-5",
+  "A1",
+  "X1",
+  "AND",
+  "Min",
+  "Max",
+  "Avg",
+  "CDE",
+  "PEICAA",
+  "CAA",
+  "AR",
+  "SA",
+  "arXiv",
+  "OpenAI"
+ ]
+}

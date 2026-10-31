@@ -10,10 +10,11 @@ folder holds only the paper lists, the export script and, later, the labels.
   It holds the 22 papers already labelled in `../gold-standard.json` (the
   detector was tuned on them) plus papers from your own library: about 15–20,
   at most 2 per journal, research articles and reviews mixed.
-- **test**: 40 open-access papers drawn at random from 38 journals, 21
+- **test**: 39 open-access papers drawn at random from 37 journals, 21
   publishers and fields from microbiology to physics, plus one medRxiv and one
   arXiv preprint. Measure on it only before a release, never while tuning, so
-  the numbers stay honest. See `test-papers.csv`.
+  the numbers stay honest. See `test-papers.csv`. (The draw was 40; one paper
+  was dropped, so a replacement can be drawn if the set should be exactly 40.)
 
 ## Getting the texts (once)
 

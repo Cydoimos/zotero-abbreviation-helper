@@ -1,0 +1,95 @@
+{
+ "doi": "10.5194/bg-21-3477-2024",
+ "title": "Climatic controls on metabolic constraints in the ocean",
+ "journal": "Biogeosciences",
+ "defined": [
+  {
+   "sf": "pO2",
+   "lf": "oxygen partial pressure",
+   "how": "paren"
+  },
+  {
+   "sf": "CESM1-LE",
+   "lf": "Community Earth System Model, version 1, Large Ensemble",
+   "how": "paren"
+  },
+  {
+   "sf": "RCP85",
+   "lf": "Representative Concentration Pathway Scenario 8.5",
+   "how": "paren"
+  },
+  {
+   "sf": "ToE",
+   "lf": "time of emergence",
+   "how": "paren"
+  },
+  {
+   "sf": "BEC",
+   "lf": "Biogeochemical Elemental Cycling",
+   "how": "paren"
+  },
+  {
+   "sf": "WOA2013",
+   "lf": "World Ocean Atlas, version 2013",
+   "how": "paren"
+  },
+  {
+   "sf": "RMSE",
+   "lf": "root mean square error",
+   "how": "paren"
+  },
+  {
+   "sf": "PCC",
+   "lf": "pattern correlation coefficient",
+   "how": "paren"
+  },
+  {
+   "sf": "OMZs",
+   "lf": "oxygen minimum zones",
+   "how": "paren"
+  },
+  {
+   "sf": "NCAR",
+   "lf": "National Center for Atmospheric Research",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "WOA",
+   "lf": "World Ocean Atlas"
+  }
+ ],
+ "ignore": [
+  "RCP8.5",
+  "RCP8",
+  "WOA13",
+  "CESM1",
+  "CESM",
+  "BGC",
+  "POP",
+  "CCSM",
+  "LENS",
+  "NSF",
+  "COMFORT",
+  "SOCCO",
+  "NITheCS",
+  "CSIR",
+  "KB",
+  "eV",
+  "kPa",
+  "Eo",
+  "Ac",
+  "Es",
+  "Ed",
+  "Ao",
+  "Tref",
+  "pO2-T",
+  "dEo/dT",
+  "low-pO2",
+  "USA",
+  "PM",
+  "ML",
+  "LLC"
+ ]
+}

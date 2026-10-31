@@ -1,0 +1,252 @@
+{
+ "doi": "10.1016/j.eclinm.2024.103028",
+ "title": "Rapid molecular assays versus blood culture for bloodstream infections: a systematic review and meta-analysis",
+ "journal": "eClinicalMedicine",
+ "defined": [
+  {
+   "sf": "RMAs",
+   "lf": "rapid molecular assays",
+   "how": "paren",
+   "alt": [
+    "rapid molecular assay"
+   ]
+  },
+  {
+   "sf": "BSI",
+   "lf": "bloodstream infection",
+   "how": "paren"
+  },
+  {
+   "sf": "BCs",
+   "lf": "blood cultures",
+   "how": "paren",
+   "alt": [
+    "blood culture"
+   ]
+  },
+  {
+   "sf": "QUADAS-2",
+   "lf": "Quality Assessment of Diagnostic Accuracy Studies-2",
+   "how": "paren"
+  },
+  {
+   "sf": "QUADAS-C",
+   "lf": "Quality Assessment of Diagnostic Accuracy Studies-Comparative",
+   "how": "paren"
+  },
+  {
+   "sf": "CI",
+   "lf": "confidence interval",
+   "how": "paren"
+  },
+  {
+   "sf": "AMT",
+   "lf": "antimicrobial therapy",
+   "how": "paren",
+   "alt": [
+    "early appropriate antimicrobial therapy"
+   ]
+  },
+  {
+   "sf": "TAT",
+   "lf": "turnaround time",
+   "how": "paren"
+  },
+  {
+   "sf": "ABs",
+   "lf": "antibiotics",
+   "how": "paren",
+   "alt": [
+    "empiric broad-spectrum antibiotics"
+   ]
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction",
+   "how": "paren"
+  },
+  {
+   "sf": "ICU",
+   "lf": "intensive care unit",
+   "how": "paren"
+  },
+  {
+   "sf": "PRISMA",
+   "lf": "Preferred Reporting Items for Systematic Review and Meta-Analysis",
+   "how": "paren"
+  },
+  {
+   "sf": "CENTRAL",
+   "lf": "Cochrane Library",
+   "how": "paren",
+   "note": "CENTRAL normally stands for Cochrane Central Register of Controlled Trials; the paper writes \"Cochrane Library (CENTRAL)\""
+  },
+  {
+   "sf": "TP",
+   "lf": "true positives",
+   "how": "paren",
+   "alt": [
+    "true positive"
+   ]
+  },
+  {
+   "sf": "FN",
+   "lf": "false negatives",
+   "how": "paren",
+   "alt": [
+    "false negative"
+   ]
+  },
+  {
+   "sf": "FP",
+   "lf": "false positives",
+   "how": "paren",
+   "alt": [
+    "false positive"
+   ]
+  },
+  {
+   "sf": "TN",
+   "lf": "true negatives",
+   "how": "paren",
+   "alt": [
+    "true negative"
+   ]
+  },
+  {
+   "sf": "Se",
+   "lf": "sensitivity",
+   "how": "paren"
+  },
+  {
+   "sf": "Sp",
+   "lf": "specificity",
+   "how": "paren"
+  },
+  {
+   "sf": "ED",
+   "lf": "emergency department",
+   "how": "paren"
+  },
+  {
+   "sf": "ROB",
+   "lf": "risk of bias",
+   "how": "paren"
+  },
+  {
+   "sf": "GRADE",
+   "lf": "Grades of Recommendation, Assessment, Development, and Evaluation",
+   "how": "paren"
+  },
+  {
+   "sf": "LMICs",
+   "lf": "low- and middle-income countries",
+   "how": "paren"
+  },
+  {
+   "sf": "qPCR",
+   "lf": "quantitative polymerase chain reaction",
+   "how": "list"
+  },
+  {
+   "sf": "ESI-MS",
+   "lf": "electrospray ionization mass spectrometry",
+   "how": "list"
+  },
+  {
+   "sf": "MRSA",
+   "lf": "Methicillin-resistant Staphylococcus aureus",
+   "how": "list"
+  },
+  {
+   "sf": "ddPCR",
+   "lf": "droplet digital polymerase chain reaction",
+   "how": "list"
+  },
+  {
+   "sf": "SF",
+   "lf": "LightCycler SeptiFast Test MGRADE",
+   "how": "list"
+  }
+ ],
+ "undefined": [],
+ "ignore": [
+  "RMA-based",
+  "PCR-based",
+  "PCR-reverse",
+  "PCR/ESI-MS",
+  "Septifast",
+  "SeptiFast",
+  "SepsiTest",
+  "SepsiTestTM",
+  "IRIDICA",
+  "Magicplex",
+  "MagicPlex",
+  "VYOO",
+  "VYOO®",
+  "UMD-SelectNA",
+  "UMDSelectNA",
+  "MicrobScan",
+  "MicrobScanKairos24/7",
+  "REBA",
+  "Sepsis-ID",
+  "InfectID-BSI",
+  "PLEXID",
+  "PLEX-ID",
+  "MGRADE",
+  "BAC",
+  "LightCycler",
+  "Molzym",
+  "Seegene",
+  "Nurex",
+  "Optipharm",
+  "Microbio",
+  "Abbott",
+  "EndNote",
+  "Rayyan",
+  "MetaBayesDTA",
+  "GRADEpro",
+  "MEDLINE",
+  "PROSPERO",
+  "CRD42022377280",
+  "Sepsis3",
+  "DNA",
+  "rRNA",
+  "DNAemia",
+  "mecA",
+  "vanA",
+  "vanB",
+  "vanA/vanB",
+  "blaKPC",
+  "blaCTX",
+  "blaNDM",
+  "I2",
+  "MA",
+  "PA",
+  "WA",
+  "IL",
+  "MD",
+  "USA",
+  "GAR",
+  "MR",
+  "UNDT",
+  "VEK",
+  "BGF",
+  "AW",
+  "DC",
+  "PH",
+  "MRF",
+  "LVK",
+  "SV",
+  "CV",
+  "FAM",
+  "DG",
+  "TK",
+  "Abu-Zidan",
+  "JAMA",
+  "BMC",
+  "PLoS",
+  "Lond",
+  "Studies-2"
+ ]
+}

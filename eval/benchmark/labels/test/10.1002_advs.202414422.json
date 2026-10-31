@@ -1,0 +1,136 @@
+{
+ "doi": "10.1002/advs.202414422",
+ "title": "2D Perovskite Heterojunction‐Based Self‐Powered Polarized Photodetectors with Controllable Polarization Ratio Enabled by Ferro‐Pyro‐Phototronic Effect",
+ "journal": "Advanced Science",
+ "defined": [
+  {
+   "sf": "MHPs",
+   "lf": "Metal halide perovskites",
+   "how": "paren"
+  },
+  {
+   "sf": "PDs",
+   "lf": "photodetectors",
+   "how": "paren",
+   "alt": [
+    "polarization-sensitive photodetectors"
+   ]
+  },
+  {
+   "sf": "PR",
+   "lf": "polarization ratio",
+   "how": "paren"
+  },
+  {
+   "sf": "FPPE",
+   "lf": "ferro-pyro-phototronic effect",
+   "how": "paren"
+  },
+  {
+   "sf": "SEM",
+   "lf": "scanning electron microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "XRD",
+   "lf": "X-ray diffraction",
+   "how": "paren"
+  },
+  {
+   "sf": "PL",
+   "lf": "photoluminescence",
+   "how": "paren"
+  },
+  {
+   "sf": "TRPL",
+   "lf": "time-resolved photoluminescence",
+   "how": "paren"
+  },
+  {
+   "sf": "SCLC",
+   "lf": "space charge-limited current",
+   "how": "paren"
+  },
+  {
+   "sf": "GIWAXS",
+   "lf": "Grazing-incidence wide-angle X-ray scattering",
+   "how": "paren"
+  },
+  {
+   "sf": "EDS",
+   "lf": "energy-dispersive spectroscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "XPS",
+   "lf": "X-ray photoelectron spectroscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "PFM",
+   "lf": "Piezoresponse force microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "AFM",
+   "lf": "Atomic force microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "RT",
+   "lf": "room temperature",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "UV",
+   "lf": "ultraviolet"
+  },
+  {
+   "sf": "ITO",
+   "lf": "indium tin oxide"
+  },
+  {
+   "sf": "ASCII",
+   "lf": "American Standard Code for Information Interchange"
+  }
+ ],
+ "ignore": [
+  "2D MHPs",
+  "Ce3+",
+  "Ce3",
+  "BA2",
+  "TMIM",
+  "HBU",
+  "Ebi",
+  "Eferro",
+  "Iphoto+pyro",
+  "Iphoto",
+  "Ipyro",
+  "Pup",
+  "Pdown",
+  "D*",
+  "Voc",
+  "ΔVoc",
+  "ΔE",
+  "I–V",
+  "C–V",
+  "Pb2",
+  "mW",
+  "quasi-2D",
+  "PR-tunable",
+  "MHPs-based",
+  "BDA0",
+  "3EA2Pb3Br10",
+  "BDAEA2Pb3Br10",
+  "BA2EA2Pb3I10",
+  "3MA4Pb5I16",
+  "PC61BM/Bi/Ag",
+  "PEDOT",
+  "PSS",
+  "OA",
+  "Wiley-VCH",
+  "GmbH"
+ ]
+}

@@ -1,0 +1,281 @@
+{
+ "doi": "10.1093/gbe/evae047",
+ "title": "The Complex Landscape of Structural Divergence Between the Drosophila pseudoobscura and D. persimilis Genomes",
+ "journal": "Genome Biology and Evolution",
+ "defined": [
+  {
+   "sf": "TEs",
+   "lf": "Transposable Elements",
+   "how": "paren"
+  },
+  {
+   "sf": "SVs",
+   "lf": "structural variants",
+   "how": "paren"
+  },
+  {
+   "sf": "DE",
+   "lf": "differentially expressed",
+   "how": "paren"
+  },
+  {
+   "sf": "noDE",
+   "lf": "not differentially expressed",
+   "how": "paren"
+  },
+  {
+   "sf": "XL",
+   "lf": "left arm of chromosome X",
+   "how": "paren"
+  },
+  {
+   "sf": "XR",
+   "lf": "right arm of chromosome X",
+   "how": "paren"
+  },
+  {
+   "sf": "SR",
+   "lf": "Sex-Ratio",
+   "how": "paren"
+  },
+  {
+   "sf": "BUSCO",
+   "lf": "Benchmarking sets of Universal Single-Copy Orthologs",
+   "how": "paren",
+   "alt": [
+    "Benchmarking Universal Single-Copy Orthologs"
+   ]
+  },
+  {
+   "sf": "GLM",
+   "lf": "general linear model",
+   "how": "paren"
+  },
+  {
+   "sf": "INDELs",
+   "lf": "INSertions and DELetions",
+   "how": "paren",
+   "alt": [
+    "insertions and deletions"
+   ]
+  },
+  {
+   "sf": "INS",
+   "lf": "insertions",
+   "how": "list",
+   "alt": [
+    "INSertions"
+   ]
+  },
+  {
+   "sf": "DEL",
+   "lf": "deletions",
+   "how": "list",
+   "alt": [
+    "DELetions"
+   ]
+  },
+  {
+   "sf": "CNVs",
+   "lf": "Copy-number variants",
+   "how": "paren",
+   "alt": [
+    "copy-number variant"
+   ]
+  },
+  {
+   "sf": "INV",
+   "lf": "inverted regions",
+   "how": "paren",
+   "alt": [
+    "major fixed inverted regions"
+   ]
+  },
+  {
+   "sf": "COL",
+   "lf": "collinear regions",
+   "how": "paren"
+  },
+  {
+   "sf": "noSV",
+   "lf": "genes not associated with SVs",
+   "how": "list",
+   "alt": [
+    "no structural variant"
+   ]
+  },
+  {
+   "sf": "GO",
+   "lf": "Gene ontology",
+   "how": "paren"
+  },
+  {
+   "sf": "SNPs",
+   "lf": "single nucleotide polymorphisms",
+   "how": "paren"
+  },
+  {
+   "sf": "piRNA",
+   "lf": "Piwi-interacting RNA",
+   "how": "paren"
+  },
+  {
+   "sf": "ST",
+   "lf": "Standard",
+   "how": "phrase",
+   "alt": [
+    "\"with one shared arrangement (Standard or \\\"ST\\\")\""
+   ]
+  },
+  {
+   "sf": "FB",
+   "lf": "FlyBase",
+   "how": "list"
+  },
+  {
+   "sf": "1L",
+   "lf": "first instar larvae",
+   "how": "list"
+  },
+  {
+   "sf": "3L",
+   "lf": "third instar larvae",
+   "how": "list"
+  },
+  {
+   "sf": "Pup",
+   "lf": "pupae",
+   "how": "list"
+  },
+  {
+   "sf": "Ad",
+   "lf": "adult",
+   "how": "list"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "mRNA",
+   "lf": "messenger RNA"
+  },
+  {
+   "sf": "ncRNAs",
+   "lf": "non-coding RNAs"
+  },
+  {
+   "sf": "RNA-seq",
+   "lf": "RNA sequencing"
+  },
+  {
+   "sf": "CLR",
+   "lf": "continuous long reads"
+  },
+  {
+   "sf": "ONT",
+   "lf": "Oxford Nanopore Technologies"
+  }
+ ],
+ "ignore": [
+  "TE",
+  "CNV",
+  "siRNAs",
+  "ncRNA",
+  "Hi-C",
+  "HiFi",
+  "MC",
+  "AR",
+  "Mya",
+  "Mb",
+  "bp",
+  "GC",
+  "N50",
+  "PE",
+  "EST",
+  "GBE",
+  "MV225",
+  "MV2-25",
+  "M40",
+  "S10",
+  "S11",
+  "S12",
+  "S13",
+  "S14",
+  "S17",
+  "S18",
+  "S19",
+  "S20",
+  "S21",
+  "S23",
+  "S25",
+  "S34",
+  "S36",
+  "S37",
+  "CR1",
+  "R1",
+  "Rhi",
+  "Dcr-2",
+  "Helitron",
+  "Copia",
+  "Gypsy",
+  "TcMar-Tc1",
+  "GO:0007399",
+  "GO:0005215",
+  "GO:0016458",
+  "NCBI",
+  "SRA",
+  "PRJNA753500",
+  "PRJNA753501",
+  "JAIUWF000000000",
+  "SAMN16555934",
+  "IBBR",
+  "Qiagen",
+  "Illumina",
+  "PacBio",
+  "RepeatMasker",
+  "RepeatModeler",
+  "StringTie",
+  "DESeq2",
+  "GenomeScope",
+  "PbJelly",
+  "PBSuite",
+  "MAKER",
+  "SNAP",
+  "Augustus",
+  "AGAT",
+  "GenomeTools",
+  "CLfinder-OrthNet",
+  "CLfinderOrthNet",
+  "OrthoFinder",
+  "SyRI",
+  "GATK",
+  "TEanalysis",
+  "TETranscripts",
+  "STAR",
+  "GOrilla",
+  "DBG2OLC",
+  "Pilon",
+  "Mikado",
+  "GffCompare",
+  "liftOver",
+  "FlyBase",
+  "Flybase",
+  "MD",
+  "USA",
+  "SL",
+  "EK",
+  "WW",
+  "FJ",
+  "RE",
+  "EE",
+  "MJ",
+  "X2"
+ ]
+}

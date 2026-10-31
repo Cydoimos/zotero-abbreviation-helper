@@ -1,0 +1,126 @@
+{
+ "doi": "10.1093/bioinformatics/btae396",
+ "title": "CLigOpt: controllable ligand design through target-specific optimization",
+ "journal": "Bioinformatics",
+ "defined": [
+  {
+   "sf": "FBDD",
+   "lf": "Fragment-based drug design",
+   "how": "paren"
+  },
+  {
+   "sf": "GNNs",
+   "lf": "graph neural networks",
+   "how": "paren"
+  },
+  {
+   "sf": "VAE",
+   "lf": "variational autoencoder",
+   "how": "paren"
+  },
+  {
+   "sf": "BO",
+   "lf": "Bayesian optimization",
+   "how": "paren"
+  },
+  {
+   "sf": "RL",
+   "lf": "reinforcement learning",
+   "how": "paren"
+  },
+  {
+   "sf": "CGM",
+   "lf": "Controllable Generation Module",
+   "how": "paren"
+  },
+  {
+   "sf": "hDHFR",
+   "lf": "human dihydrofolate reductase",
+   "how": "paren"
+  },
+  {
+   "sf": "SA",
+   "lf": "synthetic accessibility",
+   "how": "paren"
+  },
+  {
+   "sf": "QED",
+   "lf": "quantitative estimate of druglikeness",
+   "how": "paren"
+  },
+  {
+   "sf": "PAINS",
+   "lf": "Pan-Assay Interference compounds",
+   "how": "paren",
+   "note": "extracted text reads \"PanAssay\""
+  },
+  {
+   "sf": "QSAR",
+   "lf": "Quantitative Structure–Activity Relationship",
+   "how": "paren"
+  },
+  {
+   "sf": "BFE",
+   "lf": "binding free energy",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "GCN",
+   "lf": "graph convolutional network"
+  },
+  {
+   "sf": "SMILES",
+   "lf": "simplified molecular-input line-entry system"
+  },
+  {
+   "sf": "RMSE",
+   "lf": "root mean square error"
+  }
+ ],
+ "ignore": [
+  "CLigOpt",
+  "CLigOptGCN",
+  "CLigOptCensNet",
+  "CensNet",
+  "CGVAE",
+  "CLaSS",
+  "CLaSS-generated",
+  "DeLinker",
+  "FFLOM",
+  "DeepAffinity",
+  "DeepChem",
+  "modSAR",
+  "CharNN",
+  "transformer-CNN",
+  "Transformer-CNN",
+  "CNN",
+  "RNN",
+  "ZINC",
+  "CASF",
+  "ChEMBL",
+  "pIC50",
+  "LogP",
+  "Min",
+  "MMPS",
+  "A*STAR",
+  "STAR",
+  "KCL",
+  "MLPE",
+  "MLPN",
+  "GF",
+  "GM",
+  "Ez1",
+  "VAE-based",
+  "ECCB2024",
+  "WC2B",
+  "4BG",
+  "S.T.",
+  "M.W.",
+  "ACS",
+  "AR",
+  "LG",
+  "arXiv"
+ ]
+}

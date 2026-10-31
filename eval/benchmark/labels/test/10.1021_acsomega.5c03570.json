@@ -1,0 +1,123 @@
+{
+ "doi": "10.1021/acsomega.5c03570",
+ "title": "Overcoming Detection Challenges of 2,4-D Herbicides via SERS through a Simple Modification of Citrate-Reduced Silver Nanoparticles",
+ "journal": "ACS Omega",
+ "defined": [
+  {
+   "sf": "SERS",
+   "lf": "surface-enhanced Raman scattering",
+   "how": "paren"
+  },
+  {
+   "sf": "2,4-D",
+   "lf": "2,4-dichlorophenoxyacetic acid",
+   "how": "paren"
+  },
+  {
+   "sf": "LOD",
+   "lf": "limits of detection",
+   "how": "paren"
+  },
+  {
+   "sf": "NHL",
+   "lf": "non-Hodgkin lymphoma",
+   "how": "paren"
+  },
+  {
+   "sf": "EPA",
+   "lf": "United States Environmental Protection Agency",
+   "how": "reverse"
+  },
+  {
+   "sf": "MCLG",
+   "lf": "Maximum Contaminant Level Goal",
+   "how": "reverse"
+  },
+  {
+   "sf": "LSPR",
+   "lf": "localized surface plasmon resonance",
+   "how": "paren"
+  },
+  {
+   "sf": "AgCit",
+   "lf": "Silver nanoparticles reduced by citrate",
+   "how": "paren"
+  },
+  {
+   "sf": "TEM",
+   "lf": "Transmission electron microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "DLS",
+   "lf": "Dynamic light scattering",
+   "how": "paren"
+  },
+  {
+   "sf": "NIR",
+   "lf": "near-infrared",
+   "how": "paren"
+  },
+  {
+   "sf": "S/N",
+   "lf": "signal-to-noise",
+   "how": "paren",
+   "alt": [
+    "signal-to-noise ratio"
+   ]
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "UV",
+   "lf": "ultraviolet"
+  },
+  {
+   "sf": "NPs",
+   "lf": "nanoparticles"
+  }
+ ],
+ "ignore": [
+  "AgCit1.0",
+  "AgCit0.50",
+  "AgCit0.25",
+  "AgCit1",
+  "AgCit0",
+  "AgCitx",
+  "AgNPs",
+  "AuNPs",
+  "UV−vis",
+  "CCD",
+  "Nd/YAG",
+  "LL",
+  "pKa",
+  "pH",
+  "AgNO3",
+  "HNO3",
+  "COO",
+  "UNESP",
+  "IEM-CSIC",
+  "CAPES",
+  "CNPq",
+  "FAPESP",
+  "CNME",
+  "INCT",
+  "INEO",
+  "Oct",
+  "PDF",
+  "ACS",
+  "LWT",
+  "AND",
+  "mL",
+  "mg/L",
+  "mol/L",
+  "GD",
+  "CJLC",
+  "SSC",
+  "FBFS",
+  "UK",
+  "Citrate-Reduced",
+  "Surface-Enhanced",
+  "Sanchez-Cortes"
+ ]
+}

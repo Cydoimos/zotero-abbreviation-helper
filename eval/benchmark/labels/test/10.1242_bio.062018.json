@@ -1,0 +1,145 @@
+{
+ "doi": "10.1242/bio.062018",
+ "title": "Coincident evolution and functional adaptation of the taxonomically restricted genes ivph-3 and gon-14 in Caenorhabditis nematodes",
+ "journal": "Biology Open",
+ "defined": [
+  {
+   "sf": "Muv",
+   "lf": "Multivulva",
+   "how": "paren"
+  },
+  {
+   "sf": "DE",
+   "lf": "differential expression",
+   "how": "paren"
+  },
+  {
+   "sf": "GO",
+   "lf": "Gene Ontology",
+   "how": "paren"
+  },
+  {
+   "sf": "DTCs",
+   "lf": "distal tip cells",
+   "how": "paren"
+  },
+  {
+   "sf": "Mes",
+   "lf": "Maternal Effect Sterile",
+   "how": "inside"
+  },
+  {
+   "sf": "pLDDT",
+   "lf": "predicted local distance difference test",
+   "how": "paren"
+  },
+  {
+   "sf": "VPCs",
+   "lf": "vulva precursor cells",
+   "how": "paren"
+  },
+  {
+   "sf": "PQ",
+   "lf": "Paraquat",
+   "how": "inside",
+   "alt": [
+    "Methyl viologen"
+   ]
+  },
+  {
+   "sf": "Ste",
+   "lf": "sterile",
+   "how": "paren",
+   "unclear": true,
+   "note": "defined only by description: \"fail to produce offspring (Ste)\""
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction"
+  },
+  {
+   "sf": "cDNA",
+   "lf": "complementary DNA"
+  },
+  {
+   "sf": "RNAseq",
+   "lf": "RNA sequencing"
+  }
+ ],
+ "ignore": [
+  "ZBED",
+  "Tau",
+  "NGM",
+  "RT-qPCR",
+  "PDB",
+  "AFDB50",
+  "NEB",
+  "NIH",
+  "WormBase",
+  "WormBook",
+  "PANTHER",
+  "MEGA11",
+  "EzMol",
+  "AlphaFold",
+  "Blastp",
+  "OSUCCC",
+  "Cbr-ivph-3",
+  "Cbrivph-3",
+  "Cel-ivph-3",
+  "Cel-gon-14",
+  "Celgon-14",
+  "Cbr-gon-14",
+  "Cbrgon-14",
+  "Cbr-spr-4",
+  "Cbr-htz-1",
+  "Cbr-lin-3/EGF",
+  "LIN-15B",
+  "LIN15B",
+  "lin-15B",
+  "LIN-15B-domain",
+  "IVPH-3",
+  "GON-14",
+  "Cel-IVPH-3",
+  "Cel-GON-14",
+  "Cel-LIN-15B",
+  "Cel-ETS-6",
+  "Hsa-ZBED4",
+  "THAP",
+  "BED",
+  "SLEEPER",
+  "DREAM",
+  "hAT",
+  "C2H2",
+  "H2A",
+  "RNAse",
+  "nonMuv",
+  "AF16",
+  "OP50",
+  "gu163",
+  "gu167",
+  "sy5216",
+  "gk3691",
+  "q12",
+  "s.d.",
+  "RESEARCH",
+  "ARTICLE",
+  "AND",
+  "McMaster",
+  "USA",
+  "PLoS",
+  "BMC",
+  "EMBO",
+  "S17",
+  "Toll-Riera"
+ ]
+}

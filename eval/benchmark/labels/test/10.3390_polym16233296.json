@@ -1,0 +1,99 @@
+{
+ "doi": "10.3390/polym16233296",
+ "title": "The Use of Terahertz Computed Tomography and Time Domain Spectroscopy to Evaluate Symmetry in 3D Printed Parts",
+ "journal": "Polymers",
+ "defined": [
+  {
+   "sf": "THz",
+   "lf": "terahertz",
+   "how": "paren"
+  },
+  {
+   "sf": "THz-TDS",
+   "lf": "terahertz time-domain spectroscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "THz CT",
+   "lf": "terahertz computed tomography",
+   "how": "paren"
+  },
+  {
+   "sf": "MSD",
+   "lf": "mean squared deviation",
+   "how": "paren"
+  },
+  {
+   "sf": "NDE",
+   "lf": "non-destructive evaluation",
+   "how": "paren"
+  },
+  {
+   "sf": "X-ray CT",
+   "lf": "X-ray computed tomography",
+   "how": "paren"
+  },
+  {
+   "sf": "AM",
+   "lf": "additive manufacturing",
+   "how": "paren"
+  },
+  {
+   "sf": "FDM",
+   "lf": "fused deposition modeling",
+   "how": "paren"
+  },
+  {
+   "sf": "SLA",
+   "lf": "stereolithography",
+   "how": "paren"
+  },
+  {
+   "sf": "DEVCOM",
+   "lf": "U.S. Army Combat Capabilities Development Command",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "CT",
+   "lf": "computed tomography"
+  },
+  {
+   "sf": "UV",
+   "lf": "ultraviolet"
+  }
+ ],
+ "ignore": [
+  "THZ-TDS",
+  "3D",
+  "PLA",
+  "MATLAB",
+  "FIJI",
+  "LabView",
+  "TeraMetrix",
+  "T-Ray",
+  "CPS",
+  "PR221",
+  "XY",
+  "DURIP",
+  "CC BY",
+  "ISO",
+  "GPS",
+  "APCAP",
+  "EuCAP",
+  "CrossRef",
+  "PubMed",
+  "MDPI",
+  "FOR",
+  "PEER",
+  "REVIEW",
+  "IEEE",
+  "NJ",
+  "MA",
+  "VA",
+  "USA",
+  "J.F.",
+  "I.G."
+ ]
+}

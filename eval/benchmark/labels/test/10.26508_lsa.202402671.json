@@ -1,0 +1,411 @@
+{
+ "doi": "10.26508/lsa.202402671",
+ "title": "Off-targets of BRAF inhibitors disrupt endothelial signaling and vascular barrier function",
+ "journal": "Life Science Alliance",
+ "defined": [
+  {
+   "sf": "MEKi",
+   "lf": "MEK inhibitors",
+   "how": "paren"
+  },
+  {
+   "sf": "AEs",
+   "lf": "adverse events",
+   "how": "paren"
+  },
+  {
+   "sf": "BRAFi",
+   "lf": "BRAF inhibitors",
+   "how": "paren"
+  },
+  {
+   "sf": "TME",
+   "lf": "tumor microenvironment",
+   "how": "paren"
+  },
+  {
+   "sf": "MS",
+   "lf": "mass spectrometry",
+   "how": "paren",
+   "alt": [
+    "global mass spectrometry"
+   ]
+  },
+  {
+   "sf": "DMEC",
+   "lf": "dermal microvascular endothelial cells",
+   "how": "paren"
+  },
+  {
+   "sf": "Cmax",
+   "lf": "maximum plasma concentration",
+   "how": "paren"
+  },
+  {
+   "sf": "ECIS",
+   "lf": "electrical cell-substrate impedance sensing",
+   "how": "paren"
+  },
+  {
+   "sf": "BEC",
+   "lf": "blood endothelial cells",
+   "how": "paren"
+  },
+  {
+   "sf": "LEC",
+   "lf": "lymphatic endothelial cells",
+   "how": "paren"
+  },
+  {
+   "sf": "VE",
+   "lf": "vascular endothelial",
+   "how": "paren"
+  },
+  {
+   "sf": "ICI",
+   "lf": "immune checkpoint inhibitor",
+   "how": "paren"
+  },
+  {
+   "sf": "DSP",
+   "lf": "Desmoplakin",
+   "how": "inside"
+  },
+  {
+   "sf": "EPB41L2",
+   "lf": "Band 4.1-like protein 2",
+   "how": "inside"
+  },
+  {
+   "sf": "CTTN",
+   "lf": "Cortactin",
+   "how": "inside"
+  },
+  {
+   "sf": "PXN",
+   "lf": "Paxillin",
+   "how": "inside"
+  },
+  {
+   "sf": "ARHGAP29",
+   "lf": "RHO GTPase-activating protein 29",
+   "how": "inside"
+  },
+  {
+   "sf": "PPFIBP1",
+   "lf": "Liprin-beta-1",
+   "how": "inside"
+  },
+  {
+   "sf": "V10",
+   "lf": "10 μM of vemurafenib",
+   "how": "paren",
+   "alt": [
+    "vemurafenib"
+   ]
+  },
+  {
+   "sf": "D10",
+   "lf": "dabrafenib",
+   "how": "paren",
+   "alt": [
+    "10 μM of dabrafenib"
+   ]
+  },
+  {
+   "sf": "E10",
+   "lf": "encorafenib",
+   "how": "paren",
+   "alt": [
+    "10 μM of encorafenib"
+   ]
+  },
+  {
+   "sf": "P10",
+   "lf": "PLX8394",
+   "how": "paren",
+   "alt": [
+    "10 μM of PLX8394"
+   ]
+  },
+  {
+   "sf": "V100",
+   "lf": "100 μM vemurafenib",
+   "how": "paren",
+   "alt": [
+    "vemurafenib"
+   ]
+  },
+  {
+   "sf": "CST",
+   "lf": "Cell Signaling Technologies",
+   "how": "paren"
+  },
+  {
+   "sf": "JIR",
+   "lf": "Jackson Immunoresearch",
+   "how": "paren"
+  },
+  {
+   "sf": "AJCC",
+   "lf": "American Joint Committee on Cancer",
+   "how": "paren"
+  },
+  {
+   "sf": "FFPE",
+   "lf": "formalin-fixed paraffin-embedded",
+   "how": "paren"
+  },
+  {
+   "sf": "LPS",
+   "lf": "lipopolysaccharide",
+   "how": "paren",
+   "alt": [
+    "bacterial lipopolysaccharide"
+   ]
+  },
+  {
+   "sf": "EthD1",
+   "lf": "ethidium homodimer-1",
+   "how": "paren"
+  },
+  {
+   "sf": "TBST",
+   "lf": "TBS buffer containing 0.1% Tween-20",
+   "how": "paren"
+  },
+  {
+   "sf": "SDC",
+   "lf": "sodium deoxycholate",
+   "how": "paren"
+  },
+  {
+   "sf": "TEAB",
+   "lf": "triethylammonium bicarbonate",
+   "how": "paren"
+  },
+  {
+   "sf": "ACN",
+   "lf": "acetonitrile",
+   "how": "paren"
+  },
+  {
+   "sf": "TFA",
+   "lf": "trifluoroacetic acid",
+   "how": "paren"
+  },
+  {
+   "sf": "FA",
+   "lf": "formic acid",
+   "how": "inside"
+  },
+  {
+   "sf": "FDR",
+   "lf": "false discovery rate",
+   "how": "paren"
+  },
+  {
+   "sf": "FWHM",
+   "lf": "full width half maximum",
+   "how": "paren"
+  },
+  {
+   "sf": "AGC",
+   "lf": "automatic gain control",
+   "how": "paren",
+   "alt": [
+    "normalized automatic gain control"
+   ]
+  },
+  {
+   "sf": "NCE",
+   "lf": "normalized collision energy",
+   "how": "paren"
+  },
+  {
+   "sf": "DTT",
+   "lf": "Dithiothreitol",
+   "how": "paren"
+  },
+  {
+   "sf": "RIPA",
+   "lf": "radioimmunoprecipitation",
+   "how": "inside",
+   "alt": [
+    "radioimmunoprecipitation buffer"
+   ]
+  },
+  {
+   "sf": "EGM-MV",
+   "lf": "Endothelial Cell Growth Medium MV",
+   "how": "paren"
+  },
+  {
+   "sf": "WWTF",
+   "lf": "Vienna Science and Technology Fund",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "WT",
+   "lf": "wild-type"
+  },
+  {
+   "sf": "DMSO",
+   "lf": "dimethyl sulfoxide"
+  },
+  {
+   "sf": "WB",
+   "lf": "Western blot"
+  },
+  {
+   "sf": "IF",
+   "lf": "immunofluorescence"
+  },
+  {
+   "sf": "FC",
+   "lf": "flow cytometry"
+  },
+  {
+   "sf": "ANOVA",
+   "lf": "analysis of variance"
+  },
+  {
+   "sf": "PBS",
+   "lf": "phosphate-buffered saline"
+  },
+  {
+   "sf": "BSA",
+   "lf": "bovine serum albumin"
+  },
+  {
+   "sf": "RT",
+   "lf": "room temperature"
+  },
+  {
+   "sf": "SDS",
+   "lf": "sodium dodecyl sulfate"
+  },
+  {
+   "sf": "FCS",
+   "lf": "fetal calf serum"
+  },
+  {
+   "sf": "TMT",
+   "lf": "tandem mass tag"
+  }
+ ],
+ "ignore": [
+  "SD",
+  "SEM",
+  "IC50",
+  "Da",
+  "kD",
+  "TiO2",
+  "TiSH",
+  "coBRIM",
+  "COLUMBUS",
+  "LIVE",
+  "DEAD",
+  "IVM1c",
+  "IVM1d",
+  "EDTA",
+  "NaCl",
+  "DAPI",
+  "TRITC",
+  "FITC",
+  "AF488",
+  "AF546",
+  "AF647",
+  "PE",
+  "CMFDA",
+  "RPMI",
+  "Limma",
+  "PolySTest",
+  "Reactome",
+  "Cytoscape",
+  "QuPath",
+  "FIJI",
+  "Fiji",
+  "ImageJ",
+  "GraphPad",
+  "Mascot",
+  "Sequest",
+  "UniProtKB",
+  "Swissprot",
+  "Gen5",
+  "CytoFLEX",
+  "CytExpert",
+  "FACSAria",
+  "Dynabeads",
+  "Titansphere",
+  "Selleckchem",
+  "Promocell",
+  "InvivoGen",
+  "Invitrogen",
+  "Gibco",
+  "Merck",
+  "Serva",
+  "Bio-Rad",
+  "LI-COR",
+  "Abcam",
+  "BioLegend",
+  "SigmaAldrich",
+  "Sigma-Aldrich",
+  "Agilent",
+  "Prozyme",
+  "Waters",
+  "Akoya",
+  "ERK",
+  "ERK1/2",
+  "pERK",
+  "pERK1/2",
+  "BRAF",
+  "CRAF",
+  "RAS",
+  "NRAS",
+  "PTK6",
+  "TGFBR2",
+  "CAMK4",
+  "FYN",
+  "LCK",
+  "ABL1/2",
+  "HCK",
+  "JAK2",
+  "YES1",
+  "SRMS",
+  "ACK1",
+  "CD31",
+  "ICAM-1",
+  "GAPDH",
+  "Prox1",
+  "VE-cadherin",
+  "claudin-5",
+  "E-Selectin",
+  "Rho",
+  "Rac",
+  "Cdc42",
+  "VM15",
+  "VM21",
+  "VM48",
+  "VM53",
+  "S2209",
+  "S87",
+  "S261",
+  "S270",
+  "S356",
+  "S908",
+  "S1267",
+  "S2807",
+  "S7108",
+  "S7965",
+  "T202/Y204",
+  "EMA",
+  "EPAR",
+  "SICI",
+  "R-HSA-1169410",
+  "S-BIAD1169",
+  "S-BIAD1170"
+ ]
+}

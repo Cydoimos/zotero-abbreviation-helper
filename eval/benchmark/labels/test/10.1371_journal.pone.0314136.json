@@ -1,0 +1,99 @@
+{
+ "doi": "10.1371/journal.pone.0314136",
+ "title": "Extraction of clinical data on major pulmonary diseases from unstructured radiologic reports using a large language model",
+ "journal": "PLOS ONE",
+ "defined": [
+  {
+   "sf": "LLMs",
+   "lf": "large language models",
+   "how": "paren",
+   "note": "extracted text reads \"large lan guage models\""
+  },
+  {
+   "sf": "CT",
+   "lf": "computed tomography",
+   "how": "paren"
+  },
+  {
+   "sf": "EUMC",
+   "lf": "Ewha Womans University Mokdong Hospital",
+   "how": "paren"
+  },
+  {
+   "sf": "UUH",
+   "lf": "Ulsan University Hospital",
+   "how": "paren"
+  },
+  {
+   "sf": "CAUGH",
+   "lf": "Chung-Ang University Gwangmyeong Hospital",
+   "how": "paren"
+  },
+  {
+   "sf": "ILD",
+   "lf": "interstitial lung disease",
+   "how": "paren"
+  },
+  {
+   "sf": "TB",
+   "lf": "tuberculosis",
+   "how": "paren",
+   "alt": [
+    "active pulmonary tuberculosis"
+   ]
+  },
+  {
+   "sf": "MRIs",
+   "lf": "magnetic resonance imaging",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "AI",
+   "lf": "artificial intelligence"
+  },
+  {
+   "sf": "JSON",
+   "lf": "JavaScript Object Notation"
+  },
+  {
+   "sf": "USMLE",
+   "lf": "United States Medical Licensing Examination"
+  }
+ ],
+ "ignore": [
+  "NEJM",
+  "UUMC",
+  "COVID",
+  "GPT-4",
+  "GPT4",
+  "GPT-3.5",
+  "GPT-3",
+  "GPT",
+  "ChatGPT",
+  "OpenAI",
+  "Gemini",
+  "AI-based",
+  "AI-assisted",
+  "AI-MIRACLE",
+  "DOCX",
+  "XLSX",
+  "PMID",
+  "PLOS",
+  "ONE",
+  "MGC",
+  "GC",
+  "J-YH",
+  "HJ",
+  "MG",
+  "SL",
+  "AM",
+  "JH",
+  "AC",
+  "BMC",
+  "API",
+  "Chung-Ang",
+  "Jin-Young"
+ ]
+}

@@ -1,0 +1,183 @@
+{
+ "doi": "10.1063/5.0266243",
+ "title": "Continuous noninvasive blood pressure estimation using tissue blood flow measured by diffuse correlation spectroscopy",
+ "journal": "APL Bioengineering",
+ "defined": [
+  {
+   "sf": "BP",
+   "lf": "Blood pressure",
+   "how": "paren"
+  },
+  {
+   "sf": "DCS",
+   "lf": "Diffuse correlation spectroscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "BF",
+   "lf": "blood flow",
+   "how": "paren",
+   "alt": [
+    "tissue blood flow"
+   ]
+  },
+  {
+   "sf": "SBP",
+   "lf": "systolic blood pressure",
+   "how": "paren"
+  },
+  {
+   "sf": "DBP",
+   "lf": "diastolic blood pressure",
+   "how": "paren"
+  },
+  {
+   "sf": "PPG",
+   "lf": "photoplethysmography",
+   "how": "paren"
+  },
+  {
+   "sf": "DNNs",
+   "lf": "deep neural networks",
+   "how": "paren",
+   "note": "extracted text reads \"deep neural net works\""
+  },
+  {
+   "sf": "MIMC II",
+   "lf": "Medical Information Mart for Intensive Care",
+   "how": "paren"
+  },
+  {
+   "sf": "UCI",
+   "lf": "University of California Irvine",
+   "how": "paren"
+  },
+  {
+   "sf": "ECG",
+   "lf": "electrocardiogram",
+   "how": "paren"
+  },
+  {
+   "sf": "PTT",
+   "lf": "pulse transit time",
+   "how": "paren"
+  },
+  {
+   "sf": "BFI",
+   "lf": "blood flow index",
+   "how": "paren"
+  },
+  {
+   "sf": "ASL-MRI",
+   "lf": "arterial-spin labeled MRI",
+   "how": "paren"
+  },
+  {
+   "sf": "CT",
+   "lf": "computer tomography",
+   "how": "paren",
+   "alt": [
+    "xenon computer tomography"
+   ]
+  },
+  {
+   "sf": "MAE",
+   "lf": "mean absolute error",
+   "how": "paren"
+  },
+  {
+   "sf": "STD",
+   "lf": "standard deviation",
+   "how": "paren"
+  },
+  {
+   "sf": "PCR",
+   "lf": "parallel-convolutional-residual",
+   "how": "paren"
+  },
+  {
+   "sf": "BHS",
+   "lf": "British Hypertension Society",
+   "how": "paren"
+  },
+  {
+   "sf": "ABP",
+   "lf": "arterial blood pressure",
+   "how": "paren"
+  },
+  {
+   "sf": "ICU",
+   "lf": "intensive care unit",
+   "how": "paren"
+  },
+  {
+   "sf": "MIMIC-II",
+   "lf": "Multiparameter Intelligent Monitoring in Intensive Care II",
+   "how": "paren"
+  },
+  {
+   "sf": "SDS",
+   "lf": "source–detector separation",
+   "how": "paren"
+  },
+  {
+   "sf": "BMI",
+   "lf": "body mass index",
+   "how": "paren"
+  },
+  {
+   "sf": "BN",
+   "lf": "batch normalization",
+   "how": "paren"
+  },
+  {
+   "sf": "Adam",
+   "lf": "adaptive moment estimation",
+   "how": "paren"
+  },
+  {
+   "sf": "MSE",
+   "lf": "mean squared error",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "ReLU",
+   "lf": "rectified linear unit"
+  }
+ ],
+ "ignore": [
+  "BFBP",
+  "SD",
+  "MRI",
+  "U-Net",
+  "MTFF",
+  "AlexNet",
+  "MSF-MTLNet",
+  "DeepCNAP",
+  "OVAR-BPnet",
+  "MIMIC-III",
+  "DoubleConv",
+  "GPU",
+  "NVIDIA",
+  "LabVIEW",
+  "SPCM-AQRH",
+  "PCIe-6612",
+  "FMS-8",
+  "R2",
+  "hE",
+  "hI",
+  "CV",
+  "APL",
+  "ARTICLE",
+  "CC BY-NC-ND",
+  "AAAI",
+  "IEEE",
+  "US",
+  "USA",
+  "CA",
+  "PPG-based",
+  "mm Hg"
+ ]
+}

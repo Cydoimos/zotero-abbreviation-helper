@@ -1,0 +1,164 @@
+{
+ "doi": "10.1136/bmjopen-2023-073582",
+ "title": "Improving our understanding of the social determinants of mental health: a data linkage study of mental health records and the 2011 UK census",
+ "journal": "BMJ Open",
+ "defined": [
+  {
+   "sf": "SLaM",
+   "lf": "South London and Maudsley NHS Foundation Trust",
+   "how": "paren"
+  },
+  {
+   "sf": "ONS",
+   "lf": "Office of National Statistics",
+   "how": "paren"
+  },
+  {
+   "sf": "PR",
+   "lf": "Prevalence ratio",
+   "how": "paren"
+  },
+  {
+   "sf": "EHRs",
+   "lf": "Electronic health records",
+   "how": "paren"
+  },
+  {
+   "sf": "CRIS",
+   "lf": "Clinical Record Interactive Search",
+   "how": "paren"
+  },
+  {
+   "sf": "NHS",
+   "lf": "National Health Service",
+   "how": "paren"
+  },
+  {
+   "sf": "IAPT",
+   "lf": "Improving Access to Psychological Therapies",
+   "how": "paren",
+   "note": "extracted text reads \"Im proving\""
+  },
+  {
+   "sf": "CAMHS",
+   "lf": "child and adolescent mental health services",
+   "how": "paren",
+   "note": "extracted text reads \"ser vices\""
+  },
+  {
+   "sf": "ePJS",
+   "lf": "electronic Patient Journey System",
+   "how": "paren"
+  },
+  {
+   "sf": "NLP",
+   "lf": "natural language processing",
+   "how": "paren"
+  },
+  {
+   "sf": "ICD",
+   "lf": "International Classification of Disease",
+   "how": "paren"
+  },
+  {
+   "sf": "HRA",
+   "lf": "Health Research Authority",
+   "how": "paren",
+   "note": "extracted text reads \"Health Re search Authority\""
+  },
+  {
+   "sf": "CAG",
+   "lf": "Confidential Advisory Group",
+   "how": "paren"
+  },
+  {
+   "sf": "ADRCE",
+   "lf": "Administrative Data Research Centre for England",
+   "how": "paren"
+  },
+  {
+   "sf": "REC",
+   "lf": "Research Ethics Committee",
+   "how": "paren"
+  },
+  {
+   "sf": "IMD",
+   "lf": "Index of Multiple Deprivation",
+   "how": "paren"
+  },
+  {
+   "sf": "LSOA",
+   "lf": "Lower-layer Super Output Area",
+   "how": "paren"
+  },
+  {
+   "sf": "IPW",
+   "lf": "inverse probability weighting",
+   "how": "paren"
+  },
+  {
+   "sf": "CQC",
+   "lf": "Quality Care Commission",
+   "how": "paren"
+  },
+  {
+   "sf": "NSDEC",
+   "lf": "National Statistician’s Data Ethics Advisory Committee",
+   "how": "paren"
+  },
+  {
+   "sf": "CDLS",
+   "lf": "Clinical Data Linkage Service",
+   "how": "paren",
+   "note": "extracted text reads \"Ser vice\""
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "DOB",
+   "lf": "date of birth"
+  }
+ ],
+ "ignore": [
+  "IoPPN",
+  "NIHR",
+  "ESRC",
+  "UKRI",
+  "BRC",
+  "ARC",
+  "SLaM BRC",
+  "SLAM BRC",
+  "SlaM",
+  "RHO",
+  "CI",
+  "ICD-10",
+  "UK",
+  "CRIS-Census",
+  "CC-BY",
+  "medRxiv",
+  "F00-F09",
+  "F10-F19",
+  "F20-F29",
+  "F20-F9",
+  "F30-F36",
+  "F40-F48",
+  "F50-F59",
+  "F60-F69",
+  "F70-F79",
+  "F80-F89",
+  "F90-F98",
+  "F99",
+  "LC",
+  "MW",
+  "JD",
+  "CM",
+  "MH",
+  "RS",
+  "NC",
+  "MP",
+  "C-K",
+  "Das-Munshi",
+  "Single/Separated",
+  "N"
+ ]
+}

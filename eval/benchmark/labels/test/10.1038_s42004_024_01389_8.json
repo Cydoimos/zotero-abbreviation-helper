@@ -1,0 +1,266 @@
+{
+ "doi": "10.1038/s42004-024-01389-8",
+ "title": "Phase relations of bridgmanite, the most abundant mineral in the Earth’s lower mantle",
+ "journal": "Communications Chemistry",
+ "defined": [
+  {
+   "sf": "Bdm",
+   "lf": "bridgmanite",
+   "how": "inside"
+  },
+  {
+   "sf": "Fper",
+   "lf": "ferropericlase",
+   "how": "inside"
+  },
+  {
+   "sf": "Dvm",
+   "lf": "davemaoite",
+   "how": "inside"
+  },
+  {
+   "sf": "PS",
+   "lf": "postspinel phase",
+   "how": "inside"
+  },
+  {
+   "sf": "Sti",
+   "lf": "stishovite",
+   "how": "inside"
+  },
+  {
+   "sf": "LH-DAC",
+   "lf": "laser-heated diamond anvil cells",
+   "how": "paren"
+  },
+  {
+   "sf": "MAP",
+   "lf": "multi-anvil presses",
+   "how": "paren"
+  },
+  {
+   "sf": "TEM",
+   "lf": "transmission electron microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "FIB",
+   "lf": "focused ion beam",
+   "how": "paren"
+  },
+  {
+   "sf": "MF-XRD",
+   "lf": "microfocused powder X-ray diffractometer",
+   "how": "paren"
+  },
+  {
+   "sf": "SEM",
+   "lf": "scanning electron microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "BEI",
+   "lf": "backscattered electron imaging",
+   "how": "paren"
+  },
+  {
+   "sf": "EPMA",
+   "lf": "electron microprobe",
+   "how": "paren",
+   "alt": [
+    "electron probe microanalysis",
+    "electron probe microanalyzer"
+   ]
+  },
+  {
+   "sf": "EDS",
+   "lf": "energy-dispersive X-ray spectrometer",
+   "how": "paren"
+  },
+  {
+   "sf": "CC",
+   "lf": "charge-coupled",
+   "how": "paren"
+  },
+  {
+   "sf": "OV",
+   "lf": "oxygen vacancy",
+   "how": "paren"
+  },
+  {
+   "sf": "AV",
+   "lf": "A-site vacancy",
+   "how": "paren"
+  },
+  {
+   "sf": "pPv",
+   "lf": "postperovskite",
+   "how": "list"
+  },
+  {
+   "sf": "Ol",
+   "lf": "olivine",
+   "how": "list"
+  },
+  {
+   "sf": "Wds",
+   "lf": "wadsleyite",
+   "how": "list"
+  },
+  {
+   "sf": "Rwd",
+   "lf": "ringwoodite",
+   "how": "list"
+  },
+  {
+   "sf": "Gnt",
+   "lf": "garnet",
+   "how": "list",
+   "alt": [
+    "tetragonal garnet"
+   ]
+  },
+  {
+   "sf": "Px",
+   "lf": "pyroxenes",
+   "how": "list"
+  },
+  {
+   "sf": "Pl",
+   "lf": "plagioclase",
+   "how": "list"
+  },
+  {
+   "sf": "Qz",
+   "lf": "quartz",
+   "how": "list"
+  },
+  {
+   "sf": "Coe",
+   "lf": "coesite",
+   "how": "list"
+  },
+  {
+   "sf": "pSti",
+   "lf": "post-stishovite",
+   "how": "list"
+  },
+  {
+   "sf": "Sft",
+   "lf": "seifertite",
+   "how": "list"
+  },
+  {
+   "sf": "Aki",
+   "lf": "akimotoite",
+   "how": "paren"
+  },
+  {
+   "sf": "Per",
+   "lf": "periclase",
+   "how": "inside"
+  },
+  {
+   "sf": "pSt",
+   "lf": "post-stishovite",
+   "how": "paren"
+  },
+  {
+   "sf": "WC",
+   "lf": "tungsten carbide",
+   "how": "paren"
+  },
+  {
+   "sf": "SD",
+   "lf": "sintered diamond",
+   "how": "paren"
+  },
+  {
+   "sf": "Crn",
+   "lf": "corundum",
+   "how": "paren"
+  },
+  {
+   "sf": "NMR",
+   "lf": "nuclear magnetic resonance",
+   "how": "paren"
+  },
+  {
+   "sf": "Hem",
+   "lf": "hematite",
+   "how": "inside"
+  }
+ ],
+ "undefined": [],
+ "ignore": [
+  "ERC",
+  "EOSs",
+  "Ed.",
+  "Eds.",
+  "GPa",
+  "MPaK",
+  "MPaK−1",
+  "kJ",
+  "KJ",
+  "cm3",
+  "CaSiO3",
+  "MgAl2O4",
+  "SiO2",
+  "MgSiO3",
+  "MgO",
+  "Mg2SiO4",
+  "Al2O3",
+  "CaO",
+  "FeO",
+  "H2O",
+  "Fe2O3",
+  "FeAlO3",
+  "AlAlO3",
+  "LiNbO3",
+  "Rh2O3",
+  "Mg2+",
+  "Fe2+",
+  "Fe3+",
+  "Al3+",
+  "Si4+",
+  "Ca2+",
+  "Mg2",
+  "Fe2",
+  "Fe3",
+  "Al3",
+  "Si4",
+  "Ca2",
+  "CCAl",
+  "OVAl",
+  "CCFe3",
+  "OVFe3",
+  "CCFeAl",
+  "KBdm",
+  "xBdm",
+  "aBdm",
+  "WBdm",
+  "WFper",
+  "FPer",
+  "RT",
+  "ΔG",
+  "ΔG0",
+  "ΔH0",
+  "IW",
+  "CF-phase",
+  "P-T",
+  "dP/dT",
+  "fO2",
+  "ΣFe",
+  "S1A",
+  "II",
+  "Fe-Mg",
+  "Mg/Si",
+  "MgO-SiO2",
+  "MgO-Al2O3-SiO2",
+  "MAP43",
+  "GPa15",
+  "GPa20",
+  "Al-27",
+  "USA"
+ ]
+}

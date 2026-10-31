@@ -1,0 +1,610 @@
+{
+ "doi": "10.1038/s42003-024-07383-z",
+ "title": "Mechanisms and therapeutic implications of gene expression regulation by circRNA-protein interactions in cancer",
+ "journal": "Communications Biology",
+ "defined": [
+  {
+   "sf": "circRNAs",
+   "lf": "Circular RNAs",
+   "how": "paren"
+  },
+  {
+   "sf": "RBPs",
+   "lf": "RNA-binding proteins",
+   "how": "paren"
+  },
+  {
+   "sf": "CPIs",
+   "lf": "circRNA-protein interactions",
+   "how": "paren"
+  },
+  {
+   "sf": "ssRNAs",
+   "lf": "single-stranded RNAs",
+   "how": "paren"
+  },
+  {
+   "sf": "RNA-seq",
+   "lf": "RNA sequencing",
+   "how": "paren"
+  },
+  {
+   "sf": "EcircRNAs",
+   "lf": "exon circRNAs",
+   "how": "paren"
+  },
+  {
+   "sf": "ciRNAs",
+   "lf": "intronic circRNAs",
+   "how": "paren"
+  },
+  {
+   "sf": "ElciRNAs",
+   "lf": "exon-intron circRNAs",
+   "how": "paren"
+  },
+  {
+   "sf": "EIciRNAs",
+   "lf": "exon-intron circRNAs",
+   "how": "paren",
+   "alt": [
+    "CircRNAs containing introns"
+   ]
+  },
+  {
+   "sf": "EVs",
+   "lf": "extracellular vesicles",
+   "how": "paren"
+  },
+  {
+   "sf": "ICC",
+   "lf": "Intrahepatic cholangiocarcinoma",
+   "how": "paren"
+  },
+  {
+   "sf": "BCa",
+   "lf": "Bladder cancer",
+   "how": "paren"
+  },
+  {
+   "sf": "GC",
+   "lf": "Gastric cancer",
+   "how": "paren"
+  },
+  {
+   "sf": "GBM",
+   "lf": "Glioblastoma multiforme",
+   "how": "paren"
+  },
+  {
+   "sf": "PC",
+   "lf": "Prostatic cancer",
+   "how": "paren",
+   "alt": [
+    "prostate cancer"
+   ]
+  },
+  {
+   "sf": "CML",
+   "lf": "Chronic myeloid leukemia",
+   "how": "paren"
+  },
+  {
+   "sf": "EC",
+   "lf": "Endometrial cancer",
+   "how": "paren"
+  },
+  {
+   "sf": "HCC",
+   "lf": "Hepatocellular carcinoma",
+   "how": "paren"
+  },
+  {
+   "sf": "CRC",
+   "lf": "Colorectal cancer",
+   "how": "paren"
+  },
+  {
+   "sf": "OC",
+   "lf": "Ovarian cancer",
+   "how": "paren"
+  },
+  {
+   "sf": "ccRCC",
+   "lf": "Clear cell renal cell carcinoma",
+   "how": "paren"
+  },
+  {
+   "sf": "CC",
+   "lf": "Cervical cancer",
+   "how": "paren"
+  },
+  {
+   "sf": "OS",
+   "lf": "Osteosarcoma",
+   "how": "paren"
+  },
+  {
+   "sf": "TNBC",
+   "lf": "Triple-negative breast cancer",
+   "how": "paren"
+  },
+  {
+   "sf": "CSCC",
+   "lf": "Cervival squamous cell carcinoma",
+   "how": "paren",
+   "alt": [
+    "cervical squamous cell carcinoma"
+   ]
+  },
+  {
+   "sf": "RB",
+   "lf": "Retinoblastoma",
+   "how": "paren"
+  },
+  {
+   "sf": "NPC",
+   "lf": "Nasopharyngeal carcinoma",
+   "how": "paren"
+  },
+  {
+   "sf": "NSCLC",
+   "lf": "Non-small cell lung cancer",
+   "how": "paren"
+  },
+  {
+   "sf": "CLL",
+   "lf": "Chronic lymphocytic leukemia",
+   "how": "paren"
+  },
+  {
+   "sf": "PDAC",
+   "lf": "Pancreatic ductal adenocarcinoma",
+   "how": "paren"
+  },
+  {
+   "sf": "CDDP",
+   "lf": "cisplatin",
+   "how": "reverse"
+  },
+  {
+   "sf": "ESCC",
+   "lf": "Esophageal cell carcinoma",
+   "how": "paren"
+  },
+  {
+   "sf": "HNSCC",
+   "lf": "Head and neck squamous cell carcinoma",
+   "how": "paren"
+  },
+  {
+   "sf": "cRCC",
+   "lf": "Clear cell renal cell carcinoma",
+   "how": "paren"
+  },
+  {
+   "sf": "LSCC",
+   "lf": "Laryngeal squamous cell carcinoma",
+   "how": "paren"
+  },
+  {
+   "sf": "HB",
+   "lf": "Hepatoblastoma",
+   "how": "paren"
+  },
+  {
+   "sf": "RCC",
+   "lf": "Renal cell carcinoma",
+   "how": "paren"
+  },
+  {
+   "sf": "LUAD",
+   "lf": "Lung adenocarcinoma",
+   "how": "paren"
+  },
+  {
+   "sf": "MIBC",
+   "lf": "muscle-invasive bladder cancer",
+   "how": "paren"
+  },
+  {
+   "sf": "PAX",
+   "lf": "paclitaxel",
+   "how": "reverse"
+  },
+  {
+   "sf": "DDP",
+   "lf": "cisplatin",
+   "how": "reverse"
+  },
+  {
+   "sf": "TOP1",
+   "lf": "topoisomerase 1",
+   "how": "paren"
+  },
+  {
+   "sf": "DHX15",
+   "lf": "DEAH box helicase 15",
+   "how": "paren"
+  },
+  {
+   "sf": "ATF3",
+   "lf": "transcription factor 3",
+   "how": "paren",
+   "alt": [
+    "activating transcription factor 3"
+   ]
+  },
+  {
+   "sf": "UPF1",
+   "lf": "upstream frameshift 1",
+   "how": "paren"
+  },
+  {
+   "sf": "HDAC1",
+   "lf": "histone deacetylase 1",
+   "how": "paren"
+  },
+  {
+   "sf": "hnRNPM",
+   "lf": "heterogeneous nuclear ribonucleoprotein M",
+   "how": "paren"
+  },
+  {
+   "sf": "SRSF1",
+   "lf": "Serine and Arginine Rich Splicing Factor 1",
+   "how": "paren"
+  },
+  {
+   "sf": "RBFOX2",
+   "lf": "RNA-binding protein fox-1 homolog 2",
+   "how": "paren"
+  },
+  {
+   "sf": "TFRC",
+   "lf": "transferrin receptor protein 1",
+   "how": "paren"
+  },
+  {
+   "sf": "QKI",
+   "lf": "Quaking",
+   "how": "paren"
+  },
+  {
+   "sf": "MBL",
+   "lf": "Muscleblind",
+   "how": "paren"
+  },
+  {
+   "sf": "IGF2BP2",
+   "lf": "Insulin-like growth factor 2 mRNA binding protein 2",
+   "how": "paren"
+  },
+  {
+   "sf": "PTBP1",
+   "lf": "polypyrimidine tract-binding protein 1",
+   "how": "paren"
+  },
+  {
+   "sf": "CDCP1",
+   "lf": "CUB-domain-containing protein 1",
+   "how": "paren"
+  },
+  {
+   "sf": "TXNIP",
+   "lf": "thioredoxin-interacting protein",
+   "how": "paren"
+  },
+  {
+   "sf": "FUS",
+   "lf": "Fused in Sarcoma",
+   "how": "paren"
+  },
+  {
+   "sf": "PD-L1",
+   "lf": "programmed death ligand-1",
+   "how": "paren"
+  },
+  {
+   "sf": "PTMs",
+   "lf": "posttranslational modifications",
+   "how": "paren"
+  },
+  {
+   "sf": "MEK1",
+   "lf": "dual-specificity mitogen-activated protein kinase kinase 1",
+   "how": "paren",
+   "alt": [
+    "a kinase"
+   ]
+  },
+  {
+   "sf": "IGF2BPs",
+   "lf": "Insulin-like growth factor 2 mRNA-binding proteins",
+   "how": "paren",
+   "alt": [
+    "IGF2 mRNA-binding proteins"
+   ]
+  },
+  {
+   "sf": "SUMO",
+   "lf": "Small Ubiquitin-like Modifier",
+   "how": "reverse"
+  },
+  {
+   "sf": "SIM",
+   "lf": "SUMO-interacting motif",
+   "how": "paren"
+  },
+  {
+   "sf": "ALIX",
+   "lf": "ALG-2 interacting protein X",
+   "how": "paren"
+  },
+  {
+   "sf": "ELAVL1",
+   "lf": "ELAV-like RNA-binding protein 1",
+   "how": "paren"
+  },
+  {
+   "sf": "GALNT3",
+   "lf": "polypeptide N-acetylgalactosaminyltransferase 3",
+   "how": "paren"
+  },
+  {
+   "sf": "FGF9",
+   "lf": "Fibroblast Growth Factor 9",
+   "how": "reverse"
+  },
+  {
+   "sf": "TME",
+   "lf": "tumor immune microenvironment",
+   "how": "paren",
+   "alt": [
+    "tumor microenvironment"
+   ]
+  },
+  {
+   "sf": "MSH2",
+   "lf": "MutS homolog 2",
+   "how": "paren"
+  },
+  {
+   "sf": "MAT2A",
+   "lf": "methionine adenosyltransferase IIa",
+   "how": "paren"
+  },
+  {
+   "sf": "TKIs",
+   "lf": "tyrosine kinase inhibitors",
+   "how": "paren",
+   "alt": [
+    "small-molecule tyrosine kinase inhibitors"
+   ]
+  },
+  {
+   "sf": "ME1",
+   "lf": "malate dehydrogenase 1",
+   "how": "paren",
+   "alt": [
+    "malic enzyme 1"
+   ]
+  },
+  {
+   "sf": "GRB7",
+   "lf": "growth factor receptor-bound protein 7",
+   "how": "paren"
+  },
+  {
+   "sf": "FAK",
+   "lf": "focal adhesion kinase 1",
+   "how": "paren"
+  },
+  {
+   "sf": "ER",
+   "lf": "estrogen receptor",
+   "how": "paren"
+  },
+  {
+   "sf": "ceRNA",
+   "lf": "competitive endogenous RNA",
+   "how": "paren"
+  },
+  {
+   "sf": "ESR1",
+   "lf": "estrogen receptor 1",
+   "how": "paren"
+  },
+  {
+   "sf": "IFN",
+   "lf": "interferon",
+   "how": "paren",
+   "alt": [
+    "type I interferon"
+   ]
+  },
+  {
+   "sf": "MAVS",
+   "lf": "mitochondrial antiviral signaling protein",
+   "how": "paren"
+  },
+  {
+   "sf": "m6A",
+   "lf": "N6-methyladenosine",
+   "how": "paren"
+  },
+  {
+   "sf": "RBDs",
+   "lf": "RNA-binding domains",
+   "how": "paren"
+  },
+  {
+   "sf": "RNP",
+   "lf": "RNA-protein",
+   "how": "paren",
+   "alt": [
+    "ribonucleoprotein"
+   ]
+  },
+  {
+   "sf": "RIP-seq",
+   "lf": "RNA immunoprecipitation sequencing",
+   "how": "paren"
+  },
+  {
+   "sf": "CLIP-seq",
+   "lf": "crosslinking immunoprecipitation sequencing",
+   "how": "paren"
+  },
+  {
+   "sf": "ASOs",
+   "lf": "Antisense oligonucleotides",
+   "how": "paren"
+  },
+  {
+   "sf": "HNRNPK",
+   "lf": "heterogeneous nuclear ribonucleoprotein K",
+   "how": "paren"
+  },
+  {
+   "sf": "IGF2BP1",
+   "lf": "Insulin-like growth factor 2 mRNA-binding protein 1",
+   "how": "paren"
+  },
+  {
+   "sf": "IGF2BP3",
+   "lf": "oncofetal IGF2 mRNA-binding protein 3",
+   "how": "paren",
+   "alt": [
+    "IGF2 mRNA-binding protein 3"
+   ]
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "BC",
+   "lf": "breast cancer"
+  },
+  {
+   "sf": "PCa",
+   "lf": "prostate cancer"
+  },
+  {
+   "sf": "EMT",
+   "lf": "epithelial-mesenchymal transition"
+  },
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "mRNA",
+   "lf": "messenger RNA"
+  },
+  {
+   "sf": "miRNA",
+   "lf": "microRNA"
+  },
+  {
+   "sf": "snRNP",
+   "lf": "small nuclear ribonucleoprotein"
+  },
+  {
+   "sf": "UTR",
+   "lf": "untranslated region"
+  }
+ ],
+ "ignore": [
+  "VEGF-Axxxa",
+  "VEGF-Axxxb",
+  "VEGF-AXXXa",
+  "VEGFA",
+  "MAT IIa",
+  "LN",
+  "ERα",
+  "p53",
+  "p65",
+  "PTEN",
+  "MYC",
+  "RAS",
+  "HER2",
+  "BCL2",
+  "STAT2",
+  "STAT3",
+  "p-STAT3",
+  "YBX1",
+  "hnRNPL",
+  "hnRNPA2B1",
+  "HuR",
+  "KAT7",
+  "CNBP",
+  "TIP60",
+  "NR2F6",
+  "EWSR1",
+  "MAZ",
+  "Sam68",
+  "FZD7",
+  "SOX4",
+  "NFIB",
+  "TRIM25",
+  "NFATC3",
+  "SMAD3",
+  "AP2A1",
+  "PKM2",
+  "HSP27",
+  "UBE3C",
+  "PEBP1",
+  "ILF3",
+  "C1QBP",
+  "LARP1",
+  "RNF181",
+  "FABP3",
+  "MMR",
+  "EIF4A3",
+  "eIF3h",
+  "PCBP2",
+  "HNRNPC",
+  "AUF1",
+  "CTNNB1",
+  "SDC1",
+  "MMP9",
+  "KLF2",
+  "PI3K/AKT",
+  "RAS/ERK",
+  "Wnt/β-catenin",
+  "NF-κB",
+  "AKT",
+  "Cpkm",
+  "II",
+  "AND",
+  "OR",
+  "Weinh.",
+  "Ger.",
+  "circRNA",
+  "CircRNA",
+  "CircRNAs",
+  "pre-RNA",
+  "RNAs",
+  "RNA-binding",
+  "circRNA-protein",
+  "circACTN4",
+  "circNCOR1",
+  "circMRPS35",
+  "circ-HuR",
+  "circRHOT1",
+  "circ-CUX1",
+  "circCAPRIN1",
+  "circRNF10",
+  "circRPPH1",
+  "circFMN2",
+  "circRPMS1",
+  "ebv-circRPMS1",
+  "circ-0075804",
+  "hsa_circ_0005273",
+  "hsa_circ_0036200"
+ ]
+}

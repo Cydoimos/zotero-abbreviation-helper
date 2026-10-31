@@ -1,0 +1,105 @@
+{
+ "doi": "10.1002/ece3.72025",
+ "title": "Evaluation of the Effectiveness of Regulatory Measures for the Use of Natural Ecological Space Based on the Remote Sensing‐Driven PLUS ‐ InVEST Model: A Case Study From the Central Mountainous Area of Hainan Island",
+ "journal": "Ecology and Evolution",
+ "defined": [
+  {
+   "sf": "ND",
+   "lf": "natural development",
+   "how": "paren"
+  },
+  {
+   "sf": "EP",
+   "lf": "ecological priority",
+   "how": "paren"
+  },
+  {
+   "sf": "HQ",
+   "lf": "habitat quality",
+   "how": "paren"
+  },
+  {
+   "sf": "InVEST",
+   "lf": "Integrated Valuation of Ecosystem Services and Tradeoffs",
+   "how": "paren"
+  },
+  {
+   "sf": "CA",
+   "lf": "Cellular Automata",
+   "how": "paren"
+  },
+  {
+   "sf": "ANN",
+   "lf": "Artificial Neural Network",
+   "how": "paren"
+  },
+  {
+   "sf": "FLUS",
+   "lf": "Future Land Use Simulation",
+   "how": "paren"
+  },
+  {
+   "sf": "PLUS",
+   "lf": "Patch-generating Land Use Simulation",
+   "how": "paren"
+  },
+  {
+   "sf": "LULC",
+   "lf": "Land Use/Land Cover",
+   "how": "paren"
+  },
+  {
+   "sf": "LEAS",
+   "lf": "Land Expansion Analysis Strategy",
+   "how": "paren"
+  },
+  {
+   "sf": "CIESIN",
+   "lf": "Center for International Earth Science Information Network",
+   "how": "paren"
+  },
+  {
+   "sf": "SEM",
+   "lf": "structural equation modeling",
+   "how": "paren"
+  },
+  {
+   "sf": "GeoDetector",
+   "lf": "geographical detector",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "DEM",
+   "lf": "digital elevation model"
+  },
+  {
+   "sf": "GDP",
+   "lf": "gross domestic product"
+  }
+ ],
+ "ignore": [
+  "CBD",
+  "UNDP",
+  "HIS",
+  "C-Plan",
+  "Maxent",
+  "CPLAN",
+  "OA",
+  "PLUS-InVEST",
+  "CA-Markov",
+  "ArcGIS",
+  "OpenStreetMap",
+  "km2",
+  "Area/km2",
+  "NASA",
+  "SRTM1",
+  "CSTR",
+  "DS/ OL",
+  "OPP1134076",
+  "Land-Use",
+  "Use/Cover",
+  "Multi-Scenario"
+ ]
+}

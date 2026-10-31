@@ -1,0 +1,321 @@
+{
+ "doi": "10.1098/rsob.230270",
+ "title": "Interaction of MLE with CLAMP zinc finger is involved in proper MSL proteins binding to chromosomes in Drosophila",
+ "journal": "Open Biology",
+ "defined": [
+  {
+   "sf": "MSL",
+   "lf": "male-specific lethal",
+   "how": "paren"
+  },
+  {
+   "sf": "MOF",
+   "lf": "male absent on the first",
+   "how": "paren"
+  },
+  {
+   "sf": "MLE",
+   "lf": "maleless",
+   "how": "paren"
+  },
+  {
+   "sf": "lncRNAs",
+   "lf": "long noncoding RNAs",
+   "how": "paren"
+  },
+  {
+   "sf": "CLAMP",
+   "lf": "chromatin-linked adapter for MSL proteins",
+   "how": "paren",
+   "alt": [
+    "chromatin-linked adaptor for MSL proteins"
+   ]
+  },
+  {
+   "sf": "DCC",
+   "lf": "dosage compensation complex",
+   "how": "paren"
+  },
+  {
+   "sf": "MSL1",
+   "lf": "male-specific lethal 1",
+   "how": "paren"
+  },
+  {
+   "sf": "MSL2",
+   "lf": "male-specific lethal 2",
+   "how": "paren"
+  },
+  {
+   "sf": "MSL3",
+   "lf": "male-specific lethal 3",
+   "how": "paren"
+  },
+  {
+   "sf": "CES",
+   "lf": "chromatin entry sites",
+   "how": "paren",
+   "alt": [
+    "primary chromatin entry sites",
+    "chromatin entry"
+   ]
+  },
+  {
+   "sf": "HAS",
+   "lf": "high-affinity sites",
+   "how": "paren",
+   "alt": [
+    "high-affinity"
+   ]
+  },
+  {
+   "sf": "MRE",
+   "lf": "MSL recognition element",
+   "how": "paren"
+  },
+  {
+   "sf": "CBD",
+   "lf": "CLAMP binding domain",
+   "how": "paren"
+  },
+  {
+   "sf": "Y2H",
+   "lf": "yeast two-hybrid",
+   "how": "paren"
+  },
+  {
+   "sf": "aa",
+   "lf": "amino acid",
+   "how": "paren"
+  },
+  {
+   "sf": "dsRNA",
+   "lf": "double-stranded RNA",
+   "how": "paren"
+  },
+  {
+   "sf": "dsRBD1",
+   "lf": "double-stranded RNA binding domain 1",
+   "how": "paren",
+   "alt": [
+    "dsRNA binding domain 1"
+   ]
+  },
+  {
+   "sf": "dsRBD2",
+   "lf": "double-stranded RNA binding domain 2",
+   "how": "paren",
+   "alt": [
+    "dsRNA binding domain 2"
+   ]
+  },
+  {
+   "sf": "HA2",
+   "lf": "helicase associated 2",
+   "how": "paren"
+  },
+  {
+   "sf": "OB",
+   "lf": "oligonucleotide-binding",
+   "how": "paren"
+  },
+  {
+   "sf": "NLS",
+   "lf": "nuclear localization signal",
+   "how": "paren"
+  },
+  {
+   "sf": "AD",
+   "lf": "activating domain",
+   "how": "paren",
+   "alt": [
+    "GAL4 activating domain"
+   ]
+  },
+  {
+   "sf": "DBD",
+   "lf": "DNA-binding domain",
+   "how": "paren",
+   "alt": [
+    "GAL4 DNA-binding domain"
+   ]
+  },
+  {
+   "sf": "WT",
+   "lf": "wild-type",
+   "how": "paren"
+  },
+  {
+   "sf": "MBP",
+   "lf": "maltose-binding protein",
+   "how": "paren"
+  },
+  {
+   "sf": "ZnF",
+   "lf": "zinc finger",
+   "how": "list",
+   "alt": [
+    "C2H2-type zinc finger domains"
+   ]
+  },
+  {
+   "sf": "AUT",
+   "lf": "autosomes",
+   "how": "paren",
+   "alt": [
+    "autosomal peaks",
+    "autosomal"
+   ]
+  },
+  {
+   "sf": "FC",
+   "lf": "fold-change",
+   "how": "paren",
+   "alt": [
+    "log fold-change"
+   ]
+  },
+  {
+   "sf": "RPKM",
+   "lf": "reads per kilobase per million mapped reads",
+   "how": "paren"
+  },
+  {
+   "sf": "RR",
+   "lf": "rescue ratio",
+   "how": "paren"
+  },
+  {
+   "sf": "SR",
+   "lf": "self-consistency ratio",
+   "how": "paren"
+  },
+  {
+   "sf": "GEO",
+   "lf": "Gene Expression Omnibus",
+   "how": "paren"
+  },
+  {
+   "sf": "ChIP-seq",
+   "lf": "chromatin immunoprecipitation-sequencing",
+   "how": "reverse"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "ChIP",
+   "lf": "chromatin immunoprecipitation"
+  },
+  {
+   "sf": "IP",
+   "lf": "immunoprecipitation"
+  },
+  {
+   "sf": "IgG",
+   "lf": "immunoglobulin G"
+  },
+  {
+   "sf": "UTR",
+   "lf": "untranslated region"
+  }
+ ],
+ "ignore": [
+  "MREs",
+  "Zn3Cys9",
+  "C2H2",
+  "C2H2-type",
+  "CXC",
+  "GA",
+  "GA-rich",
+  "GAGA",
+  "GGGYGNN",
+  "HAS/CES",
+  "RecA1",
+  "RecA2",
+  "OB-like",
+  "ZnF1",
+  "ZnF2",
+  "ZnF3",
+  "ZnF4",
+  "ZnF5",
+  "ZnF6",
+  "ZnF7",
+  "MLEWT",
+  "MLEwt",
+  "MLEΔ",
+  "MLEΔCBD",
+  "MLEWT-FLAG",
+  "MLEΔCBD-FLAG",
+  "mleWT",
+  "mleΔCBD",
+  "mley38",
+  "mle9",
+  "TM6",
+  "CyO",
+  "Ubi",
+  "Ubi-p63E",
+  "Ubi:mleWT",
+  "SV40",
+  "GAL4",
+  "FLAG",
+  "3xFLAG",
+  "3xHA-CLAMP",
+  "HA-tagged",
+  "anti-FLAG",
+  "anti-MSL1",
+  "anti-MSL2",
+  "anti-MSL3",
+  "DAPI",
+  "PBS",
+  "PBST",
+  "SDS",
+  "EDTA",
+  "DTT",
+  "PMSF",
+  "KCl",
+  "MgCl2",
+  "HCl",
+  "HEPES",
+  "mM",
+  "kDa",
+  "bp",
+  "pH",
+  "Dm0",
+  "ADL84",
+  "dCTCF",
+  "dI-dC",
+  "FAM",
+  "Cy5",
+  "Ex/Em",
+  "PAGE",
+  "MACS",
+  "MACS2",
+  "NovaSeq",
+  "Illumina",
+  "Invitrogen",
+  "Sigma",
+  "NEB",
+  "DSHB",
+  "Agilent",
+  "DeNovix",
+  "Diagenode",
+  "AppliChem",
+  "Bioanalyzer",
+  "roX",
+  "roX1",
+  "roX2",
+  "RoX1",
+  "RoX2",
+  "ChrX",
+  "CG1518",
+  "CG4645",
+  "CES5C2",
+  "Opbp",
+  "pJ69-4A",
+  "BBA",
+  "SICI",
+  "USA",
+  "PG",
+  "OM"
+ ]
+}

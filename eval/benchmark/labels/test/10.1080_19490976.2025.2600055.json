@@ -1,0 +1,164 @@
+{
+ "doi": "10.1080/19490976.2025.2600055",
+ "title": "Recipients' native bacteria determine the outcome of FMT treatment in inflammatory bowel disease",
+ "journal": "Gut Microbes",
+ "defined": [
+  {
+   "sf": "FMT",
+   "lf": "Fecal microbiota transplantation",
+   "how": "paren"
+  },
+  {
+   "sf": "IBD",
+   "lf": "inflammatory bowel disease",
+   "how": "paren"
+  },
+  {
+   "sf": "UC",
+   "lf": "ulcerative colitis",
+   "how": "paren"
+  },
+  {
+   "sf": "CD",
+   "lf": "Crohn's disease",
+   "how": "paren"
+  },
+  {
+   "sf": "RCTs",
+   "lf": "randomized controlled trials",
+   "how": "paren"
+  },
+  {
+   "sf": "RR",
+   "lf": "relative risk",
+   "how": "paren"
+  },
+  {
+   "sf": "CI",
+   "lf": "confidence interval",
+   "how": "paren"
+  },
+  {
+   "sf": "CDAI",
+   "lf": "Crohn Disease Activity Index",
+   "how": "paren"
+  },
+  {
+   "sf": "MAOs",
+   "lf": "Major adverse outcomes",
+   "how": "paren"
+  },
+  {
+   "sf": "LDA",
+   "lf": "linear discriminant analysis",
+   "how": "paren"
+  },
+  {
+   "sf": "LEfSe",
+   "lf": "linear discriminant analysis effect size",
+   "how": "paren",
+   "alt": [
+    "LDA effect size"
+   ]
+  },
+  {
+   "sf": "GMI",
+   "lf": "gut microbiome index",
+   "how": "paren"
+  },
+  {
+   "sf": "SAEs",
+   "lf": "serious adverse events",
+   "how": "paren"
+  },
+  {
+   "sf": "ET_B",
+   "lf": "Bacteroides-dominated",
+   "how": "paren",
+   "alt": [
+    "Bacteroides-dominated enterotype"
+   ]
+  },
+  {
+   "sf": "ET_F",
+   "lf": "Firmicutes-dominated",
+   "how": "paren",
+   "alt": [
+    "Firmicutes-dominated enterotype"
+   ]
+  },
+  {
+   "sf": "rCDI",
+   "lf": "recurrent Clostridioides difficile infection",
+   "how": "paren"
+  },
+  {
+   "sf": "TNFα",
+   "lf": "tumor necrosis factor alpha",
+   "how": "paren"
+  },
+  {
+   "sf": "HDL-C",
+   "lf": "high-density lipoprotein cholesterol",
+   "how": "paren"
+  },
+  {
+   "sf": "CRP",
+   "lf": "C-reactive protein",
+   "how": "paren",
+   "note": "extracted text reads \"Creactive protein\""
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "rRNA",
+   "lf": "ribosomal RNA"
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction"
+  }
+ ],
+ "ignore": [
+  "MR",
+  "MU",
+  "IQR",
+  "SCFA",
+  "SCFA-producing",
+  "NCT07149441",
+  "NCT05703477",
+  "ChiCTR2000039915",
+  "ClinicalTrials",
+  "ClinicalTrials.gov",
+  "PRJNA1269753",
+  "QIAGEN",
+  "Illumina",
+  "GUT",
+  "MICROBES",
+  "NO",
+  "ZHAO",
+  "ET",
+  "AL",
+  "mL",
+  "IBD-related",
+  "FMT-driven",
+  "pre-FMT",
+  "post-FMT",
+  "non-IBD",
+  "DZ",
+  "XW",
+  "QX",
+  "QC",
+  "HQ",
+  "CM",
+  "CR",
+  "SP",
+  "TJ",
+  "SHDC",
+  "USA"
+ ]
+}
