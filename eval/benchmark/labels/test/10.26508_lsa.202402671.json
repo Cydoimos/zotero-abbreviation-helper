@@ -225,7 +225,10 @@
   {
    "sf": "DTT",
    "lf": "Dithiothreitol",
-   "how": "paren"
+   "how": "paren",
+   "alt": [
+    "1,4-dithiothreitol"
+   ]
   },
   {
    "sf": "RIPA",
@@ -294,6 +297,16 @@
   {
    "sf": "TMT",
    "lf": "tandem mass tag"
+  },
+  {
+   "sf": "GFP",
+   "lf": "green fluorescent protein",
+   "recon": true
+  },
+  {
+   "sf": "HPLC",
+   "lf": "high-performance liquid chromatography",
+   "recon": true
   }
  ],
  "ignore": [

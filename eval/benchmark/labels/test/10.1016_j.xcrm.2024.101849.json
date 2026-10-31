@@ -286,6 +286,11 @@
   {
    "sf": "CPM",
    "lf": "counts per million"
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction",
+   "recon": true
   }
  ],
  "ignore": [
@@ -386,6 +391,9 @@
   "S4",
   "S7",
   "S8A",
-  "S8B"
+  "S8B",
+  "mg/L",
+  "IL-1a",
+  "IL-1b"
  ]
 }

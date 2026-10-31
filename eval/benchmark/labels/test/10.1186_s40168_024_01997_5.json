@@ -193,7 +193,10 @@
   },
   {
    "sf": "rRNA",
-   "lf": "ribosomal ribonucleic acid"
+   "lf": "ribosomal ribonucleic acid",
+   "alt": [
+    "ribosomal RNA"
+   ]
   },
   {
    "sf": "MS/MS",

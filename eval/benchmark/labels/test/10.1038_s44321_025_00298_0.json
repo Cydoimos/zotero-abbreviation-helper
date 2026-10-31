@@ -150,6 +150,11 @@
   {
    "sf": "ESCRT",
    "lf": "endosomal sorting complex required for transport"
+  },
+  {
+   "sf": "DMEM",
+   "lf": "Dulbecco's Modified Eagle Medium",
+   "recon": true
   }
  ],
  "ignore": [

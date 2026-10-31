@@ -300,6 +300,31 @@
   {
    "sf": "CO2",
    "lf": "carbon dioxide"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid",
+   "recon": true
+  },
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid",
+   "recon": true
+  },
+  {
+   "sf": "CRISPR",
+   "lf": "clustered regularly interspaced short palindromic repeats",
+   "recon": true
+  },
+  {
+   "sf": "DMSO",
+   "lf": "dimethyl sulfoxide",
+   "recon": true
+  },
+  {
+   "sf": "ANOVA",
+   "lf": "analysis of variance",
+   "recon": true
   }
  ],
  "ignore": [
@@ -392,6 +417,7 @@
   "QuickBlock",
   "Trizol",
   "TruSeq",
-  "cBot"
+  "cBot",
+  "Cas9"
  ]
 }

@@ -217,6 +217,30 @@
   {
    "sf": "UTR",
    "lf": "untranslated region"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid",
+   "recon": true
+  },
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid",
+   "recon": true
+  },
+  {
+   "sf": "EGTA",
+   "lf": "ethylene glycol tetraacetic acid",
+   "recon": true,
+   "alt": [
+    "ethylene glycol-bis(beta-aminoethyl ether)-N,N,N,N-tetraacetic acid",
+    "ethylene glycol bis(2-aminoethyl ether)tetraacetic acid"
+   ]
+  },
+  {
+   "sf": "SDS-PAGE",
+   "lf": "sodium dodecyl sulfate polyacrylamide gel electrophoresis",
+   "recon": true
   }
  ],
  "ignore": [
