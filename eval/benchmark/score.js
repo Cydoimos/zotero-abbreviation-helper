@@ -13,8 +13,8 @@
  *   Glossary   : the same, for short forms the paper never defines
  *
  * Usage
- *   node eval/benchmark/score.js dev  <text-dir> [path-to-abbreviation.js]
- *   node eval/benchmark/score.js test <text-dir> [path-to-abbreviation.js]
+ *   node eval/benchmark/score.js dev  <text-dir> [abbreviation.js [abbreviations.json]]
+ *   node eval/benchmark/score.js test <text-dir> [abbreviation.js [abbreviations.json]]
  *
  * <text-dir> is a folder written by export-from-zotero.js: papers.json plus
  * one <ZoteroKey>.txt per paper. The paper text comes from Zotero's own PDF
@@ -35,7 +35,7 @@ const textDir = process.argv[3];
 const args = process.argv.slice(4).filter(a => !a.startsWith('--'));
 const wantErrors = process.argv.includes('--errors');
 if (set !== 'dev' && set !== 'test' || !textDir) {
-  console.log('usage: node eval/benchmark/score.js dev|test <text-dir> [abbreviation.js] [--errors]');
+  console.log('usage: node eval/benchmark/score.js dev|test <text-dir> [abbreviation.js [abbreviations.json]] [--errors]');
   process.exit(1);
 }
 
@@ -47,7 +47,8 @@ function load(p) {
   vm.runInContext(c + '\n;this.__H=AbbreviationHelper;', sb);
   return sb.__H;
 }
-const dicts = require(path.join(ROOT, 'src/data/abbreviations.json'));
+// The dictionary can be given too, to score an older version as it shipped.
+const dicts = JSON.parse(fs.readFileSync(args[1] || path.join(ROOT, 'src/data/abbreviations.json'), 'utf8'));
 const H = load(args[0] || path.join(ROOT, 'src/abbreviation.js'));
 H.dictionaries = { staticDefs: dicts.staticDefs, commonKnownDefs: dicts.commonKnownDefs };
 
@@ -84,11 +85,22 @@ const variants = s => {
   return [...v].filter(Boolean);
 };
 
+// Units are always ignored (GUIDELINES.md), so outputs for them are never
+// false positives; where a paper's labels list one, it is scored as labelled.
+const UNITS = ['bp', 'nt', 'kb', 'aa', 'kda', 'da', 'mda', 'nm', 'mm', 'mg', 'ml'];
+
 // ---- comparing meanings ----------------------------------------------------
 const STOP = new Set(['the', 'a', 'an', 'of', 'and', 'or', 'for', 'in', 'on', 'to', 'with', 'by']);
+// A Greek letter and its name are the same word ("β-D-maltoside", "beta-D-
+// maltoside"), and accents do not change a meaning ("Biomédica").
+const GREEK = { α: 'alpha', β: 'beta', γ: 'gamma', δ: 'delta', ε: 'epsilon', ζ: 'zeta', η: 'eta',
+  θ: 'theta', ι: 'iota', κ: 'kappa', λ: 'lambda', μ: 'mu', ν: 'nu', ξ: 'xi', π: 'pi', ρ: 'rho',
+  σ: 'sigma', τ: 'tau', φ: 'phi', χ: 'chi', ψ: 'psi', ω: 'omega' };
 function norm(s) {
   return String(s || '')
     .toLowerCase()
+    .replace(/[α-ω]/g, c => ' ' + (GREEK[c] || '') + ' ')
+    .normalize('NFD').replace(/\p{M}/gu, '')
     .replace(/\(common term.*$|\(common possible meanings.*$/, '')
     .replace(/[‐-―]/g, '-')
     .replace(/[^a-z0-9]+/g, ' ')
@@ -175,8 +187,9 @@ for (const L of labels) {
   }
 
   // Precision: an output is a false positive when it is neither labelled nor
-  // listed in "ignore". Unclear entries are accepted either way.
-  const accepted = new Set();
+  // listed in "ignore". Unclear entries are accepted either way, and so are
+  // units, which the guidelines always ignore unless a paper's labels list them.
+  const accepted = new Set(UNITS);
   for (const s of [...(L.defined || []).map(e => e.sf), ...(L.undefined || []).map(e => e.sf), ...(L.ignore || [])]) {
     for (const v of variants(s)) accepted.add(v);
   }

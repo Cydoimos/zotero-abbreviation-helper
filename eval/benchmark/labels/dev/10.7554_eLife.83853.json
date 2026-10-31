@@ -110,6 +110,13 @@
    "lf": "paraformaldehyde",
    "how": "paren",
    "recon": true
+  },
+  {
+   "sf": "lincRNAs",
+   "lf": "long intergenic noncoding RNAs",
+   "how": "phrase",
+   "recon": true,
+   "note": "\"long intergenic noncoding RNAs, or lincRNAs\""
   }
  ],
  "undefined": [
@@ -136,10 +143,6 @@
   {
    "sf": "piRNA",
    "lf": "Piwi-interacting RNA"
-  },
-  {
-   "sf": "lincRNAs",
-   "lf": "long intergenic non-coding RNAs"
   },
   {
    "sf": "PCR",
@@ -216,6 +219,26 @@
   {
    "sf": "CRISPR",
    "lf": "clustered regularly interspaced short palindromic repeats",
+   "recon": true
+  },
+  {
+   "sf": "IgG",
+   "lf": "immunoglobulin G",
+   "recon": true
+  },
+  {
+   "sf": "LB",
+   "lf": "lysogeny broth",
+   "recon": true
+  },
+  {
+   "sf": "NCBI",
+   "lf": "National Center for Biotechnology Information",
+   "recon": true
+  },
+  {
+   "sf": "dsRNA",
+   "lf": "double-stranded RNA",
    "recon": true
   }
  ],

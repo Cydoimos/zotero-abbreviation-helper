@@ -358,6 +358,21 @@
    "sf": "DNA",
    "lf": "deoxyribonucleic acid",
    "recon": true
+  },
+  {
+   "sf": "WT",
+   "lf": "wild type",
+   "recon": true
+  },
+  {
+   "sf": "LC",
+   "lf": "liquid chromatography",
+   "recon": true
+  },
+  {
+   "sf": "MS/MS",
+   "lf": "tandem mass spectrometry",
+   "recon": true
   }
  ],
  "ignore": [

@@ -183,6 +183,11 @@
    "sf": "cDNA",
    "lf": "complementary DNA",
    "recon": true
+  },
+  {
+   "sf": "IgG",
+   "lf": "immunoglobulin G",
+   "recon": true
   }
  ],
  "ignore": [

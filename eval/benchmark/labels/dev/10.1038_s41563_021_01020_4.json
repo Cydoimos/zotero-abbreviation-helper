@@ -168,6 +168,16 @@
    "sf": "RNA",
    "lf": "ribonucleic acid",
    "recon": true
+  },
+  {
+   "sf": "EM",
+   "lf": "electron microscopy",
+   "recon": true
+  },
+  {
+   "sf": "TBE",
+   "lf": "Tris-borate-EDTA",
+   "recon": true
   }
  ],
  "ignore": [

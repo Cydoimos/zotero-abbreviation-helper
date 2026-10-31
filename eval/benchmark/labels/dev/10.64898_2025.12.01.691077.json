@@ -30,8 +30,9 @@
   },
   {
    "sf": "FBS",
-   "lf": "foetal bovine serum",
-   "how": "other"
+   "lf": "fetal bovine serum",
+   "how": "other",
+   "recon": true
   },
   {
    "sf": "PPIA",

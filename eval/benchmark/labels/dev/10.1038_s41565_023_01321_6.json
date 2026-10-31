@@ -181,6 +181,11 @@
    "sf": "TEM",
    "lf": "transmission electron microscopy",
    "recon": true
+  },
+  {
+   "sf": "EM",
+   "lf": "electron microscopy",
+   "recon": true
   }
  ],
  "ignore": [

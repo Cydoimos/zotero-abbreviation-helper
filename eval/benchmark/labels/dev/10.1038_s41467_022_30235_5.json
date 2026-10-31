@@ -85,8 +85,12 @@
   },
   {
    "sf": "CTD",
-   "lf": "C-terminal domain",
-   "how": "paren"
+   "lf": "carboxyl terminal domain",
+   "how": "paren",
+   "alt": [
+    "C-terminal domain"
+   ],
+   "recon": true
   },
   {
    "sf": "GGA",

@@ -123,6 +123,11 @@
   {
    "sf": "CFU",
    "lf": "colony-forming units"
+  },
+  {
+   "sf": "MS/MS",
+   "lf": "tandem mass spectrometry",
+   "recon": true
   }
  ],
  "ignore": [

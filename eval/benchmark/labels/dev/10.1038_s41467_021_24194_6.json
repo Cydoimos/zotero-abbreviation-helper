@@ -131,7 +131,11 @@
   {
    "sf": "ABCA",
    "lf": "ABC subfamily A",
-   "how": "other"
+   "how": "other",
+   "alt": [
+    "ATP-binding cassette subfamily A"
+   ],
+   "recon": true
   },
   {
    "sf": "hABCA4",
@@ -194,6 +198,21 @@
   {
    "sf": "MS",
    "lf": "mass spectrometry",
+   "recon": true
+  },
+  {
+   "sf": "ACN",
+   "lf": "acetonitrile",
+   "recon": true
+  },
+  {
+   "sf": "LC",
+   "lf": "liquid chromatography",
+   "recon": true
+  },
+  {
+   "sf": "MS/MS",
+   "lf": "tandem mass spectrometry",
    "recon": true
   }
  ],

@@ -122,6 +122,41 @@
    "sf": "RPAP2",
    "lf": "RNAP II associated with protein 2",
    "how": "paren"
+  },
+  {
+   "sf": "Eco",
+   "lf": "Escherichia coli",
+   "how": "other",
+   "recon": true,
+   "note": "figure legend key, like Mja"
+  },
+  {
+   "sf": "Bsu",
+   "lf": "Bacillus subtilis",
+   "how": "other",
+   "recon": true,
+   "note": "figure legend key, like Mja"
+  },
+  {
+   "sf": "Mtu",
+   "lf": "Mycobacterium tuberculosis",
+   "how": "other",
+   "recon": true,
+   "note": "figure legend key, like Mja"
+  },
+  {
+   "sf": "Sac",
+   "lf": "Sulfolobus acidocaldarius",
+   "how": "other",
+   "recon": true,
+   "note": "figure legend key, like Mja"
+  },
+  {
+   "sf": "Tko",
+   "lf": "Thermococcus kodakarensis",
+   "how": "other",
+   "recon": true,
+   "note": "figure legend key, like Mja"
   }
  ],
  "undefined": [
@@ -184,6 +219,16 @@
   {
    "sf": "HEPES",
    "lf": "4-(2-hydroxyethyl)-1-piperazineethanesulfonic acid",
+   "recon": true
+  },
+  {
+   "sf": "UV",
+   "lf": "ultraviolet",
+   "recon": true
+  },
+  {
+   "sf": "MS/MS",
+   "lf": "tandem mass spectrometry",
    "recon": true
   }
  ],

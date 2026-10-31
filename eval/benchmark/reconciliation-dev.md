@@ -183,3 +183,19 @@ its construct description as a meaning. Remaining misses are counted as they
 are; the main kinds are long forms whose letters do not follow the short form
 (KD, dissociation constant), descriptive definitions (ATF4, "a cytoprotective
 transcription factor") and names in other languages (ZMBH).
+
+## Third pass (failure review)
+
+While reviewing the remaining misses, each was read in the text. Changes:
+
+- 10.1093/nar/gkae282: defined += Eco, Bsu, Mtu, Sac, Tko (the figure-legend species key "Eco: Escherichia coli, ..."; Mja from the same key was already labelled)
+- 10.7554/eLife.83853: lincRNAs moved from undefined to defined (phrase: "long intergenic noncoding RNAs, or lincRNAs")
+- 10.1038/s41467-022-30235-5: CTD = carboxyl terminal domain, as written at the first definition ("C-terminal domain" kept as an alternative)
+- 10.64898/2025.12.01.691077: FBS = fetal bovine serum, as written (the label said "foetal")
+
+The scorer now treats a Greek letter and its name as the same word, and ignores accents ("n-dodecyl-β-D-maltoside" = "n-dodecyl-beta-D-maltoside"). This applies to both sets and both detectors.
+- 10.1038/s41467-021-24194-6: ABCA alt += "ATP-binding cassette subfamily A" (the text: "ATP-binding cassette (ABC) subfamily A (ABCA)")
+- Standard abbreviations the blind pass missed, found when the glossary grew; each used at least twice outside the references (uses inside compounds such as "LC-MS/MS" count) and never spelled out: 10.1016/j.celrep.2024.114803: WT, 10.1016/j.celrep.2024.114803: LC, 10.1016/j.celrep.2024.114803: MS/MS, 10.1038/s41467-021-24194-6: ACN, 10.1038/s41467-021-24194-6: LC, 10.1038/s41467-021-24194-6: MS/MS, 10.1093/nar/gkae282: UV, 10.1093/nar/gkae282: MS/MS, 10.1002/mnfr.201700403: MS/MS, 10.1038/s41598-026-40706-0: IgG, 10.7554/eLife.83853: IgG, 10.7554/eLife.83853: LB, 10.7554/eLife.83853: NCBI, 10.7554/eLife.83853: dsRNA, 10.1038/s41563-021-01020-4: EM, 10.1038/s41563-021-01020-4: TBE, 10.1038/s41565-023-01321-6: EM, 10.3390/biom14020176: NTP
+- 10.7554/eLife.81856: FDR to ignore (a statistic the paper never spells out)
+
+The scorer also no longer counts units (bp, nt, kb, ...) as false positives, since the guidelines always ignore them; where a paper's labels list a unit, it is still scored.
