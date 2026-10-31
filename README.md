@@ -112,16 +112,25 @@ Tools menu) after editing; no restart required.
 
 ## How detection works
 
-Detection follows the [Schwartz–Hearst algorithm](https://psb.stanford.edu/psb-online/proceedings/psb03/schwartz.pdf)
-(Biocomputing 2003): find a short form in parentheses, take the neighbouring text as the
-candidate long form, and align the two right-to-left. On top of that:
+Detection extends the [Schwartz–Hearst algorithm](https://psb.stanford.edu/psb-online/proceedings/psb03/schwartz.pdf)
+(Biocomputing 2003). A short form is paired with the words next to it, and the pair is
+kept only if the short form's letters appear, in order, in those words. Where the
+original takes the shortest stretch of text containing the letters, every possible
+stretch is scored here: a letter at the start of a word scores most, and a word that
+contributes no letter counts against it. So "mitochondrial inner membrane potential
+(MMP)" keeps all four words. The same scorer judges every way papers define
+abbreviations:
 
-- author-written "Abbreviations" lists are parsed directly (comma-, colon- and
-  whitespace-delimited layouts are all handled, since publishers differ);
-- a fuzzy alignment score acts as a fallback;
-- a curated glossary supplies well-known abbreviations a paper uses but never defines,
-  with ambiguous entries requiring contextual support;
-- peptide sequences, supplier names and PDF extraction artefacts are filtered out.
+- long form (SF), long form [SF], (long form, SF) and SF (long form);
+- "long form, hereafter SF", "abbreviated as SF", "termed SF";
+- table and figure keys: "SF = long form" and "SF, long form; SF, long form";
+- author-written "Abbreviations" lists (comma-, colon-, space- and line-delimited).
+
+Before that, reference-list lines are dropped one by one, so Methods sections placed
+after the references are still read. Running page headers and footers are removed too,
+so a definition split across two pages is still found. A curated glossary supplies
+well-known abbreviations that a paper uses at least twice but never defines. Ambiguous
+entries need contextual support.
 
 Everything runs locally. No network requests are made except when you click a database
 link.
@@ -149,25 +158,33 @@ abbreviation database, and carries no third-party licence obligations. It holds
 common scientific abbreviations (DNA, PCR, ELISA and similar) plus a small set
 of terms used only to normalise definitions a paper already provides.
 
-The detection method is the published Schwartz–Hearst algorithm, cited above;
-the implementation here is original.
+The detection method extends the published Schwartz–Hearst algorithm, cited
+above; the implementation here is original.
 
 ### Accuracy
 
-Measured against a hand-labelled gold standard of **357 abbreviations across 22 papers**
-from 12 publishers (MDPI, Nature, eLife, PLOS, Oxford/NAR, Frontiers, Wiley, JBC, BMC,
-Cell Press, Rockefeller, bioRxiv):
+Measured with the benchmark in `eval/benchmark/`, which has its own labelling rules
+(`GUIDELINES.md`). The dev set was used while developing the detector. The test set is
+39 open-access papers drawn at random from 37 journals, and it was not used for tuning.
 
-| Metric | Result |
-|---|---|
-| Recall (abbreviations found) | 94.7 % |
-| Meaning correct | 90.5 % |
-| Meaning correct or partially correct | 97.9 % |
-| Precision (sample-estimated) | ≈ 95 % |
+| | dev (36 papers) | test (39 papers) |
+|---|---|---|
+| Defined abbreviations found | 87.3 % | 84.8 % |
+| Meaning correct, when found | 95.6 % | 96.7 % |
+| Undefined ones found through the glossary | 63.4 % | 45.9 % |
+| Outputs that are right (precision) | 99.9 % | 94.6 % |
 
-Known limitations: supplier acronyms that happen to align (`NEB`), gene names paired with
-nearby prose (`PTEN`), short peptide sequences, and short forms containing a space
-(`Pol II`). The ignore list exists to deal with these case by case.
+The previous detector (2.1.0) scored 82.6 %, 95.0 %, 42.9 % and 98.7 % on the test set.
+One caveat applies to the comparison. Each set's labels were checked once against a
+detector's output, then corrected where the text showed the labels were wrong. Dev was
+checked against this detector and test against the previous one. That checking flatters
+precision for whichever detector it was done with.
+
+Known limitations: long forms that do not contain the short form's letters in order
+("dissociation constant (KD)", "NRF2 (NFE2L2)"), definitions that only describe ("a
+cytoprotective transcription factor (ATF4)"), names in other languages ("Zentrum für
+Molekulare Biologie (ZMBH)"), and abbreviations missing from the glossary. The ignore list
+deals with wrong ones case by case.
 
 ## Development
 
@@ -182,7 +199,8 @@ node test/test-menu.js       # Tools menu structure and wording (fake XUL DOM)
 node test/test-settings.js   # Settings pane wiring, parsed from settings.xhtml
 node test/test-fixes.js      # active tab, settings file safety, background scan, tooltips
 
-node eval/score.js           # accuracy against the gold standard (needs a corpus)
+node eval/benchmark/score.js dev <dir>   # accuracy on the benchmark (needs the texts)
+node eval/score.js           # accuracy against the older gold standard (needs a corpus)
 node eval/difftest.js A B    # prove a change leaves detection unchanged
 ```
 
@@ -199,11 +217,14 @@ checkable items.
 
 ### Reproducing the accuracy figures
 
-`eval/gold-standard.json` lists all 22 papers and their hand-labelled
-abbreviations, but the extracted paper text is copyrighted and is **not**
-included here. All 22 are open access; download them, run `pdftotext` on each
-into `corpus/` using the filename in the `file` field, then run
-`node eval/score.js`.
+The paper texts are copyrighted and are **not** included here. Export them from
+Zotero as described in `eval/benchmark/README.md`, then run
+`node eval/benchmark/score.js dev|test <folder with the texts>`.
+
+The older gold standard, `eval/gold-standard.json` (22 papers, now part of the
+dev set), is still run by `./build.sh --check` when its `corpus/` folder is
+present: download the papers, run `pdftotext` on each into `corpus/` using the
+filename in the `file` field, then run `node eval/score.js`.
 
 ## Building
 

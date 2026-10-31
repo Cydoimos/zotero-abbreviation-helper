@@ -73,9 +73,11 @@ const USER = '/zotero/abbreviation-helper/abbreviations.json';
   check('user glossary entry is loaded', !!H.dictionaries.commonKnownDefs['QQQ']);
 
   // ---- 3) A user entry actually changes detection -------------------------
-  const text = 'We measured the widget of interest (ZZTOP) in all samples. ZZTOP values rose. ZZTOP again.';
+  // staticDefs normalise definitions the paper provides: "my custom widget"
+  // cannot be aligned with ZZTOP, so only the user's entry makes this count.
+  const text = 'We measured my custom widget (ZZTOP) in all samples. ZZTOP values rose. ZZTOP again.';
   const got = new Map(H._detectAbbreviations(text).map(p => [p.abbr, p.term]));
-  check('custom entry participates in detection', got.has('ZZTOP'), '-> ' + got.get('ZZTOP'));
+  check('custom entry participates in detection', got.get('ZZTOP') === 'my custom widget', '-> ' + got.get('ZZTOP'));
 
   // ---- 4) Malformed user file must not break the plugin -------------------
   ({ H, FS } = makeEnv({ [USER]: '{ this is not valid json' }));

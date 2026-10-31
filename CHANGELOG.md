@@ -5,9 +5,39 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-Bug fixes from a code audit. Abbreviation detection is unchanged: the detector
-code is byte-for-byte the same and gives identical results. Still supports
-Zotero 7.0 to 10.*, with the same settings and the same abbreviations file.
+A rewritten abbreviation detector, and bug fixes from a code audit. Still
+supports Zotero 7.0 to 10.*, with the same settings and the same abbreviations
+file.
+
+### Detection
+- **One scorer for every kind of definition.** Each short form is paired with
+  the words next to it and kept only if its letters align with them, as
+  before. But every possible span is now scored, instead of the shortest one
+  being taken: letters at the start of words count most, and words that
+  contribute nothing count against the span. "Translocase of the Outer Membrane
+  (TOM)" is no longer cut to "Outer Membrane". The same scoring now judges
+  bracketed definitions, "SF (long form)", "hereafter SF", table keys
+  ("SF = …") and abbreviation lists. It replaces many special-case rules.
+- **The reference list is dropped line by line** instead of cutting the paper
+  off where the references start. Methods placed after the references (Cell
+  Press STAR Methods, Science) are read again.
+- **Running page headers and footers are removed** ("ACCEPTED MANUSCRIPT",
+  bioRxiv licence lines), so definitions split across two pages are found and
+  no longer pick up header text. The PDF text now reaches the detector with
+  its page breaks intact.
+- A short form whose first candidate definition fails is no longer blocked
+  for the rest of the paper. The most reliable acceptable definition wins.
+- Short forms with digits, Greek letters, lowercase letters or a space are
+  handled by the same rules ("IC50", "dCas9", "Pol II", "I/R"). Panel ranges,
+  catalogue numbers, units, version numbers and author initials are not taken
+  for abbreviations.
+- Uses inside compounds now count towards the glossary's "used at least
+  twice" rule ("ATP-dependent" uses ATP, "LC-MS/MS" uses LC-MS).
+- Measured on the new benchmark (`eval/benchmark/`): on 39 test papers not used
+  for tuning, defined abbreviations found rose from 82.6 % to 84.8 %, with the
+  meaning correct in 96.7 % (was 95.0 %). Undefined ones found through the
+  glossary rose from 42.9 % to 45.9 %. Precision is 94.6 % (was 98.7 %),
+  against labels that were checked only against the previous detector's output.
 
 ### Fixed
 - **Meanings now come from the paper you are reading.** The plugin looked for

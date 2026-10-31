@@ -202,10 +202,14 @@ const visible = (doc) => !!tipOf(doc) && tipOf(doc).style.display !== 'none';
     await H2._autoScanActiveReader();
     await H2._autoScanActiveReader();
     check('a PDF that fails is not retried on every tick', env2.worker.calls === 1, 'calls=' + env2.worker.calls);
-    check('page breaks become spaces', (await (async () => {
-      const e3 = makeEnv({ texts: { 6: 'one\ftwo' } }); const H3 = await started(e3);
-      return H3._extractTextForItem({ id: 6 });
-    })()) === 'one two');
+    // Page breaks are kept for the detector (it finds running headers next to
+    // them) and read there as plain spaces.
+    const e3 = makeEnv({ texts: { 6: 'one\ftwo' } }); const H3 = await started(e3);
+    check('page breaks reach the detector', (await H3._extractTextForItem({ id: 6 })) === 'one\ftwo');
+    const split = H3._detectAbbreviations('Cells grew in fetal bovine\fserum (FBS) with FBS added.')
+      .find(p => p.abbr === 'FBS');
+    check('a page break inside a long form is a space', !!split && split.term === 'fetal bovine serum',
+      '-> ' + (split && split.term));
   }
 
   // ---------- P3: settings edits do not re-read the PDF ----------

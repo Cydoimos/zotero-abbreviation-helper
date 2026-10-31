@@ -20,9 +20,8 @@
  * It only reads your library. Nothing in Zotero is added, changed or deleted.
  * Running it again overwrites the previous export.
  *
- * Text format: pages are separated by a form feed (\f). The plugin turns
- * these into spaces before detecting abbreviations; the benchmark does the
- * same.
+ * Text format: pages are separated by a form feed (\f), exactly as the plugin
+ * receives it; the detector uses the page breaks to find running headers.
  */
 const MATCH = /abbrev\w*[\s\-–—_:]*benchmark/i;
 const libraryID = Zotero.Libraries.userLibraryID;

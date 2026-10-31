@@ -9,9 +9,9 @@
  *
  * Layout of this file:
  *
- *   1. AbbrevText          Pure text/shape helpers and constants. No dependency
- *                          on Zotero, the dictionaries, or the current
- *                          document, so they are built once at load time.
+ *   1. Detection           detectAbbreviations() and its helpers: pure
+ *                          functions with no dependency on Zotero or on
+ *                          plugin state, built once at load time.
  *   2. AbbreviationHelper  Everything stateful, grouped into sections:
  *                            - preferences (persisted via Zotero.Prefs)
  *                            - dictionaries (bundled + user-editable)
@@ -21,306 +21,994 @@
  *                            - hover tooltips
  *                            - database lookup links
  *
- * Detection follows the Schwartz-Hearst algorithm (Biocomputing 2003): find a
- * short form in parentheses, take the neighbouring text as the candidate long
- * form, and align the two right-to-left.  A fuzzy alignment score acts as a
- * fallback, and explicit author-written "Abbreviations" lists are parsed
- * directly since they are the most reliable evidence a paper offers.
- *
- * Precision is favoured over recall: a candidate that cannot be aligned with
- * its long form, or that has no supporting evidence in the document, is
- * dropped rather than guessed at.  Only the first definition of an
- * abbreviation is retained.
+ * Detection pairs every short form with the text next to it and keeps the
+ * pair only if the short form's letters align with that text (an extension of
+ * Schwartz & Hearst, 2003; see the detection section). Precision is favoured
+ * over recall: a candidate that cannot be aligned with its long form is
+ * dropped rather than guessed at.
  */
 
 /* ============================================================================
- * Text and shape utilities
+ * Abbreviation detection
  *
- * Pure helpers with no dependency on Zotero, on the loaded dictionaries or on
- * the document being scanned.  They live here rather than inside the detector
- * so they are created once when the plugin loads instead of on every scan, and
- * so the detector itself reads as a pipeline rather than a 700-line function.
+ * Pure functions with no dependency on Zotero or on plugin state, built once
+ * when the plugin loads. The entry point is detectAbbreviations(text, dicts).
+ *
+ * The method follows Schwartz & Hearst (2003): a short form is paired with the
+ * words next to it, and the pair is kept only if the short form's letters can
+ * be found, in order, in those words. Where the original takes the shortest
+ * span that contains the letters, every possible span is scored here and the
+ * best one wins: a letter at the start of a word scores most, a letter inside
+ * a word less, and a word that contributes no letter counts against the span.
+ * So "mitochondrial inner membrane potential (MMP)" keeps all four words and
+ * "Translocase of the Outer Membrane (TOM)" no longer matches T to "the".
+ *
+ * The same scorer judges every place a definition can appear:
+ *
+ *   forward   long form (SF)       long form [SF]     long form (SF, Fig. 2)
+ *   inside    (long form, SF)      (a long form; SF)
+ *   reverse   SF (long form)
+ *   phrase    long form, hereafter SF      ... abbreviated as SF
+ *   key       SF = long form       (table footnotes)
+ *   list      Abbreviations: SF, long form; SF, long form ...
+ *
+ * then short forms the paper uses but never defines are looked up in the
+ * curated glossary. Nothing is decided in a fixed order and no short form is
+ * blocked by a failed attempt: every candidate is scored, and for each short
+ * form the most reliable acceptable candidate is kept.
  * ============================================================================ */
 
-/**
- * Minimum fuzzy alignment score required to accept a pair from a loose
- * parenthetical pattern when strict Schwartz-Hearst alignment fails.
- */
-var DEFAULT_ALIGNMENT_SCORE_FLOOR = 1.0;
+// ---- characters -------------------------------------------------------------
 
-function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+var GREEK_NAMES = {
+    'α': 'alpha', 'β': 'beta', 'γ': 'gamma', 'δ': 'delta', 'ε': 'epsilon', 'ζ': 'zeta',
+    'η': 'eta', 'θ': 'theta', 'ι': 'iota', 'κ': 'kappa', 'λ': 'lambda', 'μ': 'mu',
+    'ν': 'nu', 'ξ': 'xi', 'π': 'pi', 'ρ': 'rho', 'σ': 'sigma', 'τ': 'tau',
+    'φ': 'phi', 'χ': 'chi', 'ψ': 'psi', 'ω': 'omega'
+};
+// A digit in a short form may stand for a number word in the long form:
+// 5HT five-helix tile, SH2 Src homology two, PIP3 ...trisphosphate,
+// IC50 half maximal inhibitory concentration.
+var NUMBER_WORDS = {
+    1: ['one', 'first', 'mono', 'single', 'uni'],
+    2: ['two', 'second', 'di', 'bi', 'double', 'dual'],
+    3: ['three', 'third', 'tri'],
+    4: ['four', 'fourth', 'tetra', 'quadr'],
+    5: ['five', 'fifth', 'penta'],
+    6: ['six', 'sixth', 'hexa'],
+    7: ['seven', 'hepta'],
+    8: ['eight', 'octa'],
+    9: ['nine', 'nona'],
+    10: ['ten', 'deca'],
+    50: ['half']
+};
+// X stands for "cross" (DX double-crossover, XL crosslinker) or "trans".
+var X_WORDS = ['cross', 'trans'];
 
-var stopwords = [
-    // Keep this list narrow. Broad words such as protein, cells,
-    // medium, buffer, serum, assay and concentration occur in many
-    // real long forms (e.g. green fluorescent protein, culture medium,
-    // phosphate buffered saline, critical micelle concentration).
-    'wild-type', 'wildtype', 'knockdown', 'knocked', 'knockin',
-    'knock-in', 'knockout', 'mutant', 'vehicle', 'control',
-    'catalogue', 'cat#', 'cat.', 'lane', 'figure', 'fig', 'table'
-];
-var leadingStop = ['transported', 'towards', 'toward', 'using',
-    'with', 'by', 'from', 'to', 'and', 'or', 'including', 'below', 'namely',
-    'of', 'the', 'a', 'an', 'for', 'in', 'on', 'as', 'at'];
-var romanNumerals = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+// ---- words --------------------------------------------------------------------
 
-function isPluralShortForm(abbr) {
-    return /^[A-Z0-9\-\/]{2,}s$/.test(abbr) || /^[A-Z][a-z]?[A-Z0-9\-\/]{1,}s$/.test(abbr);
-}
+// Function words: free inside a long form ("Translocase of the Outer
+// Membrane"), and only able to supply a letter when capitalised ("The Cancer
+// Genome Atlas"). Quantities ("10 mM") are treated the same way.
+var FUNCTION_WORDS = new Set(['a', 'an', 'the', 'of', 'and', 'or', 'for', 'in', 'on',
+    'at', 'to', 'by', 'with', 'from', 'as', 'into', 'via', 'per', 'its', 'their', 'that',
+    'which', 'is', 'are', 'was', 'were', 'be', 'this', 'these', 'we', 'our',
+    // in institution names: Institut de ..., Zentrum f\u00fcr ...
+    'de', 'des', 'du', 'del', 'della', 'di', 'la', 'le', 'les', 'et', 'y', 'f\u00fcr', 'und', 'der', 'van', 'von']);
+// "in vitro", "in vivo": here "in" is part of the term (IVT, IVIS).
+var LATIN_AFTER_IN = new Set(['vitro', 'vivo', 'situ', 'silico', 'utero', 'ovo', 'planta', 'cellulo']);
+// Words that introduce a long form and are never its first word.
+var LEADING_NOISE = new Set(['a', 'an', 'the', 'and', 'or', 'of', 'for', 'in', 'on', 'at',
+    'to', 'by', 'with', 'from', 'as', 'using', 'including', 'namely', 'such', 'its', 'their',
+    'our', 'this', 'these', 'via', 'called', 'termed', 'named', 'both', 'between']);
+// Bracket contents that are references to the paper itself, not short forms.
+var NOT_SHORT_FORMS = new Set(['fig', 'figs', 'figure', 'figures', 'table', 'tables', 'eq',
+    'eqs', 'equation', 'ref', 'refs', 'see', 'eg', 'ie', 'cf', 'vs', 'and', 'or', 'the', 'of',
+    'in', 'on', 'to', 'is', 'it', 'as', 'at', 'by', 'an', 'be', 'we', 'no', 'not', 'yes',
+    'top', 'left', 'right', 'bottom', 'middle', 'inset', 'insets', 'panel', 'step', 'lane',
+    'lanes', 'movie', 'video', 'appendix', 'note', 'data', 'text', 'online', 'print']);
+// Units and other measures written in brackets after what they measure.
+var UNITS = new Set(['mM', 'nM', 'pM', 'fM', 'uM', 'μM', 'µM', 'mg', 'ng', 'pg', 'kg', 'μg', 'µg',
+    'mL', 'ml', 'μL', 'µL', 'μl', 'nL', 'nm', 'μm', 'µm', 'mm', 'cm', 'km', 'kDa', 'Da', 'kD',
+    'MDa', 'GDa', 'min', 'h', 'hr', 'hrs', 's', 'ms', 'μs', 'ns', 'ps', 'Hz', 'kHz', 'MHz',
+    'GHz', 'rpm', 'ppm', 'ppb', 'pH', 'mV', 'kV', 'eV', 'keV', 'MeV', 'mA', 'nA', 'pA', 'mW',
+    'kW', 'Gy', 'mGy', 'Sv', 'kb', 'Mb', 'Gb', 'bp', 'nt', 'aa', 'MPa', 'GPa', 'kPa', 'Pa',
+    'bar', 'mbar', 'atm', 'Torr', 'cps', 'au', 'AU', 'OD', 'RCF', 'xg', 'wt', 'vol', 'mol',
+    'mmol', 'μmol', 'nmol', 'pmol', 'IU', 'U', 'K', 'J', 'kJ', 'kcal', 'cal', 'W', 'N']);
+// Long forms that are measurement units are never the answer either, but
+// "bp", "nt" and "aa" are real abbreviations when a paper defines them.
+var DEFINABLE_UNITS = new Set(['bp', 'nt', 'aa', 'kb', 'Mb', 'Gb', 'au', 'AU', 'OD', 'RCF']);
+var ROMAN_NUMERAL = /^(?:i{1,3}|iv|vi{0,3}|ix|xi{0,2})$/i;
+
+// ---- short forms ----------------------------------------------------------------
+
+/** "EVs" -> "EV"; "" when the final s is part of the short form. */
 function singularShortForm(abbr) {
-    if (!abbr || !abbr.endsWith('s')) return '';
+    if (!abbr || abbr.length < 3 || !abbr.endsWith('s')) return '';
     const base = abbr.slice(0, -1);
-    // Avoid stripping the final s from ordinary short forms where
-    // the s is very likely part of the abbreviation rather than a
-    // plural marker.  Lowercase final s is the common scientific
-    // pattern for plural abbreviations: EVs, NPs, BAs, CEs, etc.
-    if (/[a-z]$/.test(abbr) && /[A-Z]/.test(base)) return base;
-    // All-uppercase plurals are less common but occur in extracted
-    // text after case normalization.  Only strip when the base is
-    // still a plausible abbreviation.
-    if (/^[A-Z0-9\-\/]{2,}$/.test(abbr) && /^[A-Z0-9\-\/]{2,}$/.test(base)) return base;
+    // A lowercase plural s after a capital is the common pattern: EVs, NPs.
+    if (/\p{Lu}[\p{L}\d]*$/u.test(base) && /\p{Lu}/u.test(base.slice(-2))) return base;
+    if (/\p{Lu}/u.test(base) && /\d$/.test(base)) return base;          // GLUT4s
+    if (DEFINABLE_UNITS.has(base)) return base;                            // bps, nts
     return '';
 }
 function pluralShortForms(abbr) {
+    if (!abbr || singularShortForm(abbr)) return [];
+    return [abbr + 's', abbr + 'S'];
+}
+
+/**
+ * Could this token be a short form at all? Only the shape is judged here;
+ * whether it is one depends on its long form aligning with it.
+ *
+ * @param {string} sf
+ * @param {boolean} [inList] true for entries of an explicit abbreviation list,
+ *   which may define ordinary lowercase forms ("aa, amino acid").
+ */
+function looksLikeShortForm(sf, inList) {
+    if (!sf || sf.length < 2 || sf.length > 20) return false;
+    if (/[=<>±×≈~@#$%&*{}|\\+]/.test(sf)) return false;
+    if (!/^[\p{L}\p{N}]/u.test(sf) || !/[\p{L}\p{N}]$/u.test(sf)) return false;
+    const tokens = sf.split(' ');
+    // "Pol II", "Chr III", "GSDM D" - never a phrase or a version ("Dfam 2.0").
+    if (tokens.length > 2 || (tokens.length === 2 && (tokens[1].length > 4 || tokens[1].includes('.')))) return false;
+    // Only lowercase or Title-case tokens can be ordinary words: "AT" is
+    // antiterminator and "OR" odds ratio, but "(at)", "(Fig)" and "(Top)" are not.
+    if (/\p{Ll}/u.test(tokens[0]) && NOT_SHORT_FORMS.has(tokens[0].replace(/\.$/, '').toLowerCase())) return false;
+    // The first word of a two-word short form is itself short-form-like
+    // ("Pol II", "LSM 900"), not a quantity or a word ("10 mL", "dataset I").
+    if (tokens.length === 2 && !looksLikeShortForm(tokens[0])) return false;
+    if (/[,:;]/.test(sf)) return false;
+    if (/^\p{Ll}\/\p{Ll}$/u.test(sf)) return false;                            // v/v, w/v
+    if (/[\u0370-\u03ff]\p{Ll}{3}/u.test(sf)) return false;                    // αexp: a subscript
+    if ((sf.match(/\p{Ll}{4,}/gu) || []).length >= 2) return false;           // GeneiFPKMmale: a variable
+    if (ROMAN_NUMERAL.test(sf)) return false;
+    if (UNITS.has(sf) && !DEFINABLE_UNITS.has(sf)) return false;
+    const letters = (sf.match(/\p{L}/gu) || []).length;
+    const alnum = (sf.match(/[\p{L}\p{N}]/gu) || []).length;
+    if (letters < 1 || alnum < 2) return false;
+    if (/^\d/.test(sf) && /^\d+(?:[.,]\d+)*[a-z]?$/.test(sf)) return false;   // 2019, 3.5, 12a
+    const digits = (sf.match(/\d/g) || []).length;
+    if (digits >= 4 && digits > letters) return false;                       // sc-17839: a catalogue number
+    const upper = (sf.match(/\p{Lu}/gu) || []).length;
+    const digit = /\d/.test(sf);
+    const greek = /[\u0370-\u03ff]/.test(sf);
+    if (upper >= 2) return true;                                   // DNA, PolyIC, iNANO
+    if (upper === 1) {
+        // One capital: fine when short, mixed with digits or Greek, or when the
+        // capital is not the first letter (dCas9, polyUb). A longer Title-case
+        // token is an ordinary word ("Methods", "Insets").
+        return letters <= 4 || digit || greek || !/^\p{Lu}/u.test(sf);
+    }
+    // No capitals: "bp", "nt", "p53"; longer lowercase only in explicit lists.
+    if (digit || greek) return letters <= 6;
+    if (inList) return letters <= 6;
+    return letters <= 2 || DEFINABLE_UNITS.has(sf.replace(/s$/, ''));
+}
+
+/** The pieces of a short form that must be found in its long form. */
+function shortFormUnits(sf) {
+    const s = String(sf).normalize('NFC');
+    const units = [];
+    for (let i = 0; i < s.length;) {
+        const ch = s[i];
+        if (/\d/.test(ch)) {
+            let j = i + 1;
+            while (j < s.length && /\d/.test(s[j])) j++;
+            units.push({ kind: 'number', text: s.slice(i, j) });
+            i = j;
+            continue;
+        }
+        const lower = ch.toLowerCase();
+        if (GREEK_NAMES[lower]) units.push({ kind: 'greek', text: lower });
+        else if (/\p{L}/u.test(ch)) units.push({ kind: 'letter', text: lower });
+        i++;
+    }
+    return units;
+}
+
+// ---- long-form windows -----------------------------------------------------------
+
+/**
+ * Split candidate long-form text into words. A bracketed group set off by
+ * spaces ("TNF (Tumor Necrosis Factor) Receptor 1") is optional: its words
+ * may supply letters but cost nothing when they do not, and an unused group
+ * is left out of the result.
+ */
+function tokenizeLongForm(text) {
+    const words = [];
+    const re = /\S+/g;
+    let m;
+    while ((m = re.exec(text))) {
+        words.push({ text: m[0], optional: false, group: -1 });
+    }
+    // Mark space-delimited bracket groups.
+    let depth = 0, groupStart = -1, groups = 0;
+    for (let i = 0; i < words.length; i++) {
+        const w = words[i].text;
+        const opens = (w.match(/[([]/g) || []).length;
+        const closes = (w.match(/[)\]]/g) || []).length;
+        if (depth === 0 && /^[([]/.test(w) && opens > closes) { groupStart = i; depth = opens - closes; continue; }
+        if (depth === 0 && /^[([].*[)\]][,;:.]?$/.test(w) && opens === closes) {
+            words[i].optional = true; words[i].group = groups++;     // "(23)", "(TNF)"
+            continue;
+        }
+        if (depth > 0) {
+            depth += opens - closes;
+            if (depth <= 0) {
+                depth = 0;
+                if (/[)\]][,;:.]?$/.test(w)) {
+                    for (let k = groupStart; k <= i; k++) { words[k].optional = true; words[k].group = groups; }
+                    groups++;
+                }
+                groupStart = -1;
+            }
+        }
+    }
+    for (const w of words) {
+        const bare = w.text.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '').toLowerCase();
+        w.bare = bare;
+        w.empty = bare === '';
+        w.commaAfter = /[,;]$/.test(w.text);
+    }
+    words.forEach((w, i) => {
+        // "in vitro", "in vivo": the "in" belongs to the term (IVT, IVIS).
+        const latin = w.bare === 'in' && i + 1 < words.length && LATIN_AFTER_IN.has(words[i + 1].bare);
+        // Quantities ("10 mM", "0.5×") are as neutral as function words.
+        w.functionWord = (FUNCTION_WORDS.has(w.bare) || isQuantity(w.text)) && !latin;
+        // A capitalised function word in a capitalised name may supply its
+        // initial ("The Cancer Genome Atlas", "A Disintegrin And Metalloproteinase").
+        w.titled = w.functionWord && /^[^\p{L}]*\p{Lu}/u.test(w.text);
+        // Words that introduce a long form are never its first word.
+        w.noStart = LEADING_NOISE.has(w.bare) && !latin && !w.titled;
+    });
+    return words;
+}
+
+/** "10", "0.5×", "25%", "mM": a number or unit, not a word of a long form. */
+function isQuantity(word) {
+    const w = word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}%×]+$/gu, '');
+    return /^[\d.,]*\d(?:[a-zμµ]{1,3}|%|×)?$/i.test(w) || UNITS.has(w);
+}
+
+/** Character positions in the words where a short-form unit could match. */
+function longFormChars(words) {
+    const chars = [];
+    words.forEach((w, wi) => {
+        const t = w.text.normalize('NFC');
+        for (let j = 0; j < t.length; j++) {
+            const c = t[j];
+            const prev = j ? t[j - 1] : ' ';
+            const isLetter = /\p{L}/u.test(c);
+            const partStart = /[\p{L}\p{N}]/u.test(c) && (
+                j === 0 || !/[\p{L}\p{N}]/u.test(prev) ||
+                (isLetter && /\p{Lu}/u.test(c) && /\p{Ll}/u.test(prev)) ||
+                (isLetter && /\d/.test(prev)));
+            chars.push({ c: c.toLowerCase(), word: wi, partStart, wordText: t, offset: j });
+        }
+        chars.push({ c: ' ', word: wi, partStart: false, wordText: t, offset: t.length });
+    });
+    return chars;
+}
+
+/** Every way one short-form unit can be matched in the long-form characters. */
+function unitMatches(unit, chars, words) {
     const out = [];
-    if (!abbr || /s$/.test(abbr)) return out;
-    // Most academic plural abbreviations are formed by adding a
-    // lowercase s: EV -> EVs, NP -> NPs, BA -> BAs.  Also add an
-    // uppercase S fallback for PDFs that normalize case.
-    if (/^[A-Z0-9\-\/]{2,}$/.test(abbr) || /^[A-Z][a-z]?[A-Z0-9\-\/]{1,}$/.test(abbr)) {
-        out.push(abbr + 's');
-        out.push(abbr + 'S');
+    const at = (p, len, base, initial) => out.push({ p, len, base, initial, word: chars[p].word });
+    const startsWith = (p, s) => {
+        const ch = chars[p];
+        return ch.wordText.slice(ch.offset).toLowerCase().startsWith(s);
+    };
+    for (let p = 0; p < chars.length; p++) {
+        const ch = chars[p];
+        if (ch.c === ' ') continue;
+        const fw = words[ch.word].functionWord && !words[ch.word].titled;
+        if (unit.kind === 'letter' || unit.kind === 'greek') {
+            if (ch.c === unit.text) {
+                if (ch.partStart) at(p, 1, fw ? 0.5 : 3, !fw);
+                else at(p, 1, 0, false);
+            }
+            if (!ch.partStart || fw) continue;
+            if (unit.kind === 'greek' && startsWith(p, GREEK_NAMES[unit.text])) at(p, GREEK_NAMES[unit.text].length, 3, true);
+            if (unit.text === 'x' && X_WORDS.some(x => startsWith(p, x))) at(p, 1, 2.5, true);
+        } else {
+            // A number: the same digits (not inside a longer number), or a
+            // number word at the start of a word part.
+            const n = unit.text;
+            if (ch.c === n[0] && (p === 0 || !/\d/.test(chars[p - 1].c))) {
+                let ok = true;
+                for (let k = 1; k < n.length; k++) if (!chars[p + k] || chars[p + k].c !== n[k]) { ok = false; break; }
+                if (ok && !(chars[p + n.length] && /\d/.test(chars[p + n.length].c))) at(p, n.length, ch.partStart ? 2 : 1, ch.partStart);
+            }
+            if (ch.partStart && !fw) {
+                for (const word of NUMBER_WORDS[parseInt(n, 10)] || []) {
+                    if (startsWith(p, word)) at(p, word.length, 2.5, true);
+                }
+            }
+        }
     }
     return out;
 }
 
-function isDigitLeadingChemicalShortForm(abbr) {
-    // Chemical/lipid abbreviations often begin with a locant number,
-    // e.g. 4-HNE for 4-hydroxynonenal, 8-OHdG, 15d-PGJ2.  These are
-    // only accepted as local definitions, not as fallback glossary
-    // entries.  Keep the shape narrow so years, references and
-    // catalogue numbers do not become abbreviations.
-    return /^\d{1,2}[A-Za-z]?[-‑–—][A-Za-z][A-Za-z0-9]{1,8}s?$/.test(abbr);
-}
+var ALIGN_UNMATCHED_WORD = 2;     // a word of the long form that supplies no letter
+var ALIGN_COMMA = 1;              // a comma crossed inside the long form
+var ALIGN_SKIPPED_NUMBER = 0.5;   // a number of the short form with nothing to match
+var ALIGN_SPAN_WORD = 0.1;        // every content word of the span: shorter spans win ties
 
-function isWeakButPlausibleShortForm(abbr) {
-    if (!abbr || abbr.length < 2 || abbr.length > 16) return false;
-    if (/\s/.test(abbr)) return false;
-    if (romanNumerals.includes(abbr)) return false;
-    if (/^[0-9]+$/.test(abbr)) return false;
-    if (!/^[A-Za-z0-9\u0391-\u03c9]/.test(abbr)) return false;
-    const letters = (abbr.match(/[A-Za-z\u0391-\u03c9]/g) || []).length;
-    if (letters < 2) return false;
-    // Needs some non-lowercase signal: an uppercase letter, a digit or
-    // a Greek character. Purely lowercase words are ordinary prose.
-    if (!/[A-Z0-9\u0391-\u03c9]/.test(abbr)) return false;
-    // A long word with a single leading capital is almost always an
-    // ordinary proper noun ("Canada", "Barcelona") rather than an
-    // abbreviation. Genuine mixed-case short forms either stay short
-    // (Tfh, Inr, Pfu, Arc) or carry a second capital, a digit or a
-    // Greek letter (sgRNA, dCas9, DepMap, Egr1, AtAGO1, PLC\u03b2).
-    const caps = (abbr.match(/[A-Z]/g) || []).length;
-    if (caps < 2 && !/[0-9\u0391-\u03c9]/.test(abbr) && abbr.length > 4) return false;
-    return true;
-}
+/**
+ * Best alignment of a short form with long-form words.
+ *
+ * mode 'end'  : the long form must end at the last word (text before a
+ *               bracket); where it starts is chosen by the score.
+ * mode 'start': the long form must start at the first word (text after
+ *               "SF =" or inside brackets); where it ends is chosen.
+ * mode 'both' : the long form is exactly the given words.
+ *
+ * Returns null, or { longForm, quality, unmatched, words, firstWord,
+ * lastWord, ... }: quality is the score per matched short-form unit (about 3
+ * when every unit starts a word), unmatched the number of content words that
+ * supply no letter, words the number of content words in the long form.
+ */
+function alignLongForm(sf, text, mode) {
+    const base = singularShortForm(sf) || sf;
+    const allUnits = shortFormUnits(base);
+    if (!allUnits.some(u => u.kind !== 'number')) return null;
+    const words = tokenizeLongForm(text);
+    if (!words.length) return null;
+    const chars = longFormChars(words);
 
-function cleanTerm(term) {
-    let cleaned = term.replace(/\s+/g, ' ').trim();
-    // Reagent definitions often carry the working concentration, e.g.
-    // "0.5 mM sodium taurodeoxycholate hydrate".  The quantity is not
-    // part of the term.
-    cleaned = cleaned.replace(/^\d+(?:[.,]\d+)?\s*(?:mM|\u00b5M|\u03bcM|uM|nM|pM|M|mg|\u00b5g|\u03bcg|ng|g|kg|mL|ml|\u00b5L|\u03bcL|L|%|U|kDa|Da|nm|mm|cm)\s+/i, '');
-    cleaned = cleaned.replace(/^[,;:\-–—]+\s*/, '').replace(/\s*[,;:\-–—]+$/, '');
-    let tokens = cleaned.split(/\s+/);
-    while (tokens.length > 1 && leadingStop.includes(tokens[0].toLowerCase())) {
-        tokens.shift();
+    // Prefix sums: content words and commas up to each word index.
+    const content = [0], commas = [0];
+    words.forEach((w, i) => {
+        content.push(content[i] + (w.optional || w.functionWord || w.empty ? 0 : 1));
+        commas.push(commas[i] + (w.commaAfter && !w.optional ? 1 : 0));
+    });
+    const contentBetween = (a, b) => b > a + 1 ? content[b] - content[a + 1] : 0;   // words strictly between
+    const commasBetween = (a, b) => b > a ? commas[b] - commas[a] : 0;              // commas after words a..b-1
+
+    // Number units may go unmatched (IC50 -> inhibitory concentration).
+    const numberIdx = allUnits.length - allUnits.filter(u => u.kind === 'number').length >= 2
+        ? allUnits.map((u, i) => u.kind === 'number' ? i : -1).filter(i => i >= 0) : [];
+    let best = null;
+    for (let mask = 0; mask < (1 << Math.min(numberIdx.length, 3)); mask++) {
+        const skipped = new Set(numberIdx.filter((_, k) => mask & (1 << k)));
+        const units = allUnits.filter((_, i) => !skipped.has(i));
+        const r = alignUnits(units, words, chars, mode, content, contentBetween, commasBetween);
+        if (!r) continue;
+        r.score -= ALIGN_SKIPPED_NUMBER * skipped.size;
+        // Quality is measured over the units that were matched.
+        r.units = units.length;
+        if (!best || r.score > best.score) best = r;
     }
-    cleaned = tokens.join(' ');
-    return cleaned.replace(/\s+/g, ' ').trim();
-}
-function firstContentWord(s) {
-    const words = String(s || '')
-        .replace(/[()\[\],.;:]/g, ' ')
-        .split(/\s+/)
-        .filter(Boolean)
-        .filter(w => !leadingStop.includes(w.toLowerCase()));
-    return words.length ? words[0].toLowerCase() : '';
+    if (!best) return null;
+    best.quality = best.score / best.units;
+    best.longForm = renderLongForm(words, best);
+    if (!best.longForm) return null;
+    return best;
 }
 
-function findBestLongForm(shortForm, longForm) {
-    // Schwartz–Hearst strict right-to-left alignment.
-    let sIndex = shortForm.length - 1;
-    let lIndex = longForm.length - 1;
-    for (; sIndex >= 0; sIndex--) {
-        const curr = shortForm[sIndex].toLowerCase();
-        if (!/[a-z0-9]/.test(curr)) continue;
-        while (lIndex >= 0 && (
-            longForm[lIndex].toLowerCase() !== curr ||
-            (sIndex === 0 && lIndex > 0 && /[a-z0-9]/i.test(longForm[lIndex - 1]))
-        )) {
-            lIndex--;
+function alignUnits(units, words, chars, mode, content, contentBetween, commasBetween) {
+    const n = units.length;
+    if (!n) return null;
+    const lastWord = words.length - 1;
+    const matches = units.map(u => unitMatches(u, chars, words));
+    if (matches.some(m => !m.length)) return null;
+    // score[k][j]: best score with unit k at its j-th match; from[k][j]: predecessor.
+    const score = [], from = [];
+    for (let k = 0; k < n; k++) {
+        score.push(new Array(matches[k].length).fill(-Infinity));
+        from.push(new Array(matches[k].length).fill(-1));
+    }
+    matches[0].forEach((m, j) => {
+        // The long form starts at the word of the first unit, at its start.
+        if (!m.initial && !(chars[m.p].partStart && units[0].kind !== 'letter')) return;
+        if (words[m.word].noStart || words[m.word].optional) return;
+        // In 'start' and 'both' modes nothing but function words may precede it.
+        if (mode !== 'end' && content[m.word] > 0) return;
+        score[0][j] = m.base;
+        if (mode === 'end') score[0][j] -= ALIGN_SPAN_WORD * (content[lastWord + 1] - content[m.word]);
+    });
+    for (let k = 1; k < n; k++) {
+        for (let j = 0; j < matches[k].length; j++) {
+            const b = matches[k][j];
+            for (let i = 0; i < matches[k - 1].length; i++) {
+                const prev = score[k - 1][i];
+                if (prev === -Infinity) continue;
+                const a = matches[k - 1][i];
+                if (b.p < a.p + a.len) continue;
+                let s = b.base;
+                // A letter inside a word: worth something when it continues
+                // the previous letter (DNA from "DNA"), a little when it is in
+                // the same word (phosphoenolpyruvate PEP). A new word that
+                // supplies only an inner letter counts as contributing nothing
+                // ("medium containing" for Met).
+                if (!chars[b.p].partStart) {
+                    if (b.word !== a.word) s -= ALIGN_UNMATCHED_WORD;
+                    else s += b.p === a.p + a.len ? 1.5 : 0.5;
+                }
+                s -= ALIGN_UNMATCHED_WORD * contentBetween(a.word, b.word);
+                s -= ALIGN_COMMA * commasBetween(a.word, b.word);
+                if (prev + s > score[k][j]) { score[k][j] = prev + s; from[k][j] = i; }
+            }
         }
-        if (lIndex < 0) return null;
-        lIndex--;
     }
-    lIndex = longForm.lastIndexOf(' ', lIndex) + 1;
-    const sub = longForm.slice(lIndex).trim();
-    if (!sub || sub.length < shortForm.length) return null;
-    return sub;
-}
-function hmmStyleScore(shortForm, longForm) {
-    // Lightweight local dynamic alignment: initial-letter matches are
-    // scored higher than internal matches, with small gap penalties.
-    // This approximates the useful part of alignment-HMM behaviour
-    // without training data or a large model.
-    const sf = shortForm.replace(/[^A-Za-z0-9]/g, '').toLowerCase();
-    const lf = longForm.toLowerCase();
-    let pos = -1, score = 0, matched = 0;
-    for (let i = 0; i < sf.length; i++) {
-        const ch = sf[i];
-        let best = -1, bestScore = -999;
-        for (let j = pos + 1; j < lf.length; j++) {
-            if (lf[j] !== ch) continue;
-            const initial = (j === 0 || /[^a-z0-9]/.test(lf[j - 1]));
-            const candidateScore = (initial ? 3 : 1) - Math.min(2, (j - pos - 1) * 0.05);
-            if (candidateScore > bestScore) { bestScore = candidateScore; best = j; }
+    let bestJ = -1, bestScore = -Infinity, bestEnd = lastWord;
+    matches[n - 1].forEach((m, j) => {
+        if (score[n - 1][j] === -Infinity) return;
+        let end = lastWord, s = score[n - 1][j];
+        if (mode === 'start') {
+            // The long form may stop after its last matched word; dropping the
+            // words beyond it costs a little, so a longer good span still wins.
+            end = m.word;
+            s -= 0.25 * contentBetween(m.word, lastWord + 1) + ALIGN_SPAN_WORD * content[m.word + 1];
+        } else {
+            s -= ALIGN_UNMATCHED_WORD * contentBetween(m.word, lastWord + 1);
+            s -= ALIGN_COMMA * commasBetween(m.word, lastWord);
         }
-        if (best < 0) return -999;
-        score += bestScore;
-        pos = best;
-        matched++;
+        if (s > bestScore) { bestScore = s; bestJ = j; bestEnd = end; }
+    });
+    if (bestJ < 0) return null;
+    // Walk back to recover the matched words.
+    const used = new Set(), touched = new Set(), usedGroups = new Set();
+    let firstWord = 0, firstOffset = 0, j = bestJ;
+    for (let k = n - 1; k >= 0; k--) {
+        const m = matches[k][j];
+        touched.add(m.word);
+        if (chars[m.p].partStart) used.add(m.word);
+        if (words[m.word].group >= 0) usedGroups.add(words[m.word].group);
+        firstWord = m.word;
+        firstOffset = chars[m.p].offset;
+        j = from[k][j];
     }
-    return matched ? score / sf.length : -999;
+    let unmatched = 0, total = 0;
+    for (let w = firstWord; w <= bestEnd; w++) {
+        const wd = words[w];
+        if ((wd.optional && !usedGroups.has(wd.group)) || wd.functionWord || wd.empty) continue;
+        total++;
+        if (!used.has(w)) unmatched++;
+    }
+    return { score: bestScore, firstWord, lastWord: bestEnd, unmatched, words: total, usedGroups, touched, firstOffset };
 }
+
+/** The long form as written, without unused bracket groups or edge noise. */
+function renderLongForm(words, { firstWord: first, lastWord: last, usedGroups, touched, firstOffset }) {
+    // Trailing words that supply nothing and mean nothing on their own (page
+    // and line numbers, "of") are not part of the long form.
+    while (last > first && (words[last].functionWord || words[last].empty) && !touched.has(last)) last--;
+    const parts = [];
+    for (let i = first; i <= last; i++) {
+        const w = words[i];
+        if (w.optional && !usedGroups.has(w.group)) continue;
+        // An affiliation mark glued to the first word: "1Interdisciplinary", "dInstitut".
+        if (i === first && firstOffset > 0 && /^(?:\d+|\p{Ll})$/u.test(w.text.slice(0, firstOffset)) &&
+            /^\p{Lu}\p{Ll}{4}/u.test(w.text.slice(firstOffset))) {
+            parts.push(w.text.slice(firstOffset));
+            continue;
+        }
+        parts.push(w.text);
+    }
+    let out = parts.join(' ');
+    // Quotes and trailing punctuation are typography, not part of the term.
+    out = out.replace(/^[\s"“”‘’'«»,;:]+|[\s"“”‘’'«»,;:.]+$/g, '');
+    // Unbalanced brackets at the edges: "(Tumor Necrosis" -> "Tumor Necrosis".
+    const opens = (out.match(/[([]/g) || []).length, closes = (out.match(/[)\]]/g) || []).length;
+    if (opens > closes) out = out.replace(/^[([]\s*/, '');
+    if (closes > opens) out = out.replace(/\s*[)\]]$/, '');
+    return out.trim();
+}
+
+// ---- document preparation ------------------------------------------------------
+
+// Features of a bibliography entry. A line dense in them is part of a
+// reference list (or a running header such as "eLife 2022;11:e81856. DOI:").
+var CITATION_FEATURES = [
+    /\b\d{1,4}\s*[,:]\s*(?:\d{1,5}\s*[\u2013\u2014-]\s*)?\d{1,6}\s*\(\s*(?:19|20)\d{2}[a-z]?\s*\)/g,
+    /\(\s*(?:19|20)\d{2}[a-z]?\s*\)\s*[A-Z]/g,
+    /\b(?:19|20)\d{2}[a-z]?\s*[;,]\s*\d{1,4}\s*(?:\(\s*[\w-]+\s*\))?\s*[:,]\s*\w*\d+/g,
+    /\b\d{1,4}\s*\(\s*[\w\u2013-]{1,6}\s*\)\s*:\s*[e\d]/g,
+    /\bdoi\b|\bhttps?:\/\/doi\.org|\bPMID\b|\[CrossRef\]|\[PubMed\]|\[Google Scholar\]/gi,
+    /\b\p{Lu}[\p{L}'’-]+,\s(?:\p{Lu}\.[\s-]?){1,3}(?=[,&]|\s(?:&|and)\s)/gu,
+    /\b\p{Lu}[\p{L}'’-]+\s\p{Lu}{1,3}(?:,\s|\s\(|\.\s)(?=\p{Lu})/gu,
+    /\bet al\.\s*(?:\(\s*)?(?:19|20)\d{2}/g
+];
+function isReferenceLine(line) {
+    let n = 0;
+    for (const re of CITATION_FEATURES) {
+        re.lastIndex = 0;
+        const m = line.match(re);
+        if (m) n += m.length;
+    }
+    return n >= 2 && n * 400 >= line.length;
+}
+
+// Put where text was removed (reference lines): long forms never cross it.
+var BREAK = '\u2029';
+
+/**
+ * Running headers and footers ("ACCEPTED MANUSCRIPT", "Page 3 of 12") sit
+ * next to page breaks (form feeds) and interrupt sentences that run across
+ * pages. A short line found near three or more page breaks is one.
+ */
+function dropRunningHeaders(lines) {
+    const NEAR = 4;                     // non-empty lines on either side of a break
+    const shape = l => l.replace(/\f/g, '').trim().replace(/\d+/g, '#');
+    const filled = [];
+    lines.forEach((l, i) => { if (l.trim()) filled.push(i); });
+    const near = new Set();
+    filled.forEach((i, k) => {
+        if (!lines[i].includes('\f')) return;
+        for (let d = Math.max(0, k - NEAR); d <= Math.min(filled.length - 1, k + NEAR); d++) near.add(filled[d]);
+    });
+    const count = new Map();
+    for (const i of near) count.set(shape(lines[i]), (count.get(shape(lines[i])) || 0) + 1);
+    return lines.filter((l, i) => {
+        if (!near.has(i)) return true;
+        const s = shape(l);
+        return !(s && s.length <= 80 && count.get(s) >= 3);
+    });
+}
+
+/**
+ * Undo extraction artefacts: soft hyphens, odd spaces, ligatures, and running
+ * page headers. Expects the text with a form feed between pages, as Zotero's
+ * PDF worker returns it.
+ */
+function cleanText(text) {
+    const cleaned = String(text || '')
+        .replace(/[\u00ad\u200b\u200c\u200d\u2060\ufeff]/g, '')
+        .replace(/[\u00a0\u2007\u2009\u202f]/g, ' ')
+        .replace(/\ufb00/g, 'ff').replace(/\ufb01/g, 'fi').replace(/\ufb02/g, 'fl')
+        .replace(/\ufb03/g, 'ffi').replace(/\ufb04/g, 'ffl').replace(/[\ufb05\ufb06]/g, 'st')
+        .normalize('NFC');
+    // Page breaks (form feeds) locate the headers, then become plain spaces.
+    return dropRunningHeaders(cleaned.split('\n')).join('\n').replace(/\f/g, ' ');
+}
+
+/**
+ * Drop bibliography lines, leaving a BREAK where they were. The rest of the
+ * paper is kept: Methods sections often come after the reference list.
+ */
+function dropReferences(text) {
+    const lines = text.split('\n');
+    const kind = lines.map(l => l.length < 40 ? null : isReferenceLine(l));
+    // Short lines (headings, page numbers) follow their neighbours.
+    for (let i = 0; i < lines.length; i++) {
+        if (kind[i] !== null) continue;
+        let a = i - 1, b = i + 1;
+        while (a >= 0 && kind[a] === null) a--;
+        while (b < lines.length && kind[b] === null) b++;
+        kind[i] = a >= 0 && b < lines.length && kind[a] === true && kind[b] === true;
+    }
+    const out = [];
+    for (let i = 0; i < lines.length; i++) {
+        if (!kind[i]) out.push(lines[i]);
+        else if (out[out.length - 1] !== BREAK) out.push(BREAK);
+    }
+    return out.join('\n');
+}
+
+/**
+ * Occurrence counts of every word-like token, computed once per paper. A
+ * compound also counts as a use of each run of its parts: "LC-MS/MS" uses
+ * LC-MS and MS, "ATP-dependent" uses ATP, "3\u2032UTR" uses UTR. A compound
+ * that is an abbreviation in its own right ("SDS-PAGE") is not split.
+ */
+function countTokens(text, isAbbreviation) {
+    const counts = new Map();
+    const bump = t => counts.set(t, (counts.get(t) || 0) + 1);
+    const re = /[\p{L}\p{N}](?:[\p{L}\p{N}\p{M}'\u2019\u2032]|[-\u2010\u2011/.](?=[\p{L}\p{N}]))*/gu;
+    let m;
+    while ((m = re.exec(text))) {
+        const token = m[0];
+        bump(token);
+        const parts = token.split(/([-\u2010\u2011/'\u2019\u2032])/);
+        if (parts.length < 3 || parts.length > 11 || isAbbreviation(token)) continue;
+        for (let i = 0; i < parts.length; i += 2) {
+            for (let j = i; j < parts.length; j += 2) {
+                if (i === 0 && j === parts.length - 1) continue;      // the whole token
+                const piece = parts.slice(i, j + 1).join('');
+                if (piece) bump(piece);
+            }
+        }
+    }
+    return counts;
+}
+
+// ---- finding candidates ------------------------------------------------------------
+
+var LEAD_IN = /^(?:i\.?\s?e\.?|hereafter(?:\s+(?:referred\s+to\s+as|called|termed|named|abbreviated(?:\s+as)?))?|henceforth(?:\s+(?:referred\s+to\s+as|called))?|abbreviated(?:\s+as)?|abbr\.|referred\s+to\s+as|termed|called|named|known\s+as|denoted(?:\s+(?:as|by))?|or|also|short\s+for)\s*[,:]?\s+/i;
+var PHRASE_LINK = /(?:,\s*)?\b(?:hereafter(?:\s+(?:referred\s+to\s+as|called|termed|named|abbreviated(?:\s+as)?))?|henceforth(?:\s+(?:referred\s+to\s+as|called))?|abbreviated(?:\s+as)?|referred\s+to\s+as|termed|denoted\s+(?:as|by))\s+["“‘']?([\p{L}\p{N}][\p{L}\p{N}\-\u2010\u2011/.]{0,18}[\p{L}\p{N}])["”’']?/giu;
+
+/**
+ * The text a long form may come from, ending at `end`: back to the start of
+ * the sentence, clause, enclosing bracket or removed region.
+ */
+function windowBefore(text, end) {
+    let w = text.slice(Math.max(0, end - 260), end);
+    // Never across a removed region.
+    w = w.slice(w.lastIndexOf(BREAK) + 1);
+    // Clause and sentence boundaries. A full stop after a capital letter or a
+    // known abbreviation ("E. coli", "et al.", "Fig.") is not a boundary.
+    let cut = -1;
+    const re = /([\p{L}\p{N})\]"”’%]+)([.!?;]|:)\s+/gu;
+    let m;
+    while ((m = re.exec(w))) {
+        const word = m[1];
+        if (m[2] === '.' && (/^\p{Lu}$/u.test(word) || /^(?:al|Fig|Figs|e\.g|i\.e|vs|cf|approx|ref|refs|Ref|Eq|Eqs|no|No|Dr|Prof|St|sp|spp|var|ca|Inc|Ltd|Co|Corp|vol|Vol|pp)$/.test(word))) continue;
+        cut = m.index + m[0].length;
+    }
+    if (cut >= 0) w = w.slice(cut);
+    // Inside an enclosing bracket, stop at its opening.
+    let depth = 0;
+    for (let i = w.length - 1; i >= 0; i--) {
+        const c = w[i];
+        if (c === ')' || c === ']') depth++;
+        else if (c === '(' || c === '[') {
+            if (depth === 0) return w.slice(i + 1);
+            depth--;
+        }
+    }
+    return w;
+}
+
+/** Bracket groups with their contents, innermost included; nesting tracked. */
+function bracketGroups(text) {
+    const groups = [], stack = [];
+    for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        if (c === '(' || c === '[') stack.push(i);
+        else if (c === ')' || c === ']') {
+            if (!stack.length) continue;
+            const open = stack.pop();
+            if (i - open - 1 <= 220) groups.push({ open, close: i, content: text.slice(open + 1, i) });
+        } else if (c === BREAK || c === '\n' && stack.length > 3) stack.length = 0;
+    }
+    return groups.sort((a, b) => a.open - b.open);
+}
+
+/** Bracket content without a lead-in ("i.e.", "hereafter"), split at ";" and ", ". */
+function splitBracketContent(content) {
+    const c = content.replace(/\s+/g, ' ').trim().replace(LEAD_IN, '');
+    const parts = c.split(/\s*;\s*|,\s+/).map(s => s.trim()).filter(Boolean);
+    return { whole: c, parts };
+}
+
+// Brackets that give examples or point elsewhere define nothing: "(e.g., CD8, CD25)".
+var NOT_A_DEFINITION = /^\s*(?:e\.?\s?g\.?|for\s+example|such\s+as|see|cf\.?|compare|including)[\s,:]/i;
+
+/** Candidate definitions from brackets: forward, inside and reverse. */
+function bracketCandidates(text, add) {
+    for (const g of bracketGroups(text)) {
+        if (NOT_A_DEFINITION.test(g.content)) continue;
+        const { whole, parts } = splitBracketContent(g.content);
+        if (!whole) continue;
+        const first = parts[0], last = parts[parts.length - 1];
+        // forward: long form (SF) / (SF, Fig. 1) / (MgAl2O4, PS)
+        const forward = new Set([whole, first]);
+        if (parts.length > 1) forward.add(last);
+        let window = null;
+        for (const sf of forward) {
+            if (!looksLikeShortForm(sf)) continue;
+            if (window === null) window = windowBefore(text, g.open);
+            add(sf, window, 'end', 'forward', g.open);
+        }
+        // inside: (long form, SF)
+        if (parts.length > 1 && looksLikeShortForm(last)) {
+            const lf = parts.slice(0, -1).join(', ').replace(LEAD_IN, '');
+            if (/\p{L}{3}/u.test(lf)) add(last, lf, 'both', 'inside', g.open);
+        }
+        // reverse: SF (long form)
+        const before = text.slice(Math.max(0, g.open - 24), g.open);
+        const tok = /(?:^|[\s(\[,;:])([\p{L}\p{N}][\p{L}\p{N}\-\u2010\u2011/.]*[\p{L}\p{N}])\s?$/u.exec(before);
+        if (tok && looksLikeShortForm(tok[1]) && !looksLikeShortForm(whole) && /\p{L}{3}/u.test(whole)) {
+            add(tok[1], whole, 'both', 'reverse', g.open);
+            if (parts.length > 1 && first !== whole) add(tok[1], first, 'both', 'reverse', g.open);
+        }
+    }
+}
+
+/** "long form, hereafter SF", "... abbreviated as SF", "... termed SF". */
+function phraseCandidates(text, add) {
+    PHRASE_LINK.lastIndex = 0;
+    let m;
+    while ((m = PHRASE_LINK.exec(text))) {
+        const sf = m[1].replace(/\.$/, '');
+        if (!looksLikeShortForm(sf)) continue;
+        add(sf, windowBefore(text, m.index), 'end', 'phrase', m.index);
+    }
+}
+
+/** Table and figure keys: "SF = long form" (", SF = ...", "SF = ...; "). */
+function keyCandidates(text, add) {
+    const re = /(?:^|[\s(;,.])([\p{L}\p{N}][\p{L}\p{N}\-\u2010\u2011/]{0,18}[\p{L}\p{N}])\s?=\s?(?=\p{L})/gu;
+    let m;
+    while ((m = re.exec(text))) {
+        const sf = m[1];
+        if (!looksLikeShortForm(sf)) continue;
+        const from = m.index + m[0].length;
+        let lf = text.slice(from, from + 160);
+        const stop = lf.search(/[;\n\u2029]|\.\s|,\s?[\p{L}\p{N}][\p{L}\p{N}\-/]{0,18}\s?=|\s[\p{L}\p{N}][\p{L}\p{N}\-/]{0,18}\s=/u);
+        if (stop >= 0) lf = lf.slice(0, stop);
+        if (/\p{L}{3}/u.test(lf)) add(sf, lf, 'start', 'key', m.index);
+    }
+}
+
+// ---- explicit abbreviation lists ----------------------------------------------------
+
+// "Abbreviations:" anywhere, or an "Abbreviations" heading at the start of a line.
+var LIST_HEADER = /(?:^|\n)[ \t]*(?:Table\s+\d+\s*[|.:]\s*)?(?:(?:the\s+)?list\s+of\s+abbreviations|(?:non-?standard\s+)?abbreviations?(?:\s+and\s+(?:acronyms|symbols))?(?:\s+used)?)[ \t]*[:.\-\u2013\u2014]?[ \t]*(?=\S)|\b(?:abbreviations?|abbreviation\s+key)(?:\s+used(?:\s+in\s+this\s+(?:paper|study|article|work))?(?:\s+are)?)?[ \t]*:[ \t]*/gi;
+var LIST_END = /\n[ \t]*\n|[\u0000-\u0008\u000B\u000C\u000E-\u001F\u2029]|\u00a9|www\.|https?:\/\/|\b(?:METHODS|RESULTS|INTRODUCTION|DISCUSSION|References|Declarations|Supplementary\s+Information)\b/;
 
 function splitAbbreviationEntries(block) {
-    // Journals use at least three layouts for an abbreviation list:
+    // Journals use several layouts for an abbreviation list:
     //   "BA, bile acids; CHD, coronary heart disease"      (comma)
     //   "TE: Trolox equivalent; SNP: sodium nitroprusside"  (colon)
-    //   "AAV adeno-associated virus, Ab Antibody"           (whitespace)
-    // Rather than guess, every layout is parsed and the one that yields
-    // the most plausible entries wins.
+    //   "AAV adeno-associated virus, Ab Antibody"           (space)
+    //   "circRNAs Circular RNAs\nRBPs RNA-binding proteins" (one per line)
+    // Every layout is parsed and the one with the most plausible entries wins.
     const text = String(block || '').trim();
     if (!text) return [];
-
-    const looksLikeShortForm = (tok) => {
-        if (!tok) return false;
-        const t = tok.trim();
-        if (t.length < 2 || t.length > 24) return false;
-        if (/\s/.test(t)) return false;
-        if (!/^[A-Za-z0-9\u0391-\u03c9]/.test(t)) return false;
-        if (!/[A-Z0-9\u0391-\u03c9]/.test(t)) return false;
-        return true;
-    };
-    const clean = (v) => String(v || '').replace(/\s+/g, ' ').replace(/^[\s,;:.]+|[\s,;:.]+$/g, '').trim();
-
-    // Layout A/B: split on the separator, then on the first comma or
-    // colon inside each entry (whichever appears first).
-    const delimitedParse = (sep) => {
+    const clean = v => String(v || '').replace(/\s+/g, ' ').replace(/^[\s,;:.]+|[\s,;:.]+$/g, '').trim();
+    const isEntry = (abbr, term) => looksLikeShortForm(abbr, true) && term.length >= 2 && /\p{L}{2}/u.test(term);
+    const delimited = sep => {
         const out = [];
         for (let chunk of text.split(sep)) {
-            chunk = chunk.replace(/^\s*Abbreviations?\s*:?\s*/i, '').trim();
+            chunk = chunk.trim();
             if (!chunk) continue;
             const ci = chunk.indexOf(':'), mi = chunk.indexOf(',');
-            const colonStyle = ci !== -1 && (mi === -1 || ci < mi);
-            if (colonStyle) {
-                const SF = '[A-Z0-9\u0391-\u03c9][A-Za-z0-9\u0391-\u03c9\\-\u2010-\u2015\\/\\.]{0,23}';
-                const re = new RegExp('(?:^|\\s)(' + SF + ')\\s*:\\s*', 'g');
-                const marks = []; let m;
+            if (ci !== -1 && (mi === -1 || ci < mi)) {
+                const re = /(?:^|\s)([\p{L}\p{N}\u0391-\u03c9][\p{L}\p{N}\-\u2010-\u2015/.]{0,23})\s*:\s*/gu;
+                const marks = [];
+                let m;
                 while ((m = re.exec(chunk))) marks.push({ abbr: m[1], start: m.index, end: re.lastIndex });
-                for (let i = 0; i < marks.length; i++) {
-                    const stop = (i + 1 < marks.length) ? marks[i + 1].start : chunk.length;
-                    const term = clean(chunk.slice(marks[i].end, stop));
-                    if (looksLikeShortForm(marks[i].abbr) && term) out.push({ abbr: marks[i].abbr.trim(), term });
-                }
+                marks.forEach((mk, i) => {
+                    const term = clean(chunk.slice(mk.end, i + 1 < marks.length ? marks[i + 1].start : chunk.length));
+                    if (isEntry(mk.abbr, term)) out.push({ abbr: mk.abbr, term });
+                });
             } else if (mi !== -1) {
-                const parts = chunk.split(',');
-                const abbr = parts.shift().trim();
-                const term = clean(parts.join(','));
-                if (looksLikeShortForm(abbr) && term) out.push({ abbr, term });
+                const abbr = chunk.slice(0, mi).trim(), term = clean(chunk.slice(mi + 1));
+                if (isEntry(abbr, term)) out.push({ abbr, term });
             }
         }
         return out;
     };
-
-    // Layout C: "SHORTFORM definition" pairs separated by commas or
-    // semicolons, with no punctuation between the short form and its
-    // expansion. The short form is the first whitespace-delimited token.
-    const whitespaceParse = (sep) => {
+    const spaced = sep => {
         const out = [];
         for (let chunk of text.split(sep)) {
-            chunk = chunk.replace(/^\s*Abbreviations?\s*:?\s*/i, '').replace(/\s+/g, ' ').trim();
-            if (!chunk) continue;
+            chunk = chunk.replace(/\s+/g, ' ').trim();
             const sp = chunk.indexOf(' ');
             if (sp < 1) continue;
-            const abbr = chunk.slice(0, sp).trim();
-            const term = clean(chunk.slice(sp + 1));
-            // Require a real short form and a definition of real words.
-            if (!looksLikeShortForm(abbr) || !term || term.length < 3) continue;
-            if (!/[A-Za-z]{3}/.test(term)) continue;
-            out.push({ abbr, term });
+            const abbr = chunk.slice(0, sp).replace(/[,:]$/, ''), term = clean(chunk.slice(sp + 1));
+            if (isEntry(abbr, term) && /\p{L}{3}/u.test(term)) out.push({ abbr, term });
         }
         return out;
     };
-
-    const candidates = [
-        delimitedParse(/;+/),
-        delimitedParse(/,\s*(?=[A-Z0-9])/),
-        whitespaceParse(/,\s*(?=[A-Za-z0-9])/),
-        whitespaceParse(/;+/)
+    const layouts = [
+        delimited(/;+/), delimited(/,\s*(?=[\p{Lu}\p{N}])/u),
+        spaced(/,\s*(?=[\p{L}\p{N}])/u), spaced(/;+/), spaced(/\n+/)
     ];
     let best = [];
-    for (const c of candidates) if (c.length > best.length) best = c;
+    for (const l of layouts) if (l.length > best.length) best = l;
     return best;
 }
-function trimSectionLongForm(abbr, term) {
-    // Bound a long form taken from an explicit "Abbreviations:" list.
-    // Unlike the parenthetical patterns, the definition FOLLOWS the
-    // short form here, so the window is taken from the start.
+
+/** Bound a long form taken from a list, where it follows the short form. */
+function trimListLongForm(abbr, term) {
     let t = String(term || '').replace(/\s+/g, ' ').trim();
-    if (!t) return '';
-    // A list entry is a noun phrase, never a sentence: stop at the
-    // first sentence boundary or trailing citation marker.
-    const sentenceCut = t.search(/\.\s+[A-Z“"(\[]/);
-    if (sentenceCut > 0) t = t.slice(0, sentenceCut);
-    t = t.replace(/\s*\[\d+(?:\s*[,–-]\s*\d+)*\]\s*$/, '').trim();
-    // Schwartz-Hearst word window, with a small floor so ordinary
-    // two-letter abbreviations keep their full definition.
-    const sfLen = (String(abbr).match(/[A-Za-z0-9]/g) || []).length;
-    const maxWords = Math.max(6, Math.min(sfLen + 5, sfLen * 2));
+    const sentence = t.search(/\.\s+[\p{Lu}“"(\[]/u);
+    if (sentence > 0) t = t.slice(0, sentence);
+    t = t.replace(/\s*\[\d+(?:\s*[,\u2013-]\s*\d+)*\]\s*$/, '').replace(/\s*\([^)]{8,}\)\s*$/, '').trim();
+    // A run-on into body text: when the short form aligns with the start and
+    // more than two words follow its last aligned word, cut there. One or two
+    // ("... sulfonic acid", "... Triton X100") belong to the term.
+    const aligned = alignLongForm(abbr, t, 'start');
+    if (aligned && aligned.quality >= 1.5) {
+        const words = t.split(/\s+/);
+        if (words.length - (aligned.lastWord + 1) > 2) t = words.slice(0, aligned.lastWord + 1).join(' ');
+    }
+    const units = (String(abbr).match(/[\p{L}\p{N}]/gu) || []).length;
+    const maxWords = Math.max(6, Math.min(units + 5, units * 2));
     const words = t.split(/\s+/);
     if (words.length > maxWords) t = words.slice(0, maxWords).join(' ');
-    // Never let an explicit-list definition exceed a sane length.
     if (t.length > 120) t = t.slice(0, 120);
     return t.replace(/[\s,;:]+$/, '').replace(/\s+(?:and|or|of|the|a|an|to|in|for|with|all)$/i, '').trim();
 }
-function refineLongForm(abbr, term) {
-    const cleaned = cleanTerm(term);
-    // For digit-leading chemical abbreviations such as 4-HNE, the
-    // strict alignment may trim the numeric locant from the long form
-    // and return only “hydroxynonenal”.  Prefer the complete local
-    // chemical token, e.g. “4-hydroxynonenal”, when present.
-    if (isDigitLeadingChemicalShortForm(abbr)) {
-        const locantTerms = cleaned.match(/\b\d{1,2}[A-Za-z]?[-‑–—][A-Za-z][A-Za-z0-9εβγδαΩω'’]*\b/g);
-        if (locantTerms && locantTerms.length) {
-            return { term: locantTerms[locantTerms.length - 1], strictAligned: hmmStyleScore(abbr, locantTerms[locantTerms.length - 1]) >= 0.75 };
+
+/** Entries of explicit abbreviation lists ("Abbreviations: ..."). */
+function listCandidates(text, add) {
+    LIST_HEADER.lastIndex = 0;
+    let m;
+    while ((m = LIST_HEADER.exec(text))) {
+        const rest = text.slice(LIST_HEADER.lastIndex, LIST_HEADER.lastIndex + 6000);
+        const endAt = rest.search(LIST_END);
+        const block = (endAt >= 0 ? rest.slice(0, endAt) : rest).replace(/\b\d{2,4}\s*$/, '');
+        const entries = splitAbbreviationEntries(block);
+        if (entries.length < 2) continue;       // a list has more than one entry
+        for (const e of entries) {
+            const lf = trimListLongForm(e.abbr, e.term);
+            if (!lf) continue;
+            // "but", "with", "who": prose read as a list. A lowercase short
+            // form must align with its long form to count.
+            if (!/[\p{Lu}\d]/u.test(e.abbr)) {
+                const a = alignLongForm(e.abbr, lf, 'start');
+                if (!a || a.quality < 1) continue;
+            }
+            add(e.abbr, lf, null, 'list', m.index);
         }
     }
-    const strict = findBestLongForm(abbr, term);
-    if (strict) return { term: strict, strictAligned: true };
-    // Canonical Schwartz-Hearst guardrail: a long form spans at most
-    // min(|SF|+5, |SF|*2) words. When strict alignment fails, trim the
-    // candidate window to that length before the fuzzy score so an
-    // over-long span of surrounding prose is not attached to the term.
-    const sfLen = (String(abbr).match(/[A-Za-z0-9]/g) || []).length;
-    const maxWords = Math.max(1, Math.min(sfLen + 5, sfLen * 2));
-    const windowWords = cleaned.split(/\s+/);
-    const windowed = windowWords.length > maxWords
-        ? cleanTerm(windowWords.slice(-maxWords).join(' '))
-        : cleaned;
-    if (hmmStyleScore(abbr, windowed) >= 0.75) return { term: windowed, strictAligned: false };
-    return { term: windowed, strictAligned: false };
 }
+
+/**
+ * A run of "SF, long form;" entries without a heading, as under tables and in
+ * figure legends: "INS, insertions; DEL, deletions; CNV, copy-number variants".
+ */
+function inlineKeyCandidates(text, add) {
+    const re = /(?:^|[.;:]\s|\n)((?:[\p{L}\p{N}][\p{L}\p{N}\-\u2010\u2011/]{0,15}[\p{L}\p{N}]?,\s[^;,\n]{3,80}?;\s){1,}[\p{L}\p{N}][\p{L}\p{N}\-\u2010\u2011/]{0,15}[\p{L}\p{N}]?,\s[^;\n]{3,80}?)(?=[.;\n]|$)/gu;
+    let m;
+    while ((m = re.exec(text))) {
+        for (const entry of m[1].split(/;\s/)) {
+            const comma = entry.indexOf(', ');
+            if (comma < 1) continue;
+            const sf = entry.slice(0, comma).trim(), lf = entry.slice(comma + 2).trim();
+            if (looksLikeShortForm(sf)) add(sf, lf, 'start', 'key', m.index);
+        }
+    }
+}
+
+// ---- choosing and checking definitions -----------------------------------------------
+
+// What each kind of evidence needs to be accepted: the minimum alignment
+// quality (score per short-form unit; 3 = every unit at the start of a word),
+// how many content words may contribute no letter, and how many words the
+// long form needs. Measured on the dev set: a long form in which every word
+// contributes a letter is right at almost any quality, including one-word
+// chemical names (phosphoenolpyruvate PEP, dithiothreitol DTT); words that
+// contribute nothing are where wrong spans come from. A reverse "SF (text)"
+// is the weakest evidence, because prose often follows a term with a
+// bracketed synonym or example, so it needs a near-perfect multi-word match.
+var ACCEPT = {
+    forward: { quality: 1.0, unmatched: 1, words: 1 },
+    phrase: { quality: 1.0, unmatched: 1, words: 1 },
+    key: { quality: 1.0, unmatched: 1, words: 1 },
+    inside: { quality: 1.0, unmatched: 2, words: 1 },
+    reverse: { quality: 2.2, unmatched: 1, words: 2 }
+};
+
+/** Accept or reject one candidate; returns the long form to keep, or ''. */
+function judgeCandidate(sf, text, mode, kind, known) {
+    if (kind === 'list') return text;
+    const a = alignLongForm(sf, text, mode);
+    const rule = ACCEPT[kind];
+    if (a && a.quality >= rule.quality && a.unmatched <= rule.unmatched && a.words >= rule.words &&
+        !restatesShortForm(sf, a.longForm)) return a.longForm;
+    // A dictionary meaning written out right there counts as alignment: the
+    // dictionary normalises definitions the paper provides.
+    return known ? knownMeaningInText(text, known(sf)) : '';
+}
+
+/**
+ * Is the "long form" just the short form again, or another short form?
+ * "bKLs (KLs)", "nPAGE (PAGE)", "FPKM ... GeneiFPKMmale", "MAP2Ks (MAP3Ks)":
+ * one token of capitals and fragments, with no lowercase word in it.
+ * A short form with one capital may legitimately start its long form
+ * ("Ub", ubiquitin), so containment only counts from two capitals.
+ */
+function restatesShortForm(sf, lf) {
+    const base = singularShortForm(sf) || sf;
+    if ((base.match(/\p{Lu}/gu) || []).length >= 2 && lf.includes(base)) return true;
+    return !/\s/.test(lf) && (lf.match(/\p{Lu}/gu) || []).length >= 2 && !/\p{Ll}{4}/u.test(lf);
+}
+
+/** The first of `meanings` that the text ends (or starts) with, or ''. */
+function knownMeaningInText(text, meanings) {
+    if (!meanings.length) return '';
+    const flat = s => s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
+    const t = flat(text);
+    for (const m of meanings) {
+        const f = flat(m);
+        if (f.length >= 4 && (t.endsWith(f) || t.startsWith(f))) return m;
+    }
+    return '';
+}
+
+/**
+ * Find abbreviation definitions in a paper's text.
+ *
+ * @param {string} text  the extracted text of the PDF
+ * @param {{staticDefs:Object, commonKnownDefs:Object, userDefs?:Object, ignore?:string[]}} dicts
+ * @returns {Array<{abbr:string, term:string, source:string, confidence:string}>}
+ */
+function detectAbbreviations(text, dicts) {
+    const staticDefs = dicts.staticDefs || {};
+    const glossary = dicts.commonKnownDefs || {};
+    const raw = String(text || '');
+    const clean = cleanText(raw);
+    const body = dropReferences(clean);
+    const counts = countTokens(body, sf => !!(staticDefs[sf] || glossary[sf]));
+    const countOf = sf => {
+        if (/^[\p{L}\p{N}][\p{L}\p{N}\-\u2010\u2011/.']*$/u.test(sf)) return counts.get(sf) || 0;
+        const re = new RegExp('(?:^|[^\\p{L}\\p{N}])' + escapeRegExp(sf) + '(?=$|[^\\p{L}\\p{N}])', 'gu');
+        return (body.match(re) || []).length;
+    };
+    // Every dictionary meaning of a short form (or of its singular).
+    const known = sf => [sf, singularShortForm(sf) || sf]
+        .flatMap(k => [staticDefs[k], ...(glossary[k] || []).map(o => o.term)]).filter(Boolean);
+
+    // 1. Every candidate definition, scored where it stands.
+    const accepted = new Map();     // key -> { abbr, term, source, rank, pos }
+    const RANK = { list: 0, key: 1, forward: 2, inside: 2, phrase: 2, reverse: 3 };
+    // Author initials keys ("PMGR, Pablo M Garcia-Roves") expand to names
+    // that are in the author list at the top of the paper.
+    const head = raw.slice(0, 4000);
+    const isAuthor = lf => /^\p{Lu}[\p{L}'\u2019.-]*(?:\s\p{Lu}[\p{L}'\u2019.-]*){1,3}$/u.test(lf) && head.includes(lf);
+    const add = (sf, lfText, mode, kind, pos) => {
+        sf = sf.trim();
+        const term = judgeCandidate(sf, lfText, mode, kind, known);
+        if (!term || term.length > 160 || !/\p{L}{3}/u.test(term)) return;
+        if (kind === 'key' && isAuthor(term)) return;
+        if (term.replace(/[^\p{L}\p{N}]/gu, '').toLowerCase() === sf.replace(/[^\p{L}\p{N}]/gu, '').toLowerCase()) return;
+        const key = singularShortForm(sf) || sf;
+        const prev = accepted.get(key);
+        const rank = RANK[kind];
+        if (prev && (prev.rank < rank || (prev.rank === rank && prev.pos <= pos))) return;
+        accepted.set(key, { abbr: sf, term, source: kind, rank, pos });
+    };
+    listCandidates(clean, add);
+    keyCandidates(body, add);
+    inlineKeyCandidates(body, add);
+    bracketCandidates(body, add);
+    phraseCandidates(body, add);
+
+    const pairs = [...accepted.values()]
+        .sort((a, b) => a.pos - b.pos)
+        .map(p => ({ abbr: p.abbr, term: p.term, source: p.source, confidence: p.rank <= 2 ? 'high' : 'medium' }));
+
+    // 2. Well-known abbreviations the paper uses at least twice but never defines.
+    const lowerBody = body.toLowerCase();
+    const taken = new Set(accepted.keys());
+    const defined = sf => taken.has(singularShortForm(sf) || sf) || taken.has(sf) ||
+        pluralShortForms(sf).some(p => taken.has(p));
+    for (const [abbr, options] of Object.entries(glossary)) {
+        if (!options || !options.length || defined(abbr)) continue;
+        const uses = countOf(abbr) + pluralShortForms(abbr).reduce((n, p) => n + (counts.get(p) || 0), 0);
+        if (uses < 2) continue;
+        const terms = [];
+        for (const opt of options) {
+            if (opt.ambiguity !== 'low' && !hasContextSupport(opt, lowerBody)) continue;
+            if (!terms.includes(opt.term)) terms.push(opt.term);
+        }
+        if (!terms.length) continue;
+        taken.add(abbr);   // so the plural entry of the glossary is not added as well
+        pairs.push({
+            abbr,
+            term: terms.join(' / ') + (terms.length > 1
+                ? ' (common possible meanings; not explicitly defined in this paper)'
+                : ' (common term; not explicitly defined in this paper)'),
+            source: 'common-known',
+            confidence: terms.length > 1 ? 'low' : 'medium'
+        });
+    }
+
+    // 3. The user's own definitions win, for short forms the paper uses.
+    for (const [abbr, term] of Object.entries(dicts.userDefs || {})) {
+        if (!abbr || !term || !countOf(abbr)) continue;
+        const existing = pairs.find(p => p.abbr === abbr);
+        if (existing) Object.assign(existing, { term, source: 'user', confidence: 'high' });
+        else pairs.push({ abbr, term, source: 'user', confidence: 'high' });
+    }
+    const ignored = new Set(dicts.ignore || []);
+    return ignored.size ? pairs.filter(p => !ignored.has(p.abbr)) : pairs;
+}
+
+/** Does the paper talk about the subject a glossary meaning belongs to? */
+function hasContextSupport(option, lowerBody) {
+    const ctx = option.context || [];
+    if (!ctx.length) return option.ambiguity === 'low';
+    for (const c of ctx) if (lowerBody.includes(String(c).toLowerCase())) return true;
+    return false;
+}
+
+function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
 // Create a global namespace.  Zotero assigns global variables per
 // add-on into a shared scope.  We deliberately avoid polluting the
@@ -1530,9 +2218,9 @@ var AbbreviationHelper = {
             throw new Error('Zotero.PDFWorker.getFullText is not available');
         }
         const result = await worker.getFullText(item.id);
-        const text = (result && typeof result.text === 'string') ? result.text : '';
-        // The detector expects continuous text, so page breaks become spaces.
-        return text.replace(/\f/g, ' ');
+        // Page breaks (form feeds) are kept: the detector uses them to find
+        // running headers and footers.
+        return (result && typeof result.text === 'string') ? result.text : '';
     },
 
     /**
@@ -1605,530 +2293,18 @@ var AbbreviationHelper = {
         return path ? { item: att, path } : null;
     },
 
+    /* ---- abbreviation detection ---- */
+
     /**
-     * Given plain text extracted from a PDF, return an array of
-     * abbreviation-definition pairs.  Patterns are designed to catch
-     * common academic conventions such as "Full Term (FT)", "Full Term
-     * [FT]", "Full Term, hereafter FT" and "Full Term, abbreviated as FT".
-     * Short forms of 2–16 characters are considered, including mixed-case
-     * ones (sgRNA, dCas9) that must align with their long form; the phases
-     * are listed at the top of the function.  Only the first definition of
-     * an abbreviation is kept.
+     * Abbreviation/definition pairs for a paper's text. The detection itself
+     * is the pure function detectAbbreviations() at the top of this file; this
+     * adds the loaded dictionaries (bundled defaults merged with the user's).
      *
      * @param {string} text Text extracted from the PDF
-     * @returns {Array<{ abbr: string, term: string }>}
+     * @returns {Array<{abbr: string, term: string, source: string, confidence: string}>}
      */
-    /* ---- Abbreviation detection (Schwartz-Hearst + dictionary layers) ---- */
     _detectAbbreviations(text) {
-        /*
-         * Detect abbreviation/definition pairs with a local, rule-based
-         * pipeline. Everything here runs offline; no external services.
-         *
-         * Phases, in order of decreasing evidence strength. Earlier phases win,
-         * because `seen` blocks a short form once it has been claimed:
-         *
-         *   prepare   normalise extraction artefacts, cut the reference list,
-         *             count how often each candidate short form occurs
-         *   0         explicit author "Abbreviations" lists (comma-, colon- or
-         *             whitespace-delimited; every list in the document)
-         *   0b        comma mini-glossaries that match a curated definition
-         *   A         "long form (SF)", "..., hereafter SF", "abbreviated as SF"
-         *   A2        generic parenthetical scan, for long forms that
-         *             themselves contain brackets
-         *   A3        reverse form "SF (long form)", alignment required
-         *   B         "(long form, SF)" with the expansion inside the brackets
-         *   D         fallback glossary for well-known abbreviations the paper
-         *             uses but never defines; ambiguous entries need contextual
-         *             support and otherwise list their candidate meanings
-         *
-         * Acceptance is centralised in addPair(), which applies the alignment,
-         * frequency, length and sanity gates.
-         */
-        const pairs = [];
-        const seen = new Set();
-        // Minimum fuzzy alignment score for a pair from a loose parenthetical
-        // pattern that has no strict Schwartz-Hearst alignment. Tuned on a
-        // 22-paper corpus; overridable only so the evaluation harness can sweep
-        // it (see eval/sweep.js).
-        const ALIGNMENT_SCORE_FLOOR = Number(
-            this._alignmentFloor != null ? this._alignmentFloor : DEFAULT_ALIGNMENT_SCORE_FLOOR);
-
-        // Cut off sections that mostly contain cited titles, journal names,
-        // product codes, trial names and chemical oxidation states.
-        // PDF text layers carry artefacts that silently corrupt long forms:
-        // soft hyphens inside words ("fluorescence-\u00adactivated"), zero-width
-        // characters, and typographic ligatures ("In\ufb01ltrating"). Normalise
-        // them first, otherwise alignment breaks and terms come out truncated.
-        let workingText = String(text || '')
-            .replace(/[\u00ad\u200b\u200c\u200d\ufeff]/g, '')
-            .replace(/\ufb00/g, 'ff').replace(/\ufb01/g, 'fi').replace(/\ufb02/g, 'fl')
-            .replace(/\ufb03/g, 'ffi').replace(/\ufb04/g, 'ffl')
-            .replace(/\ufb05/g, 'st').replace(/\ufb06/g, 'st');
-        const cutMatch = workingText.search(/\n\s*(References|Acknowledg(e)?ments|CRediT authorship contribution statement|Declaration of competing interest)\s*\n/i);
-        if (cutMatch > 0) {
-            workingText = workingText.slice(0, cutMatch);
-        }
-        const normalised = workingText.replace(/\s+/g, ' ');
-
-        // Curated dictionary used only as a normalizer/validator for terms
-        // that are locally detected in the paper. It must not add entries
-        // by itself: ambiguous abbreviations such as CA, PS, RI, FI, etc.
-        // are only accepted when the PDF provides local definition evidence.
-        // Loaded once at startup (see _loadDictionaries); used only to
-        // normalize/validate definitions the paper itself provides.
-        const staticDefs = this.dictionaries.staticDefs;
-
-        // Common fallback glossary.  These entries are deliberately kept
-        // separate from staticDefs.  staticDefs only normalizes definitions
-        // that the paper itself appears to define.  commonKnownDefs may add
-        // a tooltip/list entry when a highly conventional abbreviation occurs
-        // repeatedly but is not locally defined.  Ambiguous abbreviations
-        // need context support; when multiple plausible meanings remain, the
-        // tooltip shows the alternatives instead of pretending certainty.
-        // Loaded once at startup (see _loadDictionaries). Fallback glossary
-        // for widely-known abbreviations that a paper uses but does not define.
-        const commonKnownDefs = this.dictionaries.commonKnownDefs;
-
-        // Count short-form occurrences.  Mixed-case scientific abbreviations
-        // such as ZnPC, mTHPC, Nbs and Rh are allowed.
-        const abbrCounts = {};
-        const abbrPattern = /\b([A-Za-z0-9][A-Za-z0-9\-\/]{1,15}s?)\b/g;
-        let cm;
-        while ((cm = abbrPattern.exec(normalised))) {
-            const ab = cm[1];
-            abbrCounts[ab] = (abbrCounts[ab] || 0) + 1;
-        }
-        // Count exact occurrences of dictionary entries that contain spaces,
-        // Greek dots or parentheses and therefore are not picked up by the
-        // generic abbreviation-token regex.  This rescues terms such as
-        // “RPMI 1640”, “Sn(Oct)2” and “MAL-NH2⋅HCl”.
-        for (const key of Object.keys(staticDefs)) {
-            if (abbrCounts[key]) continue;
-            try {
-                const exact = new RegExp('(?:^|[^A-Za-z0-9])' + escapeRegExp(key) + '(?=$|[^A-Za-z0-9])', 'g');
-                const hits = normalised.match(exact);
-                if (hits && hits.length) abbrCounts[key] = hits.length;
-            } catch (e) {}
-        }
-
-        for (const key of Object.keys(this.dictionaries.userDefs || {})) {
-            if (abbrCounts[key]) continue;
-            try {
-                const exact = new RegExp('(?:^|[^A-Za-z0-9])' + escapeRegExp(key) + '(?=$|[^A-Za-z0-9])', 'g');
-                const hits = normalised.match(exact);
-                if (hits && hits.length) abbrCounts[key] = hits.length;
-            } catch (e) {}
-        }
-
-        // Also count exact occurrences for fallback-glossary entries, many
-        // of which contain lowercase prefixes, hyphens, slashes or Greek
-        // symbols that the generic token regex may miss.
-        for (const key of Object.keys(commonKnownDefs)) {
-            if (abbrCounts[key]) continue;
-            try {
-                const exact = new RegExp('(?:^|[^A-Za-z0-9])' + escapeRegExp(key) + '(?=$|[^A-Za-z0-9])', 'g');
-                const hits = normalised.match(exact);
-                if (hits && hits.length) abbrCounts[key] = hits.length;
-            } catch (e) {}
-        }
-
-        function canonicalKey(abbr) {
-            if (staticDefs.hasOwnProperty(abbr)) return abbr;
-            const singular = singularShortForm(abbr);
-            if (singular && staticDefs.hasOwnProperty(singular)) return singular;
-            return abbr;
-        }
-        // Proteomics papers print peptide/protein sequences in parentheses,
-        // e.g. "(DLVLDVPS)" or "(VNPDPAGGPTSGRAL)".  These are not
-        // abbreviations, but a generic scanner sees an uppercase token beside a
-        // sentence and invents a definition for it.  They are recognised
-        // structurally, not from any paper-specific list: six or more
-        // characters drawn exclusively from the 20 standard amino-acid
-        // one-letter codes (B, J, O, U, X and Z are deliberately absent), with
-        // no digits, hyphens or lowercase.  The rule only applies in documents
-        // that actually discuss peptides, and curated dictionary entries are
-        // always exempt.
-        const AMINO_ACID_SEQUENCE = /^[ACDEFGHIKLMNPQRSTVWY]{6,}$/;
-        const documentDiscussesPeptides = /\b(?:peptides?|amino acid sequence|residues?|hydrolysates?|proteolysis)\b/i.test(normalised);
-        function looksLikePeptideSequence(abbr) {
-            if (!documentDiscussesPeptides) return false;
-            if (staticDefs.hasOwnProperty(abbr) || commonKnownDefs.hasOwnProperty(abbr)) return false;
-            return AMINO_ACID_SEQUENCE.test(abbr);
-        }
-        // Modern molecular-biology nomenclature is full of mixed-case short
-        // forms that the classic all-caps test rejects: sgRNA, miRNA, ncRNA,
-        // dCas9, CRISPRi, RNAi, ntDNA, DepMap, Inr, Pfu, Tfh. Accepting these
-        // outright would also admit ordinary Title-case words, so they are
-        // treated as "weak" candidates: allowed through the shape test here,
-        // but required by addPair to align with their long form.
-        function isValidShortForm(abbr) {
-            if (!abbr || abbr.length < 2 || abbr.length > 16) return false;
-            if (staticDefs.hasOwnProperty(abbr)) return true;
-            if (/\s/.test(abbr)) return false;
-            if (romanNumerals.includes(abbr)) return false;
-            if (/^[0-9]+$/.test(abbr)) return false;
-            if (isDigitLeadingChemicalShortForm(abbr)) return true;
-            // Non-dictionary digit-containing tokens are often catalogue
-            // numbers, cell-line identifiers or trial names (CGP55847,
-            // CRL-1555, OE21). Allow compact biomedical patterns such as
-            // T2D/T1D when the paper locally defines them, but reject long
-            // numeric/code-like tokens.
-            const compactLetterDigitLetter = /^[A-Z]\d[A-Z]s?$/.test(abbr);
-            if (/^[A-Z]{1,3}-?\d{3,}/.test(abbr) && !staticDefs.hasOwnProperty(abbr)) return false; // catalogue/cell-line style
-            if (/\d/.test(abbr) && !staticDefs.hasOwnProperty(abbr) && !compactLetterDigitLetter) return false;
-            // Mixed-case abbreviations are common (ZnPC, mTHPC), but mixed-
-            // case ordinary names such as Sigma-Aldrich should not be treated
-            // as abbreviations.
-            if (/[a-z]/.test(abbr) && !staticDefs.hasOwnProperty(abbr)) {
-                if (!(isPluralShortForm(abbr)
-                    || /^[a-z]{1,3}[A-Z0-9][A-Za-z0-9]*(?:-[A-Za-z0-9]+)?s?$/.test(abbr)
-                    || /^[A-Z][a-z]{0,3}[A-Z0-9][A-Za-z0-9]*(?:-[A-Za-z0-9]+)?s?$/.test(abbr)
-                    || /^[A-Z0-9]{2,}[a-z]{1,3}$/.test(abbr))) return false;
-            }
-            const letters = (abbr.match(/[A-Za-z]/g) || []).length;
-            const uppers = (abbr.match(/[A-Z]/g) || []).length;
-            if (letters < 2) return false;
-            if (uppers < 2 && !staticDefs.hasOwnProperty(abbr)) return false;
-            return true;
-        }
-        // A short form is "classic" if it passes the strict historical test.
-        // Anything else may still be an abbreviation, but must prove itself by
-        // aligning with its long form (see addPair).
-        function isClassicShortForm(abbr) { return isValidShortForm(abbr); }
-        function staticDefinitionMatchesLocalEvidence(key, localTerm, source) {
-            // Explicit abbreviation lists are high-confidence local evidence.
-            // We may normalize their spelling/plurals with the dictionary.
-            if (source === 'abbrev-section') return true;
-            if (!staticDefs.hasOwnProperty(key)) return false;
-            const localFirst = firstContentWord(localTerm);
-            const dictFirst = firstContentWord(staticDefs[key]);
-            if (!localFirst || !dictFirst) return false;
-            if (localFirst === dictFirst) return true;
-            // Allow hyphen/space variation: low-density vs low density.
-            const localCompact = String(localTerm).toLowerCase().replace(/[^a-z0-9]/g, '');
-            const dictCompact = String(staticDefs[key]).toLowerCase().replace(/[^a-z0-9]/g, '');
-            return localCompact && dictCompact && (localCompact.includes(dictCompact.slice(0, Math.min(dictCompact.length, 18))) || dictCompact.includes(localCompact.slice(0, Math.min(localCompact.length, 18))));
-        }
-
-        function shouldSkip(term, abbr) {
-            const key = canonicalKey(abbr);
-            if (staticDefs.hasOwnProperty(key)) return false;
-            // Geographic/provider acronyms in author affiliations and supplier
-            // addresses are rarely useful in the reading-assistance context and
-            // create very noisy pairs such as “USA — purchased from ...”.
-            if (['USA', 'UK', 'EU'].includes(abbr)) return true;
-            const tokens = term.toLowerCase().split(/\s+/);
-            if (tokens.some(tok => stopwords.includes(tok))) return true;
-            if (/\b(cat\.?|catalog|catalogue|lane|fig\.?|table)\b/i.test(term)) return true;
-            if (/\b(purchased from|obtained from|acquired from|provided by|manufactured by|distributed by)\b/i.test(term)) return true;
-            return false;
-        }
-        function addPair(abbr, term, source, options) {
-            options = options || {};
-            if (source === 'abbrev-section') {
-                if (!abbr || abbr.length > 40 || seen.has(abbr)) return;
-            }
-            else if ((!isValidShortForm(abbr) && !isWeakButPlausibleShortForm(abbr)) || seen.has(abbr)) return;
-            const key = canonicalKey(abbr);
-            if (key !== abbr && seen.has(key)) return;
-
-            let cleaned = cleanTerm(term);
-            if (!cleaned || cleaned.length < 2) return;
-
-            // A definition must contain at least one real word.  This rejects
-            // fragments harvested from formulas and spectra, such as “z 407”
-            // picked up from “[M-H]- m/z 407”.
-            if (!/[A-Za-z]{3}/.test(cleaned)) return;
-            // Final backstop against runaway long forms from any pattern.  No
-            // genuine expansion approaches this length (the longest curated
-            // dictionary entry is 66 characters).
-            if (cleaned.length > 160) return;
-
-
-            // Peptide-sequence veto.  Applied at pair level so a real acronym
-            // of the same shape survives when it aligns with its long form.
-            // The token is blacklisted on rejection so that a later, looser
-            // pattern cannot re-claim it with a worse expansion.
-            if (!options.strictAligned && looksLikePeptideSequence(abbr)) {
-                seen.add(abbr);
-                return;
-            }
-
-            // Evidence gate for the two loose parenthetical patterns. A pair is
-            // only accepted without a strict Schwartz-Hearst alignment when the
-            // fuzzy alignment score is still respectable. This removes supplier
-            // names, file-format labels and garbled figure text, which never
-            // align with the neighbouring words. Rejected tokens are
-            // blacklisted so a later, looser pattern cannot re-claim them.
-            if ((source === 'outside' || source === 'paren-window' || source === 'reverse-outside')
-                && !options.strictAligned && !staticDefs.hasOwnProperty(key)) {
-                const weak = !isClassicShortForm(abbr);
-                const score = hmmStyleScore(abbr, cleaned);
-                if (weak || score < ALIGNMENT_SCORE_FLOOR) { seen.add(abbr); return; }
-            }
-
-            const hasStatic = staticDefs.hasOwnProperty(key);
-            const hasLocalSupportForStatic = hasStatic && staticDefinitionMatchesLocalEvidence(key, cleaned, source);
-
-            // Dictionary terms should normalize locally supported definitions,
-            // not inject unrelated definitions. For low-evidence parenthesis
-            // windows, reject the candidate when the local text does not look
-            // like the dictionary definition. This fixes cases such as
-            // “(PDB, 3GKI)” being read as “placed on the basis...”.
-            if (hasStatic && source === 'paren-window' && !hasLocalSupportForStatic && !options.strictAligned) return;
-
-            if (hasStatic && hasLocalSupportForStatic) {
-                cleaned = staticDefs[key];
-            }
-
-            if (source === 'internal' && !hasStatic && cleaned.split(/\s+/).length < 2) return;
-            if (shouldSkip(cleaned, abbr)) return;
-
-            // A strict Schwartz-Hearst alignment is strong enough evidence on its
-            // own, so a short abbreviation defined once ("Mannitol Salt agar
-            // (MSA)") no longer needs a second occurrence to be accepted.
-            const minCount = (hasLocalSupportForStatic || abbr.length >= 4 || options.strictAligned || source === 'internal' || source === 'abbrev-section') ? 1 : 2;
-            if (source !== 'abbrev-section' && (!abbrCounts[abbr] || abbrCounts[abbr] < minCount)) return;
-
-            seen.add(abbr);
-            seen.add(key);
-            // Treat singular/plural abbreviation variants as the same entry
-            // for de-duplication, but keep the locally detected spelling for
-            // display.  This means a paper can define either “EV (extracellular
-            // vesicle)” or “EVs (extracellular vesicles)” and hovering over
-            // the other number will still work.
-            const singular = singularShortForm(abbr);
-            if (singular) seen.add(singular);
-            for (const plural of pluralShortForms(abbr)) seen.add(plural);
-            pairs.push({ abbr, term: cleaned, source, confidence: source === 'abbrev-section' ? 'high' : (hasLocalSupportForStatic || options.strictAligned ? 'high' : 'medium') });
-        }
-
-        // Pattern 0: explicit abbreviation-list sections.  Many journals put
-        // a compact list near the end of the first page, e.g.
-        // “Abbreviations: FSR, fractional synthetic rate; BA, bile acids; ...”.
-        // These lists are much more reliable than generic parenthetical
-        // scanning, and they can include short forms that are not pure
-        // uppercase acronyms, such as “5b reductase” or “racemase”.
-        // The block is read from the un-collapsed text so the paragraph break,
-        // page-break control character or copyright line that terminates the
-        // footnote is still visible.  In two-column PDFs the footnote runs
-        // straight into body text, and the final entry usually has no trailing
-        // semicolon, so without these boundaries it swallows the rest of the
-        // page (e.g. “RS, resistant starch” absorbing an entire paragraph).
-        // The header may or may not carry a colon: journals print both
-        // "Abbreviations: BA, bile acids; ..." and "Abbreviations A: alcalase; ...".
-        // The lookahead requires a real entry to follow, so the word
-        // "Abbreviations" in running prose does not trigger the parser.
-        const ABBR_SECTION_RE = (/\bAbbreviations?\b[ \t]*(?:[-\u2010-\u2015:][ \t]*)?(?:The\s+abbreviations?\s+used\s+are\s*:?\s*)?\s*(?:[A-Z]\s+)?((?=[^\s:,;]{1,24}[\s:,])[\s\S]{0,2600}?)(?=\n[ \t]*\n|[\u0000-\u0008\u000B\u000C\u000E-\u001F]|\u00A9|\bC\s+\d{4}\s+[A-Z]|www\.|https?:\/\/|\bMETHODS\b|\bRESULTS\b|\bINTRODUCTION\b|\bDISCUSSION\b|\bReferences\b|\bDeclarations\b|$)/gi);
-        let abbrSectionMatch;
-        while ((abbrSectionMatch = ABBR_SECTION_RE.exec(workingText))) {
-            const block = abbrSectionMatch[1]
-                .replace(/\s+/g, ' ')
-                .replace(/\b\d{2,4}\s*$/, '')
-                .trim();
-            for (const entry of splitAbbreviationEntries(block)) {
-                const abbr = entry.abbr;
-                let term = entry.term;
-                // Remove parenthetical chemical names after the main long form:
-                // “CA, cholic acid (3a,7a...)” -> “cholic acid”.
-                term = term.replace(/\s*\([^)]{8,}\)\s*$/, '').trim();
-                term = term.replace(/\s+\d{2,4}\s*$/, '').trim();
-                // Safety net: bound the long form even if the block boundary
-                // above was missed, so a malformed list can never produce a
-                // paragraph-sized definition.
-                term = trimSectionLongForm(abbr, term);
-                if (!abbr || !term) continue;
-                addPair(abbr, term, 'abbrev-section');
-            }
-        }
-
-        // Pattern 0b: semicolon/comma mini-glossaries outside an explicit
-        // “Abbreviations:” header.  Some papers define extra abbreviations
-        // below a table, e.g. “GGT, gamma glutamyl transferase; ND, not
-        // determined”.  Only rescue entries where the text after the comma
-        // starts with the same first word as our curated definition, which
-        // keeps this from treating ordinary comma clauses as definitions.
-        for (const key of Object.keys(staticDefs)) {
-            if (seen.has(key)) continue;
-            const first = staticDefs[key].split(/[\s(–—-]+/)[0];
-            if (!first || first.length < 2) continue;
-            try {
-                const defRe = new RegExp('(?:^|[;.]\s*)' + escapeRegExp(key) + '\s*,\s*' + escapeRegExp(first), 'i');
-                if (defRe.test(normalised)) {
-                    addPair(key, staticDefs[key], 'abbrev-section');
-                }
-            } catch (e) {}
-        }
-
-        // Pattern A: classic “long form (SF)” and “long form [SF]”.
-        // The long-form window is deliberately wider than before, which helps
-        // catch polymer names and receptor names, but alignment/cleanup trims it.
-        const outsidePatterns = [
-            /((?:[A-Za-z0-9][A-Za-z0-9ε\-–—'’\.]*\s+){0,11}[A-Za-z0-9][A-Za-z0-9ε\-–—'’\.]*)\s*[\(\[]\s*([A-Za-z0-9][A-Za-z0-9\-\/]{1,15}s?)\s*[\)\]]/g,
-            /((?:[A-Za-z0-9][A-Za-z0-9ε\-–—'’\.]*\s+){0,11}[A-Za-z0-9][A-Za-z0-9ε\-–—'’\.]*)\s*,\s*hereafter\s+([A-Za-z0-9][A-Za-z0-9\-\/]{1,15}s?)/gi,
-            /((?:[A-Za-z0-9][A-Za-z0-9ε\-–—'’\.]*\s+){0,11}[A-Za-z0-9][A-Za-z0-9ε\-–—'’\.]*)\s*,\s*abbreviated\s+as\s+([A-Za-z0-9][A-Za-z0-9\-\/]{1,15}s?)/gi
-        ];
-        for (const re of outsidePatterns) {
-            let match;
-            while ((match = re.exec(normalised))) {
-                const rawTerm = match[1].trim();
-                const abbr = match[2].trim();
-                if (!isValidShortForm(abbr) && !isWeakButPlausibleShortForm(abbr)) continue;
-                const refined = refineLongForm(abbr, rawTerm);
-                addPair(abbr, refined.term, 'outside', { strictAligned: refined.strictAligned });
-            }
-        }
-
-        // Pattern A2: robust parenthetical scanner.  The regex above cannot
-        // see definitions whose long form itself contains parentheses, such as
-        // “benzyl-poly(ε-caprolactone) (PCL)” or “poly(ethylene) glycol
-        // (PEG)”.  Instead of matching the long form directly, scan every
-        // parenthetical chunk, treat the first comma-separated part as a short
-        // form, then look backwards in the local sentence window and let the
-        // alignment/dictionary logic pick the best expansion.
-        const parenPattern = /\(([^()]{1,90})\)/g;
-        let pm2;
-        while ((pm2 = parenPattern.exec(normalised))) {
-            let content = pm2[1].trim();
-            let abbr = content.split(/[;,]/)[0].trim();
-            // Isotope prefixes such as “1H NMR” should be normalized to the
-            // reusable abbreviation “NMR”.
-            if (!isValidShortForm(abbr)) {
-                const isotope = abbr.match(/^[0-9]+[A-Za-z]?\s+([A-Za-z][A-Za-z0-9\-\/]{1,15})$/);
-                if (isotope) abbr = isotope[1];
-            }
-            if (!isValidShortForm(abbr) && content.includes(',')) {
-                // Also support “photosensitizer, PS” style chunks in this
-                // generic scanner, while the dedicated internal pattern below
-                // handles the same format more explicitly.
-                const parts = content.split(',');
-                abbr = parts[parts.length - 1].trim();
-            }
-            if (!isValidShortForm(abbr) && !isWeakButPlausibleShortForm(abbr)) continue;
-            const before = normalised.slice(Math.max(0, pm2.index - 280), pm2.index).trim();
-            // Prefer text after the last strong sentence boundary.  We keep
-            // colons out of this list because chemical names often contain
-            // colons, e.g. acyl-CoA: cholesterol acyltransferase 2.
-            const b = Math.max(before.lastIndexOf('. '), before.lastIndexOf('; '), before.lastIndexOf('? '), before.lastIndexOf('! '));
-            const candidate = (b >= 0 ? before.slice(b + 2) : before).trim();
-            const refined = refineLongForm(abbr, candidate);
-            addPair(abbr, refined.term, 'paren-window', { strictAligned: refined.strictAligned });
-        }
-
-        // Pattern A3: reverse local definitions, “SF (long form)”.
-        // Many biomedical papers define a term after the short form, e.g.
-        // “BFU-E (Burst Forming Unit–Erythroid)” or
-        // “MEP (Megakaryocyte Erythroid Progenitor)”.  This is deliberately
-        // stricter than Pattern A: we only accept the pair when the long form
-        // aligns well with the short form.  That prevents ordinary explanatory
-        // parentheses after words from becoming false abbreviations.
-        const reverseOutsidePattern = /(?:^|[^A-Za-z0-9])([A-Za-z0-9][A-Za-z0-9\-\/]{1,15}s?)\s*[\(\[]\s*([A-Za-z][A-Za-z0-9ε\-–—'’\.]*\s+[A-Za-z][A-Za-z0-9ε\-–—'’\.]*[^()\[\]]{0,120}?)\s*[\)\]]/g;
-        let rm;
-        while ((rm = reverseOutsidePattern.exec(normalised))) {
-            const abbr = rm[1].trim();
-            const rawTerm = rm[2].trim();
-            if (!isValidShortForm(abbr)) continue;
-            // If the parenthetical content itself looks like a short-form list
-            // rather than a long form, leave it to the other patterns.
-            if (isValidShortForm(rawTerm)) continue;
-            const refined = refineLongForm(abbr, rawTerm);
-            if (!refined.strictAligned && hmmStyleScore(abbr, refined.term) < 0.95) continue;
-            addPair(abbr, refined.term, 'reverse-outside', { strictAligned: refined.strictAligned });
-        }
-
-        // Pattern B: parenthetical definitions such as “(photosensitizer, PS)”
-        // or “(temoporfin, mTHPC)”, where the expansion is inside the brackets.
-        const internalPattern = /\(\s*([A-Za-z][A-Za-z0-9ε\-–—'’ ]{2,80}?)\s*,\s*([A-Za-z0-9][A-Za-z0-9\-\/]{1,15}s?)\s*\)/g;
-        let im;
-        while ((im = internalPattern.exec(normalised))) {
-            addPair(im[2].trim(), im[1].trim(), 'internal');
-        }
-
-        // Pattern C intentionally omitted for now. Paired constructions
-        // such as “X- and Y-targeted micelles (X-TM and Y-TM, respectively)”
-        // need a general local-evidence parser; a dictionary-only rescue is
-        // too paper-specific and can inject unsupported terms.
-
-        // Pattern D: common fallback glossary.  This runs only after local
-        // extraction is complete.  It does not override local definitions and
-        // it never uses paper-specific rescues.  Low-ambiguity entries can be
-        // added when the abbreviation appears repeatedly.  Medium/high
-        // ambiguity entries require contextual support.  If more than one
-        // supported meaning remains, show all supported options rather than
-        // pretending certainty.
-        function getContextSupport(abbr, option) {
-            const ctx = option.context || [];
-            if (!ctx.length) return option.ambiguity === 'low';
-            const lower = normalised.toLowerCase();
-            for (const c of ctx) {
-                if (lower.includes(String(c).toLowerCase())) return true;
-            }
-            // Look near occurrences as a fallback for multi-word context that
-            // may be split by PDF extraction.
-            try {
-                const re = new RegExp('(?:^|[^A-Za-z0-9])' + escapeRegExp(abbr) + '(?=$|[^A-Za-z0-9])', 'gi');
-                let hit;
-                while ((hit = re.exec(normalised))) {
-                    const win = normalised.slice(Math.max(0, hit.index - 220), Math.min(normalised.length, hit.index + 220)).toLowerCase();
-                    for (const c of ctx) {
-                        const parts = String(c).toLowerCase().split(/\s+/).filter(Boolean);
-                        if (parts.length && parts.every(part => win.includes(part))) return true;
-                    }
-                }
-            } catch (e) {}
-            return false;
-        }
-        function addCommonKnownPair(abbr, options) {
-            if (!options || !options.length) return;
-            if (seen.has(abbr)) return;
-            const singular = singularShortForm(abbr);
-            if (singular && seen.has(singular)) return;
-            for (const plural of pluralShortForms(abbr)) {
-                if (seen.has(plural)) return;
-            }
-            const count = abbrCounts[abbr] || 0;
-            if (count < 2) return;
-            const supported = [];
-            for (const opt of options) {
-                if (opt.ambiguity === 'low' || getContextSupport(abbr, opt)) supported.push(opt);
-            }
-            if (!supported.length) return;
-            const terms = [];
-            for (const opt of supported) {
-                if (terms.indexOf(opt.term) === -1) terms.push(opt.term);
-            }
-            if (!terms.length) return;
-            const suffix = terms.length > 1
-                ? ' (common possible meanings; not explicitly defined in this paper)'
-                : ' (common term; not explicitly defined in this paper)';
-            const term = terms.join(' / ') + suffix;
-            seen.add(abbr);
-            if (singular) seen.add(singular);
-            for (const plural of pluralShortForms(abbr)) seen.add(plural);
-            pairs.push({ abbr, term, source: 'common-known', confidence: terms.length > 1 ? 'low' : 'medium' });
-        }
-        for (const key of Object.keys(commonKnownDefs)) {
-            addCommonKnownPair(key, commonKnownDefs[key]);
-        }
-
-        // The user layer runs last and wins outright. A user definition is only
-        // applied when the abbreviation actually occurs in this document, so an
-        // unrelated personal glossary does not add noise to every paper.
-        const userDefs = this.dictionaries.userDefs || {};
-        for (const [abbr, term] of Object.entries(userDefs)) {
-            if (!abbr || !term || !abbrCounts[abbr]) continue;
-            const existing = pairs.find(p => p.abbr === abbr);
-            if (existing) {
-                existing.term = term;
-                existing.source = 'user';
-                existing.confidence = 'high';
-            } else {
-                pairs.push({ abbr, term, source: 'user', confidence: 'high' });
-            }
-        }
-
-        const ignored = new Set(this.dictionaries.ignore || []);
-        return ignored.size ? pairs.filter(p => !ignored.has(p.abbr)) : pairs;
+        return detectAbbreviations(text, this.dictionaries || {});
     },
 
     /**
