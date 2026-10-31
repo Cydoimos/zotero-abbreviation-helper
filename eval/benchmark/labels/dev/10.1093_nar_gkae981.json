@@ -1,0 +1,251 @@
+{
+ "doi": "10.1093/nar/gkae981",
+ "title": "NusG-dependent RNA polymerase pausing is a common feature of riboswitch regulatory mechanisms",
+ "journal": "Nucleic Acids Research",
+ "defined": [
+  {
+   "sf": "NGN",
+   "lf": "N-terminal NusG domain",
+   "how": "other"
+  },
+  {
+   "sf": "ntDNA",
+   "lf": "nontemplate DNA",
+   "how": "paren"
+  },
+  {
+   "sf": "PEC",
+   "lf": "paused elongation complex",
+   "how": "paren"
+  },
+  {
+   "sf": "RNAP",
+   "lf": "RNA polymerase",
+   "how": "paren"
+  },
+  {
+   "sf": "AT",
+   "lf": "antiterminator",
+   "how": "paren"
+  },
+  {
+   "sf": "ATP",
+   "lf": "adenosine triphosphate",
+   "how": "paren"
+  },
+  {
+   "sf": "SD",
+   "lf": "Shine-Dalgarno",
+   "how": "other"
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction",
+   "how": "paren"
+  },
+  {
+   "sf": "WT",
+   "lf": "wild-type",
+   "how": "paren"
+  },
+  {
+   "sf": "ACH",
+   "lf": "acid casein hydrolysate",
+   "how": "paren"
+  },
+  {
+   "sf": "TPP",
+   "lf": "thiamine pyrophosphate",
+   "how": "paren"
+  },
+  {
+   "sf": "ANOVA",
+   "lf": "analysis of variance",
+   "how": "paren"
+  },
+  {
+   "sf": "NTPs",
+   "lf": "nucleoside triphosphates",
+   "how": "paren"
+  },
+  {
+   "sf": "FMN",
+   "lf": "flavin mononucleotide",
+   "how": "paren"
+  },
+  {
+   "sf": "TSS",
+   "lf": "transcription start site",
+   "how": "paren"
+  },
+  {
+   "sf": "SAM",
+   "lf": "S-adenosyl methionine",
+   "how": "paren"
+  },
+  {
+   "sf": "IGV",
+   "lf": "integrated genomic viewer",
+   "how": "paren"
+  },
+  {
+   "sf": "RO",
+   "lf": "run-off",
+   "how": "paren"
+  },
+  {
+   "sf": "KD",
+   "lf": "dissociation constant",
+   "how": "paren"
+  },
+  {
+   "sf": "SigA",
+   "lf": "sigma factor",
+   "how": "other"
+  },
+  {
+   "sf": "RNET-seq",
+   "lf": "native elongating transcript sequencing followed by RNase I digestion",
+   "how": "paren"
+  },
+  {
+   "sf": "TRAP",
+   "lf": "trp RNA-binding attenuation protein",
+   "how": "reverse"
+  },
+  {
+   "sf": "EC50",
+   "lf": "half-maximal response",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "mRNA",
+   "lf": "messenger RNA"
+  },
+  {
+   "sf": "tRNA",
+   "lf": "transfer RNA"
+  },
+  {
+   "sf": "UTP",
+   "lf": "uridine triphosphate"
+  },
+  {
+   "sf": "GTP",
+   "lf": "guanosine triphosphate"
+  }
+ ],
+ "ignore": [
+  "NusG",
+  "NusGdependent",
+  "NusG-dependent",
+  "NusG-stimulated",
+  "NusA",
+  "nusG",
+  "ribD",
+  "ribDEAHT",
+  "fmnP",
+  "tenA",
+  "mgtE",
+  "lysP",
+  "mtnK",
+  "tlrB",
+  "vmlR",
+  "trpE",
+  "trpEDCFBA",
+  "amyE",
+  "lacZ",
+  "fmnP-lacZ",
+  "mtnK-lacZ",
+  "mgtE-lacZ",
+  "lysP-lacZ",
+  "tenA-lacZ",
+  "SD-sequestering",
+  "SAM-binding",
+  "SAM-responsive",
+  "FMN-dependent",
+  "RNA-binding",
+  "RNAs",
+  "M-box",
+  "Term",
+  "%T",
+  "A145",
+  "A193",
+  "C154",
+  "U136",
+  "U195",
+  "U208",
+  "S1A",
+  "TTCTTT",
+  "TTCAAA",
+  "TTTTTT",
+  "TTTAAA",
+  "TTNTTT",
+  "GTATTT",
+  "GTAAAA",
+  "TCTCTT",
+  "TCTCAA",
+  "pDH32",
+  "ptrpBGI-PLK",
+  "EcoRI",
+  "BamHI",
+  "PstI",
+  "Mg2",
+  "Mg2+",
+  "MgCl2",
+  "KCl",
+  "Tris-HCl",
+  "mM",
+  "nM",
+  "pH",
+  "RightsLink",
+  "Health",
+  "GM098399",
+  "GM153190",
+  "PA",
+  "USA",
+  "0.02 mM",
+  "0.1 mM",
+  "0.6-0.7 mg/ml",
+  "0.6-0.7 μg",
+  "1 e-/pixel/s",
+  "1.7 μM",
+  "100 μM",
+  "100% humidity",
+  "15 mA",
+  "2.5 MgCl2",
+  "21°C",
+  "2x100 sec",
+  "32 μM",
+  "4.3 μM",
+  "40 μM",
+  "400 μM",
+  "4°C",
+  "640 DCXR",
+  "6xHis-tag",
+  "80%:20% ratio",
+  "80kPa pressure",
+  "8ORQ",
+  "HEPES/KOH",
+  "One/OneC",
+  "RNAP-Spt4/5",
+  "Rpo1C",
+  "Rpo2C",
+  "Spt4/5",
+  "Spt4/5-TEC",
+  "Spt4/521",
+  "Tris/HCl",
+  "nanoLC-MS/MS",
+  "subunit Rpo2C*Q373"
+ ]
+}

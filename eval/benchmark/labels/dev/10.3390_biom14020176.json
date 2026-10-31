@@ -1,0 +1,303 @@
+{
+ "doi": "10.3390/biom14020176",
+ "title": "Mechanisms and Functions of the RNA Polymerase II General Transcription Machinery during the Transcription Cycle",
+ "journal": "Biomolecules",
+ "defined": [
+  {
+   "sf": "GTFs",
+   "lf": "general transcription factors",
+   "how": "paren"
+  },
+  {
+   "sf": "Pol II",
+   "lf": "RNA polymerase II",
+   "how": "paren"
+  },
+  {
+   "sf": "mRNA",
+   "lf": "messenger RNA",
+   "how": "paren"
+  },
+  {
+   "sf": "lncRNA",
+   "lf": "long non-coding RNA",
+   "how": "paren"
+  },
+  {
+   "sf": "snRNA",
+   "lf": "small nuclear RNA",
+   "how": "paren"
+  },
+  {
+   "sf": "miRNA",
+   "lf": "microRNA",
+   "how": "paren"
+  },
+  {
+   "sf": "PIC",
+   "lf": "Preinitiation Complex",
+   "how": "paren"
+  },
+  {
+   "sf": "TSS",
+   "lf": "transcriptional start site",
+   "how": "paren"
+  },
+  {
+   "sf": "TFIID",
+   "lf": "general transcription factor IID",
+   "how": "paren"
+  },
+  {
+   "sf": "TBPs",
+   "lf": "TATA-binding proteins",
+   "how": "paren"
+  },
+  {
+   "sf": "TAFs",
+   "lf": "TBP-associated factors",
+   "how": "paren"
+  },
+  {
+   "sf": "Inr",
+   "lf": "initiator",
+   "how": "paren"
+  },
+  {
+   "sf": "ncRNA",
+   "lf": "noncoding RNA",
+   "how": "paren"
+  },
+  {
+   "sf": "eRNAs",
+   "lf": "enhancer RNAs",
+   "how": "paren"
+  },
+  {
+   "sf": "PPP",
+   "lf": "promoter proximal pausing",
+   "how": "paren"
+  },
+  {
+   "sf": "DSIF",
+   "lf": "DRB Sensitivity Inducing Factor",
+   "how": "paren"
+  },
+  {
+   "sf": "NELF",
+   "lf": "Negative Elongation Factor",
+   "how": "paren"
+  },
+  {
+   "sf": "P-TEFb",
+   "lf": "positive transcription elongation factor b",
+   "how": "paren"
+  },
+  {
+   "sf": "EFs",
+   "lf": "elongation factors",
+   "how": "paren"
+  },
+  {
+   "sf": "PARPs",
+   "lf": "Poly (ADP-ribose) Polymerases",
+   "how": "paren"
+  },
+  {
+   "sf": "SEC",
+   "lf": "super elongation complex",
+   "how": "paren"
+  },
+  {
+   "sf": "CPA",
+   "lf": "cleavage and polyadenylation complex",
+   "how": "paren"
+  },
+  {
+   "sf": "ELL",
+   "lf": "elongation factor for RNA Pol II",
+   "how": "paren"
+  },
+  {
+   "sf": "PAS",
+   "lf": "polyadenylation site",
+   "how": "paren"
+  },
+  {
+   "sf": "ChIP-seq",
+   "lf": "chromatin immunoprecipitation followed by high-throughput sequencing",
+   "how": "paren"
+  },
+  {
+   "sf": "uBRE",
+   "lf": "upstream TFIIB recognition element",
+   "how": "inside",
+   "alt": [
+    "upstream TFIIB recognition elements"
+   ]
+  },
+  {
+   "sf": "dBRE",
+   "lf": "downstream TFIIB recognition element",
+   "how": "inside",
+   "alt": [
+    "downstream TFIIB recognition elements"
+   ]
+  },
+  {
+   "sf": "BREs",
+   "lf": "TFIIB recognition elements",
+   "how": "other"
+  },
+  {
+   "sf": "CTD",
+   "lf": "C-terminal domain",
+   "how": "other",
+   "alt": [
+    "carboxy-terminal domain"
+   ]
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "tRNAs",
+   "lf": "transfer RNAs"
+  },
+  {
+   "sf": "rRNAs",
+   "lf": "ribosomal RNAs"
+  },
+  {
+   "sf": "ATP",
+   "lf": "adenosine triphosphate"
+  },
+  {
+   "sf": "cryo-EM",
+   "lf": "cryo-electron microscopy"
+  }
+ ],
+ "ignore": [
+  "TFIIA",
+  "TFIIB",
+  "TFIIE",
+  "TFIIEα",
+  "TFIIEβ",
+  "TFIIF",
+  "TFIIH",
+  "TFIIS",
+  "IIA",
+  "IIB",
+  "IIE",
+  "IIF",
+  "IIH",
+  "IID",
+  "RNAPII",
+  "II-transcribed",
+  "TATA",
+  "TATA-Binding",
+  "Box-Binding",
+  "Rpb1",
+  "Rpb2",
+  "Rpb4",
+  "Rpb7",
+  "Rpb12",
+  "Rbp1",
+  "RAP30",
+  "RAP74",
+  "Rap30",
+  "XPB",
+  "XPD",
+  "XBP",
+  "XPB subunit",
+  "CAK",
+  "CDK7",
+  "CDK9",
+  "p62",
+  "p52",
+  "p44",
+  "p34",
+  "p8",
+  "TAF1",
+  "Spt4",
+  "Spt5",
+  "Spt6",
+  "Chd1",
+  "FACT",
+  "XRN2",
+  "Xrn2",
+  "Paf1",
+  "Paf1C",
+  "PAF",
+  "PAF1",
+  "Bur1",
+  "Rtf1",
+  "H2B",
+  "H3",
+  "K4",
+  "CPSF73",
+  "DRB",
+  "YSPTSPS",
+  "Ser2",
+  "Ser5",
+  "Ser7",
+  "Tyr1",
+  "Thr4",
+  "ATPase",
+  "ATP-dependent",
+  "RNAs",
+  "ChIP-exo",
+  "Cryo-EM",
+  "PIC assembly",
+  "TF",
+  "kDa",
+  "Pre-Initiation",
+  "Carboxy-Terminal",
+  "C-Terminal",
+  "N-Terminal",
+  "DNA-Binding",
+  "Double-Stranded",
+  "Protein-Coding",
+  "Genome-Wide",
+  "Single-Molecule",
+  "Real-Time",
+  "Live-Cell",
+  "Tyrosine-1",
+  "Threonine-4",
+  "NET-Seq",
+  "MDPI",
+  "CrossRef",
+  "PubMed",
+  "EMBO",
+  "eLife",
+  "BBA",
+  "USA",
+  "CO",
+  "FOR",
+  "PEER",
+  "REVIEW",
+  "J.A.G.",
+  "J.F.K.",
+  "Dugast-Darzacq",
+  "Juven-Gershon",
+  "Glover-Cutter",
+  "33 kDa",
+  "Figure1",
+  "Figure2",
+  "Figure3",
+  "Figure4",
+  "II/GTFs",
+  "II/TFIIF",
+  "PP1/PNUTS",
+  "Paf1C",
+  "TFIID/TFIIA",
+  "Table1"
+ ]
+}

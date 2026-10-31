@@ -1,0 +1,233 @@
+{
+ "doi": "10.1038/s41467-025-66290-x",
+ "title": "PyFuRNAce: an integrated design engine for RNA origami",
+ "journal": "Nature Communications",
+ "defined": [
+  {
+   "sf": "SELEX",
+   "lf": "Systematic Evolution of Ligands by Exponential Enrichment",
+   "how": "reverse"
+  },
+  {
+   "sf": "ZMBH",
+   "lf": "Center for Molecular Biology of Heidelberg University",
+   "how": "paren"
+  },
+  {
+   "sf": "tectoRNA",
+   "lf": "RNA architectonics",
+   "how": "paren"
+  },
+  {
+   "sf": "PX",
+   "lf": "paranemic cohesion",
+   "how": "paren"
+  },
+  {
+   "sf": "AFM",
+   "lf": "atomic force microscopy",
+   "how": "paren",
+   "alt": [
+    "Atomic force microscopy"
+   ]
+  },
+  {
+   "sf": "TEM",
+   "lf": "transmission electron microscopy",
+   "how": "other",
+   "alt": [
+    "experimental techniques"
+   ],
+   "note": "listed as an example technique, never spelled out"
+  },
+  {
+   "sf": "Cryo-EM",
+   "lf": "cryogenic electron microscopy",
+   "how": "other",
+   "alt": [
+    "experimental techniques"
+   ],
+   "note": "listed as an example technique, never spelled out"
+  },
+  {
+   "sf": "ROAD",
+   "lf": "RNA Origami Automated Design",
+   "how": "paren"
+  },
+  {
+   "sf": "RNAbuild",
+   "lf": "build 3D structures from a fixed motif library",
+   "how": "paren",
+   "alt": [
+    "the algorithm that builds 3D structures from a fixed motif library"
+   ]
+  },
+  {
+   "sf": "Revolvr",
+   "lf": "sequence optimization through inverse folding and sequence symmetry minimization",
+   "how": "paren",
+   "alt": [
+    "the sequence optimization algorithm"
+   ]
+  },
+  {
+   "sf": "GUI",
+   "lf": "graphical user interface",
+   "how": "paren"
+  },
+  {
+   "sf": "IVT",
+   "lf": "In vitro transcription",
+   "how": "paren"
+  },
+  {
+   "sf": "NEB",
+   "lf": "New England Biolabs",
+   "how": "paren"
+  },
+  {
+   "sf": "IDT",
+   "lf": "Integrated DNA Technologies",
+   "how": "paren",
+   "alt": [
+    "Integrated DNA technologies"
+   ]
+  },
+  {
+   "sf": "PyPI",
+   "lf": "Python Package Index",
+   "how": "paren"
+  },
+  {
+   "sf": "DFG",
+   "lf": "Deutsche Forschungsgemeinschaft",
+   "how": "inside",
+   "alt": [
+    "German Research Foundation"
+   ]
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction"
+  },
+  {
+   "sf": "rNTPs",
+   "lf": "ribonucleoside triphosphates"
+  },
+  {
+   "sf": "UV",
+   "lf": "ultraviolet"
+  },
+  {
+   "sf": "TAE",
+   "lf": "Tris-acetate-EDTA"
+  },
+  {
+   "sf": "bp",
+   "lf": "base pairs"
+  },
+  {
+   "sf": "MD",
+   "lf": "molecular dynamics"
+  },
+  {
+   "sf": "SDS",
+   "lf": "sodium dodecyl sulfate"
+  },
+  {
+   "sf": "PDB",
+   "lf": "Protein Data Bank"
+  },
+  {
+   "sf": "HEPES",
+   "lf": "4-(2-hydroxyethyl)-1-piperazineethanesulfonic acid"
+  }
+ ],
+ "ignore": [
+  "PyFuRNAce",
+  "pyFuRNAce",
+  "oxRNA",
+  "oxDNA",
+  "OxView",
+  "ViennaRNA",
+  "RNAComposer",
+  "CaDNAno29",
+  "Tiamat30",
+  "ENSnano31",
+  "Athena32",
+  "SARSE33",
+  "Streamlit53",
+  "NumPy54",
+  "SciPy55",
+  "Forna",
+  "Dorivac",
+  "Trace_analysis",
+  "Trace_pattern",
+  "Rect-10H-3X",
+  "DFHBI-1T",
+  "DFHBI1T",
+  "GelRed",
+  "TriDyeTM",
+  "HiScribe",
+  "DNase",
+  "Q5",
+  "Qiagen",
+  "Twist",
+  "Bruker",
+  "FASTSCAN-D",
+  "NanoWizard",
+  "ChemiDoc",
+  "BioRad",
+  "Greiner",
+  "Ibidi",
+  "Picodent",
+  "Tecan",
+  "Spark",
+  "LSM",
+  "Broccoli",
+  "Sigma-Aldrich",
+  "SigmaAldrich",
+  "Jena",
+  "Corning",
+  "Carl",
+  "AG",
+  "GmbH",
+  "Inc.",
+  "CRC",
+  "ACS",
+  "IEEE",
+  "VARMS",
+  "IEEEVR",
+  "ERC",
+  "ENSYNC",
+  "MgCl2",
+  "KCl",
+  "CH3COO",
+  "OH",
+  "mM",
+  "μM",
+  "μL",
+  "kHz",
+  "W/V",
+  "Lane",
+  "PCR-amplified",
+  "RNA-based",
+  "‘Droplet-5-in-arm’",
+  "‘Droplet-5-in-core’",
+  "S2",
+  "S3",
+  "S5",
+  "CA",
+  "USA"
+ ]
+}

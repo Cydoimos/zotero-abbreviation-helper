@@ -1,0 +1,305 @@
+{
+ "doi": "10.1038/s41557-021-00679-1",
+ "title": "RNA origami design tools enable cotranscriptional folding of kilobase-sized nanoscaffolds",
+ "journal": "Nature Chemistry",
+ "defined": [
+  {
+   "sf": "KLs",
+   "lf": "kissing loops",
+   "how": "paren",
+   "alt": [
+    "kissing-loop interactions"
+   ]
+  },
+  {
+   "sf": "FRET",
+   "lf": "Förster resonance energy transfer",
+   "how": "paren"
+  },
+  {
+   "sf": "ROAD",
+   "lf": "RNA Origami Automated Design",
+   "how": "paren"
+  },
+  {
+   "sf": "AFM",
+   "lf": "atomic force microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "SEC",
+   "lf": "size-exclusion chromatography",
+   "how": "paren",
+   "alt": [
+    "Size-exclusion chromatography"
+   ]
+  },
+  {
+   "sf": "TEM",
+   "lf": "transmission electron microscopy",
+   "how": "paren",
+   "alt": [
+    "negative-stain transmission electron microscopy"
+   ]
+  },
+  {
+   "sf": "180KLs",
+   "lf": "KLs that interact at an angle of 180°",
+   "how": "reverse"
+  },
+  {
+   "sf": "120KL",
+   "lf": "KLs that interact at an angle of 120°",
+   "how": "paren",
+   "alt": [
+    "connectors that interact at an angle of 120°"
+   ]
+  },
+  {
+   "sf": "DT",
+   "lf": "dovetail",
+   "how": "paren"
+  },
+  {
+   "sf": "MFE",
+   "lf": "minimum free energy",
+   "how": "paren"
+  },
+  {
+   "sf": "SSM",
+   "lf": "sequence symmetry minimization",
+   "how": "paren"
+  },
+  {
+   "sf": "bp",
+   "lf": "base pairs",
+   "how": "paren"
+  },
+  {
+   "sf": "nt",
+   "lf": "nucleotides",
+   "how": "other",
+   "alt": [
+    "nucleotides"
+   ],
+   "note": "used throughout as a unit; never spelled out next to \"nt\" itself"
+  },
+  {
+   "sf": "5HS",
+   "lf": "five-helix scaffold",
+   "how": "paren"
+  },
+  {
+   "sf": "CFP",
+   "lf": "cyan fluorescent protein",
+   "how": "inside"
+  },
+  {
+   "sf": "YFP",
+   "lf": "yellow fluorescent protein",
+   "how": "inside"
+  },
+  {
+   "sf": "MCP",
+   "lf": "MS2 coat protein",
+   "how": "paren"
+  },
+  {
+   "sf": "PCP",
+   "lf": "PP7 coat protein",
+   "how": "paren"
+  },
+  {
+   "sf": "S2T",
+   "lf": "short, two turns",
+   "how": "reverse"
+  },
+  {
+   "sf": "S3T",
+   "lf": "short, three turns",
+   "how": "reverse"
+  },
+  {
+   "sf": "L3T",
+   "lf": "long, three turns",
+   "how": "reverse"
+  },
+  {
+   "sf": "DTT",
+   "lf": "dithiothreitol",
+   "how": "paren"
+  },
+  {
+   "sf": "IPTG",
+   "lf": "isopropyl-β-d-1-thiogalactopyranoside",
+   "how": "paren"
+  },
+  {
+   "sf": "LB",
+   "lf": "Luria Bertani",
+   "how": "paren"
+  },
+  {
+   "sf": "PAGE",
+   "lf": "polyacrylamide gel electrophoresis",
+   "how": "paren"
+  },
+  {
+   "sf": "SHAPE-Seq",
+   "lf": "selective 2′-hydroxyl acylation analyzed by primer extension sequencing",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction"
+  },
+  {
+   "sf": "UV",
+   "lf": "ultraviolet"
+  },
+  {
+   "sf": "NTPs",
+   "lf": "nucleoside triphosphates"
+  },
+  {
+   "sf": "rNTPs",
+   "lf": "ribonucleoside triphosphates"
+  },
+  {
+   "sf": "TAE",
+   "lf": "Tris-acetate-EDTA"
+  },
+  {
+   "sf": "GC",
+   "lf": "guanine-cytosine"
+  }
+ ],
+ "ignore": [
+  "RNAbuild",
+  "RNApath",
+  "Revolvr",
+  "ViennaRNA",
+  "NUPACK",
+  "oxRNA",
+  "Assemble2",
+  "GitHub",
+  "PDB",
+  "1HP6",
+  "MS2",
+  "PP7",
+  "iSpinach",
+  "Spinach",
+  "Mango",
+  "DFHBI-1T",
+  "YO3-biotin",
+  "mTurquoise2",
+  "mTq-MCP",
+  "YPet",
+  "YPet-PCP",
+  "MCP-CFP",
+  "PCP-YFP",
+  "3DT",
+  "5DT",
+  "2DT",
+  "4DT",
+  "11DT",
+  "DTs",
+  "L2T",
+  "L2TsDT",
+  "3H",
+  "5H",
+  "6H",
+  "9H",
+  "1X",
+  "2X",
+  "3X",
+  "4X",
+  "3HsDT",
+  "3H-sDT",
+  "ZigZag-A-1X",
+  "ZigZag-B-1X",
+  "ZigZag-B-2X",
+  "ZigZag-B-4X",
+  "ZigZag-B-9H",
+  "Ribbon-9H",
+  "Ribbon-5H-3X",
+  "Rectangle-9H-3X",
+  "Path1",
+  "Path2",
+  "Path1-optimized",
+  "Path2-optimized",
+  "M5P1",
+  "M5P2",
+  "M5P3",
+  "M5P4",
+  "M5P10",
+  "Sp",
+  "Ma",
+  "Te",
+  "DE3",
+  "BL21",
+  "ATUM",
+  "NEB",
+  "GE",
+  "Bruker",
+  "Amersham",
+  "Horiba",
+  "Qsonica",
+  "TALON",
+  "Apigenex",
+  "Varioskan",
+  "Typhoon",
+  "FluoroMax",
+  "Superose",
+  "Spectra-Por",
+  "Float-A-Lyzer",
+  "Takara",
+  "Spectrum",
+  "Thermo",
+  "OAc",
+  "Mg2+",
+  "MgCl2",
+  "NiCl2",
+  "KCl",
+  "Tris-OAc",
+  "mM",
+  "nM",
+  "μl",
+  "kDa",
+  "RCF",
+  "exD",
+  "emA",
+  "emD",
+  "ID",
+  "Dleak",
+  "NSF",
+  "ONR",
+  "ERC",
+  "CCF-1317694",
+  "CMMI-1636364",
+  "N0001416-1-2159",
+  "NAtuRE",
+  "ChEMiStRy",
+  "NATURe",
+  "CHeMisTRy",
+  "VOL",
+  "JUNe",
+  "ACS",
+  "USA",
+  "CA",
+  "SeC",
+  "TeM",
+  "FReT",
+  "RNA-protein"
+ ]
+}

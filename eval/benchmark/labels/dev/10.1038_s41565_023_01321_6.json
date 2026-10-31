@@ -1,0 +1,240 @@
+{
+ "doi": "10.1038/s41565-023-01321-6",
+ "title": "Structure, folding and flexibility of co-transcriptional RNA origami",
+ "journal": "Nature Nanotechnology",
+ "defined": [
+  {
+   "sf": "DX",
+   "lf": "double-crossover",
+   "how": "paren"
+  },
+  {
+   "sf": "KL",
+   "lf": "kissing-loop",
+   "how": "paren"
+  },
+  {
+   "sf": "NS-TEM",
+   "lf": "negative-stain transmission electron microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "cryo-EM",
+   "lf": "Cryogenic electron microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "iNANO",
+   "lf": "Interdisciplinary Nanoscience Center",
+   "how": "paren"
+  },
+  {
+   "sf": "NMR",
+   "lf": "nuclear magnetic resonance",
+   "how": "paren"
+  },
+  {
+   "sf": "SAXS",
+   "lf": "small-angle X-ray scattering",
+   "how": "paren"
+  },
+  {
+   "sf": "cryo-ET",
+   "lf": "cryogenic electron tomography",
+   "how": "paren"
+  },
+  {
+   "sf": "ROAD",
+   "lf": "RNA origami automated design",
+   "how": "paren"
+  },
+  {
+   "sf": "DT",
+   "lf": "dovetail",
+   "how": "paren"
+  },
+  {
+   "sf": "5HT",
+   "lf": "five-helix tile",
+   "how": "paren"
+  },
+  {
+   "sf": "6HB",
+   "lf": "six-helix bundles",
+   "how": "paren",
+   "alt": [
+    "six-helix bundle"
+   ]
+  },
+  {
+   "sf": "bKL",
+   "lf": "branched kissing-loop",
+   "how": "paren"
+  },
+  {
+   "sf": "16HS",
+   "lf": "16-helix satellite",
+   "how": "paren"
+  },
+  {
+   "sf": "CTF",
+   "lf": "contrast transfer function",
+   "how": "paren"
+  },
+  {
+   "sf": "FSC",
+   "lf": "Fourier shell correlation",
+   "how": "paren"
+  },
+  {
+   "sf": "RSR",
+   "lf": "real-space refinement",
+   "how": "paren"
+  },
+  {
+   "sf": "MDFF",
+   "lf": "molecular dynamics flexible fitting",
+   "how": "paren"
+  },
+  {
+   "sf": "IPET",
+   "lf": "individual-particle electron tomography",
+   "how": "paren"
+  },
+  {
+   "sf": "SNR",
+   "lf": "signal-to-noise ratio",
+   "how": "paren"
+  },
+  {
+   "sf": "EMDB",
+   "lf": "Electron Microscopy Data Bank",
+   "how": "paren"
+  },
+  {
+   "sf": "PDB",
+   "lf": "Protein Data Bank",
+   "how": "paren"
+  },
+  {
+   "sf": "6HBC",
+   "lf": "six-helix bundle with a clasp",
+   "how": "other",
+   "alt": [
+    "6HB with H6 functioning as a clasp"
+   ],
+   "note": "named in passing: \"in H6 functioning as a clasp (6HBC)\""
+  },
+  {
+   "sf": "PBS",
+   "lf": "protein-binding studies",
+   "how": "other",
+   "alt": [
+    "protein-binding studies variant"
+   ],
+   "note": "from \"a variant of 6HBC … for protein-binding studies (6HBC-PBS)\""
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "bp",
+   "lf": "base pairs"
+  },
+  {
+   "sf": "nt",
+   "lf": "nucleotides"
+  }
+ ],
+ "ignore": [
+  "5HT-A",
+  "5HT-B",
+  "5HT-B-V2",
+  "5HT-B-3X",
+  "5HT-A-TC",
+  "5HTs",
+  "6HBC-PBS",
+  "6HBC-young",
+  "6HBC-young-1",
+  "6HBC-young-2",
+  "6HBC-mature-1",
+  "6HBC-mature-2",
+  "6HBC-PBS-mature",
+  "6HBC-PBS-mature-1",
+  "6HBC-2",
+  "H1",
+  "H3",
+  "H4",
+  "H5",
+  "H6",
+  "H1–H5",
+  "J1",
+  "J4",
+  "J1–J4",
+  "LoTToR47",
+  "CSBDeep87",
+  "HyperSAXS76",
+  "CS-Live",
+  "Warp",
+  "Warp62",
+  "EMAN",
+  "EMAN89",
+  "pdb2mrc",
+  "2d1b",
+  "7PTQ",
+  "7QDU",
+  "7PTS",
+  "7PTK",
+  "7PTL",
+  "EMD-13633",
+  "EMD13926",
+  "EMD-13636",
+  "EMD-13592",
+  "EMD-13627",
+  "EMD-13628",
+  "EMD-13630",
+  "EMD-13626",
+  "EMD-13625",
+  "BsaI",
+  "Cytiva",
+  "Superose",
+  "Titan",
+  "Krios",
+  "G1",
+  "G3i",
+  "K2",
+  "K3",
+  "Cs",
+  "Gatan",
+  "Ametek",
+  "Thermo",
+  "CF400-Cu-UL",
+  "9040-00425B",
+  "CF20-0635",
+  "ERC",
+  "mM",
+  "keV",
+  "eV",
+  "nm",
+  "ml",
+  "cm",
+  "τ",
+  "I(q)",
+  "q",
+  "Methods",
+  "series88",
+  "M.",
+  "A.",
+  "T. A.",
+  "Nogales",
+  "Gomez",
+  "Springer"
+ ]
+}

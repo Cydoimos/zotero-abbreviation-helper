@@ -1,0 +1,337 @@
+{
+ "doi": "10.1093/nar/gkae282",
+ "title": "Structural basis of archaeal RNA polymerase transcription elongation and Spt4/5 recruitment",
+ "journal": "Nucleic Acids Research",
+ "defined": [
+  {
+   "sf": "RNAP",
+   "lf": "RNA polymerase",
+   "how": "paren"
+  },
+  {
+   "sf": "Pfu",
+   "lf": "Pyrococcus furiosus",
+   "how": "paren"
+  },
+  {
+   "sf": "EC",
+   "lf": "elongation complex",
+   "how": "paren"
+  },
+  {
+   "sf": "TEC",
+   "lf": "transcription elongation complexes",
+   "how": "paren"
+  },
+  {
+   "sf": "TS",
+   "lf": "template strand",
+   "how": "paren"
+  },
+  {
+   "sf": "NTS",
+   "lf": "non-template strand",
+   "how": "paren"
+  },
+  {
+   "sf": "TBP",
+   "lf": "TATA-binding protein",
+   "how": "paren"
+  },
+  {
+   "sf": "TFB",
+   "lf": "transcription factor B",
+   "how": "paren"
+  },
+  {
+   "sf": "BRE",
+   "lf": "B-recognition element",
+   "how": "paren"
+  },
+  {
+   "sf": "TFE",
+   "lf": "transcription factor E",
+   "how": "paren"
+  },
+  {
+   "sf": "PIC",
+   "lf": "pre-initiation complex",
+   "how": "paren"
+  },
+  {
+   "sf": "NGN",
+   "lf": "N-terminal NusG domain",
+   "how": "paren"
+  },
+  {
+   "sf": "cryo-EM",
+   "lf": "cryo-electron microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "PAGE",
+   "lf": "polyacrylamide gel",
+   "how": "paren"
+  },
+  {
+   "sf": "IPTG",
+   "lf": "isopropyl-beta-d-thiogalactosid",
+   "how": "paren"
+  },
+  {
+   "sf": "CTF",
+   "lf": "Contrast Transfer Function",
+   "how": "paren"
+  },
+  {
+   "sf": "3DVA",
+   "lf": "3D variability analysis",
+   "how": "paren"
+  },
+  {
+   "sf": "DTT",
+   "lf": "dithiothreitol",
+   "how": "paren"
+  },
+  {
+   "sf": "PCA",
+   "lf": "Principal component analysis",
+   "how": "paren"
+  },
+  {
+   "sf": "KOW",
+   "lf": "Kypridis-Ouzounis-Woese",
+   "how": "paren"
+  },
+  {
+   "sf": "smFRET",
+   "lf": "single-molecule FRET",
+   "how": "paren"
+  },
+  {
+   "sf": "SigA",
+   "lf": "sigma factor",
+   "how": "other"
+  },
+  {
+   "sf": "Mja",
+   "lf": "Methanocaldococcus jannaschii",
+   "how": "other"
+  },
+  {
+   "sf": "RPAP2",
+   "lf": "RNAP II associated with protein 2",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "dsDNA",
+   "lf": "double-stranded DNA"
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction"
+  },
+  {
+   "sf": "SDS-PAGE",
+   "lf": "sodium dodecyl sulfate polyacrylamide gel electrophoresis"
+  },
+  {
+   "sf": "SDS",
+   "lf": "sodium dodecyl sulfate"
+  },
+  {
+   "sf": "MS",
+   "lf": "mass spectrometry"
+  },
+  {
+   "sf": "EM",
+   "lf": "electron microscopy"
+  },
+  {
+   "sf": "FRET",
+   "lf": "Förster resonance energy transfer"
+  },
+  {
+   "sf": "PDB",
+   "lf": "Protein Data Bank"
+  },
+  {
+   "sf": "EDTA",
+   "lf": "ethylenediaminetetraacetic acid"
+  },
+  {
+   "sf": "LB",
+   "lf": "lysogeny broth"
+  },
+  {
+   "sf": "AGC",
+   "lf": "automatic gain control"
+  },
+  {
+   "sf": "FWHM",
+   "lf": "full width at half maximum"
+  },
+  {
+   "sf": "ORF",
+   "lf": "open reading frame"
+  },
+  {
+   "sf": "DSIF",
+   "lf": "DRB sensitivity-inducing factor"
+  }
+ ],
+ "ignore": [
+  "RNAP wt",
+  "PfuRNAP",
+  "Spt4",
+  "Spt5",
+  "Spt5-NGN",
+  "NusG",
+  "RfaH",
+  "aCPSF1",
+  "rpoD",
+  "Rpo1N",
+  "Rpo1C",
+  "Rpo2",
+  "Rpo2C",
+  "Rpo3",
+  "Rpo4",
+  "Rpo11",
+  "Rpb5",
+  "S10",
+  "S11",
+  "TFS4",
+  "ORF145",
+  "KOW4",
+  "KOW5",
+  "H12",
+  "H65",
+  "R64",
+  "R67",
+  "V131",
+  "F106",
+  "II",
+  "II54",
+  "RNA-TS",
+  "DNA-RNA",
+  "DNA-binding",
+  "DNA-free",
+  "TATA-binding",
+  "polymerase-Spt4",
+  "Cryo-EM",
+  "cryoEM",
+  "cryoSPARC",
+  "RELION",
+  "SerialEM",
+  "ChimeraX",
+  "WinCoot",
+  "Isolde",
+  "PHENIX",
+  "ProtParam",
+  "Expasy",
+  "GeneID",
+  "proDA",
+  "EasiGlow",
+  "UltrAufoil",
+  "Quantifoil",
+  "TedPella",
+  "CRYO",
+  "ARMTM",
+  "HisTrapTM",
+  "NanoDropTM",
+  "ChemiDocTMMP",
+  "UV-Vis",
+  "GL",
+  "GE",
+  "GE Healthcare",
+  "Cytiva",
+  "Sigma-Aldrich",
+  "Thermofisher",
+  "Invitrogen",
+  "Promega",
+  "BIORAD",
+  "Merk",
+  "Jeol",
+  "Dr. Maisch",
+  "Springer US",
+  "Elsevier",
+  "GmbH",
+  "bioRxiv",
+  "eLife",
+  "EMBO",
+  "PLoS",
+  "CC-BY-NC-ND",
+  "Methods",
+  "Methanobacteriota",
+  "StrepII-His6-tag",
+  "pMUR1",
+  "BamHI",
+  "SME",
+  "Na2S",
+  "NaCl",
+  "MgCl2",
+  "mM",
+  "mA",
+  "mAU",
+  "mW",
+  "kPa",
+  "pH",
+  "OD600",
+  "ID",
+  "C18-AQ",
+  "phase-C18",
+  "BS3",
+  "TRIS",
+  "HD",
+  "RCB",
+  "UK",
+  "US",
+  "J.",
+  "K.-D.",
+  "ed. Entian",
+  "Cryo-Electron",
+  "0.02 mM",
+  "0.1 mM",
+  "0.6-0.7 mg/ml",
+  "0.6-0.7 μg",
+  "1 e-/pixel/s",
+  "1.7 μM",
+  "100 μM",
+  "100% humidity",
+  "15 mA",
+  "2.5 MgCl2",
+  "21°C",
+  "2x100 sec",
+  "32 μM",
+  "4.3 μM",
+  "40 μM",
+  "400 μM",
+  "4°C",
+  "640 DCXR",
+  "6xHis-tag",
+  "80%:20% ratio",
+  "80kPa pressure",
+  "8ORQ",
+  "HEPES/KOH",
+  "One/OneC",
+  "RNAP-Spt4/5",
+  "Rpo1C",
+  "Rpo2C",
+  "Spt4/5",
+  "Spt4/5-TEC",
+  "Spt4/521",
+  "Tris/HCl",
+  "nanoLC-MS/MS",
+  "subunit Rpo2C*Q373"
+ ]
+}

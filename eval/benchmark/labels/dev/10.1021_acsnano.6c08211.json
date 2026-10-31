@@ -1,0 +1,249 @@
+{
+ "doi": "10.1021/acsnano.6c08211",
+ "title": "Programmable Edge-to-Edge Assembly of RNA Nanostructures",
+ "journal": "",
+ "defined": [
+  {
+   "sf": "alphaKL",
+   "lf": "alpha kissing loop",
+   "how": "paren"
+  },
+  {
+   "sf": "ZMBH",
+   "lf": "Center for Molecular Biology of Heidelberg University",
+   "how": "paren"
+  },
+  {
+   "sf": "KLs",
+   "lf": "Kissing loops",
+   "how": "paren"
+  },
+  {
+   "sf": "alphaPK",
+   "lf": "alpha-loop pseudoknot",
+   "how": "paren"
+  },
+  {
+   "sf": "PX",
+   "lf": "paranemic crossover",
+   "how": "paren"
+  },
+  {
+   "sf": "ROAD",
+   "lf": "RNA Origami Automated Design",
+   "how": "paren"
+  },
+  {
+   "sf": "MD",
+   "lf": "molecular dynamics",
+   "how": "paren"
+  },
+  {
+   "sf": "AFM",
+   "lf": "atomic force microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "pLDDT",
+   "lf": "predicted local distance difference test",
+   "how": "other",
+   "alt": [
+    "confidence scores"
+   ],
+   "note": "given only as \"confidence scores (pLDDT)\""
+  },
+  {
+   "sf": "tSS",
+   "lf": "Sugar:Sugar trans",
+   "how": "paren"
+  },
+  {
+   "sf": "cSS",
+   "lf": "Sugar:Sugar cis",
+   "how": "paren"
+  },
+  {
+   "sf": "tHS",
+   "lf": "Hoogsteen:Sugar trans",
+   "how": "reverse"
+  },
+  {
+   "sf": "TAE",
+   "lf": "Tris-acetate, EDTA",
+   "how": "paren",
+   "alt": [
+    "Tris-acetate-EDTA"
+   ]
+  },
+  {
+   "sf": "ERC",
+   "lf": "European Research Council",
+   "how": "other",
+   "alt": [
+    "European Union"
+   ],
+   "note": "given only as \"funded by the European Union (ERC, ENSYNC, 101076997)\""
+  },
+  {
+   "sf": "DFG",
+   "lf": "Deutsche Forschungsgemeinschaft",
+   "how": "inside",
+   "alt": [
+    "German Research Foundation"
+   ]
+  },
+  {
+   "sf": "BMBF",
+   "lf": "Federal Ministry of Education and Research",
+   "how": "paren"
+  },
+  {
+   "sf": "SI",
+   "lf": "Supplementary Information",
+   "how": "paren",
+   "alt": [
+    "Supplemen tary Information"
+   ]
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "rRNA",
+   "lf": "ribosomal RNA"
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction"
+  },
+  {
+   "sf": "PAGE",
+   "lf": "polyacrylamide gel electrophoresis"
+  },
+  {
+   "sf": "PDB",
+   "lf": "Protein Data Bank"
+  },
+  {
+   "sf": "RMSD",
+   "lf": "root-mean-square deviation"
+  },
+  {
+   "sf": "RMSF",
+   "lf": "root-mean-square fluctuation"
+  },
+  {
+   "sf": "EDTA",
+   "lf": "ethylenediaminetetraacetic acid"
+  },
+  {
+   "sf": "NVT",
+   "lf": "constant number, volume and temperature"
+  },
+  {
+   "sf": "NPT",
+   "lf": "constant number, pressure and temperature"
+  },
+  {
+   "sf": "nt",
+   "lf": "nucleotides"
+  }
+ ],
+ "ignore": [
+  "al",
+  "phaKL",
+  "AlphaKL",
+  "alphaKL-mediated",
+  "bKL",
+  "KL",
+  "PK",
+  "P4-P6",
+  "H41",
+  "H42",
+  "23S",
+  "16S",
+  "1S72",
+  "1Y0Q",
+  "4V51",
+  "7PTQ",
+  "ID",
+  "QRNAS",
+  "ROAD3",
+  "pyFuRNAce",
+  "pyFuRNAce20",
+  "RNAcomposer27",
+  "AlphaFold",
+  "AlphaFold3",
+  "ViennaRNA",
+  "NUPACK",
+  "GROMACS",
+  "DSSR57",
+  "HeiData",
+  "ENSYNC",
+  "SynthImmune",
+  "CC-BY",
+  "bioRxiv",
+  "IDT",
+  "NEB",
+  "Phusion",
+  "Thermo",
+  "gBlocks",
+  "OAc",
+  "Mg2",
+  "AU",
+  "CG",
+  "UA",
+  "GC",
+  "GU",
+  "AA",
+  "CA",
+  "GG",
+  "C-G",
+  "UAA",
+  "UAG",
+  "WSSW",
+  "SWWS",
+  "N/NNN",
+  "G/CAA",
+  "G/AAA",
+  "G/GGA",
+  "G/UGA",
+  "U/AUU",
+  "U/UUA",
+  "G-major",
+  "A-minor",
+  "Pos",
+  "pos",
+  "mM",
+  "μL",
+  "nm",
+  "ns",
+  "ps",
+  "padj",
+  "θangle",
+  "2’OH-2’OH",
+  "2’OH-OP",
+  "S1",
+  "S6",
+  "S8",
+  "S9",
+  "S12",
+  "S14",
+  "S17",
+  "S24",
+  "S36",
+  "S37",
+  "S43",
+  "S48",
+  "S62",
+  "N=10",
+  "N=17"
+ ]
+}

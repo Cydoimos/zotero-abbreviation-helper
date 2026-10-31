@@ -1,0 +1,378 @@
+{
+ "doi": "10.1016/j.celrep.2024.114803",
+ "title": "Temporal alterations of the nascent proteome in response to mitochondrial stress",
+ "journal": "Cell Reports",
+ "defined": [
+  {
+   "sf": "UPR",
+   "lf": "unfolded protein response",
+   "how": "paren"
+  },
+  {
+   "sf": "ER",
+   "lf": "endoplasmic reticulum",
+   "how": "paren"
+  },
+  {
+   "sf": "ISR",
+   "lf": "integrated stress response",
+   "how": "paren"
+  },
+  {
+   "sf": "eIF2a",
+   "lf": "eukaryotic initiation factor 2a",
+   "how": "paren",
+   "alt": [
+    "eukaryotic initiation factor 2α"
+   ]
+  },
+  {
+   "sf": "ATF4",
+   "lf": "cytoprotective transcription factor",
+   "how": "paren",
+   "alt": [
+    "activating transcription factor 4"
+   ],
+   "note": "the paper introduces ATF4 only as \"a cytoprotective transcription factor (ATF4)\""
+  },
+  {
+   "sf": "mTOR",
+   "lf": "mammalian target of rapamycin",
+   "how": "paren"
+  },
+  {
+   "sf": "AHA",
+   "lf": "L-azidohomoalanine",
+   "how": "paren",
+   "alt": [
+    "L-AZIDOHOMOALANINE"
+   ]
+  },
+  {
+   "sf": "OXPHOS",
+   "lf": "oxidative phosphorylation",
+   "how": "paren"
+  },
+  {
+   "sf": "MMP",
+   "lf": "mitochondrial inner membrane potential",
+   "how": "paren"
+  },
+  {
+   "sf": "CCCP",
+   "lf": "carbonylcyanide m-chlorophenylhydrazone",
+   "how": "paren"
+  },
+  {
+   "sf": "BONCAT",
+   "lf": "bio-orthogonal non-canonical amino acid tagging",
+   "how": "reverse",
+   "alt": [
+    "Bio-orthogonal non-canonical amino acid tagging"
+   ]
+  },
+  {
+   "sf": "DMSO",
+   "lf": "dimethyl sulfoxide",
+   "how": "paren"
+  },
+  {
+   "sf": "MS",
+   "lf": "mass spectrometry",
+   "how": "paren"
+  },
+  {
+   "sf": "SD",
+   "lf": "standard deviation",
+   "how": "reverse"
+  },
+  {
+   "sf": "GO",
+   "lf": "Gene Ontology",
+   "how": "paren"
+  },
+  {
+   "sf": "CBB",
+   "lf": "Coomassie brilliant blue",
+   "how": "reverse"
+  },
+  {
+   "sf": "SR",
+   "lf": "serine/arginine",
+   "how": "paren"
+  },
+  {
+   "sf": "hnRNP",
+   "lf": "heterogeneous nuclear ribonucleoprotein",
+   "how": "paren"
+  },
+  {
+   "sf": "SLC25",
+   "lf": "Mitochondrial carrier family members",
+   "how": "paren"
+  },
+  {
+   "sf": "SLC25A11",
+   "lf": "oxoglutarate carrier",
+   "how": "paren",
+   "alt": [
+    "2-oxoglutarate carrier"
+   ]
+  },
+  {
+   "sf": "SLC25A6",
+   "lf": "ATP/adenosine diphosphate carrier",
+   "how": "inside",
+   "alt": [
+    "ATP/ADP carrier"
+   ]
+  },
+  {
+   "sf": "SLC25A32",
+   "lf": "folate carrier",
+   "how": "inside"
+  },
+  {
+   "sf": "SLC7A1",
+   "lf": "histidine/arginine carrier",
+   "how": "inside",
+   "alt": [
+    "histidine,arginine carrier"
+   ]
+  },
+  {
+   "sf": "MTHFD2",
+   "lf": "Methylenetetrahydrofolate dehydrogenase",
+   "how": "paren"
+  },
+  {
+   "sf": "SHMT2",
+   "lf": "serine hydroxymethyltransferase 2",
+   "how": "paren"
+  },
+  {
+   "sf": "GTPase",
+   "lf": "guanosine triphosphatase",
+   "how": "paren"
+  },
+  {
+   "sf": "IQGAP3",
+   "lf": "IQ motif-containing GTPase-activating protein 3",
+   "how": "paren"
+  },
+  {
+   "sf": "TRUB1/2",
+   "lf": "TruB pseudouridine synthase family proteins",
+   "how": "paren"
+  },
+  {
+   "sf": "MTFMT",
+   "lf": "methionyl-tRNA formyltransferase",
+   "how": "paren"
+  },
+  {
+   "sf": "PMPCA",
+   "lf": "mitochondrial-processing peptidase subunit alpha",
+   "how": "paren"
+  },
+  {
+   "sf": "NFE2L2",
+   "lf": "NRF2",
+   "how": "paren",
+   "alt": [
+    "nuclear factor erythroid 2-related factor 2"
+   ]
+  },
+  {
+   "sf": "SILAC",
+   "lf": "stable isotope labeling by amino acids in cell culture",
+   "how": "reverse"
+  },
+  {
+   "sf": "siRNA",
+   "lf": "small interfering RNA",
+   "how": "paren"
+  },
+  {
+   "sf": "bES",
+   "lf": "b-ethynylserine",
+   "how": "paren",
+   "alt": [
+    "β-ethynylserine"
+   ]
+  },
+  {
+   "sf": "THRONCAT",
+   "lf": "metabolic labeling of newly synthesized proteins using a bioorthogonal threonine analog",
+   "how": "other",
+   "alt": [
+    "threonine-based non-canonical amino acid tagging"
+   ],
+   "note": "spelled out only in the reference list title"
+  },
+  {
+   "sf": "AAM",
+   "lf": "Author Accepted Manuscript",
+   "how": "paren"
+  },
+  {
+   "sf": "CuAAC",
+   "lf": "Copper-catalyzed Azide-Alkyne cycloaddition",
+   "how": "paren"
+  },
+  {
+   "sf": "THPTA",
+   "lf": "Tris((1-hydroxy-propyl-1H-1,2,3-triazol-4yl)methyl)amine",
+   "how": "paren"
+  },
+  {
+   "sf": "eIF2",
+   "lf": "eukaryotic initiation factor-2",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "mRNA",
+   "lf": "messenger RNA"
+  },
+  {
+   "sf": "tRNA",
+   "lf": "transfer RNA"
+  },
+  {
+   "sf": "ATP",
+   "lf": "adenosine triphosphate"
+  },
+  {
+   "sf": "ADP",
+   "lf": "adenosine diphosphate"
+  },
+  {
+   "sf": "GTP",
+   "lf": "guanosine triphosphate"
+  },
+  {
+   "sf": "FDR",
+   "lf": "false discovery rate"
+  },
+  {
+   "sf": "LC-MS",
+   "lf": "liquid chromatography-mass spectrometry"
+  },
+  {
+   "sf": "TMT",
+   "lf": "tandem mass tag"
+  },
+  {
+   "sf": "EDTA",
+   "lf": "ethylenediaminetetraacetic acid"
+  },
+  {
+   "sf": "HEK293T",
+   "lf": "human embryonic kidney 293T"
+  }
+ ],
+ "ignore": [
+  "NRF2",
+  "EEF1A1",
+  "EEF1G",
+  "EEF2",
+  "PABPC1",
+  "AQR",
+  "SRSF6",
+  "TSFM",
+  "TUFM",
+  "NDUFS8",
+  "NDUFS7",
+  "NDUFB3",
+  "NDUFB9",
+  "NDUFA3",
+  "SLC25A3",
+  "SLC25A5",
+  "SLC25A24",
+  "MRPL4",
+  "MRPS24",
+  "RPL8",
+  "RPL22",
+  "RPL23",
+  "RPL27",
+  "RPL37A",
+  "RPLP2",
+  "RPL26L1",
+  "RPL7L1",
+  "RPS3",
+  "RPS6",
+  "RPS9",
+  "RPS6KA1",
+  "RPS6KA3",
+  "E9PJN9",
+  "PKR",
+  "MITOCOP",
+  "Velcadeâ",
+  "UBPBio",
+  "Millipore",
+  "Roche",
+  "Sigma",
+  "Aldrich",
+  "UFC5003",
+  "COEDTAF-RO",
+  "P4333",
+  "U3750-25G",
+  "C2759",
+  "X100",
+  "CLK-059-5",
+  "CLK-TA105-25",
+  "HY-140922",
+  "762024",
+  "Mg-ATP",
+  "Mg-ADP",
+  "Fluo",
+  "PEG3",
+  "PEG4",
+  "S0",
+  "DATASET",
+  "Dataset",
+  "dataset",
+  "Intensity",
+  "OPEN",
+  "ACCESS",
+  "MIN",
+  "II",
+  "IV",
+  "S1",
+  "S2",
+  "S2A",
+  "S2C",
+  "S3",
+  "S3A",
+  "S3B",
+  "S4",
+  "S5",
+  "S6B",
+  "S7",
+  "S8",
+  "S9",
+  "S10B",
+  "S11",
+  "S11C",
+  "S12",
+  "S13",
+  "C1",
+  "C4",
+  "D1",
+  "D2",
+  "B1",
+  "B2",
+  "2019/33/B/NZ5/00780",
+  "2015/18/A/NZ1/00025",
+  "2021/40/C/NZ3/00283",
+  "MAB/2017/2",
+  "START",
+  "ALTF"
+ ]
+}

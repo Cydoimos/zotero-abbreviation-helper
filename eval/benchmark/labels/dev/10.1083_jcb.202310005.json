@@ -1,0 +1,401 @@
+{
+ "doi": "10.1083/jcb.202310005",
+ "title": "Regulation of proteostasis and innate immunity via mitochondria-nuclear communication",
+ "journal": "Journal of Cell Biology",
+ "defined": [
+  {
+   "sf": "UPRmt",
+   "lf": "mitochondrial unfolded protein response",
+   "how": "paren"
+  },
+  {
+   "sf": "UPR",
+   "lf": "unfolded protein response",
+   "how": "phrase",
+   "alt": [
+    "ER unfolded protein response"
+   ],
+   "note": "\"a signaling pathway … known as the UPR\""
+  },
+  {
+   "sf": "mtDNA",
+   "lf": "mitochondrial genome",
+   "how": "paren",
+   "alt": [
+    "mitochondrial DNA"
+   ]
+  },
+  {
+   "sf": "OXPHOS",
+   "lf": "oxidative phosphorylation",
+   "how": "paren"
+  },
+  {
+   "sf": "ER",
+   "lf": "endoplasmic reticulum",
+   "how": "paren"
+  },
+  {
+   "sf": "bZip",
+   "lf": "basic leucine zipper",
+   "how": "paren",
+   "alt": [
+    "bZIP"
+   ]
+  },
+  {
+   "sf": "MTS",
+   "lf": "mitochondrial targeting sequence",
+   "how": "paren"
+  },
+  {
+   "sf": "NLS",
+   "lf": "nuclear localization sequence",
+   "how": "paren"
+  },
+  {
+   "sf": "TOM",
+   "lf": "Translocase of the Outer Membrane",
+   "how": "paren"
+  },
+  {
+   "sf": "TIM",
+   "lf": "Translocase of the Inner Membrane",
+   "how": "paren"
+  },
+  {
+   "sf": "HSF1",
+   "lf": "heat shock factor 1",
+   "how": "paren"
+  },
+  {
+   "sf": "ROS",
+   "lf": "reactive oxygen species",
+   "how": "paren",
+   "alt": [
+    "mitochondria-generated reactive oxygen species"
+   ]
+  },
+  {
+   "sf": "ISR",
+   "lf": "Integrated Stress Response",
+   "how": "paren"
+  },
+  {
+   "sf": "RNAi",
+   "lf": "RNA interference",
+   "how": "other",
+   "alt": [
+    "RNA interference"
+   ],
+   "note": "used as \"cco-1(RNAi)\"; never spelled out"
+  },
+  {
+   "sf": "NuRD",
+   "lf": "histone deacetylase complex",
+   "how": "paren",
+   "alt": [
+    "nucleosome remodeling and deacetylase complex"
+   ]
+  },
+  {
+   "sf": "DAMP",
+   "lf": "damage-associated molecular pattern",
+   "how": "reverse"
+  },
+  {
+   "sf": "PAMP",
+   "lf": "pathogen-associated molecular pattern",
+   "how": "reverse"
+  },
+  {
+   "sf": "PRR",
+   "lf": "pattern recognition receptor",
+   "how": "paren"
+  },
+  {
+   "sf": "mtRNA",
+   "lf": "mtDNA-derived double-stranded RNA",
+   "how": "paren",
+   "alt": [
+    "mitochondrial RNA"
+   ]
+  },
+  {
+   "sf": "cGAS",
+   "lf": "cyclic GMP-AMP synthase",
+   "how": "reverse"
+  },
+  {
+   "sf": "STING",
+   "lf": "stimulator of interferon genes",
+   "how": "reverse"
+  },
+  {
+   "sf": "IRF7",
+   "lf": "Interferon Regulatory Factor 7",
+   "how": "reverse",
+   "alt": [
+    "Interferon Regulatory Factor"
+   ]
+  },
+  {
+   "sf": "ISGs",
+   "lf": "interferon-stimulated genes",
+   "how": "paren"
+  },
+  {
+   "sf": "SASP",
+   "lf": "senescence-associated secretory phenotype",
+   "how": "paren",
+   "alt": [
+    "senescenceassociated secretory phenotype"
+   ]
+  },
+  {
+   "sf": "ZBP1",
+   "lf": "Z-DNA binding protein 1",
+   "how": "paren"
+  },
+  {
+   "sf": "MOMP",
+   "lf": "mitochondrial outer membrane permeabilization",
+   "how": "paren"
+  },
+  {
+   "sf": "MDVs",
+   "lf": "Mitochondrial-derived vesicles",
+   "how": "paren"
+  },
+  {
+   "sf": "VDAC",
+   "lf": "voltage-dependent anion channels",
+   "how": "paren",
+   "alt": [
+    "voltagedependent anion channels"
+   ]
+  },
+  {
+   "sf": "mPTP",
+   "lf": "mitochondrial permeability transition pore",
+   "how": "paren"
+  },
+  {
+   "sf": "NLR",
+   "lf": "NOD-like receptor",
+   "how": "paren"
+  },
+  {
+   "sf": "NACHT",
+   "lf": "NAIP, CIITA, HET-E, TEP1 domain",
+   "how": "paren",
+   "alt": [
+    "nucleotide-binding domain"
+   ]
+  },
+  {
+   "sf": "GSDM D",
+   "lf": "gasdermin D",
+   "how": "paren",
+   "alt": [
+    "gasdermin D"
+   ]
+  },
+  {
+   "sf": "IL",
+   "lf": "interleukins",
+   "how": "paren",
+   "alt": [
+    "interleukin"
+   ]
+  },
+  {
+   "sf": "PNPase",
+   "lf": "polynucleotide phosphorylase",
+   "how": "paren"
+  },
+  {
+   "sf": "RLRs",
+   "lf": "RIG-I-like receptors",
+   "how": "paren",
+   "alt": [
+    "RIGI-like receptors"
+   ]
+  },
+  {
+   "sf": "MAVS",
+   "lf": "mitochondrial antiviral signaling protein",
+   "how": "paren"
+  },
+  {
+   "sf": "TALEN",
+   "lf": "transcription activator-like effector nuclease",
+   "how": "reverse"
+  },
+  {
+   "sf": "TLR9",
+   "lf": "Toll-Like Receptor 9",
+   "how": "paren"
+  },
+  {
+   "sf": "RAGE",
+   "lf": "Receptor of Advanced Glycation End Products",
+   "how": "reverse"
+  },
+  {
+   "sf": "TNF",
+   "lf": "Tumor Necrosis Factor",
+   "how": "reverse"
+  },
+  {
+   "sf": "TNFR1",
+   "lf": "TNF Receptor 1",
+   "how": "paren",
+   "alt": [
+    "Tumor Necrosis Factor Receptor 1"
+   ]
+  },
+  {
+   "sf": "Apaf-1",
+   "lf": "apoptosis-protease-activating factor 1",
+   "how": "paren"
+  },
+  {
+   "sf": "NEMO",
+   "lf": "NF-κB essential modulator",
+   "how": "reverse"
+  },
+  {
+   "sf": "FadE2",
+   "lf": "acyl-CoA dehydrogenase",
+   "how": "paren"
+  },
+  {
+   "sf": "DMF",
+   "lf": "dimethyl fumarate",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "mRNAs",
+   "lf": "messenger RNAs"
+  },
+  {
+   "sf": "dsDNA",
+   "lf": "double-stranded DNA"
+  },
+  {
+   "sf": "dsRNAs",
+   "lf": "double-stranded RNAs"
+  },
+  {
+   "sf": "ssRNA",
+   "lf": "single-stranded RNA"
+  },
+  {
+   "sf": "ATP",
+   "lf": "adenosine triphosphate"
+  },
+  {
+   "sf": "TCA",
+   "lf": "tricarboxylic acid"
+  },
+  {
+   "sf": "NAD",
+   "lf": "nicotinamide adenine dinucleotide"
+  },
+  {
+   "sf": "OMM",
+   "lf": "outer mitochondrial membrane"
+  },
+  {
+   "sf": "MAPK",
+   "lf": "mitogen-activated protein kinase"
+  },
+  {
+   "sf": "uORFs",
+   "lf": "upstream open reading frames"
+  }
+ ],
+ "ignore": [
+  "ATFS-1",
+  "LONP",
+  "LONP1",
+  "DELE1",
+  "HRI",
+  "GCN2",
+  "PERK",
+  "PKR",
+  "ATF4",
+  "ATF5",
+  "CHOP",
+  "Cox10",
+  "MET-2",
+  "CLPP-1",
+  "LIN-65",
+  "DVE-1",
+  "UBL-5",
+  "ULP-4",
+  "JMJD1.2",
+  "JMJD3",
+  "PHF8",
+  "CBP/p300",
+  "GPS2",
+  "CLK-1",
+  "OMA1",
+  "HSP70",
+  "DNAJA1",
+  "TFAM",
+  "cGAMP",
+  "GMP-AMP",
+  "cGAS-STING",
+  "IRF3",
+  "NLRP3",
+  "NLRPs",
+  "NLRs",
+  "NOD",
+  "IPAF",
+  "PYHIN",
+  "NAIP",
+  "CIITA",
+  "HET-E",
+  "TEP1",
+  "GSDM",
+  "IL-1β",
+  "IL-18",
+  "NF-κB",
+  "BAX",
+  "BAK",
+  "BAK-mediated",
+  "DRP1",
+  "Parkin",
+  "RIG-I",
+  "MDA5",
+  "SUMO",
+  "SUMOylation",
+  "acetyl-CoA",
+  "mtDNAs",
+  "mtRNAs",
+  "mtDAMPs",
+  "cco-1",
+  "eIF2α",
+  "USA",
+  "MA",
+  "License",
+  "Williams",
+  "McArthur",
+  "McGuire",
+  "Bar-Ziv",
+  "Flores-Romero",
+  "Ravichandran"
+ ]
+}

@@ -1,0 +1,145 @@
+{
+ "doi": "10.1021/acsnano.0c07696",
+ "title": "Self-Limiting Polymerization of DNA Origami Subunits with Strain Accumulation",
+ "journal": "ACS Nano",
+ "defined": [
+  {
+   "sf": "PolyBrick",
+   "lf": "the molecular subunit designed in this work",
+   "how": "phrase",
+   "alt": [
+    "PolyBricks"
+   ],
+   "note": "\"a molecular subunit known as the PolyBrick\"; a coined name, not words behind the letters"
+  },
+  {
+   "sf": "ssDNA",
+   "lf": "single-stranded DNA",
+   "how": "paren"
+  },
+  {
+   "sf": "dsDNA",
+   "lf": "double-stranded DNA",
+   "how": "paren",
+   "alt": [
+    "doublestranded DNA"
+   ]
+  },
+  {
+   "sf": "MD",
+   "lf": "molecular dynamics",
+   "how": "paren"
+  },
+  {
+   "sf": "TEM",
+   "lf": "transmission electron microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "WHAM",
+   "lf": "weighted histogram analysis method",
+   "how": "paren"
+  },
+  {
+   "sf": "MC",
+   "lf": "Monte Carlo",
+   "how": "paren"
+  },
+  {
+   "sf": "ARC",
+   "lf": "Advanced Research Computing",
+   "how": "paren"
+  },
+  {
+   "sf": "CSD3",
+   "lf": "Cambridge Service for Data Driven Discovery",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "RT",
+   "lf": "gas constant times temperature"
+  },
+  {
+   "sf": "RMSE",
+   "lf": "root-mean-square error"
+  },
+  {
+   "sf": "EDTA",
+   "lf": "ethylenediaminetetraacetic acid"
+  },
+  {
+   "sf": "PDF",
+   "lf": "Portable Document Format"
+  },
+  {
+   "sf": "EMBL",
+   "lf": "European Molecular Biology Laboratory"
+  }
+ ],
+ "ignore": [
+  "oxDNA",
+  "Cadnano",
+  "Cadnano92",
+  "CanDo93",
+  "Matlab",
+  "M13mp18",
+  "Bayou",
+  "FEI",
+  "Tecnai",
+  "Na+",
+  "nM",
+  "mM",
+  "kV",
+  "kJ/mol",
+  "kJ/Mol",
+  "RT·mol",
+  "ΔGb",
+  "ΔGs",
+  "ΔGp",
+  "dim",
+  "mon",
+  "Δx",
+  "Δz",
+  "Δθx",
+  "Δθy",
+  "Δθz",
+  "ΔxAB",
+  "σ2",
+  "χ2",
+  "Stotal",
+  "Sn",
+  "SS",
+  "1t",
+  "3t",
+  "6t",
+  "10t",
+  "bp",
+  "S11",
+  "S12",
+  "S27",
+  "S28",
+  "S31",
+  "S34",
+  "S60",
+  "S62",
+  "ACS",
+  "UNIV",
+  "HEIDELBERG",
+  "OX1",
+  "3QZ",
+  "CE200100029",
+  "DE140100262",
+  "Self-Assembly",
+  "Self-Assembled",
+  "DNA-Origami",
+  "Origami-Based",
+  "TwoDimensional",
+  "Coarse-Grained"
+ ]
+}

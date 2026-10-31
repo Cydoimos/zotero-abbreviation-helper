@@ -1,0 +1,289 @@
+{
+ "doi": "10.1186/s12915-026-02678-5",
+ "title": "Activity-dependent increase of Egr1 in the hippocampus improves contextual memory in mice",
+ "journal": "BMC Biology",
+ "defined": [
+  {
+   "sf": "AAV",
+   "lf": "adeno-associated virus",
+   "how": "paren"
+  },
+  {
+   "sf": "Ab",
+   "lf": "Antibody",
+   "how": "paren"
+  },
+  {
+   "sf": "AMED",
+   "lf": "Japan Agency for Medical Research and Development",
+   "how": "paren"
+  },
+  {
+   "sf": "ANOVA",
+   "lf": "analyses of variance",
+   "how": "paren"
+  },
+  {
+   "sf": "A-P",
+   "lf": "antero-posterior",
+   "how": "paren"
+  },
+  {
+   "sf": "Arc",
+   "lf": "activity regulated cytoskeleton associated protein",
+   "how": "paren"
+  },
+  {
+   "sf": "BSA",
+   "lf": "bovine serum albumin",
+   "how": "paren"
+  },
+  {
+   "sf": "CTA",
+   "lf": "conditioned taste aversion",
+   "how": "paren"
+  },
+  {
+   "sf": "DD",
+   "lf": "destabilizing domain",
+   "how": "paren"
+  },
+  {
+   "sf": "DG",
+   "lf": "dentate gyrus",
+   "how": "paren"
+  },
+  {
+   "sf": "D-V",
+   "lf": "dorso-ventral",
+   "how": "paren"
+  },
+  {
+   "sf": "ECS",
+   "lf": "electroconvulsive seizure",
+   "how": "paren"
+  },
+  {
+   "sf": "EE",
+   "lf": "enriched environment",
+   "how": "paren"
+  },
+  {
+   "sf": "Egr1",
+   "lf": "Early growth response 1",
+   "how": "paren"
+  },
+  {
+   "sf": "ESARE",
+   "lf": "enhanced synaptic activity response element",
+   "how": "paren"
+  },
+  {
+   "sf": "HA",
+   "lf": "hemagglutinin",
+   "how": "paren"
+  },
+  {
+   "sf": "HC",
+   "lf": "home cage",
+   "how": "paren"
+  },
+  {
+   "sf": "IEGs",
+   "lf": "Immediate early genes",
+   "how": "paren"
+  },
+  {
+   "sf": "JSPS",
+   "lf": "Japan Society for the Promotion of Science",
+   "how": "paren"
+  },
+  {
+   "sf": "LTP",
+   "lf": "long-term potentiation",
+   "how": "paren"
+  },
+  {
+   "sf": "NAPRT",
+   "lf": "non-associative place recognition test",
+   "how": "paren"
+  },
+  {
+   "sf": "NGS",
+   "lf": "normal goat serum",
+   "how": "paren"
+  },
+  {
+   "sf": "O/N",
+   "lf": "overnight",
+   "how": "paren"
+  },
+  {
+   "sf": "PBS",
+   "lf": "phosphate-buffered saline",
+   "how": "paren"
+  },
+  {
+   "sf": "PBST",
+   "lf": "PBS containing 0.3% Triton X100",
+   "how": "paren"
+  },
+  {
+   "sf": "PFA",
+   "lf": "paraformaldehyde",
+   "how": "paren"
+  },
+  {
+   "sf": "RM",
+   "lf": "repeated measures",
+   "how": "paren"
+  },
+  {
+   "sf": "ROI",
+   "lf": "regions of interest",
+   "how": "paren"
+  },
+  {
+   "sf": "RT",
+   "lf": "reverse transcription",
+   "how": "paren"
+  },
+  {
+   "sf": "SARE",
+   "lf": "synaptic activity-responsive element",
+   "how": "paren"
+  },
+  {
+   "sf": "SEM",
+   "lf": "standard error of the mean",
+   "how": "paren"
+  },
+  {
+   "sf": "tRFP",
+   "lf": "turbo red fluorescent protein",
+   "how": "reverse"
+  },
+  {
+   "sf": "UTR",
+   "lf": "untranslated regions",
+   "how": "paren"
+  },
+  {
+   "sf": "OSF",
+   "lf": "Open Science Framework",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "cDNA",
+   "lf": "complementary DNA"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction"
+  },
+  {
+   "sf": "IgG",
+   "lf": "immunoglobulin G"
+  },
+  {
+   "sf": "GFP",
+   "lf": "green fluorescent protein"
+  },
+  {
+   "sf": "EGFP",
+   "lf": "enhanced green fluorescent protein"
+  }
+ ],
+ "ignore": [
+  "EGR1",
+  "Egr",
+  "ARC",
+  "Zif268",
+  "AMPA",
+  "AMPAR",
+  "NMDAR",
+  "AAV-ESARE",
+  "AAV-ESARE-Egr1",
+  "AAV-ESARE-tRFP",
+  "ESARE-Egr1",
+  "AAV-mediated",
+  "Anti-HA",
+  "anti-HA",
+  "Anti-EGR1",
+  "anti-EGR1",
+  "anti-ARC",
+  "DJ",
+  "DJ/8",
+  "X100",
+  "AlexaFluor",
+  "AlexFluor",
+  "ImageJ",
+  "Fiji",
+  "BioRender",
+  "EthoVision",
+  "Noldus",
+  "Keyence",
+  "Hoechst 33342",
+  "ThermoFisher",
+  "Thermo Fisher",
+  "Invitrogen",
+  "Santa Cruz",
+  "Pluronic F68",
+  "mAb",
+  "H+L",
+  "M.O.M.",
+  "ROIs",
+  "UTRs",
+  "8-bit",
+  "gc",
+  "i.p.",
+  "mA",
+  "HC control",
+  "Day",
+  "Lat.",
+  "Ltd",
+  "Tokyo",
+  "Japan",
+  "Arizona",
+  "USA",
+  "CA",
+  "ALG",
+  "HO",
+  "WG",
+  "JM",
+  "WC",
+  "ML",
+  "BMC",
+  "PLoS",
+  "PNG",
+  "ARTICLEINPRESS",
+  "Yagishita-Kyo",
+  "to ALG",
+  "0.35 mA",
+  "0.75 mg/kg",
+  "000 diln.",
+  "10-13 kΩ",
+  "100 diln.",
+  "100 mg/kg",
+  "2.0 mg/kg",
+  "8-AAV-ESARE-DD-tRFP",
+  "8-CAG-EGFP-WPRE",
+  "8-ESARE-HA-Egr1-UTRs",
+  "9.6-fold",
+  "Arc/Arg3",
+  "DJ/8-CAG EGFP",
+  "DJ/8-CAG-EGFP-WPRE",
+  "PFA/PBS",
+  "U.S.",
+  "Ultracel-100K",
+  "Version 1.54g",
+  "Zif268/Egr1",
+  "sucrose/PBS"
+ ]
+}

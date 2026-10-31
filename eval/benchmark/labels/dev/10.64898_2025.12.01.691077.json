@@ -1,0 +1,293 @@
+{
+ "doi": "10.64898/2025.12.01.691077",
+ "title": "Ambiguity of protein abbreviation PDK1: Error categorization and propagation analysis",
+ "journal": "Biochemistry",
+ "defined": [
+  {
+   "sf": "PIP3",
+   "lf": "phosphatidylinositol (3,4,5)-trisphosphate",
+   "how": "paren"
+  },
+  {
+   "sf": "MyHC-slow/β",
+   "lf": "myosin heavy chain slow/beta",
+   "how": "phrase"
+  },
+  {
+   "sf": "MyHC-IIx",
+   "lf": "myosin heavy chain IIx",
+   "how": "paren"
+  },
+  {
+   "sf": "PDPK1",
+   "lf": "3-phosphoinositide-dependent protein kinase 1",
+   "how": "paren"
+  },
+  {
+   "sf": "PDK1",
+   "lf": "Pyruvate dehydrogenase lipoamide kinase isozyme 1",
+   "how": "phrase"
+  },
+  {
+   "sf": "FBS",
+   "lf": "foetal bovine serum",
+   "how": "other"
+  },
+  {
+   "sf": "PPIA",
+   "lf": "peptidylprolyl isomerase A",
+   "how": "paren"
+  },
+  {
+   "sf": "PVDF",
+   "lf": "polyvinylidene difluoride",
+   "how": "paren"
+  },
+  {
+   "sf": "qPCR",
+   "lf": "Quantitative real-time PCR",
+   "how": "paren"
+  },
+  {
+   "sf": "HGNC",
+   "lf": "HUGO Gene Nomenclature Committee",
+   "how": "paren"
+  },
+  {
+   "sf": "IDIBELL",
+   "lf": "Institut D'investigació Biomédica de Bellvitge",
+   "how": "paren"
+  },
+  {
+   "sf": "PDH",
+   "lf": "pyruvate dehydrogenase",
+   "how": "paren"
+  },
+  {
+   "sf": "LLM",
+   "lf": "Large Language Model",
+   "how": "paren"
+  },
+  {
+   "sf": "WoS",
+   "lf": "Web of Science",
+   "how": "paren"
+  },
+  {
+   "sf": "PMIDs",
+   "lf": "Pubmed identifiers",
+   "how": "paren"
+  },
+  {
+   "sf": "DOI",
+   "lf": "digital object identifier",
+   "how": "paren"
+  },
+  {
+   "sf": "UMAP",
+   "lf": "Uniform Manifold Approximation and Projection",
+   "how": "paren",
+   "alt": [
+    "Uniform Mani-fold Approximation and Projection"
+   ]
+  },
+  {
+   "sf": "SDS",
+   "lf": "sodium dodecyl sulphate",
+   "how": "paren"
+  },
+  {
+   "sf": "ECL",
+   "lf": "enhanced chemiluminescence",
+   "how": "paren"
+  },
+  {
+   "sf": "PDVF",
+   "lf": "polyvinylidene difluoride",
+   "how": "paren",
+   "note": "the paper's typo for PVDF"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "mRNA",
+   "lf": "messenger RNA"
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction"
+  },
+  {
+   "sf": "ATP",
+   "lf": "adenosine triphosphate"
+  },
+  {
+   "sf": "DMSO",
+   "lf": "dimethyl sulfoxide"
+  },
+  {
+   "sf": "TBST",
+   "lf": "Tris-buffered saline with Tween 20"
+  },
+  {
+   "sf": "MHC",
+   "lf": "myosin heavy chain"
+  }
+ ],
+ "ignore": [
+  "PDK",
+  "PDK-1",
+  "PDK2",
+  "PDHK1",
+  "PDK1-related",
+  "PDK1-mediated",
+  "PDK1-TermTracker",
+  "AKT",
+  "AKT1",
+  "MYH1",
+  "myh1",
+  "FOXM1",
+  "FUT11",
+  "TRIM35",
+  "UPP1",
+  "ILK",
+  "LCN2",
+  "TNF",
+  "PFOA",
+  "SOX10",
+  "c-Myc",
+  "Yap1",
+  "Wipf2",
+  "ApoE",
+  "CCR2",
+  "CD56+",
+  "Ser396",
+  "aa 225-254",
+  "aa 92-151",
+  "C47H1",
+  "concept A",
+  "concept B",
+  "error M",
+  "BC",
+  "Q15118",
+  "Q15119",
+  "P12882",
+  "UniProt",
+  "HUGO",
+  "PubMed",
+  "bioRxiv",
+  "CC-BY",
+  "Supplement S2",
+  "EPR19571",
+  "ab202468",
+  "ab110025",
+  "ab90444",
+  "ab227682",
+  "SP270",
+  "4A11",
+  "3B7",
+  "3E1",
+  "9A7X4",
+  "5T6S8",
+  "8J7H4",
+  "JA67-30",
+  "PA5-28342",
+  "#PA5-18441",
+  "#A302-130A-T",
+  "#PA5-82971",
+  "#PA5-79797",
+  "#PA5-79798",
+  "#PA1-16945",
+  "#PA5-115732",
+  "#PA5-106712",
+  "#PA5-28342",
+  "#H00005163-M01",
+  "#H00005163-M02",
+  "#MA5-15797",
+  "#MA5-55304",
+  "#MA5-35736",
+  "#MA5-55303",
+  "#MA5-32702",
+  "#RP-106913",
+  "#RP-95213",
+  "#18262-1-AP",
+  "#PA5-120471",
+  "#PA5-36071",
+  "#PA5-12888",
+  "TaqMan",
+  "Fungizone",
+  "Gentamicin",
+  "Scientific",
+  "from Bio-Rad",
+  "Cytiva",
+  "Waltham",
+  "MA",
+  "USA",
+  "Basel",
+  "Lausanne",
+  "Weinh",
+  "Hoboken",
+  "Shanghai",
+  "Landmark Ed",
+  "Danio rerio",
+  "3-Indolyl",
+  "Committee",
+  "AI-assisted",
+  "ACS",
+  "PLoS",
+  "BlK",
+  "ANK",
+  "BoK",
+  "SrP",
+  "SeP",
+  "AK",
+  "KD",
+  "KM",
+  "Kociper1",
+  "Kastrin2",
+  "Kastrin8",
+  "Garcia-Roves3",
+  "Chibalin5",
+  "Rustan6",
+  "Gnaiger7",
+  "Dolinar1",
+  "Pollak2",
+  "Cestnik2",
+  "Koloski2",
+  "Pirkmajer1",
+  "10026-1-AP",
+  "18262-1-AP",
+  "1University",
+  "2% PDH",
+  "2147/JIR",
+  "2147/OTT",
+  "3University",
+  "3phosphoinositide-de",
+  "5Karolinska",
+  "6University",
+  "7Oroboros",
+  "8University",
+  "AKT/mTOR",
+  "Akt/FoxO3a/Atg7",
+  "Akt/mTOR",
+  "O/N",
+  "PDC/PDK",
+  "PDK1/AKT",
+  "PDK1/AKT/NF-κB",
+  "PDK1/AKT/mTOR",
+  "PDK1/Akt/mTOR",
+  "PI3K-AKT",
+  "PI3K/AKT",
+  "PI3K/AKT/mTOR",
+  "PI3K/Akt",
+  "PI3K/mTOR",
+  "mim.org/entry/142800",
+  "pH 6.8",
+  "pH 7.4",
+  "siRNA/shRNA"
+ ]
+}

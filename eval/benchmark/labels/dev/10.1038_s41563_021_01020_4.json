@@ -1,0 +1,229 @@
+{
+ "doi": "10.1038/s41563-021-01020-4",
+ "title": "Programmable icosahedral shell system for virus trapping",
+ "journal": "Nature Materials",
+ "defined": [
+  {
+   "sf": "cryo-EM",
+   "lf": "cryo-electron microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "FReT",
+   "lf": "Förster-resonance-energy-transfer",
+   "how": "paren",
+   "alt": [
+    "FRET"
+   ]
+  },
+  {
+   "sf": "UV",
+   "lf": "ultraviolet",
+   "how": "paren"
+  },
+  {
+   "sf": "PEG",
+   "lf": "poly(ethylene glycol)",
+   "how": "paren",
+   "alt": [
+    "polyethylene glycol"
+   ]
+  },
+  {
+   "sf": "TEM",
+   "lf": "transmission electron microscopy",
+   "how": "paren",
+   "alt": [
+    "negative stain transmission electron microscopy"
+   ]
+  },
+  {
+   "sf": "eLISA",
+   "lf": "enzyme-linked immunosorbent assay",
+   "how": "paren",
+   "alt": [
+    "ELISA"
+   ]
+  },
+  {
+   "sf": "HBV",
+   "lf": "hepatitis B virus",
+   "how": "paren"
+  },
+  {
+   "sf": "ssDNA",
+   "lf": "single-stranded DNA",
+   "how": "paren"
+  },
+  {
+   "sf": "ANOVA",
+   "lf": "analysis of variance",
+   "how": "paren"
+  },
+  {
+   "sf": "HRP",
+   "lf": "horseradish peroxidase",
+   "how": "paren"
+  },
+  {
+   "sf": "AAV2",
+   "lf": "adeno-associated virus serotype 2",
+   "how": "paren"
+  },
+  {
+   "sf": "eGFP",
+   "lf": "enhanced green fluorescent protein",
+   "how": "paren"
+  },
+  {
+   "sf": "BSA",
+   "lf": "bovine serum albumin",
+   "how": "paren"
+  },
+  {
+   "sf": "IC50",
+   "lf": "half maximal inhibitory concentration",
+   "how": "paren"
+  },
+  {
+   "sf": "FoBx",
+   "lf": "folding buffer",
+   "how": "paren",
+   "alt": [
+    "folding buffer with x mM MgCl2"
+   ]
+  },
+  {
+   "sf": "anti-HBc",
+   "lf": "Anti-HBV core antibody",
+   "how": "paren"
+  },
+  {
+   "sf": "DMEM",
+   "lf": "Dulbecco's modified Eagle's medium",
+   "how": "inside"
+  },
+  {
+   "sf": "FBS",
+   "lf": "fetal bovine serum",
+   "how": "inside"
+  },
+  {
+   "sf": "IFU",
+   "lf": "infectious units",
+   "how": "inside"
+  },
+  {
+   "sf": "CTF",
+   "lf": "contrast-transfer-function",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "PBS",
+   "lf": "phosphate-buffered saline"
+  },
+  {
+   "sf": "IgG",
+   "lf": "immunoglobulin G"
+  },
+  {
+   "sf": "EDTA",
+   "lf": "ethylenediaminetetraacetic acid"
+  },
+  {
+   "sf": "HEK293T",
+   "lf": "human embryonic kidney 293T"
+  }
+ ],
+ "ignore": [
+  "caDNAno",
+  "Thex1",
+  "FoB5",
+  "FoB20",
+  "FoB30",
+  "FoB30-T",
+  "PBS-T",
+  "RELION-2",
+  "RELION-3",
+  "MotionCor2",
+  "CTFFIND4.1",
+  "IMOD",
+  "Etomo",
+  "Protochip",
+  "C-flat",
+  "Ted",
+  "Pella",
+  "Thermo",
+  "Titan",
+  "Krios",
+  "Cs",
+  "Cytodiagnostics",
+  "OligoREADY",
+  "proFIRE",
+  "Dynamic",
+  "Biosensors",
+  "Asahi",
+  "Spectra",
+  "MAX-303",
+  "Typhoon",
+  "FLA",
+  "GE",
+  "Bio-Rad",
+  "Tetrad",
+  "Nunc",
+  "MaxiSorp",
+  "CLARIOstar",
+  "BMG",
+  "LABTECH",
+  "Quorum",
+  "Q150T",
+  "ORION",
+  "Nanofab",
+  "Zeiss",
+  "AuPd",
+  "DSMZ",
+  "Gibco",
+  "Sigma-Aldrich",
+  "Biocat",
+  "Life",
+  "Technologies",
+  "17H7",
+  "IgG-2b",
+  "IgG2b",
+  "HepBcore",
+  "IFA",
+  "NLEDPASRDLVV",
+  "ayw2",
+  "NaN3",
+  "NaCl",
+  "KCl",
+  "MgCl2",
+  "CO2",
+  "mM",
+  "nM",
+  "pM",
+  "μM",
+  "μl",
+  "μg",
+  "ml",
+  "nm",
+  "aa",
+  "GDa",
+  "MDa",
+  "M13-8064",
+  "AA002-GVO-GC",
+  "F9665",
+  "Tween-20",
+  "Subscripts",
+  "pent",
+  "T number",
+  "Product",
+  "Bank"
+ ]
+}

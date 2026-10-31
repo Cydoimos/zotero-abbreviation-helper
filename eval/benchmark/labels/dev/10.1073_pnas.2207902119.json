@@ -1,0 +1,136 @@
+{
+ "doi": "10.1073/pnas.2207902119",
+ "title": "Geometrically programmed self-limited assembly of tubules using DNA origami colloids",
+ "journal": "Proceedings of the National Academy of Sciences",
+ "defined": [
+  {
+   "sf": "cryo-EM",
+   "lf": "cryogenic electron microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "TEM",
+   "lf": "transmission electron microscopy",
+   "how": "paren",
+   "alt": [
+    "negative-stain transmission electron microscopy"
+   ]
+  },
+  {
+   "sf": "FoBX",
+   "lf": "folding buffer",
+   "how": "paren",
+   "alt": [
+    "standard folding buffer with X mM MgCl2"
+   ]
+  },
+  {
+   "sf": "TBE",
+   "lf": "Tris/Borate/EDTA",
+   "how": "paren"
+  },
+  {
+   "sf": "CTF",
+   "lf": "Contrast-transfer function",
+   "how": "paren",
+   "alt": [
+    "Contrast-transferfunction"
+   ]
+  },
+  {
+   "sf": "NACA",
+   "lf": "National Advisory Committee for Aeronautics",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "SI",
+   "lf": "Supporting Information"
+  },
+  {
+   "sf": "EM",
+   "lf": "electron microscopy"
+  },
+  {
+   "sf": "EDTA",
+   "lf": "ethylenediaminetetraacetic acid"
+  },
+  {
+   "sf": "SDs",
+   "lf": "standard deviations"
+  },
+  {
+   "sf": "CMOS",
+   "lf": "complementary metal-oxide-semiconductor"
+  }
+ ],
+ "ignore": [
+  "AMT",
+  "IMOD",
+  "Etomo",
+  "RELION-3",
+  "CTFFIND4",
+  "YOYO-1",
+  "SYBR-safe",
+  "Ficoll",
+  "p8064",
+  "Tilibit",
+  "IDT",
+  "Bio-Rad",
+  "Tetrad",
+  "Invitrogen",
+  "Nanodrop",
+  "Rotor-Gene",
+  "Corning",
+  "Roto-Therm",
+  "Benchmark",
+  "Protochip",
+  "C-flat",
+  "FEI",
+  "Morgagni",
+  "Nanosprint5",
+  "FLIR",
+  "Blackfly",
+  "USB3",
+  "TE2000",
+  "Nikon",
+  "Thermo",
+  "Garland",
+  "MgCl2",
+  "NaCl",
+  "Mg2",
+  "kBT",
+  "EH",
+  "BA",
+  "AB",
+  "nM",
+  "mM",
+  "mL",
+  "kV",
+  "krcf",
+  "nm",
+  "wt/vol",
+  "EMD-26847",
+  "EMD-26848",
+  "EMD-26849",
+  "EMD-26850",
+  "PNAS",
+  "IP",
+  "ACS",
+  "MA",
+  "CC",
+  "BY-NC-ND",
+  "S3",
+  "S3A",
+  "Δκ⊥",
+  "ΔC",
+  "σcirc",
+  "Appendix",
+  "Scale"
+ ]
+}

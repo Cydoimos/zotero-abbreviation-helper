@@ -1,0 +1,115 @@
+{
+ "doi": "10.1038/s41598-017-12127-7",
+ "title": "Pore formation in lipid membrane I: Continuous reversible trajectory from intact bilayer through hydrophobic defect to transversal pore",
+ "journal": "Scientific Reports",
+ "defined": [
+  {
+   "sf": "DOPC",
+   "lf": "1,2-dioleoyl-sn-glycero-3-phosphocholine",
+   "how": "paren"
+  },
+  {
+   "sf": "POPC",
+   "lf": "1-palmitoyl-2-oleoyl-sn-glycero-3-phosphocholine",
+   "how": "paren",
+   "alt": [
+    "1-palmitoyl-2 -oleoyl-sn-glycero-3-phosphocholine"
+   ]
+  },
+  {
+   "sf": "DMPC",
+   "lf": "1,2-dimyristoyl-sn-glycero-3-phosphocholine",
+   "how": "paren"
+  },
+  {
+   "sf": "DPPC",
+   "lf": "1,2-dipalmitoyl-sn-glycero-3-phosphocholine",
+   "how": "paren"
+  },
+  {
+   "sf": "DLPC",
+   "lf": "1,2-dilauroyl-sn-glycero-3-phosphocholine",
+   "how": "paren"
+  },
+  {
+   "sf": "MD",
+   "lf": "Molecular dynamics",
+   "how": "paren"
+  },
+  {
+   "sf": "GUV",
+   "lf": "giant unilamellar vesicles",
+   "how": "paren"
+  },
+  {
+   "sf": "CG",
+   "lf": "coarse-grain",
+   "how": "paren"
+  },
+  {
+   "sf": "PMF",
+   "lf": "potential of mean force",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "PC",
+   "lf": "phosphatidylcholine"
+  }
+ ],
+ "ignore": [
+  "Sphob",
+  "Sphil",
+  "diC13:0",
+  "diC14:0",
+  "kBT",
+  "kBT39",
+  "kBT/nm",
+  "mN/m",
+  "mN/m39",
+  "JDOPC",
+  "JDMPC",
+  "Kt",
+  "KA",
+  "KM",
+  "gJ",
+  "gY",
+  "hA",
+  "BJ",
+  "rL",
+  "WR",
+  "ΔW",
+  "γ0",
+  "σ0",
+  "J0",
+  "R0",
+  "Z0",
+  "B/2",
+  "2Loptimal",
+  "2πr",
+  "4πrL",
+  "Euler-Lagrange",
+  "Nose-Hoover",
+  "Berendsen",
+  "MgCl2",
+  "mM",
+  "pN",
+  "nm",
+  "ps",
+  "μm",
+  "MISiS",
+  "RepoRts",
+  "DOI",
+  "USA",
+  "Brochard-Wyart",
+  "S.A.A.",
+  "Research",
+  "The",
+  "set"
+ ]
+}

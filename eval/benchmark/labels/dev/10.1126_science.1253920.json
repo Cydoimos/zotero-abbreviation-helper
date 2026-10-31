@@ -1,0 +1,139 @@
+{
+ "doi": "10.1126/science.1253920",
+ "title": "A single-stranded architecture for cotranscriptional folding of RNA nanostructures",
+ "journal": "Science",
+ "defined": [
+  {
+   "sf": "KLs",
+   "lf": "kissing-loop interactions",
+   "how": "paren",
+   "alt": [
+    "kissing loops"
+   ]
+  },
+  {
+   "sf": "KL",
+   "lf": "kissing-loop",
+   "how": "other",
+   "alt": [
+    "kissing-loop interactions"
+   ],
+   "note": "singular of KLs, used throughout as \"180° KL interaction\""
+  },
+  {
+   "sf": "ssRNA",
+   "lf": "single-stranded RNA",
+   "how": "paren",
+   "alt": [
+    "singlestranded RNA"
+   ]
+  },
+  {
+   "sf": "DX",
+   "lf": "double-crossover",
+   "how": "paren",
+   "alt": [
+    "DNA double-crossover"
+   ]
+  },
+  {
+   "sf": "nt",
+   "lf": "nucleotides",
+   "how": "paren"
+  },
+  {
+   "sf": "RNA-AO",
+   "lf": "antiparallel odd",
+   "how": "paren"
+  },
+  {
+   "sf": "RNA-AE",
+   "lf": "antiparallel even",
+   "how": "paren"
+  },
+  {
+   "sf": "PDB",
+   "lf": "Protein Data Bank",
+   "how": "paren"
+  },
+  {
+   "sf": "AFM",
+   "lf": "Atomic force microscopy",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  }
+ ],
+ "ignore": [
+  "2H-AE",
+  "2H-AO",
+  "4H-AE",
+  "4H-AO",
+  "6H-AO",
+  "RNAAO",
+  "Assemble2",
+  "NUPACK",
+  "Perl",
+  "AA",
+  "bp",
+  "S2",
+  "S9",
+  "S10",
+  "S13",
+  "S14",
+  "S21",
+  "S24",
+  "DC1",
+  "IEEE",
+  "AAAI",
+  "REFERENCES",
+  "AND",
+  "NOTES",
+  "ACKNOWLEDGMENTS",
+  "SUPPLEMENTARY",
+  "MATERIALS",
+  "SCIENCE",
+  "AUGUST",
+  "VOL",
+  "ISSUE",
+  "RESEARCH",
+  "REPORTS",
+  "ISSN",
+  "DNRF81",
+  "DFF-0602-01772",
+  "CCF-0926148",
+  "CCF-0643898",
+  "NJ",
+  "CT",
+  "AK",
+  "CA",
+  "MN",
+  "FL",
+  "PSII",
+  "TOF",
+  "P680",
+  "D1-Y161",
+  "YZ",
+  "EPR",
+  "CEA",
+  "CNRS",
+  "UMR",
+  "Mn4O5Ca",
+  "Mn",
+  "O-O",
+  "O2",
+  "III",
+  "S3",
+  "S state",
+  "N.C.",
+  "W.L."
+ ]
+}

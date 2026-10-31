@@ -1,0 +1,262 @@
+{
+ "doi": "10.3390/ijms241713527",
+ "title": "JNK Cascade-Induced Apoptosis—A Unique Role in GqPCR Signaling",
+ "journal": "International Journal of Molecular Sciences",
+ "defined": [
+  {
+   "sf": "JNK",
+   "lf": "cJun-N-terminal Kinase",
+   "how": "other"
+  },
+  {
+   "sf": "MAPK",
+   "lf": "mitogen-activated protein kinase",
+   "how": "paren"
+  },
+  {
+   "sf": "GqPCRs",
+   "lf": "Gq protein-coupled receptors",
+   "how": "paren"
+  },
+  {
+   "sf": "MKPs",
+   "lf": "MAPK phosphatases",
+   "how": "paren"
+  },
+  {
+   "sf": "ROS",
+   "lf": "reactive oxygen species",
+   "how": "paren"
+  },
+  {
+   "sf": "DISC",
+   "lf": "death-induced signaling complex",
+   "how": "paren"
+  },
+  {
+   "sf": "FADD",
+   "lf": "FAS-associated via death domain",
+   "how": "paren"
+  },
+  {
+   "sf": "PRD",
+   "lf": "proline-rich domain",
+   "how": "paren"
+  },
+  {
+   "sf": "PLCβ",
+   "lf": "phospholipase C-beta",
+   "how": "other"
+  },
+  {
+   "sf": "PKC",
+   "lf": "protein kinase C",
+   "how": "paren"
+  },
+  {
+   "sf": "GnRHR",
+   "lf": "gonadotropin-releasing hormone receptor",
+   "how": "paren"
+  },
+  {
+   "sf": "GnRHa",
+   "lf": "gonadotropin-releasing hormone analogs",
+   "how": "paren"
+  },
+  {
+   "sf": "DUSP",
+   "lf": "dual-specificity phosphatases",
+   "how": "paren"
+  },
+  {
+   "sf": "Ub",
+   "lf": "ubiquitin",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "GPCRs",
+   "lf": "G protein-coupled receptors"
+  },
+  {
+   "sf": "ER",
+   "lf": "endoplasmic reticulum"
+  },
+  {
+   "sf": "NLS",
+   "lf": "nuclear localization signal"
+  },
+  {
+   "sf": "GnRH",
+   "lf": "gonadotropin-releasing hormone"
+  },
+  {
+   "sf": "EGF",
+   "lf": "epidermal growth factor"
+  },
+  {
+   "sf": "PI3K",
+   "lf": "phosphoinositide 3-kinase"
+  },
+  {
+   "sf": "cAMP",
+   "lf": "cyclic adenosine monophosphate"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "TNF",
+   "lf": "tumor necrosis factor"
+  },
+  {
+   "sf": "TRAIL",
+   "lf": "TNF-related apoptosis-inducing ligand"
+  }
+ ],
+ "ignore": [
+  "MAPKK",
+  "MAP3K",
+  "MAP3Ks",
+  "MAP4K",
+  "MAP",
+  "Map3k1",
+  "MAPKs",
+  "JNK1",
+  "JNK2",
+  "JNK3",
+  "JNK-dependent",
+  "JNK-induced",
+  "ERK",
+  "ERK5",
+  "AKT",
+  "Akt",
+  "Akt1",
+  "PP2A",
+  "PP2Ac",
+  "PP2Aa",
+  "PP2Ac-IGBP1",
+  "PP2c-IGBP1-PP2Aa",
+  "IGBP1",
+  "IGBP1-PP2Ac",
+  "S24-PP2Ac",
+  "PTEN",
+  "PHLPP",
+  "B55",
+  "PR56β",
+  "PR56γ",
+  "DUSP1",
+  "DUSP8",
+  "DUSP16",
+  "DUSPs",
+  "MKP1",
+  "MKP5",
+  "MKP7",
+  "PPM1H",
+  "POSH",
+  "JIP1",
+  "JIP3",
+  "JIP1-4",
+  "JAMP",
+  "Smurf1",
+  "CUL1",
+  "SKP2",
+  "CKS1-dependent",
+  "Imp3",
+  "Imp7",
+  "Imp9",
+  "MLK3",
+  "MEKK1",
+  "MEKK2",
+  "MEKK4",
+  "MKK4",
+  "MKK7",
+  "ASK1",
+  "TRAF2",
+  "Rac",
+  "Rac1",
+  "Rho",
+  "CDC42",
+  "GTPase",
+  "GTPases",
+  "GSK3β",
+  "GPCR",
+  "EGFR",
+  "RTKs",
+  "Bad",
+  "Bid",
+  "jBid",
+  "Bcl-2",
+  "Bcl2",
+  "Mcl1",
+  "c-FLIP",
+  "cFos",
+  "AP-1",
+  "RITA",
+  "RGS4",
+  "DLK-1",
+  "RPM-1",
+  "G12",
+  "Gs",
+  "Gi",
+  "Gq",
+  "PERY",
+  "pThr",
+  "pTyr",
+  "Ser24",
+  "Ser71",
+  "Ser608",
+  "Ser674",
+  "Thr59",
+  "T308",
+  "αT3-1",
+  "COS7",
+  "COS",
+  "DU145",
+  "PC3",
+  "TNFα",
+  "TNFalpha-induced",
+  "NH2-terminal",
+  "Dual-Specificity",
+  "Cascade-Induced",
+  "P—phosphate",
+  "MW",
+  "kDa",
+  "MDPI",
+  "CrossRef",
+  "PubMed",
+  "FASEB",
+  "FEBS",
+  "EMBO",
+  "PLoS",
+  "ONE",
+  "USA",
+  "FOR",
+  "PEER",
+  "REVIEW",
+  "Maik-Rachline",
+  "Dobkin-Bekman",
+  "Ben-Ami",
+  "29% complex1",
+  "3pK",
+  "CUL1/SKP2",
+  "Figure2",
+  "G.N.",
+  "M3/6",
+  "MAP3K",
+  "MAP4K",
+  "MAPK8/JNK1",
+  "MAPK9/JNK2",
+  "MKP1/5",
+  "MLK3-MKK4/7-JNK",
+  "SAPK1/JNK",
+  "Ser/Thr",
+  "Smac/DIABLO",
+  "and G15/16",
+  "and MAPK10/JNK3",
+  "p38/JNK",
+  "p85-PI3K"
+ ]
+}

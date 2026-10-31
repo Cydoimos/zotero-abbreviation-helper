@@ -1,0 +1,273 @@
+{
+ "doi": "10.7554/eLife.81856",
+ "title": "Maximizing CRISPRi efficacy and accessibility with dual-sgRNA libraries and optimal effectors",
+ "journal": "eLife",
+ "defined": [
+  {
+   "sf": "CRISPRi",
+   "lf": "CRISPR interference",
+   "how": "paren"
+  },
+  {
+   "sf": "sgRNA",
+   "lf": "single guide RNA",
+   "how": "paren"
+  },
+  {
+   "sf": "dCas9",
+   "lf": "catalytically dead Cas9",
+   "how": "paren"
+  },
+  {
+   "sf": "IQR",
+   "lf": "interquartile range",
+   "how": "paren"
+  },
+  {
+   "sf": "IBCs",
+   "lf": "integration barcodes",
+   "how": "paren"
+  },
+  {
+   "sf": "SFFV",
+   "lf": "spleen focus-forming virus",
+   "how": "paren"
+  },
+  {
+   "sf": "UCOE",
+   "lf": "ubiquitous chromatin opening element",
+   "how": "paren"
+  },
+  {
+   "sf": "NLSs",
+   "lf": "nuclear localization signals",
+   "how": "paren"
+  },
+  {
+   "sf": "FACS",
+   "lf": "fluorescence-activated cell sorting",
+   "how": "paren"
+  },
+  {
+   "sf": "AARS",
+   "lf": "alanyl-tRNA synthetase",
+   "how": "paren"
+  },
+  {
+   "sf": "DepMap",
+   "lf": "Cancer Dependency Map",
+   "how": "paren"
+  },
+  {
+   "sf": "IRES",
+   "lf": "internal ribosome entry site",
+   "how": "paren"
+  },
+  {
+   "sf": "CRISPRa",
+   "lf": "CRISPR activation",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "CRISPR",
+   "lf": "clustered regularly interspaced short palindromic repeats"
+  },
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "mRNA",
+   "lf": "messenger RNA"
+  },
+  {
+   "sf": "RNA-seq",
+   "lf": "RNA sequencing"
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction"
+  },
+  {
+   "sf": "NCBI",
+   "lf": "National Center for Biotechnology Information"
+  },
+  {
+   "sf": "GEO",
+   "lf": "Gene Expression Omnibus"
+  },
+  {
+   "sf": "DMEM",
+   "lf": "Dulbecco's Modified Eagle Medium"
+  },
+  {
+   "sf": "HEPES",
+   "lf": "4-(2-hydroxyethyl)-1-piperazineethanesulfonic acid"
+  },
+  {
+   "sf": "PBS",
+   "lf": "phosphate-buffered saline"
+  },
+  {
+   "sf": "GFP",
+   "lf": "green fluorescent protein"
+  },
+  {
+   "sf": "BFP",
+   "lf": "blue fluorescent protein"
+  },
+  {
+   "sf": "KRAB",
+   "lf": "Krüppel-associated box"
+  }
+ ],
+ "ignore": [
+  "CRISPRi-mediated",
+  "CRISPRi-based",
+  "Cas9",
+  "dCas9-KRAB",
+  "dCas9-Kox1",
+  "dCas9-Kox1-MeCP2",
+  "SID-dCas9-Kox1",
+  "Zim3-dCas9",
+  "Zim3",
+  "ZIM3",
+  "Kox1",
+  "KOX1",
+  "ZNF10",
+  "MeCP2",
+  "SID",
+  "SID4x",
+  "SIN3A",
+  "MAD1",
+  "TRIM28",
+  "XTEN80",
+  "P2A",
+  "WPRE",
+  "CMV",
+  "EFS",
+  "EF1α",
+  "Hygro",
+  "mCherry",
+  "mCherry-positive",
+  "mCherry-negative",
+  "GFP-negative",
+  "GFPonly",
+  "sgRNA1",
+  "sgRNA2",
+  "sgRNAs",
+  "single-sgRNA",
+  "dual-sgRNA",
+  "sgRNA-expressing",
+  "hCRISPRi",
+  "hCRISPRi_dual_1_2",
+  "hCRISPRi_dual_3_4",
+  "hCRISPRi_dual_5_6",
+  "guides 1+2",
+  "IBC",
+  "Tfinal",
+  "Dolcetto",
+  "Perturb-seq",
+  "RNA-sequencing",
+  "bulk RNA-seq",
+  "RNAs",
+  "POLR1D",
+  "DNAJC19",
+  "CD55",
+  "CD81",
+  "CD151",
+  "B2M",
+  "APC",
+  "Hsp70",
+  "VSV-G",
+  "Rev",
+  "Rev C",
+  "K562",
+  "Jurkat",
+  "RPE1",
+  "HepG2",
+  "HT29",
+  "HuTu-80",
+  "HEK293T",
+  "HEK239",
+  "ATCC",
+  "hTERT",
+  "Mycoplasma",
+  "pJB109",
+  "pJR107",
+  "dJR004",
+  "dJR020",
+  "pCRISPRia-v2",
+  "BstXI",
+  "BstX1",
+  "BlpI",
+  "NEBNext",
+  "NEB",
+  "IDT",
+  "Illumina",
+  "Gibco",
+  "VWR",
+  "R&D Systems",
+  "BD Biosciences",
+  "Mirus Bio",
+  "Twist Biosciences",
+  "Zymo Research",
+  "Thermo Fisher",
+  "BioLegend",
+  "UCSF",
+  "RRID",
+  "RRID:AB_2075857",
+  "RRID:AB_2564020",
+  "RRID:AB_10661726",
+  "RRID:AB_314323",
+  "RRID:AB_10641281",
+  "clone JS11",
+  "clone 5A6",
+  "clone 2M2",
+  "clone MOPC-21",
+  "clone 50-6",
+  "GSE205310",
+  "GSE205147",
+  "DP2 CA239597",
+  "Health",
+  "Human",
+  "Mann-Whitney",
+  "log2",
+  "AU",
+  "AB",
+  "BR",
+  "XL",
+  "v2.1",
+  "DOI",
+  "eLife",
+  "Doench",
+  "Replogle",
+  "JSW",
+  "MJ",
+  "NaHCO3",
+  "mM",
+  "10x Genomics",
+  "2019L/LT000858",
+  "2M2",
+  "3G-TUBB-IRES-mCherry",
+  "5A6",
+  "7554/eLife",
+  "8 μg/mL",
+  "B2M",
+  "BstX1/BlpI",
+  "CRISPRi/a",
+  "Gag/Pol",
+  "N/A",
+  "TAPA-1/TSPAN28",
+  "TS2/16",
+  "Tfinal/sgRNA",
+  "anti-B2M",
+  "clone TS2/16"
+ ]
+}

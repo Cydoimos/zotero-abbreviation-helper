@@ -1,0 +1,162 @@
+{
+ "doi": "10.1038/s44318-025-00615-w",
+ "title": "Mechanism of autophagy initiation by transmembrane selective autophagy receptors",
+ "journal": "The EMBO Journal",
+ "defined": [
+  {
+   "sf": "SARs",
+   "lf": "selective autophagy receptors",
+   "how": "paren"
+  },
+  {
+   "sf": "ER",
+   "lf": "endoplasmic reticulum",
+   "how": "paren"
+  },
+  {
+   "sf": "ATG",
+   "lf": "autophagy-related",
+   "how": "paren"
+  },
+  {
+   "sf": "PI3KC3C1",
+   "lf": "class III phosphatidylinositol 3-phosphate kinase complex 1",
+   "how": "paren"
+  },
+  {
+   "sf": "PI3KC3-C1",
+   "lf": "class III phosphatidylinositol 3-kinase complex I",
+   "how": "paren"
+  },
+  {
+   "sf": "WIPI",
+   "lf": "WD repeat protein Interacting with Phosphoinositides",
+   "how": "paren"
+  },
+  {
+   "sf": "PE",
+   "lf": "phosphatidylethanolamine",
+   "how": "paren"
+  },
+  {
+   "sf": "PS",
+   "lf": "phosphatidylserine",
+   "how": "paren"
+  },
+  {
+   "sf": "VBC",
+   "lf": "Vienna Biocenter Campus",
+   "how": "paren"
+  },
+  {
+   "sf": "PI3P",
+   "lf": "phosphatidylinositol 3-phosphate",
+   "how": "paren"
+  },
+  {
+   "sf": "ESCRT",
+   "lf": "Endosomal Sorting Complexes Required for Transport",
+   "how": "reverse"
+  },
+  {
+   "sf": "HIF-1",
+   "lf": "hypoxia-inducible factor 1",
+   "how": "paren"
+  },
+  {
+   "sf": "IDRs",
+   "lf": "intrinsically disordered regions",
+   "how": "paren"
+  },
+  {
+   "sf": "LIRs",
+   "lf": "LC3-interacting regions",
+   "how": "paren"
+  },
+  {
+   "sf": "RHD",
+   "lf": "reticulon homology domain",
+   "how": "paren"
+  },
+  {
+   "sf": "MER",
+   "lf": "minimal essential region",
+   "how": "paren"
+  },
+  {
+   "sf": "I/R",
+   "lf": "ischemia/reperfusion",
+   "how": "paren"
+  },
+  {
+   "sf": "DFP",
+   "lf": "deferiprone",
+   "how": "paren"
+  }
+ ],
+ "undefined": [],
+ "ignore": [
+  "ULK",
+  "ULK1",
+  "ULK1/2",
+  "ATG2",
+  "ATG5",
+  "ATG8",
+  "ATG9A",
+  "ATG12",
+  "ATG13",
+  "ATG14L",
+  "ATG16",
+  "ATG16L",
+  "ATG16L1",
+  "ATG101",
+  "FIP200",
+  "FIP200-driven",
+  "VPS15",
+  "VPS34",
+  "Beclin",
+  "LC3",
+  "LC3A",
+  "LC3B",
+  "LC3C",
+  "GABARAP",
+  "GABARAPL1",
+  "GABARAPL2",
+  "GABARABL2",
+  "WIPI1",
+  "WIPI2",
+  "WIPI3",
+  "WIPI4",
+  "WIPI49",
+  "WIPI-1α",
+  "WIPI-driven",
+  "TBK1",
+  "CK2",
+  "Src",
+  "OPTN",
+  "p62",
+  "BCL2L13",
+  "FUNDC1",
+  "FUNDC1mediated",
+  "FKBP8",
+  "CCPG1",
+  "TEX264",
+  "TEX264dependent",
+  "FAM134A/C",
+  "FAM134B",
+  "FAM134C",
+  "NIX",
+  "BNIP3",
+  "PTC7",
+  "SCF-FBXL4",
+  "REEP",
+  "VAPA",
+  "ER-phagy",
+  "LIR",
+  "SAR",
+  "USA",
+  "Nakatogawa",
+  "Proikas-Cezanne",
+  "Bruick"
+ ]
+}

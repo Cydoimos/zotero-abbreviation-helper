@@ -1,0 +1,213 @@
+{
+ "doi": "10.1101/2023.12.01.569403",
+ "title": "Mechanism of homology search expansion during recombinational DNA break repair",
+ "journal": "Genetics",
+ "defined": [
+  {
+   "sf": "NPF",
+   "lf": "nucleoprotein filament",
+   "how": "paren"
+  },
+  {
+   "sf": "DSB",
+   "lf": "DNA double-strand break",
+   "how": "paren",
+   "alt": [
+    "double-strand break"
+   ]
+  },
+  {
+   "sf": "ssDNA",
+   "lf": "single-stranded DNA",
+   "how": "paren"
+  },
+  {
+   "sf": "HR",
+   "lf": "homologous recombination",
+   "how": "paren"
+  },
+  {
+   "sf": "ChIP",
+   "lf": "Chromatin immunoprecipitation",
+   "how": "paren"
+  },
+  {
+   "sf": "RE",
+   "lf": "recombination enhancer",
+   "how": "paren"
+  },
+  {
+   "sf": "ssHi-C",
+   "lf": "ssDNA-specific Hi-C",
+   "how": "paren"
+  },
+  {
+   "sf": "SNPs",
+   "lf": "nucleotide polymorphisms",
+   "how": "paren",
+   "alt": [
+    "single nucleotide polymorphisms"
+   ]
+  },
+  {
+   "sf": "SPB",
+   "lf": "spindle-pole body",
+   "how": "paren"
+  },
+  {
+   "sf": "exo1-cd",
+   "lf": "catalytic-deficient exo1-D173A",
+   "how": "phrase"
+  },
+  {
+   "sf": "MRXN",
+   "lf": "Mre11-Rad50-Xrs2/NBS1",
+   "how": "paren",
+   "alt": [
+    "Mre1-Rad50-Xrs2NBS1"
+   ]
+  },
+  {
+   "sf": "ERC",
+   "lf": "European Research Council",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "dsDNA",
+   "lf": "double-stranded DNA"
+  },
+  {
+   "sf": "SNP",
+   "lf": "single nucleotide polymorphism"
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction"
+  },
+  {
+   "sf": "WT",
+   "lf": "wild type"
+  },
+  {
+   "sf": "AID",
+   "lf": "auxin-inducible degron"
+  },
+  {
+   "sf": "IAA",
+   "lf": "indole-3-acetic acid"
+  },
+  {
+   "sf": "YPD",
+   "lf": "yeast extract-peptone-dextrose"
+  },
+  {
+   "sf": "kb",
+   "lf": "kilobases"
+  },
+  {
+   "sf": "bp",
+   "lf": "base pairs"
+  }
+ ],
+ "ignore": [
+  "Hi-C",
+  "HO",
+  "HOcs",
+  "ARG4",
+  "MAT",
+  "URA3",
+  "LYS2",
+  "lys2",
+  "trp1",
+  "his3",
+  "HIS3",
+  "exo1",
+  "exo1Δ",
+  "exo1-D173A",
+  "Exo1",
+  "rad51Δ",
+  "rad51Δcells",
+  "rad51Δmutant",
+  "Rad51",
+  "RecA",
+  "Rad50",
+  "Mre1",
+  "Mre11",
+  "Xrs2",
+  "NBS1",
+  "Scc1",
+  "Cdc45",
+  "Pol3",
+  "Rfc1",
+  "PCNA",
+  "PCNA-Polδ",
+  "Polδ",
+  "OsTIR1",
+  "OsTir1",
+  "pADH1",
+  "pGAL1-HO",
+  "9Myc",
+  "Pk3",
+  "FlagX5",
+  "6HA",
+  "DpnII",
+  "PhiX",
+  "S288c",
+  "W303",
+  "RAD5",
+  "APY266",
+  "APY358",
+  "APY513",
+  "APY536",
+  "APY679",
+  "APY1350",
+  "APY1352",
+  "APY1481",
+  "APY1497",
+  "APY1500",
+  "APY1548",
+  "L2599",
+  "845464-F/R",
+  "RE-atchrIV",
+  "Pc(s)",
+  "chr. II",
+  "chr. III",
+  "chr. IV",
+  "chr. V",
+  "II",
+  "III",
+  "IV",
+  "V",
+  "G2/M",
+  "LOWESS",
+  "CNRS",
+  "ANR-21-CE13-0037-02",
+  "ANR-22-CE12 0035-03",
+  "DJ",
+  "A.P.",
+  "S1",
+  "S1A",
+  "S1B",
+  "S2",
+  "S2F-H",
+  "S4F",
+  "S4G",
+  "S6E-G",
+  "S7D",
+  "S7E",
+  "S8A",
+  "S8B",
+  "S8C",
+  "G-H",
+  "I-J",
+  "Methods",
+  "YEP-lactate",
+  "DSB-distal"
+ ]
+}

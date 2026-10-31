@@ -1,0 +1,237 @@
+{
+ "doi": "10.1080/15476286.2023.2237719",
+ "title": "RNA origami: design, simulation and application",
+ "journal": "RNA Biology",
+ "defined": [
+  {
+   "sf": "tectoRNAs",
+   "lf": "RNA molecules forming defined branched junctions",
+   "how": "phrase",
+   "alt": [
+    "tectoRNA"
+   ],
+   "note": "\"which they called tectoRNAs\"; the paper gives the concept, not words behind the name"
+  },
+  {
+   "sf": "ZMBH",
+   "lf": "Center for Molecular Biology of Heidelberg University",
+   "how": "paren"
+  },
+  {
+   "sf": "HITS",
+   "lf": "Heidelberg Institute for Theoretical Studies",
+   "how": "paren"
+  },
+  {
+   "sf": "ISIS",
+   "lf": "Institut de Science Et D'ingénierie Supramoléculaires",
+   "how": "paren"
+  },
+  {
+   "sf": "pRNA",
+   "lf": "packaging RNA",
+   "how": "paren"
+  },
+  {
+   "sf": "3WJ",
+   "lf": "three-way junctions",
+   "how": "paren",
+   "alt": [
+    "three-wayjunctions"
+   ]
+  },
+  {
+   "sf": "DX",
+   "lf": "double crossover",
+   "how": "paren"
+  },
+  {
+   "sf": "PX",
+   "lf": "paranemic crossover",
+   "how": "paren"
+  },
+  {
+   "sf": "6HB",
+   "lf": "6-helix bundle",
+   "how": "paren",
+   "alt": [
+    "six-helix bundle"
+   ]
+  },
+  {
+   "sf": "KL",
+   "lf": "kissing loop",
+   "how": "paren"
+  },
+  {
+   "sf": "ROAD",
+   "lf": "RNA Origami Automated Design",
+   "how": "paren"
+  },
+  {
+   "sf": "AFM",
+   "lf": "Atomic force microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "cryo-EM",
+   "lf": "Cryogenic electron microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "MFE",
+   "lf": "minimum free energy",
+   "how": "paren"
+  },
+  {
+   "sf": "MD",
+   "lf": "molecular dynamics",
+   "how": "paren"
+  },
+  {
+   "sf": "IPET",
+   "lf": "individual-particle cryo-electron tomography",
+   "how": "paren"
+  },
+  {
+   "sf": "TIS",
+   "lf": "three interaction site",
+   "how": "reverse"
+  },
+  {
+   "sf": "aPTT",
+   "lf": "activated partial thromboplastin time",
+   "how": "paren"
+  },
+  {
+   "sf": "Casp-8",
+   "lf": "caspase-8",
+   "how": "paren"
+  },
+  {
+   "sf": "dCas9",
+   "lf": "Catalytically inactive Cas9",
+   "how": "paren"
+  },
+  {
+   "sf": "sgRNA",
+   "lf": "single-guide RNA",
+   "how": "paren"
+  },
+  {
+   "sf": "sgRNAOs",
+   "lf": "sgRNAs fused with an RNA origami structure",
+   "how": "phrase",
+   "alt": [
+    "sgRNA origami"
+   ]
+  },
+  {
+   "sf": "PBS",
+   "lf": "phosphate-buffered saline",
+   "how": "paren"
+  },
+  {
+   "sf": "TLR3",
+   "lf": "Toll-like receptor 3",
+   "how": "paren"
+  },
+  {
+   "sf": "PolyIC",
+   "lf": "polyinosinic/polycytidylic acid",
+   "how": "paren"
+  },
+  {
+   "sf": "DFG",
+   "lf": "Deutsche Forschungsgemeinschaft",
+   "how": "inside",
+   "alt": [
+    "German Research Foundation"
+   ]
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "ssRNA",
+   "lf": "single-stranded RNA"
+  },
+  {
+   "sf": "siRNA",
+   "lf": "small interfering RNA"
+  },
+  {
+   "sf": "siRNAs",
+   "lf": "small interfering RNAs"
+  },
+  {
+   "sf": "FRET",
+   "lf": "Förster resonance energy transfer"
+  }
+ ],
+ "ignore": [
+  "oxRNA",
+  "MARTINI",
+  "HiRE-RNA",
+  "NUPACK",
+  "mFold",
+  "ViennaRNA",
+  "Nanotiler",
+  "DAEDALUS",
+  "TectoRNA",
+  "Cas9",
+  "SgRNAs",
+  "2HF",
+  "2HF-RNA",
+  "2HF–RNA",
+  "2HF-RNA2211",
+  "PTTe",
+  "H1299",
+  "Mg2",
+  "DNA/RNA",
+  "DNA-origami",
+  "RNA-based",
+  "Apta",
+  "Dicer",
+  "CC-BY",
+  "WILEY-VCH",
+  "GmbH",
+  "KGaA",
+  "ACS",
+  "BIOLOGY",
+  "POPPLETON",
+  "ET",
+  "AL",
+  "UK",
+  "USA",
+  "NC",
+  "NB",
+  "AY",
+  "KA",
+  "DL",
+  "BA",
+  "WW",
+  "PWK",
+  "ES",
+  "MM",
+  "SM",
+  "SH",
+  "MF",
+  "CW",
+  "EK",
+  "MT",
+  "AJ",
+  "D-69120",
+  "EXC-2082/1",
+  "B-D",
+  "Print",
+  "Online"
+ ]
+}

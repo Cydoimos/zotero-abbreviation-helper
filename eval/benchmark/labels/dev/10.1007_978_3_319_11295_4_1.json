@@ -1,0 +1,167 @@
+{
+ "doi": "10.1007/978-3-319-11295-4_1",
+ "title": "Design Principles for Single-Stranded RNA Origami Structures",
+ "journal": "",
+ "defined": [
+  {
+   "sf": "DX",
+   "lf": "double-crossover",
+   "how": "paren"
+  },
+  {
+   "sf": "PX",
+   "lf": "paranemic crossover",
+   "how": "paren"
+  },
+  {
+   "sf": "PON",
+   "lf": "parallel odd crossover bridging the narrow minor groove",
+   "how": "other",
+   "alt": [
+    "PO crossover over the narrow groove"
+   ],
+   "note": "named in the text from the letter key: P = parallel, O = odd, N = narrow"
+  },
+  {
+   "sf": "POW",
+   "lf": "parallel odd crossover bridging the wide major groove",
+   "how": "other",
+   "alt": [
+    "PO crossover over the wide groove"
+   ],
+   "note": "named from the letter key: W = wide"
+  },
+  {
+   "sf": "POD",
+   "lf": "parallel odd crossover bridging the deep major groove",
+   "how": "paren",
+   "alt": [
+    "PO crossover over the deep groove"
+   ],
+   "note": "proposed name; D = deep"
+  },
+  {
+   "sf": "POS",
+   "lf": "parallel odd crossover bridging the shallow minor groove",
+   "how": "paren",
+   "alt": [
+    "PO crossover over the shallow groove"
+   ],
+   "note": "proposed name; S = shallow"
+  },
+  {
+   "sf": "MX",
+   "lf": "multiple crossover",
+   "how": "paren"
+  },
+  {
+   "sf": "RCT",
+   "lf": "Rolling circle transcription",
+   "how": "paren"
+  },
+  {
+   "sf": "KL",
+   "lf": "kissing-loop",
+   "how": "paren"
+  },
+  {
+   "sf": "DT",
+   "lf": "dovetail",
+   "how": "paren"
+  },
+  {
+   "sf": "bps",
+   "lf": "base pairs",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "bp",
+   "lf": "base pair"
+  },
+  {
+   "sf": "HIV-1",
+   "lf": "human immunodeficiency virus 1"
+  },
+  {
+   "sf": "PDB",
+   "lf": "Protein Data Bank"
+  }
+ ],
+ "ignore": [
+  "AE",
+  "AO",
+  "PE",
+  "PO",
+  "PO-DX",
+  "PO-DXs",
+  "AO-DX",
+  "DX-distx",
+  "P-distx",
+  "P-distxyz",
+  "AE/PE",
+  "RNA-AE",
+  "RNA/DNA",
+  "B-DNA",
+  "1BNA",
+  "PDB-ID",
+  "3H-AE",
+  "3H-AO",
+  "3H-PE",
+  "2H-AO",
+  "3S-AE",
+  "14H",
+  "6S-AE",
+  "8H",
+  "7H",
+  "4H-AO",
+  "J1",
+  "J2",
+  "J3",
+  "H1",
+  "H2",
+  "AB",
+  "P-P",
+  "b1",
+  "b2",
+  "p1",
+  "p2",
+  "n1",
+  "n2",
+  "n∗11",
+  "ΔAngle",
+  "3NNN",
+  "NNN",
+  "NN",
+  "NNN3",
+  "5NNN",
+  "NNN5",
+  "NNNN",
+  "NNNNNNNNN",
+  "CCACUG",
+  "RYHWDLO",
+  "C2",
+  "Single-Stranded",
+  "Space-Filling",
+  "CITATIONS",
+  "READS",
+  "Eds.",
+  "E",
+  "O",
+  "A",
+  "P",
+  "W",
+  "N",
+  "D",
+  "S"
+ ]
+}

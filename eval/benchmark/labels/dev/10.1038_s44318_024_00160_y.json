@@ -1,0 +1,45 @@
+{
+ "doi": "10.1038/s44318-024-00160-y",
+ "title": "A hitchhiker’s guide to autophagy",
+ "journal": "The EMBO Journal",
+ "defined": [
+  {
+   "sf": "AIMs",
+   "lf": "Atg8 interacting motifs",
+   "how": "paren"
+  },
+  {
+   "sf": "LIRs",
+   "lf": "LC3-interacting regions",
+   "how": "paren",
+   "alt": [
+    "LC3interacting regions"
+   ]
+  },
+  {
+   "sf": "Hab1",
+   "lf": "highly enriched in autophagic bodies",
+   "how": "reverse"
+  },
+  {
+   "sf": "VBC",
+   "lf": "Vienna Biocenter Campus",
+   "how": "paren"
+  },
+  {
+   "sf": "PAS",
+   "lf": "pre-autophagosomal structure",
+   "how": "reverse"
+  }
+ ],
+ "undefined": [],
+ "ignore": [
+  "Atg8",
+  "ATG8",
+  "Atg11",
+  "Ybr285w",
+  "EMBO",
+  "Upper",
+  "Lower"
+ ]
+}

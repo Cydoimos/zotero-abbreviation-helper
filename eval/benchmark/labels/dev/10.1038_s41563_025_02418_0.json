@@ -1,0 +1,248 @@
+{
+ "doi": "10.1038/s41563-025-02418-0",
+ "title": "Self-assembled cell-scale containers made from DNA origami membranes",
+ "journal": "Nature Materials",
+ "defined": [
+  {
+   "sf": "Dipids",
+   "lf": "lipid-inspired DNA origami monomers",
+   "how": "phrase",
+   "alt": [
+    "Dipid"
+   ],
+   "note": "\"DNA origami subunits that we termed Dipids\"; the name is coined, with the architecture described rather than spelled out"
+  },
+  {
+   "sf": "ssDNA",
+   "lf": "single-stranded DNA",
+   "how": "paren"
+  },
+  {
+   "sf": "dsDNA",
+   "lf": "double-stranded DNA",
+   "how": "paren"
+  },
+  {
+   "sf": "TEM",
+   "lf": "Transmission electron microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "cryo-ET",
+   "lf": "cryo-electron tomography",
+   "how": "paren"
+  },
+  {
+   "sf": "IQRs",
+   "lf": "interquartile ranges",
+   "how": "paren"
+  },
+  {
+   "sf": "IQR",
+   "lf": "interquartile range",
+   "how": "inside"
+  },
+  {
+   "sf": "IVT",
+   "lf": "in vitro transcription",
+   "how": "paren"
+  },
+  {
+   "sf": "dBA",
+   "lf": "dBroccoli aptamer",
+   "how": "paren"
+  },
+  {
+   "sf": "EDTA",
+   "lf": "ethylenediaminetetraacetic acid",
+   "how": "paren"
+  },
+  {
+   "sf": "PEG",
+   "lf": "polyethylene glycol",
+   "how": "paren"
+  },
+  {
+   "sf": "CLAHE",
+   "lf": "Contrast Limited Adaptive Histogram Equalization",
+   "how": "other",
+   "alt": [
+    "Enhance Local Contrast"
+   ],
+   "note": "named only by the Fiji function \"Enhance Local Contrast\""
+  },
+  {
+   "sf": "CTF",
+   "lf": "Contrast transfer function",
+   "how": "paren"
+  },
+  {
+   "sf": "PDL",
+   "lf": "poly-D-lysine",
+   "how": "paren"
+  },
+  {
+   "sf": "dNTP",
+   "lf": "deoxynucleoside triphosphate",
+   "how": "paren"
+  },
+  {
+   "sf": "BMFTR",
+   "lf": "German Federal Ministry of Research, Technology and Space",
+   "how": "paren"
+  },
+  {
+   "sf": "RISE",
+   "lf": "Robotic Intelligence in the Synthesis of Life",
+   "how": "paren"
+  },
+  {
+   "sf": "FFT",
+   "lf": "fast Fourier transforms",
+   "how": "paren"
+  },
+  {
+   "sf": "VLPs",
+   "lf": "Virus-like particles",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "LUV",
+   "lf": "large unilamellar vesicle"
+  },
+  {
+   "sf": "HIV",
+   "lf": "human immunodeficiency virus"
+  },
+  {
+   "sf": "PDB",
+   "lf": "Protein Data Bank"
+  },
+  {
+   "sf": "s.d.",
+   "lf": "standard deviation"
+  }
+ ],
+ "ignore": [
+  "XS",
+  "S-hdT",
+  "S-hdT-binding",
+  "XS-XXL",
+  "XL",
+  "XXL",
+  "XXL-handle",
+  "XS-Atto488",
+  "XXL-Atto655",
+  "Dipid-A",
+  "Dipid-B",
+  "non-Dipid",
+  "DNA-based",
+  "DNA-sequence",
+  "HIV-inspired",
+  "PEG-purified",
+  "dBroccoli",
+  "oxDNA",
+  "oxView",
+  "NUPACK",
+  "scadnano",
+  "ChimeraX57",
+  "ArtiaX",
+  "RELION-5",
+  "RELION-562",
+  "RELION63",
+  "MotionCor2",
+  "CTFFIND4",
+  "IMOD",
+  "ETOMO",
+  "Fiji",
+  "Fiji60",
+  "GitHub",
+  "figshare",
+  "GH",
+  "FS",
+  "FOB5",
+  "FOB18",
+  "p2873",
+  "p7249",
+  "Tilibit",
+  "Millipore",
+  "Amicon",
+  "Eppendorf",
+  "Mastercycler",
+  "GX2",
+  "Picodent",
+  "twinsil",
+  "Ibidi",
+  "ibiTreat",
+  "Sigma-Aldrich",
+  "FITC",
+  "Atto488",
+  "Atto565",
+  "Atto655",
+  "HyD",
+  "Brand",
+  "Vitrobot",
+  "FEI",
+  "Tecnai",
+  "Tietz",
+  "RiboLock",
+  "RNase",
+  "Thermo",
+  "Science",
+  "Syn1",
+  "Syn1.0",
+  "T3",
+  "T9",
+  "CBS",
+  "3J3Q",
+  "GDa",
+  "nXS",
+  "nS",
+  "nM",
+  "nL",
+  "nXL",
+  "nXXL",
+  "dLUV",
+  "dminor",
+  "dmajor",
+  "dpore",
+  "dS",
+  "H2O",
+  "MgCl2",
+  "NaCl",
+  "mM",
+  "μM",
+  "μl",
+  "ml",
+  "mA",
+  "kV",
+  "px",
+  "GA",
+  "GB",
+  "cXXL",
+  "cL",
+  "ΔG",
+  "ΔGA",
+  "ΔGB",
+  "r1",
+  "r2",
+  "seq1",
+  "kJ/mol",
+  "TUM",
+  "ACS",
+  "USA",
+  "PDF",
+  "Uμl",
+  "M. J."
+ ]
+}

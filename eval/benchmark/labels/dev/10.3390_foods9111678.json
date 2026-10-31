@@ -1,0 +1,274 @@
+{
+ "doi": "10.3390/foods9111678",
+ "title": "Combinations of Legume Protein Hydrolysates Synergistically Inhibit Biological Markers Associated with Adipogenesis",
+ "journal": "Foods",
+ "defined": [
+  {
+   "sf": "A-LPH",
+   "lf": "legume protein hydrolyzed with alcalase",
+   "how": "list"
+  },
+  {
+   "sf": "ABTS",
+   "lf": "2,2'-azinobis (3-ethyl-benzothiazoline-6-sulfonic acid) diammonium salt",
+   "how": "other"
+  },
+  {
+   "sf": "ACE",
+   "lf": "angiotensin-converting enzyme",
+   "how": "paren"
+  },
+  {
+   "sf": "DH",
+   "lf": "degree of hydrolysis",
+   "how": "paren"
+  },
+  {
+   "sf": "DPP-IV",
+   "lf": "dipeptidyl peptidase-IV",
+   "how": "paren"
+  },
+  {
+   "sf": "DPPH",
+   "lf": "2,2-diphenyl-1-picrylhydrazyl",
+   "how": "list"
+  },
+  {
+   "sf": "FDA",
+   "lf": "U.S. Food and Drug Administration",
+   "how": "paren"
+  },
+  {
+   "sf": "HMGR",
+   "lf": "3-hydroxy-3-methylglutaryl coenzyme A reductase",
+   "how": "list"
+  },
+  {
+   "sf": "LC-ESI-MS/MS",
+   "lf": "liquid chromatography-electrospray ionization-mass spectrometry",
+   "how": "other"
+  },
+  {
+   "sf": "LPH",
+   "lf": "legume protein hydrolysates",
+   "how": "paren"
+  },
+  {
+   "sf": "LPI",
+   "lf": "legume protein isolates",
+   "how": "paren"
+  },
+  {
+   "sf": "MOPS",
+   "lf": "3-Morpholinopropane-1-sulfonic acid",
+   "how": "paren"
+  },
+  {
+   "sf": "NaTDC",
+   "lf": "sodium taurodeoxycholate hydrate",
+   "how": "paren"
+  },
+  {
+   "sf": "NO",
+   "lf": "nitric oxide",
+   "how": "paren"
+  },
+  {
+   "sf": "PL",
+   "lf": "pancreatic lipase",
+   "how": "paren"
+  },
+  {
+   "sf": "PP",
+   "lf": "pepsin and pancreatin",
+   "how": "paren"
+  },
+  {
+   "sf": "PP-LPH",
+   "lf": "legume protein hydrolyzed with pepsin/pancreatin",
+   "how": "list"
+  },
+  {
+   "sf": "SDS-PAGE",
+   "lf": "sodium dodecyl sulfate-polyacrylamide gel electrophoresis",
+   "how": "other"
+  },
+  {
+   "sf": "SNP",
+   "lf": "sodium nitroprusside",
+   "how": "paren"
+  },
+  {
+   "sf": "TE",
+   "lf": "Trolox equivalent",
+   "how": "paren"
+  },
+  {
+   "sf": "TNBS",
+   "lf": "trinitrobenzene sulfonic acid",
+   "how": "reverse"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "HMG-CoA",
+   "lf": "3-hydroxy-3-methylglutaryl coenzyme A"
+  },
+  {
+   "sf": "SDS",
+   "lf": "sodium dodecyl sulfate"
+  },
+  {
+   "sf": "PAGE",
+   "lf": "polyacrylamide gel electrophoresis"
+  },
+  {
+   "sf": "LC",
+   "lf": "liquid chromatography"
+  },
+  {
+   "sf": "ESI",
+   "lf": "electrospray ionization"
+  },
+  {
+   "sf": "MS/MS",
+   "lf": "tandem mass spectrometry"
+  },
+  {
+   "sf": "HPLC",
+   "lf": "high performance liquid chromatography"
+  },
+  {
+   "sf": "ACN",
+   "lf": "acetonitrile"
+  },
+  {
+   "sf": "NADPH",
+   "lf": "nicotinamide adenine dinucleotide phosphate"
+  },
+  {
+   "sf": "pI",
+   "lf": "isoelectric point"
+  }
+ ],
+ "ignore": [
+  "0.1 mM",
+  "0.15 mg/mL",
+  "1.2 mg/mL",
+  "1.4 mg/mL",
+  "1.5 mg/mL",
+  "10 mM",
+  "10% B",
+  "100% A",
+  "100% B",
+  "12 μL",
+  "16 kDa",
+  "16. [CrossRef] Publisher’s Note: ⟨MDPI⟩ stays neut",
+  "1:20 w/v",
+  "1DQ9",
+  "1LPB",
+  "2 μL",
+  "250 nM",
+  "39 kDa",
+  "4 μL",
+  "40% B",
+  "48",
+  "48 kDa",
+  "60% A",
+  "63 kDa",
+  "72 kDa",
+  "8xUSP",
+  "90% A",
+  "95% ACN",
+  "95% H2O",
+  "EC 3.4.21.62",
+  "EC 3.4.23.1",
+  "Figure1A",
+  "Figure3A",
+  "Figure3C",
+  "Figure5B",
+  "IC50 mg/mL",
+  "L.M.",
+  "LC–ESI– MS/MS",
+  "TE/mL",
+  "figure refs):",
+  "initials",
+  "measurements",
+  "numbers",
+  "pH 2.0",
+  "pH 7.0",
+  "pH 7.4",
+  "AUTO-IGNORE (units",
+  "C.M.",
+  "MDPI\t2\t100%\t. 2015",
+  "SD",
+  "IC50",
+  "TG",
+  "BLAST",
+  "BIOPEP",
+  "PepDraw",
+  "AutoDock",
+  "MMFF94",
+  "DockingServer",
+  "SimplyBlue",
+  "x-MarkTM",
+  "LabConco",
+  "FreeZone",
+  "Sigma-Aldrich",
+  "Bio-Rad",
+  "Bio-rad",
+  "Bio-Rad Laboratories",
+  "Inc.",
+  "CONACyT",
+  "CrossRef",
+  "PubMed",
+  "ISBN",
+  "MDPI",
+  "Springer",
+  "Hercules",
+  "Milford",
+  "St. Louis",
+  "Carlsbad",
+  "Kansas",
+  "Budapest",
+  "Hungary",
+  "Cary",
+  "Mexico",
+  "NY",
+  "NC",
+  "MO",
+  "CA",
+  "CT",
+  "USA",
+  "HCl",
+  "H2O",
+  "kDa",
+  "pH",
+  "mL",
+  "mM",
+  "HepG2",
+  "Luna-Vital",
+  "Camacho-Ruiz",
+  "Oseguera-Toledo",
+  "Amaya-Llano",
+  "Berenguer-Murcia",
+  "Docking",
+  "HMG",
+  "HMG-CoA Reductase",
+  "NAD",
+  "Precast",
+  "Standards",
+  "Water",
+  "Waters",
+  "+ESI",
+  "β-ME",
+  "NO2",
+  "EC",
+  "Eds.",
+  "FOR",
+  "PEER",
+  "REVIEW",
+  "STD",
+  "NCED1"
+ ]
+}

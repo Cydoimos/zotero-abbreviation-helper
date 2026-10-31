@@ -1,0 +1,111 @@
+{
+ "doi": "10.1073/pnas.1017999108",
+ "title": "Self-assembling RNA square",
+ "journal": "Proceedings of the National Academy of Sciences",
+ "defined": [
+  {
+   "sf": "IRES",
+   "lf": "internal ribosome entry site",
+   "how": "paren"
+  },
+  {
+   "sf": "HCV",
+   "lf": "hepatitis C virus",
+   "how": "paren"
+  },
+  {
+   "sf": "5BrU59",
+   "lf": "5-bromo uridine-labeled",
+   "how": "paren",
+   "alt": [
+    "5-bromo uridine"
+   ]
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "SI",
+   "lf": "Supporting Information"
+  },
+  {
+   "sf": "HPLC",
+   "lf": "high-performance liquid chromatography"
+  },
+  {
+   "sf": "PEG400",
+   "lf": "polyethylene glycol 400"
+  }
+ ],
+ "ignore": [
+  "IIa",
+  "IIa-1",
+  "A/B",
+  "C/D",
+  "E/F",
+  "G/H",
+  "X^Y",
+  "A^B-cy3",
+  "C^D-cy5",
+  "B-cy3",
+  "D-cy5",
+  "B^C",
+  "D^A",
+  "cy3",
+  "cy5",
+  "Cy3",
+  "Cy5",
+  "PHENIX",
+  "Refmac",
+  "CCP4",
+  "Molecular",
+  "Devices",
+  "Spectra",
+  "Gemini",
+  "Oxf",
+  "PNAS",
+  "CHEMISTRY",
+  "BIOCHEMISTRY",
+  "IP",
+  "III",
+  "Mg2",
+  "Co3",
+  "MgCl2",
+  "KCl",
+  "NH3",
+  "Cl3",
+  "mM",
+  "nM",
+  "nm",
+  "G48",
+  "G49",
+  "G52",
+  "G60",
+  "G106",
+  "G107",
+  "G110",
+  "C55",
+  "C58",
+  "C111",
+  "U56",
+  "A57",
+  "A109",
+  "A57-C111",
+  "G110-C58/C55",
+  "non-Watson-Crick",
+  "S1",
+  "S3",
+  "S6",
+  "R01",
+  "AI72012",
+  "T.H.",
+  "Appendix"
+ ]
+}

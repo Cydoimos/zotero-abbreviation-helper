@@ -1,0 +1,177 @@
+{
+ "doi": "10.1002/mnfr.201700403",
+ "title": "Evaluation of the hypocholesterolemic effect and prebiotic activity of a lentil ( Lens culinaris Medik) extract",
+ "journal": "Molecular Nutrition & Food Research",
+ "defined": [
+  {
+   "sf": "BAs",
+   "lf": "bile acids",
+   "how": "list"
+  },
+  {
+   "sf": "CHD",
+   "lf": "coronary heart disease",
+   "how": "list",
+   "alt": [
+    "coronary heart disease"
+   ]
+  },
+  {
+   "sf": "CVD",
+   "lf": "cardiovascular disease",
+   "how": "list"
+  },
+  {
+   "sf": "FDP",
+   "lf": "freeze-dried powder",
+   "how": "list"
+  },
+  {
+   "sf": "FOSs",
+   "lf": "fructooligosaccharides",
+   "how": "list"
+  },
+  {
+   "sf": "GC-FID",
+   "lf": "GC-flame ionization detector",
+   "how": "list",
+   "alt": [
+    "gas chromatograph equipped with a flame ionization detector"
+   ]
+  },
+  {
+   "sf": "LE",
+   "lf": "lentil extract",
+   "how": "list"
+  },
+  {
+   "sf": "RFO",
+   "lf": "raffinose-family oligosaccharides",
+   "how": "list"
+  },
+  {
+   "sf": "RS",
+   "lf": "resistant starch",
+   "how": "list"
+  },
+  {
+   "sf": "CA",
+   "lf": "cholic acid",
+   "how": "paren"
+  },
+  {
+   "sf": "CDCA",
+   "lf": "chenodeoxycholic acid",
+   "how": "paren"
+  },
+  {
+   "sf": "DCA",
+   "lf": "deoxycholic acid",
+   "how": "paren"
+  },
+  {
+   "sf": "LCA",
+   "lf": "lithocholic acid",
+   "how": "paren"
+  },
+  {
+   "sf": "UDCA",
+   "lf": "ursodeoxycholic acid",
+   "how": "paren"
+  },
+  {
+   "sf": "ANOVA",
+   "lf": "analysis of variance",
+   "how": "paren"
+  },
+  {
+   "sf": "PAST",
+   "lf": "Paleontological Statistics Software Package",
+   "how": "paren"
+  },
+  {
+   "sf": "MSA",
+   "lf": "Mannitol Salt agar",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "SCFAs",
+   "lf": "short-chain fatty acids"
+  },
+  {
+   "sf": "HDL",
+   "lf": "high-density lipoprotein"
+  },
+  {
+   "sf": "LDL",
+   "lf": "low-density lipoprotein"
+  },
+  {
+   "sf": "MS",
+   "lf": "mass spectrometry"
+  },
+  {
+   "sf": "HPLC",
+   "lf": "high performance liquid chromatography"
+  },
+  {
+   "sf": "ESI",
+   "lf": "electrospray ionization"
+  },
+  {
+   "sf": "CFU",
+   "lf": "colony-forming units"
+  },
+  {
+   "sf": "RSD",
+   "lf": "relative standard deviation"
+  }
+ ],
+ "ignore": [
+  "GC",
+  "SPE",
+  "HPLC-MS",
+  "HPLCMS/MS",
+  "C18",
+  "M-H",
+  "SIM",
+  "AP",
+  "T0",
+  "T1",
+  "T2",
+  "T3",
+  "T4",
+  "T fin",
+  "T final",
+  "OA",
+  "mL",
+  "mL/min",
+  "mg/L",
+  "mg/kg",
+  "mg/100 mL",
+  "CFU/mL",
+  "CFU/ml",
+  "H20/EtOH",
+  "PTFE",
+  "EEC",
+  "UE",
+  "FAR",
+  "OXOID",
+  "bioMerieux",
+  "SYSTAT",
+  "Systat Software",
+  "Sigma-Aldrich",
+  "Phenomenex",
+  "Zirbus",
+  "Mucedola",
+  "Charles River",
+  "Labortechnik",
+  "WILEY-VCH",
+  "GmbH",
+  "KGaA",
+  "USA",
+  "UK"
+ ]
+}

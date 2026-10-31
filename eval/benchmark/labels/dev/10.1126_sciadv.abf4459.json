@@ -1,0 +1,244 @@
+{
+ "doi": "10.1126/sciadv.abf4459",
+ "title": "Structures of artificially designed discrete RNA nanoarchitectures at near-atomic resolution",
+ "journal": "Science Advances",
+ "defined": [
+  {
+   "sf": "NAs",
+   "lf": "nucleic acids",
+   "how": "paren"
+  },
+  {
+   "sf": "KLs",
+   "lf": "kissing loops",
+   "how": "paren"
+  },
+  {
+   "sf": "bKLs",
+   "lf": "branched KLs",
+   "how": "paren",
+   "alt": [
+    "branched kissing loops"
+   ]
+  },
+  {
+   "sf": "WC",
+   "lf": "Watson-Crick",
+   "how": "paren"
+  },
+  {
+   "sf": "T-J",
+   "lf": "T-junction",
+   "how": "paren"
+  },
+  {
+   "sf": "PLM",
+   "lf": "parallelogram",
+   "how": "paren",
+   "alt": [
+    "2D parallelogram"
+   ]
+  },
+  {
+   "sf": "NMR",
+   "lf": "nuclear magnetic resonance",
+   "how": "paren"
+  },
+  {
+   "sf": "ASU",
+   "lf": "asymmetric unit",
+   "how": "paren",
+   "alt": [
+    "crystallographic asymmetric unit"
+   ]
+  },
+  {
+   "sf": "nPAGE",
+   "lf": "Native polyacrylamide gel electrophoresis",
+   "how": "paren"
+  },
+  {
+   "sf": "PDB",
+   "lf": "Protein Data Bank",
+   "how": "paren"
+  },
+  {
+   "sf": "IRES",
+   "lf": "internal ribosome entry site",
+   "how": "paren"
+  },
+  {
+   "sf": "HCV",
+   "lf": "hepatitis C virus",
+   "how": "paren"
+  },
+  {
+   "sf": "cryo-EM",
+   "lf": "cryo-electron microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "intra-bKL",
+   "lf": "intramolecular bKL",
+   "how": "paren"
+  },
+  {
+   "sf": "inter-bKLs",
+   "lf": "intermolecular bKLs",
+   "how": "paren"
+  },
+  {
+   "sf": "tWW",
+   "lf": "trans-WC/WC",
+   "how": "paren"
+  },
+  {
+   "sf": "cWW",
+   "lf": "cis-WC/WC",
+   "how": "paren"
+  },
+  {
+   "sf": "DIS",
+   "lf": "dimerization initiation site",
+   "how": "paren",
+   "alt": [
+    "HIV-1 dimerization initiation site"
+   ]
+  },
+  {
+   "sf": "BRC",
+   "lf": "bracelet",
+   "how": "phrase",
+   "alt": [
+    "the dimer named for its bracelet shape"
+   ],
+   "note": "\"referred to as BRC because of its shape\"; the shape, not the words, is given"
+  },
+  {
+   "sf": "DCG",
+   "lf": "dimer crystallized for the gel species",
+   "how": "phrase",
+   "alt": [
+    "the crystallized dimer"
+   ],
+   "note": "\"referred to as DCG\"; the letters are never spelled out"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "tRNA",
+   "lf": "transfer RNA"
+  },
+  {
+   "sf": "HIV-1",
+   "lf": "human immunodeficiency virus 1"
+  },
+  {
+   "sf": "RNase",
+   "lf": "ribonuclease"
+  },
+  {
+   "sf": "bp",
+   "lf": "base pair"
+  },
+  {
+   "sf": "nt",
+   "lf": "nucleotide"
+  }
+ ],
+ "ignore": [
+  "bKL",
+  "inter-bKL",
+  "J23",
+  "J45",
+  "AACUA",
+  "D2-symmetry",
+  "L3",
+  "L5",
+  "L12",
+  "L14",
+  "L14/L3",
+  "L12/L5",
+  "P1a-P1b",
+  "P2",
+  "P3",
+  "P4",
+  "P5",
+  "Hb2",
+  "Hk",
+  "Hl",
+  "A18",
+  "A36",
+  "A37",
+  "A44",
+  "A64",
+  "A65",
+  "A72",
+  "A85",
+  "A103",
+  "A104",
+  "A111",
+  "C17",
+  "C19",
+  "C78",
+  "C110",
+  "G12",
+  "G124",
+  "U118",
+  "2A-6N-1A",
+  "2B8R",
+  "2D1B",
+  "1BAU",
+  "2F4X",
+  "SimRNA",
+  "ColE1",
+  "phi29",
+  "K-turn",
+  "K-turns",
+  "Mg2",
+  "Mg2+",
+  "Na+",
+  "mM",
+  "nm2",
+  "NA-based",
+  "Watson-Crick",
+  "SCIENCE",
+  "ADVANCES",
+  "RESEARCH",
+  "ARTICLE",
+  "LIFE",
+  "SCIENCES",
+  "CC",
+  "BY-NC",
+  "IL",
+  "USA",
+  "P43212",
+  "GAA",
+  "GG",
+  "GC",
+  "CA",
+  "AC",
+  "AG",
+  "UC",
+  "NN",
+  "NNN",
+  "EF",
+  "BC",
+  "Insets",
+  "Three",
+  "Two",
+  "J.A.P.",
+  "Y.W.",
+  "S1",
+  "S2",
+  "S3"
+ ]
+}

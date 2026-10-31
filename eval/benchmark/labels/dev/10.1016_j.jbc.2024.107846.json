@@ -1,0 +1,626 @@
+{
+ "doi": "10.1016/j.jbc.2024.107846",
+ "title": "Spatiotemporal control of kinases and the biomolecular tools to trace activity",
+ "journal": "Journal of Biological Chemistry",
+ "defined": [
+  {
+   "sf": "CK2",
+   "lf": "casein kinase 2",
+   "how": "list"
+  },
+  {
+   "sf": "DRK3",
+   "lf": "dual specificity tyrosine-phosphorylation-regulated kinase 3",
+   "how": "list"
+  },
+  {
+   "sf": "FAK",
+   "lf": "focal adhesion kinase",
+   "how": "list"
+  },
+  {
+   "sf": "S6K1/2",
+   "lf": "ribosomal protein S6 kinase beta-1/2",
+   "how": "list"
+  },
+  {
+   "sf": "SYK",
+   "lf": "spleen tyrosine kinase",
+   "how": "list"
+  },
+  {
+   "sf": "TBK1",
+   "lf": "TANK-binding kinase 1",
+   "how": "other"
+  },
+  {
+   "sf": "ULK1",
+   "lf": "unc-51-like kinase 1",
+   "how": "list"
+  },
+  {
+   "sf": "ZAP70",
+   "lf": "z-associated protein of 70 kDa",
+   "how": "other"
+  },
+  {
+   "sf": "AKAP",
+   "lf": "A-kinase anchoring proteins",
+   "how": "paren"
+  },
+  {
+   "sf": "GPCR",
+   "lf": "G-protein receptor kinases",
+   "how": "paren"
+  },
+  {
+   "sf": "MAPK",
+   "lf": "mitogen-activated protein kinase",
+   "how": "paren"
+  },
+  {
+   "sf": "PTM",
+   "lf": "post-translational modifications",
+   "how": "paren"
+  },
+  {
+   "sf": "TAB1",
+   "lf": "TGFb-activated kinase one binding protein 1",
+   "how": "other"
+  },
+  {
+   "sf": "RTK",
+   "lf": "receptor tyrosine kinase",
+   "how": "paren"
+  },
+  {
+   "sf": "GPCRs",
+   "lf": "G-protein receptor kinases",
+   "how": "paren"
+  },
+  {
+   "sf": "PTMs",
+   "lf": "post-translational modifications",
+   "how": "paren"
+  },
+  {
+   "sf": "PPIs",
+   "lf": "protein-protein interactions",
+   "how": "paren"
+  },
+  {
+   "sf": "CDK",
+   "lf": "cyclin-dependent kinase",
+   "how": "paren"
+  },
+  {
+   "sf": "PDK1",
+   "lf": "pyruvate dehydrogenase kinase1",
+   "how": "paren",
+   "alt": [
+    "pyruvate dehydrogenase kinase 1"
+   ]
+  },
+  {
+   "sf": "IRAK4",
+   "lf": "interleukin receptor-associated kinase 4",
+   "how": "paren"
+  },
+  {
+   "sf": "PKD",
+   "lf": "protein kinase D",
+   "how": "paren"
+  },
+  {
+   "sf": "MPK",
+   "lf": "MAPK phosphatase",
+   "how": "paren"
+  },
+  {
+   "sf": "DUSP",
+   "lf": "dual-specificity phosphatases",
+   "how": "paren"
+  },
+  {
+   "sf": "cAMP",
+   "lf": "cyclic adenosine monophosphate",
+   "how": "paren"
+  },
+  {
+   "sf": "PKA",
+   "lf": "protein kinase A",
+   "how": "paren"
+  },
+  {
+   "sf": "GRKs",
+   "lf": "G-protein receptor Kinases",
+   "how": "paren"
+  },
+  {
+   "sf": "ER",
+   "lf": "endoplasmic reticulum",
+   "how": "paren"
+  },
+  {
+   "sf": "GA",
+   "lf": "Golgi apparatus",
+   "how": "paren"
+  },
+  {
+   "sf": "ERK1/2",
+   "lf": "extracellular signal-regulated kinase 1/2",
+   "how": "other"
+  },
+  {
+   "sf": "HIF-1a",
+   "lf": "hypoxia-inducible factor 1a",
+   "how": "paren"
+  },
+  {
+   "sf": "RIIBD",
+   "lf": "PKA RII subunits binding domain",
+   "how": "paren"
+  },
+  {
+   "sf": "PACT",
+   "lf": "pericentrin-AKAP450 centrosomal targeting",
+   "how": "paren"
+  },
+  {
+   "sf": "SH2",
+   "lf": "Src homology two",
+   "how": "paren"
+  },
+  {
+   "sf": "PTB",
+   "lf": "phosphotyrosine-binding",
+   "how": "paren"
+  },
+  {
+   "sf": "PI3K",
+   "lf": "Phosphatidylinositol 3-kinase",
+   "how": "paren"
+  },
+  {
+   "sf": "MAP4",
+   "lf": "microtubule-associated protein 4",
+   "how": "paren"
+  },
+  {
+   "sf": "PIP3",
+   "lf": "phosphatidylinositol-3,4,5-trisphosphate",
+   "how": "paren"
+  },
+  {
+   "sf": "SRPKs",
+   "lf": "SR Protein Kinases",
+   "how": "paren"
+  },
+  {
+   "sf": "HSP",
+   "lf": "heat shock protein",
+   "how": "paren"
+  },
+  {
+   "sf": "LKB1",
+   "lf": "Liver Kinase B1",
+   "how": "paren"
+  },
+  {
+   "sf": "LAMTOR1",
+   "lf": "Late Endosomal/Lysosomal Adaptor, MAPK And mammalian target of rapamycin Activator 1",
+   "how": "paren"
+  },
+  {
+   "sf": "NTR",
+   "lf": "nuclear transport receptors",
+   "how": "paren"
+  },
+  {
+   "sf": "NLS",
+   "lf": "nuclear localization sequence",
+   "how": "paren",
+   "alt": [
+    "nuclear localization signal"
+   ]
+  },
+  {
+   "sf": "AMPK",
+   "lf": "AMP-activated protein kinase",
+   "how": "paren"
+  },
+  {
+   "sf": "KSR1",
+   "lf": "Kinase suppressor of Ras 1",
+   "how": "paren"
+  },
+  {
+   "sf": "IQGAP1",
+   "lf": "isoleucine and glutamine motif-containing guanosine triphosphatase activating protein 1",
+   "how": "paren"
+  },
+  {
+   "sf": "MEK",
+   "lf": "mitogen-activated protein kinase kinase",
+   "how": "paren"
+  },
+  {
+   "sf": "b2AR",
+   "lf": "b2-adrenergic receptor",
+   "how": "paren"
+  },
+  {
+   "sf": "TNF",
+   "lf": "Tumor necrosis factor",
+   "how": "paren"
+  },
+  {
+   "sf": "ZnF",
+   "lf": "zinc-finger",
+   "how": "paren"
+  },
+  {
+   "sf": "JNK",
+   "lf": "c-Jun N-terminal kinase",
+   "how": "paren"
+  },
+  {
+   "sf": "LLPS",
+   "lf": "liquid-liquid phase separation",
+   "how": "paren",
+   "alt": [
+    "liquidliquid phase separation"
+   ]
+  },
+  {
+   "sf": "IDR",
+   "lf": "intrinsically disordered regions",
+   "how": "paren"
+  },
+  {
+   "sf": "IL1",
+   "lf": "interleukin-1",
+   "how": "paren"
+  },
+  {
+   "sf": "NEMO",
+   "lf": "NF-kB essential modulator",
+   "how": "paren"
+  },
+  {
+   "sf": "IKK",
+   "lf": "IkB kinase",
+   "how": "paren"
+  },
+  {
+   "sf": "polyUb",
+   "lf": "polyubiquitin chains",
+   "how": "paren"
+  },
+  {
+   "sf": "LUBAC",
+   "lf": "linear ubiquitin chain assembly complex",
+   "how": "paren"
+  },
+  {
+   "sf": "PDEs",
+   "lf": "phosphodiesterases",
+   "how": "paren",
+   "alt": [
+    "cAMP-hydrolyzing phosphodiesterases"
+   ]
+  },
+  {
+   "sf": "PDE",
+   "lf": "phosphodiesterase",
+   "how": "paren",
+   "alt": [
+    "cAMP-degrading phosphodiesterase"
+   ]
+  },
+  {
+   "sf": "SG",
+   "lf": "stress granules",
+   "how": "paren"
+  },
+  {
+   "sf": "cVACs",
+   "lf": "cytoplasmic Virion Assembly Compartments",
+   "how": "paren"
+  },
+  {
+   "sf": "IB",
+   "lf": "inclusion bodies",
+   "how": "paren",
+   "alt": [
+    "nucleocapsid assembly sites/inclusion bodies"
+   ]
+  },
+  {
+   "sf": "HSP70",
+   "lf": "heat shock proteins",
+   "how": "paren"
+  },
+  {
+   "sf": "PRK",
+   "lf": "double-stranded RNA-dependent protein kinase",
+   "how": "paren"
+  },
+  {
+   "sf": "HSV-1",
+   "lf": "Herpes Simplex Virus 1",
+   "how": "paren"
+  },
+  {
+   "sf": "RSV",
+   "lf": "Respiratory Syncytial Virus",
+   "how": "paren"
+  },
+  {
+   "sf": "HMPV",
+   "lf": "Human Metapneumovirus",
+   "how": "paren"
+  },
+  {
+   "sf": "HIV-1",
+   "lf": "Human Immunodeficiency Virus",
+   "how": "paren",
+   "alt": [
+    "Human Immunodeficiency Virus 1"
+   ]
+  },
+  {
+   "sf": "OGT",
+   "lf": "O-GlcNAc transferase",
+   "how": "paren"
+  },
+  {
+   "sf": "FRET",
+   "lf": "Fluorescence Resonance Energy Transfer",
+   "how": "paren",
+   "alt": [
+    "Förster resonance energy transfer"
+   ]
+  },
+  {
+   "sf": "KTRs",
+   "lf": "Kinase translocation reporters",
+   "how": "paren"
+  },
+  {
+   "sf": "bNLS",
+   "lf": "bipartite nuclear localization signal",
+   "how": "paren"
+  },
+  {
+   "sf": "NES",
+   "lf": "nuclear export signal",
+   "how": "paren"
+  },
+  {
+   "sf": "EYFP",
+   "lf": "enhanced YFP",
+   "how": "paren"
+  },
+  {
+   "sf": "ECFP",
+   "lf": "enhanced cyan fluorescent protein",
+   "how": "paren"
+  },
+  {
+   "sf": "PAABD",
+   "lf": "phosphoamino acid binding domain",
+   "how": "paren"
+  },
+  {
+   "sf": "CFP",
+   "lf": "cyan fluorescent protein",
+   "how": "paren",
+   "alt": [
+    "donor"
+   ]
+  },
+  {
+   "sf": "YFP",
+   "lf": "yellow fluorescent protein",
+   "how": "paren",
+   "alt": [
+    "acceptor"
+   ]
+  },
+  {
+   "sf": "EEA1",
+   "lf": "early-endosomal antigen 1",
+   "how": "paren"
+  },
+  {
+   "sf": "FRB",
+   "lf": "FK506-binding protein-rapamycin binding",
+   "how": "paren"
+  },
+  {
+   "sf": "FKBP",
+   "lf": "FK506-binding protein",
+   "how": "paren"
+  },
+  {
+   "sf": "SAH",
+   "lf": "single-alpha-helical",
+   "how": "paren"
+  },
+  {
+   "sf": "GRK",
+   "lf": "G-protein coupled receptor kinases",
+   "how": "paren",
+   "alt": [
+    "G-proteincoupled receptor kinases"
+   ]
+  },
+  {
+   "sf": "CaM",
+   "lf": "calmodulin",
+   "how": "paren"
+  },
+  {
+   "sf": "RNPs",
+   "lf": "Ribonucleoproteins",
+   "how": "paren"
+  },
+  {
+   "sf": "PKR",
+   "lf": "double-stranded RNA-dependent protein kinase",
+   "how": "paren"
+  },
+  {
+   "sf": "PERK",
+   "lf": "PKR-like endoplasmic reticulum kinase",
+   "how": "paren"
+  },
+  {
+   "sf": "ISR",
+   "lf": "integrated stress response",
+   "how": "paren"
+  },
+  {
+   "sf": "HCV",
+   "lf": "Hepatitis C Virus",
+   "how": "paren"
+  },
+  {
+   "sf": "P-bodies",
+   "lf": "Processing bodies",
+   "how": "paren"
+  },
+  {
+   "sf": "EDC4",
+   "lf": "enhancer of decapping 4",
+   "how": "paren"
+  },
+  {
+   "sf": "DNA-PK",
+   "lf": "DNA-dependent protein kinase",
+   "how": "paren"
+  },
+  {
+   "sf": "FUS",
+   "lf": "Fused in Sarcoma/Translocated in LipoSarcoma",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "ATP",
+   "lf": "adenosine triphosphate"
+  },
+  {
+   "sf": "AMP",
+   "lf": "adenosine monophosphate"
+  },
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "mRNA",
+   "lf": "messenger RNA"
+  },
+  {
+   "sf": "PKC",
+   "lf": "protein kinase C"
+  }
+ ],
+ "ignore": [
+  "AKAPs",
+  "AKAP13",
+  "AKAP150",
+  "AKAP18",
+  "AKAP450",
+  "AKAP-Lbc",
+  "Gravin",
+  "p38",
+  "p38a",
+  "P38",
+  "ERK",
+  "ERK2",
+  "AKT",
+  "PKB",
+  "mTORC1",
+  "MTORC1",
+  "AMPKa",
+  "AMPKa2",
+  "RII",
+  "RIa",
+  "RI",
+  "PKA-C",
+  "TAB",
+  "TAB2",
+  "TAB2/3",
+  "TAK1",
+  "TAK1-binding",
+  "MEKK3",
+  "MAP3K",
+  "MAP",
+  "JIP4",
+  "G3BP1",
+  "PTEN",
+  "SIRT3",
+  "MK2",
+  "MK2i",
+  "MARK2",
+  "AurA",
+  "RAP55",
+  "BRX",
+  "FLIM",
+  "GRK2",
+  "KSR",
+  "TGFb",
+  "TNFa",
+  "NF-kB",
+  "NFkB",
+  "NF-kappaB",
+  "NFAT",
+  "IkB",
+  "IkBs",
+  "K63",
+  "Thr180",
+  "Tyr323",
+  "PI",
+  "PIP",
+  "C-helix",
+  "Ca2",
+  "SR",
+  "kDA",
+  "kDa",
+  "Epac1-camps",
+  "TANK",
+  "DOI",
+  "JBC",
+  "REVIEWS",
+  "NIH",
+  "eLife",
+  "EMBO",
+  "FEBS",
+  "PLoS",
+  "mBio",
+  "BBA",
+  "Basel",
+  "Shanghai",
+  "Maik-Rachline",
+  "Molinar-Inglis",
+  "AGC",
+  "FRET-based",
+  "GPCR-mediated",
+  "GPCR-induced",
+  "AMP-activated",
+  "FK506-binding",
+  "IkB kinase",
+  "D/D",
+  "MAP2K",
+  "TAK1/TAB2/3",
+  "a1/a2/b2/g1"
+ ]
+}

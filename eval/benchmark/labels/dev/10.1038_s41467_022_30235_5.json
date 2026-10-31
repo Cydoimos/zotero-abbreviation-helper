@@ -1,0 +1,231 @@
+{
+ "doi": "10.1038/s41467-022-30235-5",
+ "title": "Cryo-EM structure of human glucose transporter GLUT4",
+ "journal": "Nature Communications",
+ "defined": [
+  {
+   "sf": "CCB",
+   "lf": "cytochalasin B",
+   "how": "paren"
+  },
+  {
+   "sf": "MFS",
+   "lf": "major facilitator superfamily",
+   "how": "paren"
+  },
+  {
+   "sf": "TGN",
+   "lf": "trans-Golgi network",
+   "how": "paren"
+  },
+  {
+   "sf": "GSVs",
+   "lf": "GLUT4 storage vesicles",
+   "how": "paren"
+  },
+  {
+   "sf": "cryo-EM",
+   "lf": "cryo-electron microscopy",
+   "how": "paren"
+  },
+  {
+   "sf": "SEC",
+   "lf": "size-exclusion chromatography",
+   "how": "other"
+  },
+  {
+   "sf": "GDN",
+   "lf": "glyco-diosgenin",
+   "how": "paren"
+  },
+  {
+   "sf": "DDM",
+   "lf": "n-dodecyl-beta-D-maltoside",
+   "how": "other"
+  },
+  {
+   "sf": "CHS",
+   "lf": "cholesteryl hemisuccinate tris salt",
+   "how": "paren"
+  },
+  {
+   "sf": "LMNG",
+   "lf": "lauryl maltose neopentyl glycol",
+   "how": "paren"
+  },
+  {
+   "sf": "TMs",
+   "lf": "transmembrane segments",
+   "how": "paren"
+  },
+  {
+   "sf": "ICH",
+   "lf": "intracellular helical",
+   "how": "paren"
+  },
+  {
+   "sf": "SLCs",
+   "lf": "solute carriers",
+   "how": "paren"
+  },
+  {
+   "sf": "Ab",
+   "lf": "antibodies",
+   "how": "paren"
+  },
+  {
+   "sf": "Nb",
+   "lf": "nanobodies",
+   "how": "paren"
+  },
+  {
+   "sf": "NTD",
+   "lf": "amino terminal domain",
+   "how": "paren"
+  },
+  {
+   "sf": "CTD",
+   "lf": "C-terminal domain",
+   "how": "paren"
+  },
+  {
+   "sf": "GGA",
+   "lf": "Golgi-localized gamma-ear-containing ARF-binding protein",
+   "how": "other"
+  },
+  {
+   "sf": "EMDB",
+   "lf": "Electron Microscopy Data Bank",
+   "how": "paren"
+  },
+  {
+   "sf": "PDB",
+   "lf": "Protein Data Bank",
+   "how": "paren"
+  },
+  {
+   "sf": "POPC",
+   "lf": "1-palmitoyl-2-oleoyl-sn-glycero-3-phospho-choline",
+   "how": "other"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "GLUT4",
+   "lf": "glucose transporter 4"
+  },
+  {
+   "sf": "GLUT1",
+   "lf": "glucose transporter 1"
+  },
+  {
+   "sf": "GLUT3",
+   "lf": "glucose transporter 3"
+  },
+  {
+   "sf": "GLUT5",
+   "lf": "glucose transporter 5"
+  },
+  {
+   "sf": "EM",
+   "lf": "electron microscopy"
+  },
+  {
+   "sf": "WT",
+   "lf": "wild-type"
+  },
+  {
+   "sf": "CTF",
+   "lf": "contrast transfer function"
+  },
+  {
+   "sf": "HEPES",
+   "lf": "4-(2-hydroxyethyl)-1-piperazineethanesulfonic acid"
+  }
+ ],
+ "ignore": [
+  "GLUTs",
+  "Glut4",
+  "SLC2A",
+  "SLC2A4",
+  "β-NG",
+  "LMNG/CHS",
+  "TM1e",
+  "TM1",
+  "TM5",
+  "TM6",
+  "ICH1",
+  "ICH3",
+  "ICH4",
+  "ICH5",
+  "Phe476",
+  "Phe458",
+  "Asn176",
+  "Asn57",
+  "Trp404",
+  "Ile42",
+  "Ile180",
+  "Thr30",
+  "Thr486",
+  "His160",
+  "Arg151",
+  "Arg210",
+  "Arg416",
+  "Ser10",
+  "Ser274",
+  "Ser488",
+  "MCT126",
+  "HEK293F",
+  "MSP1D1",
+  "SM2",
+  "KPM",
+  "AP1",
+  "DHHC7",
+  "FLAG",
+  "anti-FLAG",
+  "FQQI",
+  "LL",
+  "PHENIX",
+  "cryoSPARC",
+  "cryoSPARC28",
+  "Biobeads",
+  "Anatrace",
+  "Sigma",
+  "Avanti",
+  "PerkinElmer",
+  "Millipore",
+  "Grids",
+  "Beijing",
+  "ARTICLE",
+  "Cryo-EM",
+  "NATURE",
+  "COMMUNICATIONS",
+  "Tsinghua-Peking",
+  "USA",
+  "NJ",
+  "McGraw",
+  "Km",
+  "IC50",
+  "mM",
+  "mL",
+  "μM",
+  "pH",
+  "NaCl",
+  "7WSM",
+  "7WSN",
+  "4PYP",
+  "4ZW9",
+  "5EQI",
+  "0.427 μM",
+  "1’-rac",
+  "2-3H",
+  "2020YFA0509301",
+  "4PYP",
+  "4ZW9",
+  "5EQI",
+  "7WSM",
+  "7WSN",
+  "C.Y.",
+  "LMNG/CHS"
+ ]
+}

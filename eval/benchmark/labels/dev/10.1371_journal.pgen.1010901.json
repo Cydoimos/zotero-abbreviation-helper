@@ -1,0 +1,330 @@
+{
+ "doi": "10.1371/journal.pgen.1010901",
+ "title": "Chromatin accessibility, not 5mC methylation covaries with partial dosage compensation in crows",
+ "journal": "PLOS Genetics",
+ "defined": [
+  {
+   "sf": "SRA",
+   "lf": "Sequencing Read Archive",
+   "how": "paren"
+  },
+  {
+   "sf": "NCBI",
+   "lf": "National Center for Biotechnology Information",
+   "how": "paren"
+  },
+  {
+   "sf": "PAR",
+   "lf": "pseudo-autosomal region",
+   "how": "paren"
+  },
+  {
+   "sf": "MHM",
+   "lf": "male hypermethylated region",
+   "how": "paren"
+  },
+  {
+   "sf": "GO",
+   "lf": "gene ontology",
+   "how": "paren"
+  },
+  {
+   "sf": "TSS",
+   "lf": "transcription start sites",
+   "how": "paren"
+  },
+  {
+   "sf": "TTS",
+   "lf": "transcription termination sites",
+   "how": "paren"
+  },
+  {
+   "sf": "DB",
+   "lf": "dosage balance",
+   "how": "paren"
+  },
+  {
+   "sf": "FPKM",
+   "lf": "Fragments Per Kilobase per Million mapped reads",
+   "how": "paren"
+  },
+  {
+   "sf": "WGBS",
+   "lf": "whole-genome bisulfite sequencing",
+   "how": "paren"
+  },
+  {
+   "sf": "AB",
+   "lf": "allelic balance",
+   "how": "paren"
+  },
+  {
+   "sf": "DP",
+   "lf": "depth",
+   "how": "paren"
+  },
+  {
+   "sf": "QUAL",
+   "lf": "quality",
+   "how": "paren"
+  },
+  {
+   "sf": "GQ",
+   "lf": "genotype quality",
+   "how": "paren"
+  },
+  {
+   "sf": "DMPs",
+   "lf": "differentially methylated positions",
+   "how": "paren"
+  },
+  {
+   "sf": "EPP",
+   "lf": "read placement probability",
+   "how": "other"
+  },
+  {
+   "sf": "FriP",
+   "lf": "fraction of reads in peaks",
+   "how": "paren"
+  },
+  {
+   "sf": "ChIP-seq",
+   "lf": "chromatin immunoprecipitation followed by high-throughput sequencing",
+   "how": "other"
+  },
+  {
+   "sf": "chr1",
+   "lf": "chromosome 1",
+   "how": "paren"
+  },
+  {
+   "sf": "chr2",
+   "lf": "chromosome 2",
+   "how": "paren"
+  },
+  {
+   "sf": "ATAC-seq",
+   "lf": "chromatin accessibility",
+   "how": "paren",
+   "alt": [
+    "assay for transposase-accessible chromatin using sequencing"
+   ]
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "5mC",
+   "lf": "5-methylcytosine"
+  },
+  {
+   "sf": "CpG",
+   "lf": "cytosine-phosphate-guanine"
+  },
+  {
+   "sf": "RNA-seq",
+   "lf": "RNA sequencing"
+  },
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "mRNA",
+   "lf": "messenger RNA"
+  },
+  {
+   "sf": "SNP",
+   "lf": "single nucleotide polymorphism"
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction"
+  },
+  {
+   "sf": "FDR",
+   "lf": "false discovery rate"
+  },
+  {
+   "sf": "INDELs",
+   "lf": "insertions and deletions"
+  }
+ ],
+ "ignore": [
+  "RNAseq",
+  "ATAC",
+  "5mCG",
+  "AA",
+  "AAf",
+  "AAm",
+  "AAf:AAm",
+  "AAm ZZm",
+  "ZZ",
+  "ZZm",
+  "ZZm:AAm",
+  "Zf",
+  "Zf:AAf",
+  "Zf:ZZm",
+  "Z:A",
+  "ZW",
+  "XY",
+  "XXf",
+  "PARZf",
+  "PARZZm",
+  "nonPAR",
+  "non-PAR",
+  "AZS",
+  "AZP",
+  "Z-transformed",
+  "zFPKM",
+  "log2",
+  "CG",
+  "GC",
+  "C-T",
+  "SRP",
+  "SAP",
+  "NA",
+  "OR",
+  "AND",
+  "ID",
+  "indID",
+  "geneID",
+  "peakID",
+  "chrID",
+  "SNPs",
+  "S1",
+  "S2",
+  "S2A",
+  "S2B",
+  "S3",
+  "S4",
+  "S5",
+  "S6",
+  "S7",
+  "S8",
+  "S9",
+  "S10",
+  "S11",
+  "S12",
+  "S13",
+  "S14",
+  "S20",
+  "S21",
+  "S22",
+  "S23",
+  "S2 Fig",
+  "S3 Fig",
+  "S4 Fig",
+  "S5 Fig",
+  "S6 Fig",
+  "S7 Fig",
+  "S8 Fig",
+  "S9 Fig",
+  "S10 Fig",
+  "S13 Fig",
+  "S14 Fig",
+  "S20 Fig",
+  "S21 Fig",
+  "S22 Fig",
+  "S23 Fig",
+  "S2 Table",
+  "S3 Table",
+  "S4 Table",
+  "S6 Table",
+  "S7 Table",
+  "S8 Table",
+  "S10 Table",
+  "S11 Table",
+  "S12 Table",
+  "TIFF",
+  "DOCX",
+  "XLSX",
+  "PLOS",
+  "GENETICS",
+  "PLoS",
+  "PMID",
+  "FastQC",
+  "STAR",
+  "StringTie",
+  "MACS2",
+  "EdgeR",
+  "DSS",
+  "BWA",
+  "makeCGI",
+  "RepeatMasker",
+  "FeatureCounts",
+  "deepTools",
+  "bcftools",
+  "rptR",
+  "TissueRuptor",
+  "TruSeq",
+  "Illumina",
+  "Qiagen",
+  "Agilent Technologies",
+  "SEQ",
+  "RefSeq",
+  "ASM73873v4",
+  "PRJNA192205",
+  "FDR-corrected",
+  "Wilcoxon-test",
+  "CpG islands",
+  "Galloanserae",
+  "Jordbruksverket",
+  "ERCStG-336536",
+  "Konstanz",
+  "Hilden",
+  "Santa Clara",
+  "Germany",
+  "CA",
+  "LMU",
+  "JBW",
+  "Edinb",
+  "Council",
+  "University",
+  "DR",
+  "DC",
+  "GM",
+  "JAM",
+  "ME",
+  "MI",
+  "JE",
+  "JA",
+  "NC",
+  "DL",
+  "0.5<Zf:AAf<1",
+  "0.5<Zf:ZZm<1",
+  "0.5μm",
+  "1|geneID",
+  "100nM final",
+  "17 ̊38’E",
+  "17 ̊8’49”E",
+  "1|chrID",
+  "1|chrID/xxxxID",
+  "1|indID",
+  "1|peakID",
+  "1|xxxxID",
+  "25–154 Mbs",
+  "277/350 genes",
+  "4.88–154.33 Mb",
+  "47 ̊45N’",
+  "4–154 Mbs",
+  "5-21Mb",
+  "58 ̊56’55”N",
+  "59 ̊52’N",
+  "5mC sites",
+  "5mCG",
+  "9 ̊10’E",
+  "99/122 genes",
+  "Cat# 20020594/5",
+  "F/M",
+  "S2A–S2C Table",
+  "S2C",
+  "S2C Table",
+  "WZ/WW",
+  "ZZ/ZW"
+ ]
+}

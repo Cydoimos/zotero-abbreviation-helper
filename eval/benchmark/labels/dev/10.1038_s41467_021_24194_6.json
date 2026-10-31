@@ -1,0 +1,279 @@
+{
+ "doi": "10.1038/s41467-021-24194-6",
+ "title": "Structural basis of substrate recognition and translocation by human ABCA4",
+ "journal": "Nature Communications",
+ "defined": [
+  {
+   "sf": "ABC",
+   "lf": "ATP-binding cassette",
+   "how": "paren"
+  },
+  {
+   "sf": "TMDs",
+   "lf": "transmembrane domains",
+   "how": "paren"
+  },
+  {
+   "sf": "NRPE",
+   "lf": "N-retinylidene-phosphatidylethanolamine",
+   "how": "paren"
+  },
+  {
+   "sf": "NBDs",
+   "lf": "nucleotide-binding domains",
+   "how": "other"
+  },
+  {
+   "sf": "ECD",
+   "lf": "extracellular domain",
+   "how": "paren"
+  },
+  {
+   "sf": "RD",
+   "lf": "regulatory domain",
+   "how": "paren"
+  },
+  {
+   "sf": "HDL",
+   "lf": "high-density lipoprotein",
+   "how": "paren"
+  },
+  {
+   "sf": "ATR",
+   "lf": "all-trans retinal",
+   "how": "paren"
+  },
+  {
+   "sf": "PE",
+   "lf": "phosphatidylethanolamine",
+   "how": "paren"
+  },
+  {
+   "sf": "ATRol",
+   "lf": "all-trans retinol",
+   "how": "paren"
+  },
+  {
+   "sf": "RDH",
+   "lf": "retinal dehydrogenase",
+   "how": "paren"
+  },
+  {
+   "sf": "HEK",
+   "lf": "human embryonic kidney",
+   "how": "paren"
+  },
+  {
+   "sf": "DDM",
+   "lf": "n-dodecyl-beta-D-maltoside",
+   "how": "other"
+  },
+  {
+   "sf": "CHS",
+   "lf": "cholesteryl hemisuccinate",
+   "how": "paren"
+  },
+  {
+   "sf": "GDN",
+   "lf": "glyco-diosgenin",
+   "how": "paren"
+  },
+  {
+   "sf": "WT",
+   "lf": "wild-type",
+   "how": "paren"
+  },
+  {
+   "sf": "PC",
+   "lf": "phosphatidylcholine",
+   "how": "paren"
+  },
+  {
+   "sf": "TLC",
+   "lf": "thin-layer chromatography",
+   "how": "paren"
+  },
+  {
+   "sf": "RMSD",
+   "lf": "root-mean-square-deviation",
+   "how": "paren"
+  },
+  {
+   "sf": "PEI",
+   "lf": "polyethyleneimine",
+   "how": "paren"
+  },
+  {
+   "sf": "SEC",
+   "lf": "size-exclusion chromatography",
+   "how": "paren"
+  },
+  {
+   "sf": "BPL",
+   "lf": "brain polar lipid",
+   "how": "paren"
+  },
+  {
+   "sf": "PK",
+   "lf": "pyruvate kinase",
+   "how": "paren"
+  },
+  {
+   "sf": "LDH",
+   "lf": "lactate dehydrogenase",
+   "how": "paren"
+  },
+  {
+   "sf": "PEP",
+   "lf": "phosphoenolpyruvate",
+   "how": "paren"
+  },
+  {
+   "sf": "ABCA",
+   "lf": "ABC subfamily A",
+   "how": "other"
+  },
+  {
+   "sf": "hABCA4",
+   "lf": "human ABCA4",
+   "how": "paren"
+  },
+  {
+   "sf": "ABCR",
+   "lf": "ABCA4",
+   "how": "phrase",
+   "alt": [
+    "rim protein"
+   ]
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "ATP",
+   "lf": "adenosine triphosphate"
+  },
+  {
+   "sf": "ADP",
+   "lf": "adenosine diphosphate"
+  },
+  {
+   "sf": "EM",
+   "lf": "electron microscopy"
+  },
+  {
+   "sf": "NADH",
+   "lf": "nicotinamide adenine dinucleotide"
+  },
+  {
+   "sf": "DTT",
+   "lf": "dithiothreitol"
+  },
+  {
+   "sf": "RT",
+   "lf": "room temperature"
+  },
+  {
+   "sf": "PDB",
+   "lf": "Protein Data Bank"
+  },
+  {
+   "sf": "EMDB",
+   "lf": "Electron Microscopy Data Bank"
+  },
+  {
+   "sf": "CHAPS",
+   "lf": "3-[(3-cholamidopropyl)dimethylammonio]-1-propanesulfonate"
+  },
+  {
+   "sf": "DOPE",
+   "lf": "dioleoylphosphatidylethanolamine"
+  }
+ ],
+ "ignore": [
+  "ABCA4",
+  "ABCA1",
+  "ABCA3",
+  "ABCA7",
+  "ABCA12",
+  "hABCA1",
+  "ABC1",
+  "ABCA4QQ",
+  "apo ABCA4",
+  "NRPE-bound ABCA4",
+  "ATP-bound ABCA4",
+  "NRPE-bound",
+  "ATP-bound",
+  "NRPE-binding",
+  "ATP-binding",
+  "ATPase",
+  "ATP-Mg2",
+  "ATR-stimulated",
+  "ABCA4-mediated",
+  "TMD-NBD-RD",
+  "TM",
+  "TMs",
+  "TM5",
+  "TM11",
+  "TMD1",
+  "TMD2",
+  "ECD1",
+  "ECD2",
+  "NBD",
+  "NBD1",
+  "NBD2",
+  "RDs",
+  "PL1",
+  "PL2",
+  "PL3",
+  "Tyr345",
+  "Tyr340",
+  "Trp339",
+  "Phe348",
+  "Arg587",
+  "Arg653",
+  "A2E",
+  "Mg2",
+  "MgCl2",
+  "NaCl",
+  "mM",
+  "pH",
+  "kV",
+  "GL",
+  "GE",
+  "W1 buffer",
+  "Km",
+  "Vmax",
+  "UCSF",
+  "PyMol",
+  "ChimeraX",
+  "SerialEM",
+  "SWISS-MODEL",
+  "GraphPad",
+  "SYNERGY",
+  "LipidSearch",
+  "Gatan",
+  "GE Healthcare",
+  "Thermo Scientific",
+  "ARTICLE",
+  "Cryo-EM",
+  "NATURE",
+  "COMMUNICATIONS",
+  "ARTN",
+  "USA",
+  "5XJY",
+  "2019B151502047",
+  "5XJY",
+  "7554/eLife",
+  "ACN/H2O",
+  "ACN/IPA/H2O",
+  "ATP/Mg2+",
+  "BPL/DOPE",
+  "CHAPS/lipid",
+  "CHAPS/lipid mixture",
+  "E1087Q/ E2096Q",
+  "IPA/ACN",
+  "LC-MS/MS",
+  "X.G.",
+  "~10 mg/ml"
+ ]
+}

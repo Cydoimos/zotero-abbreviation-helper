@@ -68,6 +68,9 @@ const exported = JSON.parse(fs.readFileSync(papersFile, 'utf8')).papers || [];
 const id = p => String(p.doi || (p.archiveID ? 'arXiv:' + String(p.archiveID).split(':').pop() : '') || '')
   .toLowerCase().replace(/^https?:\/\/(dx\.)?doi\.org\//, '');
 const byId = new Map(exported.map(p => [id(p), p]));
+// A preprint may carry no DOI and no arXiv ID in the library, so a label can
+// also name the Zotero item key its text was exported under.
+const byKey = new Map(exported.map(p => [String(p.file || '').replace(/\.txt$/, ''), p]));
 
 // ---- comparing short forms -------------------------------------------------
 // PDFs render hyphen, en-dash and figure-dash inconsistently, and a paper may
@@ -136,10 +139,10 @@ const errors = [];
 const missingText = [];
 
 for (const L of labels) {
-  const p = byId.get(id(L));
-  if (!p) { missingText.push(L.doi); continue; }
+  const p = byId.get(id(L)) || (L.key ? byKey.get(L.key) : undefined);
+  if (!p) { missingText.push(L.doi || L.key); continue; }
   const file = path.join(textDir, p.file);
-  if (!fs.existsSync(file)) { missingText.push(L.doi); continue; }
+  if (!fs.existsSync(file)) { missingText.push(L.doi || L.key); continue; }
   const text = fs.readFileSync(file, 'utf8');
 
   const pairs = H._detectAbbreviations(text);

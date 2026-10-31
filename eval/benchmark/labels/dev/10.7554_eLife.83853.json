@@ -1,0 +1,343 @@
+{
+ "doi": "10.7554/eLife.83853",
+ "title": "A comprehensive survey of C. elegans argonaute proteins reveals organism-wide gene regulatory networks and functions",
+ "journal": "eLife",
+ "defined": [
+  {
+   "sf": "AGO",
+   "lf": "Argonaute",
+   "how": "paren"
+  },
+  {
+   "sf": "RNAi",
+   "lf": "RNA interference",
+   "how": "paren"
+  },
+  {
+   "sf": "sRNA",
+   "lf": "small RNA",
+   "how": "paren"
+  },
+  {
+   "sf": "RdRPs",
+   "lf": "RNA-dependent RNA polymerases",
+   "how": "paren"
+  },
+  {
+   "sf": "exoRNAi",
+   "lf": "exogenous RNAi",
+   "how": "paren"
+  },
+  {
+   "sf": "EV",
+   "lf": "empty vector",
+   "how": "paren"
+  },
+  {
+   "sf": "IP",
+   "lf": "immunoprecipitation",
+   "how": "paren"
+  },
+  {
+   "sf": "AtAGO1",
+   "lf": "A. thaliana AGO1",
+   "how": "paren"
+  },
+  {
+   "sf": "DmPIWI",
+   "lf": "D. melanogaster PIWI",
+   "how": "paren"
+  },
+  {
+   "sf": "OV",
+   "lf": "Orsay virus",
+   "how": "paren"
+  },
+  {
+   "sf": "NGM",
+   "lf": "Nematode Growth Medium",
+   "how": "paren"
+  },
+  {
+   "sf": "SK",
+   "lf": "slow killing",
+   "how": "paren"
+  },
+  {
+   "sf": "FISH",
+   "lf": "fluorescent in situ hybridization",
+   "how": "paren"
+  },
+  {
+   "sf": "RPM",
+   "lf": "reads per million",
+   "how": "paren"
+  },
+  {
+   "sf": "DIC",
+   "lf": "Differential Interference Contrast",
+   "how": "paren"
+  },
+  {
+   "sf": "RISCs",
+   "lf": "RNA induced silencing complexes",
+   "how": "reverse"
+  },
+  {
+   "sf": "piRNAs",
+   "lf": "Piwi-interacting RNAs",
+   "how": "paren"
+  },
+  {
+   "sf": "pre-miRNA",
+   "lf": "precursor miRNA",
+   "how": "paren"
+  },
+  {
+   "sf": "Mrt",
+   "lf": "Mortal germline",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "mRNA",
+   "lf": "messenger RNA"
+  },
+  {
+   "sf": "miRNA",
+   "lf": "microRNA"
+  },
+  {
+   "sf": "miRNAs",
+   "lf": "microRNAs"
+  },
+  {
+   "sf": "piRNA",
+   "lf": "Piwi-interacting RNA"
+  },
+  {
+   "sf": "lincRNAs",
+   "lf": "long intergenic non-coding RNAs"
+  },
+  {
+   "sf": "PCR",
+   "lf": "polymerase chain reaction"
+  },
+  {
+   "sf": "RT-PCR",
+   "lf": "reverse transcription PCR"
+  },
+  {
+   "sf": "GFP",
+   "lf": "green fluorescent protein"
+  },
+  {
+   "sf": "PBS",
+   "lf": "phosphate-buffered saline"
+  },
+  {
+   "sf": "PFA",
+   "lf": "paraformaldehyde"
+  },
+  {
+   "sf": "SDS-PAGE",
+   "lf": "sodium dodecyl sulfate polyacrylamide gel electrophoresis"
+  },
+  {
+   "sf": "RT",
+   "lf": "room temperature"
+  },
+  {
+   "sf": "GO",
+   "lf": "gene ontology"
+  },
+  {
+   "sf": "LTR",
+   "lf": "long terminal repeat"
+  },
+  {
+   "sf": "LINE",
+   "lf": "long interspersed nuclear element"
+  },
+  {
+   "sf": "SINE",
+   "lf": "short interspersed nuclear element"
+  }
+ ],
+ "ignore": [
+  "AGOs",
+  "WAGOs",
+  "WAGO-1",
+  "WAGO-3",
+  "WAGO-4",
+  "WAGO-9",
+  "WAGO-10",
+  "WAGO-11",
+  "WAGO-12",
+  "wago-1",
+  "wago-11",
+  "ALG-1",
+  "ALG-2",
+  "ALG-3",
+  "ALG-4",
+  "ALG-5",
+  "alg-1",
+  "alg-2",
+  "alg-3",
+  "alg-4",
+  "alg-5",
+  "PRG-1",
+  "prg-1",
+  "CSR-1",
+  "CSR-1a",
+  "CSR-1b",
+  "csr-1",
+  "RDE-1",
+  "rde-1",
+  "ERGO-1",
+  "ergo-1",
+  "HRDE-1",
+  "hrde-1",
+  "NRDE-3",
+  "nrde-3",
+  "PPW-1",
+  "PPW-2",
+  "ppw-2",
+  "SAGO-1",
+  "SAGO-2",
+  "VSRA-1",
+  "C04F12.1",
+  "PIR-1",
+  "PGL-1",
+  "ZNFX-1",
+  "DICER",
+  "PIWI",
+  "Cas9",
+  "rrf-1",
+  "rrf-3",
+  "ego-1",
+  "dpy-11",
+  "RdRP",
+  "sRNAs",
+  "RNAs",
+  "miR",
+  "cel-miR-4936",
+  "cel-miR-8198-3p",
+  "cel-miR-8202-5p",
+  "cel-miR-798",
+  "21ur-2789",
+  "22G-RNAs",
+  "26G-RNAs",
+  "26GRNA",
+  "26GRNAs",
+  "exo-RNAi",
+  "IPs",
+  "GFP::3xFLAG",
+  "3xFLAG",
+  "3xflag",
+  "gfp",
+  "sgRNAs",
+  "pDD162",
+  "PBST",
+  "log2",
+  "log2RPM",
+  "tm872",
+  "tm1019",
+  "tm1116",
+  "tm1120",
+  "tm1155",
+  "tm1163",
+  "tm1184",
+  "tm1200",
+  "tm1414",
+  "tm1860",
+  "tm892",
+  "ne219",
+  "gk214",
+  "bn2",
+  "PA14",
+  "IV",
+  "Foci",
+  "Pseudogenes",
+  "Transposons",
+  "Spermatogenesis",
+  "Oogenesis",
+  "ce10",
+  "miRBase",
+  "FastQC",
+  "CRISPOR",
+  "ImageJ",
+  "JaCoP",
+  "Dynabeads",
+  "GFP-Trap_MA",
+  "ChromoTek",
+  "Sigma",
+  "Sigma-Aldrich",
+  "Thermo Fisher",
+  "Millipore",
+  "Ambion",
+  "Roche",
+  "Illumina",
+  "NEBNext",
+  "Amersham Biosciences",
+  "Reagent",
+  "TRI",
+  "Bis-Tris",
+  "EDTA",
+  "C. elegans",
+  "E. coli",
+  "Meister",
+  "Cecere",
+  "Brenner",
+  "Ahringer",
+  "Andrews",
+  "Martin",
+  "DOI",
+  "eLife",
+  "0.1% Tween-20",
+  "1 μg/ml",
+  "1/VSRA-1",
+  "10 ng/μl",
+  "10% glycerol",
+  "21U-RNA",
+  "21U-RNAs",
+  "21U-rnas",
+  "21ur-2789",
+  "22G-RNAs",
+  "22GRNAs",
+  "25°C",
+  "26G-RNA-binding",
+  "26G-RNAs",
+  "3xFLAG",
+  "5–10 ng/μl",
+  "7554/eLife",
+  "A/G",
+  "AGO/sRNA",
+  "AGO/sRNAs",
+  "ALG-1/-2",
+  "ALG-3/-4",
+  "ALG-3/4",
+  "C04F12.1/VSRA-1",
+  "CRISPR/Cas9",
+  "DEDD/H",
+  "F1 dpy-11/EV",
+  "IP/sRNA",
+  "NRDE-3/WAGO-12",
+  "PRG-1 IP/Input",
+  "S/AS",
+  "ancRNAs/anr loci",
+  "com/ClaycombLab",
+  "dpy-11/EV",
+  "ombLab/Seroussi_2022",
+  "pH 8.0"
+ ]
+}

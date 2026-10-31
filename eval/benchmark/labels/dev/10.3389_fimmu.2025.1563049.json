@@ -1,0 +1,169 @@
+{
+ "doi": "10.3389/fimmu.2025.1563049",
+ "title": "Early events in TCR signaling – the evolving role of ITAMs",
+ "journal": "Frontiers in Immunology",
+ "defined": [
+  {
+   "sf": "TCR",
+   "lf": "T cell antigen receptor",
+   "how": "paren"
+  },
+  {
+   "sf": "pMHC",
+   "lf": "Peptide-MHC",
+   "how": "paren"
+  },
+  {
+   "sf": "ITAM",
+   "lf": "immunoreceptor tyrosine-based activation motif",
+   "how": "paren"
+  },
+  {
+   "sf": "pY",
+   "lf": "tyrosine phosphorylation",
+   "how": "paren"
+  },
+  {
+   "sf": "BCR",
+   "lf": "B cell receptor",
+   "how": "paren"
+  },
+  {
+   "sf": "CAR",
+   "lf": "Chimeric Antigen Receptor",
+   "how": "paren"
+  },
+  {
+   "sf": "Tfh",
+   "lf": "T follicular helper",
+   "how": "paren"
+  },
+  {
+   "sf": "iNKT",
+   "lf": "invariant natural killer T",
+   "how": "paren"
+  },
+  {
+   "sf": "MHC",
+   "lf": "major histocompatibility complex",
+   "how": "paren"
+  },
+  {
+   "sf": "APLs",
+   "lf": "altered peptide ligands",
+   "how": "paren"
+  },
+  {
+   "sf": "TILs",
+   "lf": "Tumor-Infiltrating Lymphocytes",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "SH2",
+   "lf": "Src homology 2"
+  },
+  {
+   "sf": "AI",
+   "lf": "artificial intelligence"
+  }
+ ],
+ "ignore": [
+  "ITAMs",
+  "zITAM",
+  "z-ITAM",
+  "multi-ITAM",
+  "non-ITAM",
+  "ITAM deleted",
+  "TCRs",
+  "TCRa",
+  "TCRb",
+  "Tcr",
+  "TCR-pMHC",
+  "TCR-mediated",
+  "z111",
+  "p21z",
+  "p23z",
+  "CD3",
+  "CD3d",
+  "CD3e",
+  "CD3g",
+  "CD4",
+  "CD8",
+  "CD8-z",
+  "CD19",
+  "CD28",
+  "CD45",
+  "Treg",
+  "Tregs",
+  "ZAP-70",
+  "ZAP70",
+  "SHP-1",
+  "SHIP",
+  "SYK",
+  "LCK",
+  "LAT",
+  "PLCg",
+  "Shc",
+  "Grb2",
+  "Fyn",
+  "p85",
+  "Ser59",
+  "Ly49",
+  "TREM-1",
+  "Fc",
+  "Ca2",
+  "Ca2+",
+  "kDa",
+  "PE",
+  "PL",
+  "TH",
+  "JB",
+  "NIH",
+  "BY",
+  "PUBLISHED",
+  "EMBO",
+  "Altan-Bonnet",
+  "AC",
+  "BA",
+  "WW",
+  "RD",
+  "JS",
+  "PA",
+  "NS",
+  "LA",
+  "JA",
+  "0.5<Zf:AAf<1",
+  "0.5<Zf:ZZm<1",
+  "0.5μm",
+  "1|geneID",
+  "100nM final",
+  "17 ̊38’E",
+  "17 ̊8’49”E",
+  "1|chrID",
+  "1|chrID/xxxxID",
+  "1|indID",
+  "1|peakID",
+  "1|xxxxID",
+  "25–154 Mbs",
+  "277/350 genes",
+  "4.88–154.33 Mb",
+  "47 ̊45N’",
+  "4–154 Mbs",
+  "5-21Mb",
+  "58 ̊56’55”N",
+  "59 ̊52’N",
+  "5mC sites",
+  "5mCG",
+  "9 ̊10’E",
+  "99/122 genes",
+  "Cat# 20020594/5",
+  "F/M",
+  "S2A–S2C Table",
+  "S2C",
+  "S2C Table",
+  "WZ/WW",
+  "ZZ/ZW"
+ ]
+}

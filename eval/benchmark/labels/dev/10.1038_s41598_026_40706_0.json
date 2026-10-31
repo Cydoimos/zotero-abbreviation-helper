@@ -1,0 +1,247 @@
+{
+ "doi": "10.1038/s41598-026-40706-0",
+ "title": "A splicing-derived microRNA from amelogenin exon4 regulates enamel formation via control of exon4 splicing and amelogenin expression",
+ "journal": "Scientific Reports",
+ "defined": [
+  {
+   "sf": "SRSFs",
+   "lf": "Serine/Arginine-rich splicing factors",
+   "how": "paren"
+  },
+  {
+   "sf": "AMELX/AMELY",
+   "lf": "amelogenin on the X and Y chromosomes",
+   "how": "paren",
+   "alt": [
+    "amelogenin genes on the X and Y chromosomes"
+   ]
+  },
+  {
+   "sf": "AI",
+   "lf": "Amelogenesis Imperfecta",
+   "how": "paren",
+   "alt": [
+    "X-linked Amelogenesis Imperfecta"
+   ]
+  },
+  {
+   "sf": "Amelx",
+   "lf": "amelogenin",
+   "how": "paren",
+   "alt": [
+    "mouse amelogenin gene"
+   ]
+  },
+  {
+   "sf": "LRAP",
+   "lf": "leucine-rich amelogenin peptide",
+   "how": "paren",
+   "alt": [
+    "short-form amelogenin"
+   ],
+   "note": "the paper introduces it only as \"a short-form (LRAP)\""
+  },
+  {
+   "sf": "LNA",
+   "lf": "Locked Nucleic Acid",
+   "how": "reverse"
+  },
+  {
+   "sf": "AMG",
+   "lf": "amelogenin protein",
+   "how": "paren",
+   "alt": [
+    "amelogenin"
+   ]
+  },
+  {
+   "sf": "KO",
+   "lf": "knockout",
+   "how": "paren"
+  },
+  {
+   "sf": "SpliceAPP",
+   "lf": "Splice-Alternative Profile Predictor",
+   "how": "paren"
+  },
+  {
+   "sf": "SF1",
+   "lf": "splicing factor 1",
+   "how": "paren"
+  },
+  {
+   "sf": "RIP",
+   "lf": "RNA immunoprecipitation",
+   "how": "paren"
+  },
+  {
+   "sf": "eCLIP",
+   "lf": "enhanced crosslinking and immunoprecipitation",
+   "how": "paren"
+  },
+  {
+   "sf": "HED",
+   "lf": "hereditary enamel defect",
+   "how": "paren"
+  },
+  {
+   "sf": "LARC",
+   "lf": "Laboratory Animal Research Center",
+   "how": "reverse"
+  },
+  {
+   "sf": "UCSF",
+   "lf": "University of California, San Francisco",
+   "how": "paren"
+  },
+  {
+   "sf": "IACUC",
+   "lf": "Institutional Animal Care and Use Committee",
+   "how": "paren"
+  },
+  {
+   "sf": "micro-CT",
+   "lf": "microcomputed tomography",
+   "how": "paren"
+  }
+ ],
+ "undefined": [
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid"
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid"
+  },
+  {
+   "sf": "mRNA",
+   "lf": "messenger RNA"
+  },
+  {
+   "sf": "pre-mRNA",
+   "lf": "precursor messenger RNA"
+  },
+  {
+   "sf": "miRNA",
+   "lf": "microRNA"
+  },
+  {
+   "sf": "miR",
+   "lf": "microRNA"
+  },
+  {
+   "sf": "UTR",
+   "lf": "untranslated region"
+  },
+  {
+   "sf": "WT",
+   "lf": "wild type"
+  },
+  {
+   "sf": "qPCR",
+   "lf": "quantitative PCR"
+  },
+  {
+   "sf": "SD",
+   "lf": "standard deviation"
+  },
+  {
+   "sf": "SVM",
+   "lf": "support vector machine"
+  },
+  {
+   "sf": "BP",
+   "lf": "branch point"
+  },
+  {
+   "sf": "CMV",
+   "lf": "cytomegalovirus"
+  },
+  {
+   "sf": "HEK293",
+   "lf": "human embryonic kidney 293"
+  }
+ ],
+ "ignore": [
+  "AMELX",
+  "AMELY",
+  "AMELX1",
+  "M180",
+  "M194",
+  "H174",
+  "TgM194",
+  "AMG+ex4",
+  "AMG+exon4",
+  "anti-AMG",
+  "Nfia",
+  "Prkch",
+  "Prkch-Runx2",
+  "Nfia/Prkch",
+  "Runx2",
+  "RUNX2",
+  "Srsf2",
+  "Srsf3",
+  "Srsf6",
+  "Tra2b",
+  "SRSF2",
+  "SRSF3",
+  "SRSF6",
+  "TRA2B",
+  "Ago1/2/3",
+  "anti-Ago1/2/3",
+  "eCLIP-seq",
+  "PureCLIP",
+  "LS8",
+  "MC3T3-E1",
+  "M14-mi2",
+  "mirVana",
+  "miRCURY",
+  "LNATM",
+  "Direct-zol",
+  "Superscript",
+  "VILO",
+  "QuantStudioTM",
+  "KOD",
+  "SYBR",
+  "Taq",
+  "Technovit",
+  "Scanco",
+  "Zymo",
+  "Qiagen",
+  "Toyobo",
+  "Takara",
+  "Thermo",
+  "Elim",
+  "Kulzer",
+  "Vector",
+  "GraphPad",
+  "Prism",
+  "c.144+22C>A",
+  "exon2-PA2895641",
+  "exon2–6d",
+  "exon4–6d",
+  "exon4-6d",
+  "HA/cm3",
+  "nmol/gBW",
+  "P4",
+  "P5",
+  "P7",
+  "P11",
+  "CA",
+  "MA",
+  "ARTICLEINPRESS",
+  "ACCEPTED",
+  "MANUSCRIPT",
+  "ARTICLE",
+  "IN",
+  "PRESS",
+  "Exon4",
+  "MicroRNAs",
+  "miRNAs",
+  "mRNAs",
+  "RNA-level",
+  "AG",
+  "Inc."
+ ]
+}
