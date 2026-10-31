@@ -123,11 +123,6 @@
    "alt": [
     "Mre11-Rad50-Nbs1 complex"
    ]
-  },
-  {
-   "sf": "LOH",
-   "lf": "loss of heterozygosity",
-   "how": "paren"
   }
  ],
  "undefined": [
@@ -150,15 +145,6 @@
   {
    "sf": "EDTA",
    "lf": "ethylenediaminetetraacetic acid"
-  },
-  {
-   "sf": "TE",
-   "lf": "Tris-EDTA"
-  },
-  {
-   "sf": "SD",
-   "lf": "standard deviation",
-   "recon": true
   }
  ],
  "ignore": [
@@ -219,6 +205,9 @@
   "Right",
   "M.A.R.",
   "Sciences",
-  "1 Z01 ES065073"
+  "1 Z01 ES065073",
+  "LOH",
+  "TE",
+  "SD"
  ]
 }

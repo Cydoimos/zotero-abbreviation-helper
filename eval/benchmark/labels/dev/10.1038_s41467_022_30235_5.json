@@ -123,10 +123,6 @@
    "lf": "glucose transporter 3"
   },
   {
-   "sf": "GLUT5",
-   "lf": "glucose transporter 5"
-  },
-  {
    "sf": "EM",
    "lf": "electron microscopy"
   },
@@ -226,6 +222,7 @@
   "7WSM",
   "7WSN",
   "C.Y.",
-  "LMNG/CHS"
+  "LMNG/CHS",
+  "GLUT5"
  ]
 }

@@ -36,10 +36,6 @@
    "lf": "Supporting Information"
   },
   {
-   "sf": "HPLC",
-   "lf": "high-performance liquid chromatography"
-  },
-  {
    "sf": "PEG400",
    "lf": "polyethylene glycol 400"
   }
@@ -106,6 +102,7 @@
   "R01",
   "AI72012",
   "T.H.",
-  "Appendix"
+  "Appendix",
+  "HPLC"
  ]
 }

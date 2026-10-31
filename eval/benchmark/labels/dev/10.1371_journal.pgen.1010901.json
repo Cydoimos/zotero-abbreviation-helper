@@ -89,11 +89,6 @@
    "how": "paren"
   },
   {
-   "sf": "ChIP-seq",
-   "lf": "chromatin immunoprecipitation followed by high-throughput sequencing",
-   "how": "other"
-  },
-  {
    "sf": "chr1",
    "lf": "chromosome 1",
    "how": "paren"
@@ -134,24 +129,12 @@
    "lf": "deoxyribonucleic acid"
   },
   {
-   "sf": "mRNA",
-   "lf": "messenger RNA"
-  },
-  {
    "sf": "SNP",
    "lf": "single nucleotide polymorphism"
   },
   {
    "sf": "PCR",
    "lf": "polymerase chain reaction"
-  },
-  {
-   "sf": "FDR",
-   "lf": "false discovery rate"
-  },
-  {
-   "sf": "INDELs",
-   "lf": "insertions and deletions"
   }
  ],
  "ignore": [
@@ -327,6 +310,12 @@
   "WZ/WW",
   "ZZ/ZW",
   "ADL",
-  "EBC"
+  "EBC",
+  "ChIP-seq",
+  "NGI",
+  "mRNA",
+  "INDELs",
+  "FDR",
+  "Zm"
  ]
 }

@@ -133,6 +133,35 @@
     "protein-binding studies variant"
    ],
    "note": "from \"a variant of 6HBC … for protein-binding studies (6HBC-PBS)\""
+  },
+  {
+   "sf": "3D",
+   "lf": "three-dimensional",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "2D",
+   "lf": "two-dimensional",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "GSFSC",
+   "lf": "GoldStandard Fourier Shell Correlation",
+   "how": "paren",
+   "recon": true,
+   "note": "table header"
+  },
+  {
+   "sf": "nt",
+   "lf": "nucleotides",
+   "how": "paren",
+   "alt": [
+    "nucelotides"
+   ],
+   "recon": true,
+   "note": "\"1,832 nucelotides (nt)\""
   }
  ],
  "undefined": [
@@ -147,10 +176,6 @@
   {
    "sf": "bp",
    "lf": "base pairs"
-  },
-  {
-   "sf": "nt",
-   "lf": "nucleotides"
   },
   {
    "sf": "TEM",

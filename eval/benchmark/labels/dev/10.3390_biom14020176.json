@@ -168,14 +168,6 @@
    "lf": "deoxyribonucleic acid"
   },
   {
-   "sf": "tRNAs",
-   "lf": "transfer RNAs"
-  },
-  {
-   "sf": "rRNAs",
-   "lf": "ribosomal RNAs"
-  },
-  {
    "sf": "ATP",
    "lf": "adenosine triphosphate"
   },
@@ -299,6 +291,8 @@
   "Paf1C",
   "TFIID/TFIIA",
   "Table1",
-  "ChIP"
+  "ChIP",
+  "tRNAs",
+  "rRNAs"
  ]
 }

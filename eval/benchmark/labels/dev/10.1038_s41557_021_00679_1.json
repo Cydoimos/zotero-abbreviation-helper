@@ -145,9 +145,10 @@
    "how": "paren"
   },
   {
-   "sf": "SHAPE-Seq",
-   "lf": "selective 2′-hydroxyl acylation analyzed by primer extension sequencing",
-   "how": "paren"
+   "sf": "3D",
+   "lf": "three-dimensional",
+   "how": "paren",
+   "recon": true
   }
  ],
  "undefined": [
@@ -174,10 +175,6 @@
   {
    "sf": "rNTPs",
    "lf": "ribonucleoside triphosphates"
-  },
-  {
-   "sf": "TAE",
-   "lf": "Tris-acetate-EDTA"
   },
   {
    "sf": "GC",
@@ -300,6 +297,8 @@
   "SeC",
   "TeM",
   "FReT",
-  "RNA-protein"
+  "RNA-protein",
+  "SHAPE-Seq",
+  "TAE"
  ]
 }

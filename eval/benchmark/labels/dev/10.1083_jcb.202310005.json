@@ -271,9 +271,11 @@
    "how": "paren"
   },
   {
-   "sf": "DMF",
-   "lf": "dimethyl fumarate",
-   "how": "paren"
+   "sf": "uORFs",
+   "lf": "upstream open reading frames",
+   "how": "phrase",
+   "recon": true,
+   "note": "\"upstream open reading frames, or uORFs\""
   }
  ],
  "undefined": [
@@ -298,10 +300,6 @@
    "lf": "double-stranded RNAs"
   },
   {
-   "sf": "ssRNA",
-   "lf": "single-stranded RNA"
-  },
-  {
    "sf": "ATP",
    "lf": "adenosine triphosphate"
   },
@@ -310,20 +308,8 @@
    "lf": "tricarboxylic acid"
   },
   {
-   "sf": "NAD",
-   "lf": "nicotinamide adenine dinucleotide"
-  },
-  {
    "sf": "OMM",
    "lf": "outer mitochondrial membrane"
-  },
-  {
-   "sf": "MAPK",
-   "lf": "mitogen-activated protein kinase"
-  },
-  {
-   "sf": "uORFs",
-   "lf": "upstream open reading frames"
   }
  ],
  "ignore": [
@@ -396,6 +382,10 @@
   "McGuire",
   "Bar-Ziv",
   "Flores-Romero",
-  "Ravichandran"
+  "Ravichandran",
+  "DMF",
+  "ssRNA",
+  "NAD",
+  "MAPK"
  ]
 }

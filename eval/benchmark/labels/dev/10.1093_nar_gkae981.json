@@ -129,20 +129,8 @@
    "lf": "deoxyribonucleic acid"
   },
   {
-   "sf": "mRNA",
-   "lf": "messenger RNA"
-  },
-  {
-   "sf": "tRNA",
-   "lf": "transfer RNA"
-  },
-  {
    "sf": "UTP",
    "lf": "uridine triphosphate"
-  },
-  {
-   "sf": "GTP",
-   "lf": "guanosine triphosphate"
   }
  ],
  "ignore": [
@@ -246,6 +234,9 @@
   "Spt4/521",
   "Tris/HCl",
   "nanoLC-MS/MS",
-  "subunit Rpo2C*Q373"
+  "subunit Rpo2C*Q373",
+  "tRNA",
+  "GTP",
+  "mRNA"
  ]
 }

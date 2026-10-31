@@ -105,6 +105,13 @@
    "alt": [
     "German Research Foundation"
    ]
+  },
+  {
+   "sf": "PDB",
+   "lf": "Protein Data Bank",
+   "how": "paren",
+   "recon": true,
+   "note": "\"Protein Data Bank (PDB IDs are listed ...)\""
   }
  ],
  "undefined": [
@@ -125,32 +132,8 @@
    "lf": "ribonucleoside triphosphates"
   },
   {
-   "sf": "UV",
-   "lf": "ultraviolet"
-  },
-  {
    "sf": "TAE",
    "lf": "Tris-acetate-EDTA"
-  },
-  {
-   "sf": "bp",
-   "lf": "base pairs"
-  },
-  {
-   "sf": "MD",
-   "lf": "molecular dynamics"
-  },
-  {
-   "sf": "SDS",
-   "lf": "sodium dodecyl sulfate"
-  },
-  {
-   "sf": "PDB",
-   "lf": "Protein Data Bank"
-  },
-  {
-   "sf": "HEPES",
-   "lf": "4-(2-hydroxyethyl)-1-piperazineethanesulfonic acid"
   }
  ],
  "ignore": [
@@ -228,6 +211,12 @@
   "S3",
   "S5",
   "CA",
-  "USA"
+  "USA",
+  "UV",
+  "bp",
+  "MD",
+  "SDS",
+  "HEPES",
+  "LSM 900"
  ]
 }

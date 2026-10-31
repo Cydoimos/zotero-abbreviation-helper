@@ -68,9 +68,11 @@
    ]
   },
   {
-   "sf": "ERC",
-   "lf": "European Research Council",
-   "how": "paren"
+   "sf": "SNP",
+   "lf": "single nucleotide polymorphisms",
+   "how": "paren",
+   "recon": true,
+   "note": "\"single\" and the rest of the long form are split by a page footer"
   }
  ],
  "undefined": [
@@ -81,10 +83,6 @@
   {
    "sf": "dsDNA",
    "lf": "double-stranded DNA"
-  },
-  {
-   "sf": "SNP",
-   "lf": "single nucleotide polymorphism"
   },
   {
    "sf": "PCR",
@@ -103,16 +101,37 @@
    "lf": "indole-3-acetic acid"
   },
   {
-   "sf": "YPD",
-   "lf": "yeast extract-peptone-dextrose"
-  },
-  {
    "sf": "kb",
    "lf": "kilobases"
   },
   {
    "sf": "bp",
    "lf": "base pairs"
+  },
+  {
+   "sf": "PBS",
+   "lf": "phosphate-buffered saline",
+   "recon": true
+  },
+  {
+   "sf": "DMSO",
+   "lf": "dimethyl sulfoxide",
+   "recon": true
+  },
+  {
+   "sf": "HPLC",
+   "lf": "high-performance liquid chromatography",
+   "recon": true
+  },
+  {
+   "sf": "GFP",
+   "lf": "green fluorescent protein",
+   "recon": true
+  },
+  {
+   "sf": "PAGE",
+   "lf": "polyacrylamide gel electrophoresis",
+   "recon": true
   }
  ],
  "ignore": [
@@ -209,6 +228,9 @@
   "Methods",
   "YEP-lactate",
   "DSB-distal",
-  "ATP"
+  "ATP",
+  "ERC",
+  "YPD",
+  "SEM"
  ]
 }

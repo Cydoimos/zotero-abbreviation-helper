@@ -46,14 +46,17 @@
    "how": "paren"
   },
   {
-   "sf": "ARC",
-   "lf": "Advanced Research Computing",
-   "how": "paren"
+   "sf": "1D",
+   "lf": "one-dimensional",
+   "how": "paren",
+   "recon": true,
+   "note": "\"onedimensional\" in the extracted text"
   },
   {
-   "sf": "CSD3",
-   "lf": "Cambridge Service for Data Driven Discovery",
-   "how": "paren"
+   "sf": "nt",
+   "lf": "nucleotide",
+   "how": "paren",
+   "recon": true
   }
  ],
  "undefined": [
@@ -64,22 +67,6 @@
   {
    "sf": "RT",
    "lf": "gas constant times temperature"
-  },
-  {
-   "sf": "RMSE",
-   "lf": "root-mean-square error"
-  },
-  {
-   "sf": "EDTA",
-   "lf": "ethylenediaminetetraacetic acid"
-  },
-  {
-   "sf": "PDF",
-   "lf": "Portable Document Format"
-  },
-  {
-   "sf": "EMBL",
-   "lf": "European Molecular Biology Laboratory"
   }
  ],
  "ignore": [
@@ -140,6 +127,12 @@
   "DNA-Origami",
   "Origami-Based",
   "TwoDimensional",
-  "Coarse-Grained"
+  "Coarse-Grained",
+  "ARC",
+  "CSD3",
+  "EMBL",
+  "EDTA",
+  "PDF",
+  "RMSE"
  ]
 }

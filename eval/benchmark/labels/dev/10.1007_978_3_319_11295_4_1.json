@@ -73,6 +73,12 @@
    "sf": "bps",
    "lf": "base pairs",
    "how": "paren"
+  },
+  {
+   "sf": "3D",
+   "lf": "three-dimensional",
+   "how": "paren",
+   "recon": true
   }
  ],
  "undefined": [
@@ -91,10 +97,6 @@
   {
    "sf": "HIV-1",
    "lf": "human immunodeficiency virus 1"
-  },
-  {
-   "sf": "PDB",
-   "lf": "Protein Data Bank"
   }
  ],
  "ignore": [
@@ -162,6 +164,7 @@
   "W",
   "N",
   "D",
-  "S"
+  "S",
+  "PDB"
  ]
 }

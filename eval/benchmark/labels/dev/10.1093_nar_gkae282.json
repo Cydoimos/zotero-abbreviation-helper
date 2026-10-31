@@ -182,14 +182,6 @@
    "lf": "full width at half maximum"
   },
   {
-   "sf": "ORF",
-   "lf": "open reading frame"
-  },
-  {
-   "sf": "DSIF",
-   "lf": "DRB sensitivity-inducing factor"
-  },
-  {
    "sf": "HEPES",
    "lf": "4-(2-hydroxyethyl)-1-piperazineethanesulfonic acid",
    "recon": true
@@ -337,6 +329,8 @@
   "Spt4/521",
   "Tris/HCl",
   "nanoLC-MS/MS",
-  "subunit Rpo2C*Q373"
+  "subunit Rpo2C*Q373",
+  "DSIF",
+  "ORF"
  ]
 }

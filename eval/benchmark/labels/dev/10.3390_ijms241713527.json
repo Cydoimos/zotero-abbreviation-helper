@@ -92,28 +92,12 @@
    "lf": "gonadotropin-releasing hormone"
   },
   {
-   "sf": "EGF",
-   "lf": "epidermal growth factor"
-  },
-  {
    "sf": "PI3K",
    "lf": "phosphoinositide 3-kinase"
   },
   {
-   "sf": "cAMP",
-   "lf": "cyclic adenosine monophosphate"
-  },
-  {
-   "sf": "DNA",
-   "lf": "deoxyribonucleic acid"
-  },
-  {
    "sf": "TNF",
    "lf": "tumor necrosis factor"
-  },
-  {
-   "sf": "TRAIL",
-   "lf": "TNF-related apoptosis-inducing ligand"
   }
  ],
  "ignore": [
@@ -257,6 +241,10 @@
   "and G15/16",
   "and MAPK10/JNK3",
   "p38/JNK",
-  "p85-PI3K"
+  "p85-PI3K",
+  "EGF",
+  "cAMP",
+  "DNA",
+  "TRAIL"
  ]
 }

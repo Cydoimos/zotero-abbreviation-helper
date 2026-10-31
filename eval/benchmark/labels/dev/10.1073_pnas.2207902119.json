@@ -38,9 +38,10 @@
    ]
   },
   {
-   "sf": "NACA",
-   "lf": "National Advisory Committee for Aeronautics",
-   "how": "paren"
+   "sf": "2D",
+   "lf": "two-dimensional",
+   "how": "paren",
+   "recon": true
   }
  ],
  "undefined": [
@@ -59,14 +60,6 @@
   {
    "sf": "EDTA",
    "lf": "ethylenediaminetetraacetic acid"
-  },
-  {
-   "sf": "SDs",
-   "lf": "standard deviations"
-  },
-  {
-   "sf": "CMOS",
-   "lf": "complementary metal-oxide-semiconductor"
   }
  ],
  "ignore": [
@@ -131,6 +124,9 @@
   "ΔC",
   "σcirc",
   "Appendix",
-  "Scale"
+  "Scale",
+  "NACA",
+  "CMOS",
+  "SDs"
  ]
 }

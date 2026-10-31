@@ -123,6 +123,24 @@
    "lf": "antibody",
    "how": "paren",
    "recon": true
+  },
+  {
+   "sf": "3D",
+   "lf": "three-dimensional",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "2D",
+   "lf": "two-dimensional",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "VP",
+   "lf": "virus particles",
+   "how": "paren",
+   "recon": true
   }
  ],
  "undefined": [
@@ -145,6 +163,11 @@
   {
    "sf": "HEK293T",
    "lf": "human embryonic kidney 293T"
+  },
+  {
+   "sf": "RNA",
+   "lf": "ribonucleic acid",
+   "recon": true
   }
  ],
  "ignore": [

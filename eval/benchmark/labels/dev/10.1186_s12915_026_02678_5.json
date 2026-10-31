@@ -172,6 +172,20 @@
    "sf": "OSF",
    "lf": "Open Science Framework",
    "how": "paren"
+  },
+  {
+   "sf": "CDS",
+   "lf": "coding sequence",
+   "how": "list",
+   "recon": true,
+   "note": "figure legend \"Abbreviations:\" list"
+  },
+  {
+   "sf": "ITR",
+   "lf": "inverted terminal repeat",
+   "how": "list",
+   "recon": true,
+   "note": "figure legend \"Abbreviations:\" list"
   }
  ],
  "undefined": [

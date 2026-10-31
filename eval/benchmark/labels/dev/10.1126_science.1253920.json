@@ -60,6 +60,24 @@
    "sf": "AFM",
    "lf": "Atomic force microscopy",
    "how": "paren"
+  },
+  {
+   "sf": "4H",
+   "lf": "four-helix",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "6H",
+   "lf": "six-helix",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "3D",
+   "lf": "three-dimensional",
+   "how": "paren",
+   "recon": true
   }
  ],
  "undefined": [

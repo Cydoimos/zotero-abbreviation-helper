@@ -120,6 +120,47 @@
    "how": "other",
    "recon": true,
    "note": "table footnote key: \"TFS = Thermo Fisher Scientific (Waltham, MA, USA)\""
+  },
+  {
+   "sf": "PKD1",
+   "lf": "Polycystic Kidney Disease 1",
+   "how": "reverse",
+   "recon": true
+  },
+  {
+   "sf": "VDAC",
+   "lf": "voltage dependent anion channel",
+   "how": "other",
+   "recon": true,
+   "note": "figure legend key \"VDAC = ...\""
+  },
+  {
+   "sf": "MPC",
+   "lf": "mitochondrial pyruvate carrier",
+   "how": "other",
+   "recon": true,
+   "note": "figure legend key"
+  },
+  {
+   "sf": "AU",
+   "lf": "arbitrary units",
+   "how": "other",
+   "recon": true,
+   "note": "figure legend key \"AU = arbitrary units\""
+  },
+  {
+   "sf": "TBST",
+   "lf": "Tris-buffered saline with Tween",
+   "how": "paren",
+   "recon": true,
+   "note": "\"(TBST: 20 mM Tris, ...)\""
+  },
+  {
+   "sf": "PBS",
+   "lf": "phosphate-buffered saline",
+   "how": "paren",
+   "recon": true,
+   "note": "\"(PBS: 137 mM NaCl, ...)\""
   }
  ],
  "undefined": [
@@ -136,54 +177,12 @@
    "lf": "polymerase chain reaction"
   },
   {
-   "sf": "ATP",
-   "lf": "adenosine triphosphate"
-  },
-  {
-   "sf": "DMSO",
-   "lf": "dimethyl sulfoxide"
-  },
-  {
-   "sf": "TBST",
-   "lf": "Tris-buffered saline with Tween 20"
-  },
-  {
    "sf": "MHC",
    "lf": "myosin heavy chain"
   },
   {
-   "sf": "ANOVA",
-   "lf": "analysis of variance",
-   "recon": true
-  },
-  {
-   "sf": "BSA",
-   "lf": "bovine serum albumin",
-   "recon": true
-  },
-  {
-   "sf": "EMT",
-   "lf": "epithelial-to-mesenchymal transition",
-   "recon": true
-  },
-  {
-   "sf": "PBS",
-   "lf": "phosphate-buffered saline",
-   "recon": true
-  },
-  {
-   "sf": "WB",
-   "lf": "Western blot",
-   "recon": true
-  },
-  {
-   "sf": "cDNA",
-   "lf": "complementary DNA",
-   "recon": true
-  },
-  {
-   "sf": "lncRNA",
-   "lf": "long non-coding RNA",
+   "sf": "siRNA",
+   "lf": "small interfering RNA",
    "recon": true
   }
  ],
@@ -339,6 +338,14 @@
   "pH 7.4",
   "siRNA/shRNA",
   "DAP",
-  "TTFields"
+  "TTFields",
+  "ATP",
+  "EMT",
+  "lncRNA",
+  "WB",
+  "DMSO",
+  "ANOVA",
+  "BSA",
+  "cDNA"
  ]
 }

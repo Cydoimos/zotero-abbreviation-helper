@@ -63,10 +63,6 @@
   {
    "sf": "SH2",
    "lf": "Src homology 2"
-  },
-  {
-   "sf": "AI",
-   "lf": "artificial intelligence"
   }
  ],
  "ignore": [
@@ -164,6 +160,7 @@
   "S2C",
   "S2C Table",
   "WZ/WW",
-  "ZZ/ZW"
+  "ZZ/ZW",
+  "AI"
  ]
 }

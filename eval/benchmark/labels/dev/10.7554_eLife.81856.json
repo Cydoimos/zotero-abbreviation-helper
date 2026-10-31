@@ -73,6 +73,12 @@
    "lf": "fetal bovine serum",
    "how": "paren",
    "recon": true
+  },
+  {
+   "sf": "DMEM",
+   "lf": "Dulbecco's modified eagle medium",
+   "how": "paren",
+   "recon": true
   }
  ],
  "undefined": [
@@ -103,14 +109,6 @@
   {
    "sf": "NCBI",
    "lf": "National Center for Biotechnology Information"
-  },
-  {
-   "sf": "GEO",
-   "lf": "Gene Expression Omnibus"
-  },
-  {
-   "sf": "DMEM",
-   "lf": "Dulbecco's Modified Eagle Medium"
   },
   {
    "sf": "HEPES",
@@ -285,6 +283,7 @@
   "Tfinal/sgRNA",
   "anti-B2M",
   "clone TS2/16",
-  "tRNA"
+  "tRNA",
+  "GEO"
  ]
 }

@@ -139,22 +139,24 @@
    "how": "paren"
   },
   {
-   "sf": "ABCR",
-   "lf": "ABCA4",
-   "how": "phrase",
-   "alt": [
-    "rim protein"
-   ]
+   "sf": "IH",
+   "lf": "intracellular helices",
+   "how": "other",
+   "recon": true,
+   "note": "figure legend key \"IH, intracellular helices\""
+  },
+  {
+   "sf": "EH",
+   "lf": "extracellular helices",
+   "how": "other",
+   "recon": true,
+   "note": "figure legend key"
   }
  ],
  "undefined": [
   {
    "sf": "ATP",
    "lf": "adenosine triphosphate"
-  },
-  {
-   "sf": "ADP",
-   "lf": "adenosine diphosphate"
   },
   {
    "sf": "EM",
@@ -175,10 +177,6 @@
   {
    "sf": "PDB",
    "lf": "Protein Data Bank"
-  },
-  {
-   "sf": "EMDB",
-   "lf": "Electron Microscopy Data Bank"
   },
   {
    "sf": "CHAPS",
@@ -284,6 +282,9 @@
   "IPA/ACN",
   "LC-MS/MS",
   "X.G.",
-  "~10 mg/ml"
+  "~10 mg/ml",
+  "ADP",
+  "EMDB",
+  "ABCR"
  ]
 }

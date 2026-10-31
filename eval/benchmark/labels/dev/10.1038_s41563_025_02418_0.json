@@ -87,24 +87,28 @@
    "how": "paren"
   },
   {
-   "sf": "BMFTR",
-   "lf": "German Federal Ministry of Research, Technology and Space",
-   "how": "paren"
-  },
-  {
-   "sf": "RISE",
-   "lf": "Robotic Intelligence in the Synthesis of Life",
-   "how": "paren"
-  },
-  {
    "sf": "FFT",
    "lf": "fast Fourier transforms",
    "how": "paren"
   },
   {
-   "sf": "VLPs",
-   "lf": "Virus-like particles",
-   "how": "paren"
+   "sf": "3D",
+   "lf": "three-dimensional",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "2D",
+   "lf": "two-dimensional",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "LUV",
+   "lf": "large unilamellar vesicles",
+   "how": "other",
+   "recon": true,
+   "note": "figure legend key \"LUV, large unilamellar vesicles\""
   }
  ],
  "undefined": [
@@ -117,20 +121,8 @@
    "lf": "ribonucleic acid"
   },
   {
-   "sf": "LUV",
-   "lf": "large unilamellar vesicle"
-  },
-  {
    "sf": "HIV",
    "lf": "human immunodeficiency virus"
-  },
-  {
-   "sf": "PDB",
-   "lf": "Protein Data Bank"
-  },
-  {
-   "sf": "s.d.",
-   "lf": "standard deviation"
   }
  ],
  "ignore": [
@@ -243,6 +235,11 @@
   "USA",
   "PDF",
   "Uμl",
-  "M. J."
+  "M. J.",
+  "VLPs",
+  "BMFTR",
+  "RISE",
+  "PDB",
+  "s.d."
  ]
 }

@@ -54,10 +54,6 @@
  ],
  "undefined": [
   {
-   "sf": "DNA",
-   "lf": "deoxyribonucleic acid"
-  },
-  {
    "sf": "PC",
    "lf": "phosphatidylcholine"
   }
@@ -110,6 +106,7 @@
   "S.A.A.",
   "Research",
   "The",
-  "set"
+  "set",
+  "DNA"
  ]
 }

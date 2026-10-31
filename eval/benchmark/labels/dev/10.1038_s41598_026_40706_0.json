@@ -162,18 +162,6 @@
    "lf": "quantitative PCR"
   },
   {
-   "sf": "SD",
-   "lf": "standard deviation"
-  },
-  {
-   "sf": "SVM",
-   "lf": "support vector machine"
-  },
-  {
-   "sf": "BP",
-   "lf": "branch point"
-  },
-  {
    "sf": "CMV",
    "lf": "cytomegalovirus"
   },
@@ -279,6 +267,9 @@
   "Inc.",
   "IP",
   "UMIs",
-  "DEJ"
+  "DEJ",
+  "SVM",
+  "BP",
+  "SD"
  ]
 }

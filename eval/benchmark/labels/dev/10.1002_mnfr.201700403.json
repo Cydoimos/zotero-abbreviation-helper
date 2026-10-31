@@ -123,10 +123,6 @@
   {
    "sf": "CFU",
    "lf": "colony-forming units"
-  },
-  {
-   "sf": "RSD",
-   "lf": "relative standard deviation"
   }
  ],
  "ignore": [
@@ -172,6 +168,7 @@
   "GmbH",
   "KGaA",
   "USA",
-  "UK"
+  "UK",
+  "RSD"
  ]
 }

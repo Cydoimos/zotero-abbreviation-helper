@@ -97,6 +97,19 @@
    "sf": "Mrt",
    "lf": "Mortal germline",
    "how": "paren"
+  },
+  {
+   "sf": "AS",
+   "lf": "antisense",
+   "how": "other",
+   "recon": true,
+   "note": "figure legend key \"AS = antisense, S = sense\""
+  },
+  {
+   "sf": "PFA",
+   "lf": "paraformaldehyde",
+   "how": "paren",
+   "recon": true
   }
  ],
  "undefined": [
@@ -133,24 +146,12 @@
    "lf": "polymerase chain reaction"
   },
   {
-   "sf": "RT-PCR",
-   "lf": "reverse transcription PCR"
-  },
-  {
    "sf": "GFP",
    "lf": "green fluorescent protein"
   },
   {
    "sf": "PBS",
    "lf": "phosphate-buffered saline"
-  },
-  {
-   "sf": "PFA",
-   "lf": "paraformaldehyde"
-  },
-  {
-   "sf": "SDS-PAGE",
-   "lf": "sodium dodecyl sulfate polyacrylamide gel electrophoresis"
   },
   {
    "sf": "RT",
@@ -200,6 +201,21 @@
   {
    "sf": "tRNA",
    "lf": "transfer RNA",
+   "recon": true
+  },
+  {
+   "sf": "UTR",
+   "lf": "untranslated region",
+   "recon": true
+  },
+  {
+   "sf": "DTT",
+   "lf": "dithiothreitol",
+   "recon": true
+  },
+  {
+   "sf": "CRISPR",
+   "lf": "clustered regularly interspaced short palindromic repeats",
    "recon": true
   }
  ],
@@ -371,6 +387,8 @@
   "pH 8.0",
   "MAPK",
   "ROI",
-  "siRNA"
+  "siRNA",
+  "RT-PCR",
+  "SDS-PAGE"
  ]
 }

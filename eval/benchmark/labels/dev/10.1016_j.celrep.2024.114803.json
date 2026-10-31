@@ -202,20 +202,6 @@
    ]
   },
   {
-   "sf": "THRONCAT",
-   "lf": "metabolic labeling of newly synthesized proteins using a bioorthogonal threonine analog",
-   "how": "other",
-   "alt": [
-    "threonine-based non-canonical amino acid tagging"
-   ],
-   "note": "spelled out only in the reference list title"
-  },
-  {
-   "sf": "AAM",
-   "lf": "Author Accepted Manuscript",
-   "how": "paren"
-  },
-  {
    "sf": "CuAAC",
    "lf": "Copper-catalyzed Azide-Alkyne cycloaddition",
    "how": "paren"
@@ -226,9 +212,66 @@
    "how": "paren"
   },
   {
-   "sf": "eIF2",
-   "lf": "eukaryotic initiation factor-2",
-   "how": "paren"
+   "sf": "TCEP",
+   "lf": "Tris (2-carboxyethyl) phosphine hydrochloride",
+   "how": "paren",
+   "recon": true,
+   "note": "key resources table and methods"
+  },
+  {
+   "sf": "CHX",
+   "lf": "Cyclohexamide",
+   "how": "paren",
+   "recon": true,
+   "note": "key resources table; the paper misspells cycloheximide"
+  },
+  {
+   "sf": "DMEM",
+   "lf": "Dulbecco's modified Eagle's medium",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "FBS",
+   "lf": "fetal bovine serum",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "TLC",
+   "lf": "Thin layer chromatography",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "TFA",
+   "lf": "trifluoroacetic acid",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "FA",
+   "lf": "formic acid",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "HCD",
+   "lf": "higher-energy collision dissociation",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "SCGal",
+   "lf": "complete synthetic medium containing 2% galactose",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "PBS/PIC",
+   "lf": "PBS supplemented with an EDTA-free protease inhibitor cocktail",
+   "how": "paren",
+   "recon": true
   }
  ],
  "undefined": [
@@ -289,6 +332,31 @@
   {
    "sf": "rRNA",
    "lf": "ribosomal RNA",
+   "recon": true
+  },
+  {
+   "sf": "PBS",
+   "lf": "phosphate-buffered saline",
+   "recon": true
+  },
+  {
+   "sf": "HEPES",
+   "lf": "4-(2-hydroxyethyl)-1-piperazineethanesulfonic acid",
+   "recon": true
+  },
+  {
+   "sf": "HPLC",
+   "lf": "high-performance liquid chromatography",
+   "recon": true
+  },
+  {
+   "sf": "NMR",
+   "lf": "nuclear magnetic resonance",
+   "recon": true
+  },
+  {
+   "sf": "DNA",
+   "lf": "deoxyribonucleic acid",
    "recon": true
   }
  ],
@@ -389,6 +457,9 @@
   "MAB/2017/2",
   "START",
   "ALTF",
-  "SEC"
+  "SEC",
+  "eIF2",
+  "AAM",
+  "THRONCAT"
  ]
 }

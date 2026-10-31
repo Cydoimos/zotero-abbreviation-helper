@@ -76,15 +76,6 @@
    ]
   },
   {
-   "sf": "ERC",
-   "lf": "European Research Council",
-   "how": "other",
-   "alt": [
-    "European Union"
-   ],
-   "note": "given only as \"funded by the European Union (ERC, ENSYNC, 101076997)\""
-  },
-  {
    "sf": "DFG",
    "lf": "Deutsche Forschungsgemeinschaft",
    "how": "inside",
@@ -93,17 +84,19 @@
    ]
   },
   {
-   "sf": "BMBF",
-   "lf": "Federal Ministry of Education and Research",
-   "how": "paren"
-  },
-  {
    "sf": "SI",
    "lf": "Supplementary Information",
    "how": "paren",
    "alt": [
     "Supplemen tary Information"
    ]
+  },
+  {
+   "sf": "sc",
+   "lf": "self-complementary",
+   "how": "paren",
+   "recon": true,
+   "note": "figure legend"
   }
  ],
  "undefined": [
@@ -120,36 +113,12 @@
    "lf": "ribosomal RNA"
   },
   {
-   "sf": "PCR",
-   "lf": "polymerase chain reaction"
-  },
-  {
-   "sf": "PAGE",
-   "lf": "polyacrylamide gel electrophoresis"
-  },
-  {
    "sf": "PDB",
    "lf": "Protein Data Bank"
   },
   {
-   "sf": "RMSD",
-   "lf": "root-mean-square deviation"
-  },
-  {
    "sf": "RMSF",
    "lf": "root-mean-square fluctuation"
-  },
-  {
-   "sf": "EDTA",
-   "lf": "ethylenediaminetetraacetic acid"
-  },
-  {
-   "sf": "NVT",
-   "lf": "constant number, volume and temperature"
-  },
-  {
-   "sf": "NPT",
-   "lf": "constant number, pressure and temperature"
   },
   {
    "sf": "nt",
@@ -244,6 +213,15 @@
   "S48",
   "S62",
   "N=10",
-  "N=17"
+  "N=17",
+  "ROSIE",
+  "ERC",
+  "BMBF",
+  "PCR",
+  "PAGE",
+  "RMSD",
+  "EDTA",
+  "NVT",
+  "NPT"
  ]
 }

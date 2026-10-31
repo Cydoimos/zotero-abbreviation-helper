@@ -178,6 +178,33 @@
    "how": "paren",
    "recon": true,
    "note": "\"16S ribosomal RNA (rRNA; Fig. 9F)\""
+  },
+  {
+   "sf": "2D",
+   "lf": "two-dimensional",
+   "how": "paren",
+   "recon": true
+  },
+  {
+   "sf": "c-di-GMP",
+   "lf": "bis-(3′-5′)-cyclic dimeric guanosine monophosphate",
+   "how": "reverse",
+   "recon": true,
+   "note": "c-di-GMP [long form]"
+  },
+  {
+   "sf": "RNase",
+   "lf": "ribonuclease",
+   "how": "paren",
+   "recon": true,
+   "note": "\"bacterial ribonuclease (RNase) P RNA\""
+  },
+  {
+   "sf": "nt",
+   "lf": "nucleotide",
+   "how": "paren",
+   "recon": true,
+   "note": "\"51-nucleotide (nt) RNA tile\""
   }
  ],
  "undefined": [
@@ -198,16 +225,8 @@
    "lf": "human immunodeficiency virus 1"
   },
   {
-   "sf": "RNase",
-   "lf": "ribonuclease"
-  },
-  {
    "sf": "bp",
    "lf": "base pair"
-  },
-  {
-   "sf": "nt",
-   "lf": "nucleotide"
   },
   {
    "sf": "EDTA",
@@ -306,6 +325,7 @@
   "S1",
   "S2",
   "S3",
-  "EMS"
+  "EMS",
+  "3IGI"
  ]
 }
