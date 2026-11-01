@@ -105,9 +105,11 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
   check('the key is taken', e.defaultPrevented);
   check('pressing O over KD lists where it is used', tip(doc) && tip(doc).style.display === 'block'
     && rows(doc)[0] === 'KD — no meaning found' && rows(doc)[1] === 'Used 3 times:', rows(doc).slice(0, 2).join(' | '));
-  check('each use says its page and shows its words, the word in bold',
-    /^1 · p\. 2 {2}The binding was measured as a dissociation constant \(KD\)\.$/.test(rows(doc)[2])
-    && tip(doc).childNodes[2].childNodes[2].tagName === 'strong', rows(doc)[2]);
+  const choice = i => tip(doc).childNodes[2].childNodes[i];
+  check('each use is a numbered choice with its page and words, the word in bold',
+    choice(0).textContent === '1p. 2 · The binding was measured as a dissociation constant (KD).'
+    && choice(0).childNodes[0].textContent === '1' && choice(0).childNodes[3].tagName === 'strong', choice(0).textContent);
+  check('and the tooltip says how to choose', rows(doc)[3] === 'Click one, or press its number.', rows(doc)[3]);
   check('the list can be clicked', tip(doc).style.pointerEvents === 'auto');
 
   H._onReaderKeyDown(doc, { key: 'Shift', shiftKey: true });
@@ -122,7 +124,7 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
 
   hover(60);
   await press('o');
-  tip(doc).childNodes[2]._click({ stopPropagation() {} });
+  tip(doc).childNodes[2].childNodes[0]._click({ preventDefault() {}, stopPropagation() {} });
   await wait(5);
   check('clicking a use goes there', env.reader.calls.length === 2 && env.reader.calls[1].pageIndex === 1);
 
@@ -162,6 +164,46 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
   await press('w');
   check('"goes to the first use" goes straight there', env.reader.calls.length === 3 && env.reader.calls[2].pageIndex === 1
     && !H.usesWindow, JSON.stringify(env.reader.calls[2]));
+
+  // ---------- one look and one way of choosing for all three tooltips ----------
+  {
+    H._forgetHover(doc);
+    const heads = [];
+    const opened = [];
+    H._openExternalURL = url => opened.push(url);
+    const groups = [{ groupLabel: 'Gene/protein databases', links: [{ label: 'HGNC', url: 'u1' }, { label: 'UniProt', url: 'u2' }] },
+      { groupLabel: 'Cell line databases', links: [{ label: 'Cellosaurus', url: 'u3' }] }];
+    H._showHoverTooltip(doc, 10, 10, 'EGFR', 'epidermal growth factor receptor', { groups, certainty: 'defined' });
+    heads.push(tip(doc).childNodes[0]);
+    const meaningChoices = tip(doc).childNodes.filter(c => c.childNodes.length && c.childNodes[0].childNodes
+      && c.childNodes[0].childNodes[0] && c.childNodes[0].childNodes[0].style && c.childNodes[0].childNodes[0].style.fontWeight === '600');
+    check('1 · a meaning with links: groups named, numbers run on across them',
+      rows(doc).join(' | ') === 'EGFR — epidermal growth factor receptor | Defined in this paper | Gene/protein databases | 1HGNC2UniProt'
+        + ' | Cell line databases | 3Cellosaurus | Click one, or press its number.', rows(doc).join(' | '));
+    H._onReaderKeyDown(doc, key('3', { code: 'Digit3' }));
+    check('pressing 3 opens the third link, in the second group', opened.join() === 'u3', opened.join());
+
+    H._showDatabaseTooltip(doc, 10, 10, { symbol: 'TP53', groups });
+    heads.push(tip(doc).childNodes[0]);
+    check('2 · database links alone: the same heading, groups and hint',
+      rows(doc).join(' | ') === 'TP53 — look it up in a database | Gene/protein databases | 1HGNC2UniProt'
+        + ' | Cell line databases | 3Cellosaurus | Click one, or press its number.', rows(doc).join(' | '));
+    const linkBadge = tip(doc).childNodes[2].childNodes[0].childNodes[0].style;
+
+    H.usesAction = 'list';
+    H.usesKey = 'o';
+    word = 'KD';
+    hover(130);
+    await press('o');
+    heads.push(tip(doc).childNodes[0]);
+    const useBadge = tip(doc).childNodes[2].childNodes[0].childNodes[0].style;
+    check('3 · uses: the same heading, then numbered choices and the same hint',
+      rows(doc)[0] === 'KD — no meaning found' && rows(doc)[rows(doc).length - 1] === 'Click one, or press its number.');
+    check('every heading is the word in bold, a dash and what the tooltip says',
+      heads.every(h => h.childNodes[0].tagName === 'strong' && /^ — /.test(h.childNodes[1].textContent)));
+    check('database and use choices are numbered in the same style',
+      JSON.stringify(linkBadge) === JSON.stringify(useBadge) && linkBadge.color && linkBadge.fontWeight === '600');
+  }
 
   // ---------- marking the word on its page ----------
   {

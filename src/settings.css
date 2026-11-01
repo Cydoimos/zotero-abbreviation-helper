@@ -21,6 +21,20 @@
   margin-top: 1em !important;
 }
 
+/* The overview of the three tooltips, above the first section. */
+#abbrev-settings-root .abbrev-settings-intro {
+  max-width: 46em;
+  margin-block: 0.5em 1em;
+  line-height: 1.45;
+}
+
+/* A part of a section ("Your own abbreviations" under Meanings). */
+#abbrev-settings-root groupbox label > h3 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 1.4em 0 0.3em;
+}
+
 #abbrev-settings-root .abbrev-settings-hint {
   opacity: 0.75;
   margin-block-end: 0.6em;

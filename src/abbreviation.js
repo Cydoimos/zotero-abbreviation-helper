@@ -1349,10 +1349,14 @@ var AbbreviationHelper = {
     // "Show where a word is used": a key pressed while the pointer is on any
     // word lists the word's first uses in the paper, or goes to the first.
     usesEnabled: true,
-    usesKey: 'o',          // a letter, matched by the character it types
+    usesKey: 'o',          // one of USES_KEYS, matched by the character it types
     usesAction: 'list',    // 'list' or 'jump'
     usesCount: 3,          // how many uses the list shows
-    // The open list of uses: { state, uses, word, doc }, or null.
+    // The letters the key can be: every letter Zotero's reader leaves free.
+    // It uses h, s and u itself (tools, read aloud) and blocks pdf.js's j, k,
+    // n, p and r, so those are left out.
+    USES_KEYS: 'abcdefgilmoqtvwxyz',
+    // The open list of uses: { state, word, doc }, or null.
     usesWindow: null,
     // Whether a tooltip for a defined abbreviation also carries database links.
     databaseLinksOnAbbreviations: true,
@@ -1383,7 +1387,8 @@ var AbbreviationHelper = {
     // the PDF text to the tooltip. Plain abbreviation-only tooltips keep
     // the normal transient hover behavior.
     hoverInteractiveTooltip: false,
-    activeGeneLinks: [],
+    // What each numbered choice of the open tooltip does (see _addChoices).
+    activeChoices: [],
     // Extracted text per attachment, so a change to your definitions or the
     // ignore list can be re-detected without reading the PDF again. Texts are
     // large, so only a few are kept.
@@ -1558,7 +1563,8 @@ var AbbreviationHelper = {
         this.useLibraryDefinitions = this._getPref('useLibraryDefinitions', this.useLibraryDefinitions);
         this.showMeaningSource = this._getPref('showMeaningSource', this.showMeaningSource);
         this.usesEnabled = this._getPref('usesEnabled', this.usesEnabled);
-        this.usesKey = String(this._getPref('usesKey', this.usesKey) || 'o').toLowerCase();
+        const key = String(this._getPref('usesKey', this.usesKey) || '').toLowerCase();
+        this.usesKey = key.length === 1 && this.USES_KEYS.includes(key) ? key : 'o';
         this.usesAction = this._getPref('usesAction', this.usesAction) === 'jump' ? 'jump' : 'list';
         this.usesCount = Number(this._getPref('usesCount', this.usesCount)) || 3;
         // A menulist in the preference pane stores its value as a string,
@@ -2091,7 +2097,7 @@ var AbbreviationHelper = {
             // them is visible side by side instead of split across two
             // identical-looking submenus.
             const whenPopup = submenu(rootPopup, 'When to Show\u2026');
-            header(whenPopup, 'Meanings');
+            header(whenPopup, '1 · Meanings');
             radioGroup(whenPopup, 'abbrev-tooltip-mod',
                 this._modifierChoices(), this.tooltipModifier, (id) => {
                     this.tooltipModifier = id;
@@ -2099,7 +2105,7 @@ var AbbreviationHelper = {
                     this._hideHoverTooltip(doc);
                 });
             sep(whenPopup);
-            header(whenPopup, 'Database links');
+            header(whenPopup, '2 · Database links');
             for (const item of radioGroup(whenPopup, 'abbrev-db-mod',
                 this._modifierChoices(), this.databaseLinksModifier, (id) => {
                     this.databaseLinksModifier = id;
@@ -2107,7 +2113,7 @@ var AbbreviationHelper = {
                     this._refreshHoverFromLastState(doc);
                 })) dbDependents.push(item);
             dbDependents.push(checkbox(whenPopup, 'abbreviation-helper-db-on-abbr',
-                'Also show links on defined abbreviations',
+                'Also show links under a meaning',
                 this.databaseLinksOnAbbreviations, (item) => {
                     this.databaseLinksOnAbbreviations = !this.databaseLinksOnAbbreviations;
                     this._setPref('databaseLinksOnAbbreviations', this.databaseLinksOnAbbreviations);
@@ -2115,9 +2121,9 @@ var AbbreviationHelper = {
                     this._refreshHoverFromLastState(doc);
                 }));
             sep(whenPopup);
-            header(whenPopup, 'Where a word is used');
-            radioGroup(whenPopup, 'abbrev-uses-key',
-                [{ id: '', label: 'Off' }, ...['o', 'w', 'f', 'e'].map(k => ({ id: k, label: 'Press ' + k.toUpperCase() }))],
+            header(whenPopup, '3 · Where a word is used');
+            radioGroup(submenu(whenPopup, 'Key'), 'abbrev-uses-key',
+                [{ id: '', label: 'Off' }, ...[...this.USES_KEYS].map(k => ({ id: k, label: 'When I press ' + k.toUpperCase() }))],
                 this.usesEnabled ? this.usesKey : '', (id) => {
                     this.usesEnabled = !!id;
                     this._setPref('usesEnabled', this.usesEnabled);
@@ -3829,42 +3835,114 @@ var AbbreviationHelper = {
         return '';
     },
 
-    /**
-     * Show a meaning. options.groups adds database links; options.certainty
-     * (as detection reports it) decides the line saying where the meaning
-     * comes from.
-     */
-    _showHoverTooltip(doc, x, y, abbr, term, options) {
+    /* ---- The three tooltips: one look, one way of choosing --------------
+     * Meanings, database links and where a word is used are drawn alike: a
+     * heading (the word in bold, a dash, what the tooltip says about it),
+     * quieter lines under it, and, when there is something to choose,
+     * numbered choices. Every choice is taken the same way: click it, or
+     * press its number (1-9). */
+
+    /** Empty the tooltip and write its heading: "word — says". */
+    _startTooltip(doc, word, says) {
         const tip = this._ensureHoverTooltip(doc);
         while (tip.firstChild) tip.removeChild(tip.firstChild);
-        this.activeGeneLinks = [];
-
-        const { meaning, origin } = this._meaningAndOrigin(term, options && options.certainty);
-        const main = doc.createElement('div');
+        this.activeChoices = [];
+        // Each part is built before it goes into the tooltip.
+        const head = doc.createElement('div');
         const strong = doc.createElement('strong');
-        strong.textContent = String(abbr || '');
-        main.appendChild(strong);
-        main.appendChild(doc.createTextNode(' — ' + meaning));
-        tip.appendChild(main);
-        // How certain the meaning is, in a quieter line underneath.
-        if (this.showMeaningSource) {
-            const originLine = doc.createElement('div');
-            originLine.textContent = origin;
-            originLine.style.fontSize = '0.85em';
-            originLine.style.opacity = '0.7';
-            originLine.style.marginTop = '2px';
-            tip.appendChild(originLine);
+        strong.textContent = String(word || '');
+        head.appendChild(strong);
+        head.appendChild(doc.createTextNode(' — ' + says));
+        tip.appendChild(head);
+        return tip;
+    },
+
+    /** A quieter line: where a meaning comes from, a count, a group, a hint. */
+    _addNote(doc, tip, text) {
+        const div = doc.createElement('div');
+        div.textContent = text;
+        Object.assign(div.style, { fontSize: '0.85em', opacity: '0.7', marginTop: '3px' });
+        return tip.appendChild(div);
+    },
+
+    /**
+     * Numbered choices, each { label: text or nodes, choose(), href? }.
+     * `inline` sets short labels side by side (database names); otherwise
+     * each takes a line (a sentence of the paper). Numbers run on across the
+     * lists of one tooltip: the keys reach 1 to 9, a click reaches every one.
+     */
+    _addChoices(doc, tip, items, inline) {
+        const light = this.tooltipTheme === 'light';
+        const accent = light ? '#0b5fbf' : '#9ecbff';
+        const hover = light ? 'rgba(11, 95, 191, 0.10)' : 'rgba(158, 203, 255, 0.16)';
+        const box = doc.createElement('div');
+        for (const item of items) {
+            const n = this.activeChoices.push(item.choose);
+            const el = doc.createElement(item.href ? 'a' : 'div');
+            if (item.href) { el.href = item.href; el.target = '_blank'; el.rel = 'noopener noreferrer'; }
+            Object.assign(el.style, {
+                display: inline ? 'inline-block' : 'block', margin: inline ? '1px 4px 1px 0' : '2px 0',
+                padding: '1px 4px', borderRadius: '4px', cursor: 'pointer', color: 'inherit', textDecoration: 'none'
+            });
+            const badge = el.appendChild(doc.createElement('span'));
+            badge.textContent = n <= 9 ? String(n) : '·';
+            Object.assign(badge.style, { color: accent, fontWeight: '600', marginRight: '0.45em' });
+            for (const part of [].concat(item.label)) {
+                el.appendChild(typeof part === 'string' ? doc.createTextNode(part) : part);
+            }
+            el.addEventListener('mouseenter', () => { el.style.background = hover; });
+            el.addEventListener('mouseleave', () => { el.style.background = ''; });
+            el.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                item.choose();
+            });
+            box.appendChild(el);
         }
+        return tip.appendChild(box);
+    },
 
-        const groups = (options && options.groups) || null;
-        const interactive = !!(groups && groups.length);
-        tip.dataset.abbreviationHelperInteractive = interactive ? 'true' : 'false';
-        // A tooltip with links must receive clicks; a plain one must not, so
-        // it never gets in the way of hovering or selecting the text below.
-        tip.style.pointerEvents = interactive ? 'auto' : 'none';
-        this.hoverInteractiveTooltip = interactive;
-        for (const g of groups || []) this._appendDatabaseLinks(doc, tip, g);
+    /** Say how to choose, and let the tooltip be clicked and stay put. */
+    _finishChoices(doc, tip) {
+        this._addNote(doc, tip, 'Click one, or press its number.');
+        tip.dataset.abbreviationHelperInteractive = 'true';
+        tip.style.pointerEvents = 'auto';
+        this.hoverInteractiveTooltip = true;
+    },
 
+    /** A tooltip with nothing to choose lets the mouse through to the page. */
+    _finishPlain(tip) {
+        tip.dataset.abbreviationHelperInteractive = 'false';
+        tip.style.pointerEvents = 'none';
+        this.hoverInteractiveTooltip = false;
+    },
+
+    /** Database links as choices: each group's name, then its databases. */
+    _addLinkGroups(doc, tip, groups) {
+        for (const g of groups) {
+            this._addNote(doc, tip, g.groupLabel);
+            this._addChoices(doc, tip, g.links.map(link => ({
+                label: link.label, href: link.url, choose: () => this._openExternalURL(link.url)
+            })), true);
+        }
+    },
+
+    /**
+     * Tooltip 1, a meaning. options.certainty (as detection reports it)
+     * decides the line saying where it comes from; options.groups adds the
+     * database links of tooltip 2 under it.
+     */
+    _showHoverTooltip(doc, x, y, abbr, term, options) {
+        const { meaning, origin } = this._meaningAndOrigin(term, options && options.certainty);
+        const tip = this._startTooltip(doc, abbr, meaning);
+        if (this.showMeaningSource) this._addNote(doc, tip, origin);
+        const groups = (options && options.groups) || [];
+        if (groups.length) {
+            this._addLinkGroups(doc, tip, groups);
+            this._finishChoices(doc, tip);
+        } else {
+            this._finishPlain(tip);
+        }
         this._positionHoverTooltip(doc, tip, x, y);
     },
 
@@ -3891,23 +3969,13 @@ var AbbreviationHelper = {
         return { meaning, origin: 'Defined in this paper' };
     },
 
+    /** Tooltip 2 on its own, for a word with no meaning: database links. */
     _showDatabaseTooltip(doc, x, y, info) {
         const groups = (info && info.groups) || [];
         if (!groups.length) return;
-        const tip = this._ensureHoverTooltip(doc);
-        while (tip.firstChild) tip.removeChild(tip.firstChild);
-        this.activeGeneLinks = [];
-
-        const main = doc.createElement('div');
-        const strong = doc.createElement('strong');
-        strong.textContent = info.symbol || '';
-        main.appendChild(strong);
-        main.appendChild(doc.createTextNode(' \u2014 possible database match'));
-        tip.appendChild(main);
-        tip.dataset.abbreviationHelperInteractive = 'true';
-        tip.style.pointerEvents = 'auto';
-        this.hoverInteractiveTooltip = true;
-        for (const g of groups) this._appendDatabaseLinks(doc, tip, g);
+        const tip = this._startTooltip(doc, info.symbol, 'look it up in a database');
+        this._addLinkGroups(doc, tip, groups);
+        this._finishChoices(doc, tip);
         this._positionHoverTooltip(doc, tip, x, y);
     },
 
@@ -3936,54 +4004,32 @@ var AbbreviationHelper = {
         this._showUsesWindow(state, word, entry, result);
     },
 
-    /** The list of uses, in the tooltip, which stays open so a use can be clicked. */
+    /** Tooltip 3, the first uses of a word; it stays open so a use can be chosen. */
     _showUsesWindow(state, word, entry, result) {
         const doc = state.doc;
-        const tip = this._ensureHoverTooltip(doc);
-        while (tip.firstChild) tip.removeChild(tip.firstChild);
-        this.activeGeneLinks = [];
-        const note = (text) => {
-            const div = doc.createElement('div');
-            div.textContent = text;
-            Object.assign(div.style, { fontSize: '0.85em', opacity: '0.7', marginTop: '2px' });
-            return tip.appendChild(div);
-        };
-
-        const head = tip.appendChild(doc.createElement('div'));
-        const strong = doc.createElement('strong');
-        strong.textContent = word;
-        head.appendChild(strong);
-        head.appendChild(doc.createTextNode(' — ' + (entry ? this._meaningAndOrigin(entry.term, entry.certainty).meaning
-            : 'no meaning found')));
+        const says = entry ? this._meaningAndOrigin(entry.term, entry.certainty).meaning : 'no meaning found';
+        const tip = this._startTooltip(doc, word, says);
         const n = result.total, shown = result.uses.length;
-        note(!n ? 'Not found in the text of this PDF.'
+        this._addNote(doc, tip, !n ? 'Not found in the text of this PDF.'
             : 'Used ' + n + (n === 1 ? ' time' : ' times') + (shown < n ? '; the first ' + shown + ':' : ':'));
-        result.uses.forEach((use, i) => {
-            const row = doc.createElement('div');
-            row.style.marginTop = '4px';
-            row.style.cursor = 'pointer';
-            const where = doc.createElement('span');
-            where.textContent = (i + 1) + ' · p. ' + (use.pageIndex + 1) + '  ';
-            where.style.opacity = '0.7';
-            row.appendChild(where);
-            row.appendChild(doc.createTextNode(use.before));
-            const match = doc.createElement('strong');
-            match.textContent = use.match;
-            row.appendChild(match);
-            row.appendChild(doc.createTextNode(use.after));
-            row.addEventListener('click', (event) => {
-                event.stopPropagation();
-                this._jumpToUse(doc, use, word).catch(e => this.log('Could not go to the use: ' + e));
-            });
-            tip.appendChild(row);
-        });
-        if (shown) note('Click a use or press its number to go there.');
-
-        tip.dataset.abbreviationHelperInteractive = 'true';
-        tip.style.pointerEvents = 'auto';
-        this.hoverInteractiveTooltip = true;
+        if (shown) {
+            this._addChoices(doc, tip, result.uses.map(use => {
+                const page = doc.createElement('span');
+                page.textContent = 'p. ' + (use.pageIndex + 1) + ' · ';
+                page.style.opacity = '0.7';
+                const match = doc.createElement('strong');
+                match.textContent = use.match;
+                return {
+                    label: [page, use.before, match, use.after],
+                    choose: () => this._jumpToUse(doc, use, word).catch(e => this.log('Could not go to the use: ' + e))
+                };
+            }), false);
+            this._finishChoices(doc, tip);
+        } else {
+            this._finishPlain(tip);
+        }
         this._positionHoverTooltip(doc, tip, state.x, state.y);
-        this.usesWindow = { state, uses: result.uses, word, doc };
+        this.usesWindow = { state, word, doc };
         this._renderedSig = this._hoverSignature(state.token);
     },
 
@@ -4052,40 +4098,6 @@ var AbbreviationHelper = {
         if (holder && holder.scrollIntoView) holder.scrollIntoView({ block: 'center', inline: 'nearest' });
         setTimeout(() => { for (const m of marks) m.style.opacity = '0'; }, 1400);
         setTimeout(() => { for (const m of marks) if (m.parentNode) m.parentNode.removeChild(m); }, 2100);
-    },
-
-    _appendDatabaseLinks(doc, tip, info) {
-        const line = doc.createElement('div');
-        line.style.marginTop = '4px';
-        // Relative, so the links follow the chosen tooltip text size.
-        line.style.fontSize = '0.9em';
-        line.style.opacity = '0.98';
-        const groupLabel = (info && info.groupLabel) ? info.groupLabel : 'Gene/protein databases';
-        line.appendChild(doc.createTextNode(groupLabel + ': '));
-        const links = (info && info.links) || [];
-        const startIndex = this.activeGeneLinks ? this.activeGeneLinks.length : 0;
-        this.activeGeneLinks = (this.activeGeneLinks || []).concat(links).slice(0, 9);
-        links.forEach((link, idx) => {
-            if (idx) line.appendChild(doc.createTextNode(' | '));
-            const a = doc.createElement('a');
-            a.textContent = String(startIndex + idx + 1) + ': ' + link.label;
-            a.href = link.url;
-            a.target = '_blank';
-            a.rel = 'noopener noreferrer';
-            a.style.color = this.tooltipTheme === 'light' ? '#0b5fbf' : '#9ecbff';
-            a.style.textDecoration = 'underline';
-            a.addEventListener('click', (event) => {
-                event.stopPropagation();
-                try {
-                    if (typeof Zotero !== 'undefined' && Zotero.launchURL) {
-                        event.preventDefault();
-                        this._openExternalURL(link.url);
-                    }
-                } catch (e) {}
-            });
-            line.appendChild(a);
-        });
-        tip.appendChild(line);
     },
 
     _ensureHoverTooltip(doc) {
@@ -4242,21 +4254,11 @@ var AbbreviationHelper = {
             : (/^(?:Digit|Numpad)([1-9])$/.exec(String(event.code || '')) || [])[1];
         if (!digit) return;
 
-        if (this.usesWindow) {
-            const use = this.usesWindow.uses[Number(digit) - 1];
-            if (!use) return;
-            event.preventDefault();
-            event.stopPropagation();
-            this._jumpToUse(this.usesWindow.doc, use, this.usesWindow.word)
-                .catch(e => this.log('Could not go to the use: ' + e));
-            return;
-        }
-        const link = this.activeGeneLinks && this.activeGeneLinks[Number(digit) - 1];
-        if (!link || !link.url) return;
-
+        const choose = this.activeChoices[Number(digit) - 1];
+        if (!choose) return;
         event.preventDefault();
         event.stopPropagation();
-        this._openExternalURL(link.url);
+        choose();
     },
 
     /** Is the key going into a text field or an editable element? */
@@ -4349,7 +4351,7 @@ var AbbreviationHelper = {
         this.usesWindow = null;
         this.hoverPinnedDoc = null;
         this.hoverInteractiveTooltip = false;
-        this.activeGeneLinks = [];
+        this.activeChoices = [];
         this._renderedSig = null;
         this.hoverAnchor = null;
         try {

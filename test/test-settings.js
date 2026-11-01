@@ -148,6 +148,14 @@ const tick = () => new Promise(r => setTimeout(r, 0));
     check(id + ' uses the same ids the plugin stores',
       items.map(i => i.getAttribute('value')).join(',') === 'none,shift,ctrl,alt');
   }
+  {
+    const list = doc.getElementById('abbrev-settings-uses-key');
+    const items = list ? descend(list).filter(e => e.tagName === 'menuitem') : [];
+    check('the key list offers every letter the plugin allows',
+      items.map(i => i.getAttribute('value')).join('') === H.USES_KEYS && items.length === 18
+      && items[0].getAttribute('label') === 'When I press A', items.length + ' items');
+    check('no letter the reader itself uses is offered', !/[hjknprsu]/.test(H.USES_KEYS));
+  }
 
   // ---------- 4b. form controls use Zotero's native styling ----------
   // Firefox 115 needs native="true" for a XUL form element to be drawn as a
@@ -155,6 +163,14 @@ const tick = () => new Promise(r => setTimeout(r, 0));
   // looks nothing like the rest of Zotero's settings.
   const menulists = descend(frag).filter(e => e.tagName === 'menulist');
   check('the pane has menulists', menulists.length === 7, menulists.length + '');
+  // The pane is built around the three tooltips: a numbered section each.
+  const headings = descend(frag).filter(e => e.tagName === 'h2').map(e => e.textContent || '');
+  check('one numbered section per tooltip, in order',
+    XHTML.indexOf('1 · Meanings') < XHTML.indexOf('2 · Database links')
+    && XHTML.indexOf('2 · Database links') < XHTML.indexOf('3 · Where a word is used') && XHTML.indexOf('1 · Meanings') > 0);
+  check('each tooltip is switched on and off the same way, with a "Show:" list',
+    ['abbrev-settings-tooltip-modifier', 'abbrev-settings-db-modifier', 'abbrev-settings-uses-key']
+      .every(id => new RegExp('control="' + id + '" value="Show:"').test(XHTML)));
   check('every menulist is native',
     menulists.every(e => e.getAttribute('native') === 'true'),
     menulists.filter(e => e.getAttribute('native') !== 'true')

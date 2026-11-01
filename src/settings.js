@@ -5,7 +5,8 @@
  * Most controls in settings.xhtml bind straight to a preference and need no
  * code. This file supplies the parts that cannot be static markup:
  *
- *   - modifier-key labels, which differ on macOS (Command / Option)
+ *   - the "Show:" lists: modifier keys, named for the platform (Command,
+ *     Option on macOS), and the letters for where a word is used
  *   - forgetting the definitions learned from other papers
  *   - greying out controls whose checkbox is off
  *   - your own abbreviations, editable in place
@@ -110,36 +111,46 @@ var AbbrevSettings = {
         return this.doc.createElementNS('http://www.w3.org/1999/xhtml', tag);
     },
 
-    /* ---- modifier keys --------------------------------------------------- */
+    /* ---- what shows each tooltip ------------------------------------------ */
+    /**
+     * The "Show:" list of each tooltip, built here because its entries come
+     * from the plugin: the modifier keys (named for the platform) for
+     * meanings and database links, the letters for where a word is used.
+     */
     _fillModifierMenus() {
         const H = this.helper;
-        const choices = (H && H._modifierChoices) ? H._modifierChoices() : [
+        const modifiers = (H && H._modifierChoices) ? H._modifierChoices() : [
             { id: 'none', label: 'Always' },
             { id: 'shift', label: 'Only while holding Shift' },
             { id: 'ctrl', label: 'Only while holding Ctrl' },
             { id: 'alt', label: 'Only while holding Alt' }
         ];
-        for (const id of ['abbrev-settings-tooltip-modifier', 'abbrev-settings-db-modifier']) {
-            const list = this._byId(id);
-            if (!list) continue;
-            const popup = list.querySelector('menupopup');
-            if (!popup) continue;
-            while (popup.firstChild) popup.removeChild(popup.firstChild);
-            for (const choice of choices) {
-                const item = this.doc.createXULElement('menuitem');
-                item.setAttribute('value', choice.id);
-                item.setAttribute('label', choice.label);
-                popup.appendChild(item);
-            }
-            // The preference binding ran before these items existed, so the
-            // menulist has a value but nothing to show for it. Re-apply.
-            const pref = list.getAttribute('preference');
-            if (!pref) continue;
-            let current = null;
-            try { current = Zotero.Prefs.get(pref, true); } catch (e) {}
-            if (current === undefined || current === null) current = choices[0].id;
-            list.value = String(current);
+        const letters = [...((H && H.USES_KEYS) || 'o')]
+            .map(k => ({ id: k, label: 'When I press ' + k.toUpperCase() }));
+        this._fillMenu('abbrev-settings-tooltip-modifier', modifiers);
+        this._fillMenu('abbrev-settings-db-modifier', modifiers);
+        this._fillMenu('abbrev-settings-uses-key', letters);
+    },
+
+    _fillMenu(id, choices) {
+        const list = this._byId(id);
+        const popup = list && list.querySelector('menupopup');
+        if (!popup) return;
+        while (popup.firstChild) popup.removeChild(popup.firstChild);
+        for (const choice of choices) {
+            const item = this.doc.createXULElement('menuitem');
+            item.setAttribute('value', choice.id);
+            item.setAttribute('label', choice.label);
+            popup.appendChild(item);
         }
+        // The preference binding ran before these items existed, so the
+        // menulist has a value but nothing to show for it. Re-apply.
+        const pref = list.getAttribute('preference');
+        if (!pref) return;
+        let current = null;
+        try { current = Zotero.Prefs.get(pref, true); } catch (e) {}
+        if (current === undefined || current === null) current = choices[0].id;
+        list.value = String(current);
     },
 
     /* ---- your abbreviations ---------------------------------------------- */
@@ -395,14 +406,15 @@ var AbbrevSettings = {
 
     // Checkboxes, each with the controls that only apply while it is ticked.
     DEPENDENTS: [
+        ['abbrev-settings-hover', 'abbrev-settings-hover-dependent'],
         ['abbrev-settings-db-enabled', 'abbrev-settings-db-dependent'],
         ['abbrev-settings-uses', 'abbrev-settings-uses-dependent']
     ],
 
     /**
      * Grey out the controls that only apply while their checkbox is ticked
-     * (database links, where a word is used), so no visible control silently
-     * does nothing.
+     * (each of the three tooltips), so no visible control silently does
+     * nothing.
      */
     _syncDependents() {
         for (const [masterId, dependentId] of this.DEPENDENTS) {

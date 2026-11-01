@@ -89,9 +89,17 @@ abbreviations file.
   first uses in the paper, with their pages and the words around them; click
   one, or press its number, to go there (the reader marks the word, and its
   Back button returns). Most useful for abbreviations without a meaning,
-  whose first use usually defines them. It can be switched off, put on
-  another key (O, W, F or E), set to go straight to the first use, and list
-  1, 3, 5 or 10 uses.
+  whose first use usually defines them. It can be switched off, put on any
+  letter Zotero's reader leaves free (A–G, I, L, M, O, Q, T, V–Z), set to go
+  straight to the first use, and list 1, 3, 5 or 10 uses.
+- **One look for the three tooltips** (meanings, database links, where a
+  word is used): the word in bold and what the tooltip says, quieter lines
+  under it, and numbered choices chosen the same way everywhere, by click
+  or by number. Database links are numbered choices instead of underlined
+  links, grouped by kind.
+- **The settings follow the three tooltips**: a numbered section for each,
+  with its own switch and a "Show:" choice, then the shared appearance.
+  Your own abbreviations and the ignore list sit under Meanings.
 - **Show where each meaning comes from** (on by default) in the settings
   hides the line under each meaning when turned off.
 - Five more databases, off until ticked in the settings: Ensembl, InterPro,

@@ -32,13 +32,22 @@ Works on **macOS, Windows and Linux**. Requires **Zotero 7 or newer**
 
 ## Use
 
-Open a PDF in the Zotero reader. The plugin scans it in the background; hover over any
-abbreviation to see its meaning. Only the PDF in the reader tab you are looking at is
-scanned, and switching tabs switches the meanings with it. Tooltips also work in Zotero
-10's Reading Mode for PDFs, which shows the same paper as reflowed text, including over
-highlighted text.
+Open a PDF in the Zotero reader. The plugin scans it in the background. Only the PDF in
+the reader tab you are looking at is scanned, and switching tabs switches the meanings
+with it. Everything also works in Zotero 10's Reading Mode for PDFs, which shows the same
+paper as reflowed text, including over highlighted text.
 
-Under each meaning, the tooltip says how sure it is:
+The plugin shows three kinds of tooltips. They look alike: the word in bold and what the
+tooltip says about it, quieter lines underneath, and, when there is something to choose,
+numbered choices. Click a choice or press its number (**1–9**); a tooltip with choices
+stays put while you move the pointer onto it. The number keys work on every keyboard
+layout: on a German keyboard Shift+1 chooses the first entry although it types "!", and
+on a French one the 1 key works with or without Shift.
+
+### 1 · Meanings
+
+Point at an abbreviation to see its meaning. Under it, the tooltip can say how sure the
+meaning is:
 
 | Line in the tooltip | Where the meaning comes from |
 |---|---|
@@ -48,28 +57,40 @@ Under each meaning, the tooltip says how sure it is:
 | Common term; not explicitly defined in this paper | The paper doesn't define it; the built-in glossary does |
 | Your own definition | You defined it in Settings |
 
-**Show where each meaning comes from** in the settings turns this line off.
+**Show where each meaning comes from** in the settings (on by default) turns this line on
+or off.
 
-### Where a word is used
+### 2 · Database links
 
-Press **O** with the pointer on any word, and a small window lists the word's first uses
-in the paper: the page, and the words around each one. It works on every word, and is
+Hold **Shift** (by default) over a gene, protein, cell line or chemical name for links to
+look it up: on their own for a word without a meaning, or under a meaning. Built in:
+HGNC, UniProt, GeneCards, NCBI Gene, Cellosaurus, ATCC and PubChem are on; Ensembl,
+InterPro, RCSB PDB, RNAcentral and Addgene are available and off until you tick them in
+the settings.
+
+### 3 · Where a word is used
+
+Press **O** with the pointer on any word, and the tooltip lists the word's first uses in
+the paper: the page, and the sentence around each one. It works on every word, and is
 most useful for an abbreviation the plugin found no meaning for, since its first use
-usually defines it. Click a use, or press its number, to go there: the reader turns to
-the page and marks the word for a moment, and its Back button takes you back. In
-Reading Mode the jump goes to the page.
+usually defines it. Choose a use to go there: the reader turns to the page and marks the
+word for a moment, and its Back button takes you back. In Reading Mode the jump goes to
+the page.
 
-In the settings you can switch it off, choose another key (O, W, F or E), make the key
-go straight to the first use instead of listing, and list 1, 3, 5 or 10 uses. The key
-needs the keyboard focus in the paper: if it does nothing, click the paper once. It is
-never taken while you type in a text field, or with Ctrl, Cmd or Alt held.
+The key can be any letter Zotero's reader does not use itself: A–G, I, L, M, O, Q, T and
+V–Z. It can also go straight to the first use instead of listing, and the list can show
+1, 3, 5 or 10 uses. The key needs the keyboard focus in the paper: if it does nothing,
+click the paper once. It is never taken while you type in a text field, or with Ctrl,
+Cmd or Alt held.
 
 ### Settings
 
 Everything is in **Zotero Settings → Abbreviation Helper** (or **Tools → Abbreviation
-Helper → Settings…**): hover behaviour, modifier keys, which databases are enabled,
-tooltip appearance, and — editable in place, with no JSON to hand-edit — **your own
-abbreviations** and the **ignore list**. Changes apply immediately.
+Helper → Settings…**), in the same order: one section for each of the three tooltips,
+each with its own on/off switch and a **Show:** choice of what brings it up, then the
+appearance they share, the Tools menu and the abbreviations file. Your own
+abbreviations and the ignore list are under Meanings, editable in place with no JSON to
+hand-edit. Changes apply immediately.
 
 Definitions you add there are authoritative: they are shown even when a paper defines
 the short form differently. A definition or ignore entry covers the singular and the
@@ -105,15 +126,6 @@ override it. That is why settings live in the Settings window.
 **On macOS the Ctrl setting also accepts ⌘ Command**, and the menu labels it that way. One
 saved preference therefore behaves correctly on every platform, which matters if your
 Zotero profile is synced between machines.
-
-While a tooltip with database links is showing, click a link or press **1–9** to open
-the matching one. The tooltip stays put while you move the pointer onto it. The number
-keys work on every keyboard layout: on a German keyboard Shift+1 opens the first link
-although it types "!", and on a French one the 1 key works with or without Shift.
-
-Built-in databases: HGNC, UniProt, GeneCards, NCBI Gene, Cellosaurus, ATCC and PubChem
-are on; Ensembl, InterPro, RCSB PDB, RNAcentral and Addgene are available and off until
-you tick them in the settings.
 
 ## The abbreviations file
 

@@ -3,29 +3,45 @@
       id="abbrev-settings-root"
       onload="AbbrevSettings.init()">
 
+  <!-- The pane follows the three tooltips the plugin shows in the reader,
+       one section each, then what they share. -->
+  <description class="abbrev-settings-intro">
+    Abbreviation Helper shows three kinds of tooltips in the reader, each set
+    up in its own section below: 1 · the meaning of an abbreviation, when you
+    point at it; 2 · database links for gene, protein, cell line and chemical
+    names; 3 · where a word is used in the paper, when you press a key over
+    it. All three look alike, and in all three you choose a numbered entry
+    by clicking it or pressing its number.
+  </description>
+
   <groupbox>
-    <label><html:h2>Abbreviation meanings</html:h2></label>
+    <label><html:h2>1 · Meanings</html:h2></label>
+    <description class="abbrev-settings-hint">
+      The meaning of an abbreviation, when you point at it.
+    </description>
 
     <checkbox id="abbrev-settings-hover"
-              label="Show meanings on hover"
+              label="Show meanings"
               preference="extensions.abbreviation-helper.hoverEnabled"/>
 
-    <hbox align="center" class="abbrev-settings-sub">
-      <label control="abbrev-settings-tooltip-modifier" value="Show meanings:"/>
-      <menulist native="true" id="abbrev-settings-tooltip-modifier"
-                preference="extensions.abbreviation-helper.tooltipModifier">
-        <menupopup/>
-      </menulist>
-    </hbox>
+    <vbox class="abbrev-settings-sub" id="abbrev-settings-hover-dependent">
+      <hbox align="center">
+        <label control="abbrev-settings-tooltip-modifier" value="Show:"/>
+        <menulist native="true" id="abbrev-settings-tooltip-modifier"
+                  preference="extensions.abbreviation-helper.tooltipModifier">
+          <menupopup/>
+        </menulist>
+      </hbox>
 
-    <checkbox id="abbrev-settings-source"
-              label="Show where each meaning comes from"
-              preference="extensions.abbreviation-helper.showMeaningSource"
-              data-search-strings-raw="source, origin, common term, defined in this paper"/>
-    <description class="abbrev-settings-hint abbrev-settings-sub">
-      A second line under each meaning: "Defined in this paper", "Common term",
-      "From 3 other papers in your library" and so on.
-    </description>
+      <checkbox id="abbrev-settings-source"
+                label="Show where each meaning comes from"
+                preference="extensions.abbreviation-helper.showMeaningSource"
+                data-search-strings-raw="source, origin, common term, defined in this paper"/>
+      <description class="abbrev-settings-hint abbrev-settings-sub">
+        A second line under each meaning: "Defined in this paper", "Probable
+        meaning", "Common term", "From 3 other papers in your library" and so on.
+      </description>
+    </vbox>
 
     <checkbox id="abbrev-settings-library"
               label="Use definitions from my other papers"
@@ -34,70 +50,15 @@
     <description class="abbrev-settings-hint abbrev-settings-sub">
       When a paper uses an abbreviation without defining it, show the meaning
       your other papers give it. Learned from the papers you open in the
-      reader and kept on this computer; marked "from your library" in the
-      tooltip.
+      reader and kept on this computer.
     </description>
     <hbox align="center" class="abbrev-settings-sub abbrev-settings-add-row">
       <html:button id="abbrev-settings-library-forget"
                    data-search-strings-raw="forget, library, learned">Forget learned definitions</html:button>
       <description id="abbrev-settings-library-count" class="abbrev-settings-hint"/>
     </hbox>
-  </groupbox>
 
-  <groupbox>
-    <label><html:h2>Where a word is used</html:h2></label>
-
-    <checkbox id="abbrev-settings-uses"
-              label="Show where a word is used when I press a key over it"
-              preference="extensions.abbreviation-helper.usesEnabled"
-              data-search-strings-raw="uses, occurrences, first use, jump, shortcut, key"/>
-
-    <vbox class="abbrev-settings-sub" id="abbrev-settings-uses-dependent">
-      <hbox align="center">
-        <label control="abbrev-settings-uses-key" value="Key:"/>
-        <menulist native="true" id="abbrev-settings-uses-key"
-                  preference="extensions.abbreviation-helper.usesKey">
-          <menupopup>
-            <menuitem value="o" label="O"/>
-            <menuitem value="w" label="W"/>
-            <menuitem value="f" label="F"/>
-            <menuitem value="e" label="E"/>
-          </menupopup>
-        </menulist>
-      </hbox>
-      <hbox align="center">
-        <label control="abbrev-settings-uses-action" value="The key:"/>
-        <menulist native="true" id="abbrev-settings-uses-action"
-                  preference="extensions.abbreviation-helper.usesAction">
-          <menupopup>
-            <menuitem value="list" label="lists the first uses"/>
-            <menuitem value="jump" label="goes to the first use"/>
-          </menupopup>
-        </menulist>
-      </hbox>
-      <hbox align="center">
-        <label control="abbrev-settings-uses-count" value="Uses listed:"/>
-        <menulist native="true" id="abbrev-settings-uses-count"
-                  preference="extensions.abbreviation-helper.usesCount">
-          <menupopup>
-            <menuitem value="1" label="1"/>
-            <menuitem value="3" label="3"/>
-            <menuitem value="5" label="5"/>
-            <menuitem value="10" label="10"/>
-          </menupopup>
-        </menulist>
-      </hbox>
-      <description class="abbrev-settings-hint">
-        Works on any word, including abbreviations the plugin found no meaning
-        for: their first use often defines them. Click a use, or press its
-        number, to go there; the reader's Back button takes you back.
-      </description>
-    </vbox>
-  </groupbox>
-
-  <groupbox>
-    <label><html:h2>Your abbreviations</html:h2></label>
-
+    <label><html:h3>Your own abbreviations</html:h3></label>
     <description class="abbrev-settings-hint">
       Meanings you define here are always used, even when a paper defines the
       short form differently.
@@ -127,11 +88,8 @@
       <html:button id="abbrev-settings-def-add">Add</html:button>
     </hbox>
     <description id="abbrev-settings-def-error" class="abbrev-settings-error"/>
-  </groupbox>
 
-  <groupbox>
-    <label><html:h2>Ignored abbreviations</html:h2></label>
-
+    <label><html:h3>Ignored abbreviations</html:h3></label>
     <description class="abbrev-settings-hint">
       Short forms the plugin should never explain — for wrong detections, such
       as a supplier name that happens to look like an abbreviation.
@@ -161,11 +119,10 @@
   </groupbox>
 
   <groupbox>
-    <label><html:h2>Database links</html:h2></label>
-
+    <label><html:h2>2 · Database links</html:h2></label>
     <description class="abbrev-settings-hint">
-      Optional lookup links for gene, protein, cell line and chemical names
-      under the cursor.
+      Lookup links for gene, protein, cell line and chemical names under the
+      pointer: on their own for a word without a meaning, or under a meaning.
     </description>
 
     <checkbox id="abbrev-settings-db-enabled"
@@ -174,7 +131,7 @@
 
     <vbox class="abbrev-settings-sub" id="abbrev-settings-db-dependent">
       <hbox align="center">
-        <label control="abbrev-settings-db-modifier" value="Show links:"/>
+        <label control="abbrev-settings-db-modifier" value="Show:"/>
         <menulist native="true" id="abbrev-settings-db-modifier"
                   preference="extensions.abbreviation-helper.databaseLinksModifier">
           <menupopup/>
@@ -182,7 +139,7 @@
       </hbox>
 
       <checkbox id="abbrev-settings-db-on-abbr"
-                label="Also show links on defined abbreviations"
+                label="Also show them under a meaning"
                 preference="extensions.abbreviation-helper.databaseLinksOnAbbreviations"/>
 
       <html:div class="abbrev-settings-listbox" id="abbrev-settings-db-box">
@@ -207,7 +164,59 @@
   </groupbox>
 
   <groupbox>
-    <label><html:h2>Tooltip appearance</html:h2></label>
+    <label><html:h2>3 · Where a word is used</html:h2></label>
+    <description class="abbrev-settings-hint">
+      The first uses of any word in the paper, with the sentence around each,
+      when you press a key over it. Most useful for an abbreviation without a
+      meaning: its first use often defines it.
+    </description>
+
+    <checkbox id="abbrev-settings-uses"
+              label="Show where a word is used"
+              preference="extensions.abbreviation-helper.usesEnabled"
+              data-search-strings-raw="uses, occurrences, first use, jump, shortcut, key"/>
+
+    <vbox class="abbrev-settings-sub" id="abbrev-settings-uses-dependent">
+      <hbox align="center">
+        <label control="abbrev-settings-uses-key" value="Show:"/>
+        <menulist native="true" id="abbrev-settings-uses-key"
+                  preference="extensions.abbreviation-helper.usesKey">
+          <menupopup/>
+        </menulist>
+      </hbox>
+      <hbox align="center">
+        <label control="abbrev-settings-uses-action" value="The key:"/>
+        <menulist native="true" id="abbrev-settings-uses-action"
+                  preference="extensions.abbreviation-helper.usesAction">
+          <menupopup>
+            <menuitem value="list" label="Lists the first uses"/>
+            <menuitem value="jump" label="Goes to the first use"/>
+          </menupopup>
+        </menulist>
+      </hbox>
+      <hbox align="center">
+        <label control="abbrev-settings-uses-count" value="Uses listed:"/>
+        <menulist native="true" id="abbrev-settings-uses-count"
+                  preference="extensions.abbreviation-helper.usesCount">
+          <menupopup>
+            <menuitem value="1" label="1"/>
+            <menuitem value="3" label="3"/>
+            <menuitem value="5" label="5"/>
+            <menuitem value="10" label="10"/>
+          </menupopup>
+        </menulist>
+      </hbox>
+      <description class="abbrev-settings-hint">
+        To go to a use, click it or press its number; the reader's Back button
+        takes you back. The key needs the keyboard focus in the paper: if it
+        does nothing, click the paper once.
+      </description>
+    </vbox>
+  </groupbox>
+
+  <groupbox>
+    <label><html:h2>Appearance</html:h2></label>
+    <description class="abbrev-settings-hint">For all three tooltips.</description>
 
     <hbox align="center">
       <label control="abbrev-settings-font" value="Text size:"/>
@@ -252,11 +261,11 @@
   </groupbox>
 
   <groupbox>
-    <label><html:h2>Advanced</html:h2></label>
+    <label><html:h2>Abbreviations file</html:h2></label>
 
     <description class="abbrev-settings-hint">
-      Everything above is stored in one JSON file. Edit it directly if you
-      prefer, then reload.
+      Your own abbreviations, the ignored ones and the databases are stored in
+      one JSON file. Edit it directly if you prefer, then reload.
     </description>
 
     <hbox class="abbrev-settings-add-row">

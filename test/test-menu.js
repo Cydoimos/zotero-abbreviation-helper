@@ -180,14 +180,17 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
   check('both groups present', whenRadios.length === 8, whenRadios.length + ' radio items');
   check('the no-key choice reads "Always"',
     whenRadios.filter(c => c.label === 'Always').length === 2);
-  check('the "where a word is used" key is offered there too, with Off',
-    radiosOf('abbrev-uses-key').map(c => c.label).join(',') === 'Off,Press O,Press W,Press F,Press E'
-    && radiosOf('abbrev-uses-action').length === 2);
+  const keyMenu = popupOf(findByLabel(when, 'Key'));
+  const keyRadios = keyMenu ? keyMenu.childNodes.filter(c => c.getAttribute('type') === 'radio') : [];
+  check('the "where a word is used" key is offered there too: Off and every free letter',
+    keyRadios.length === 1 + H.USES_KEYS.length && keyRadios[0].label === 'Off'
+    && keyRadios[1].label === 'When I press A' && radiosOf('abbrev-uses-action').length === 2,
+    keyRadios.map(c => c.label).slice(0, 3).join(','));
 
   // ---------- 6. master switch greys out its dependents ----------
   const dbSwitch = findByLabel(root, 'Show database links');
   const dbMenu = findByLabel(root, 'Databases');
-  const onAbbr = findByLabel(root, 'Also show links on defined abbreviations');
+  const onAbbr = findByLabel(root, 'Also show links under a meaning');
   const dbRadios = whenRadios.filter(c => c.getAttribute('name') === 'abbrev-db-mod');
   check('dependents start enabled', dbMenu.getAttribute('disabled') === 'false');
 

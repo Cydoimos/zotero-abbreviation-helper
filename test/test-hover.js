@@ -59,7 +59,7 @@ check('database lookup returns groups', !!(info && info.groups && info.groups.le
 H._showHoverTooltip(doc, 120, 120, 'EGFR', 'epidermal growth factor receptor', { groups: info.groups });
 tip = doc.getElementById('abbreviation-helper-tooltip');
 check('tooltip with links is interactive', tip && tip.dataset.abbreviationHelperInteractive === 'true');
-check('link shortcuts registered', H.activeGeneLinks.length > 0, 'n=' + H.activeGeneLinks.length);
+check('numbered choices registered', H.activeChoices.length > 0, 'n=' + H.activeChoices.length);
 
 // 3) Database-only tooltip (the signature that lost its hoverKey argument).
 H._showDatabaseTooltip(doc, 140, 140, info);
@@ -70,7 +70,7 @@ check('database-only tooltip is interactive', tip && tip.dataset.abbreviationHel
 // 4) Hide path clears state.
 H._hideHoverTooltip(doc);
 check('tooltip hidden', tip.style.display === 'none');
-check('link shortcuts cleared', H.activeGeneLinks.length === 0);
+check('numbered choices cleared', H.activeChoices.length === 0);
 
 // 5) Hover map still resolves plurals/variants.
 H._setActiveHoverPairs(1, [{ abbr: 'EV', term: 'extracellular vesicle' }]);
