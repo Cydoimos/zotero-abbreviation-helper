@@ -3,7 +3,7 @@
 All notable changes to this project are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [2.2.0] — 2026-11-01
 
 A rewritten abbreviation detector, tooltips that say how sure a meaning is,
 meanings learned from your other papers, and bug fixes from a code audit.
