@@ -156,7 +156,9 @@ abbreviations file.
   of composing a character.
 - **The 1–9 keys open database links on every keyboard layout.** They read
   the character typed, so on a German keyboard Shift+1 ("!") did nothing,
-  and on a French one the keys only worked with Shift.
+  and on a French one the keys only worked with Shift. They also work while
+  the key that shows the tooltip is held, Ctrl, Cmd or Option/Alt included:
+  the number goes to the tooltip instead of switching tabs or reader tools.
 - Escape, and a click elsewhere, close a tooltip with links even when another
   page of the reader (the PDF or its Reading Mode) has the keyboard focus.
 - Holding a modifier key no longer rebuilds the tooltip on every key repeat

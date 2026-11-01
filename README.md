@@ -50,15 +50,19 @@ a thin line. Set all three to the same key to see everything about a word at onc
 They look alike: the word in bold and what the tooltip says about it, quieter lines
 underneath, and, when there is something to choose, numbered choices, numbered on from
 one part to the next. Click a choice or press its number (**1–9**, then **0** for the
-tenth); a tooltip with choices stays put while you move the pointer onto it, even after
-you let go of the key. The number keys work on every keyboard layout: on a German
-keyboard Shift+1 chooses the first entry although it types "!", and on a French one the
-1 key works with or without Shift. They are left alone while Ctrl, Cmd or Alt is held,
-since Zotero uses those combinations to switch tabs and reader tools, and with AltGr,
-which types a character ("@" on a French keyboard). A key pressed while you type in a
-text field (an annotation, a note, the search box) never brings up a tooltip. On Windows and
-Linux, letting go of Alt after using it for a tooltip does not move the keyboard to the
-menu bar, so the number you press next still reaches the tooltip.
+tenth), while still holding the tooltip's key or after letting go; a tooltip with choices
+stays put while you move the pointer onto it, even after you let go of the key.
+
+The number keys work on every keyboard layout and system. What counts is the key's
+place, not the character it types: on a German keyboard Shift+1 chooses the first entry
+although it types "!", and on a French one the 1 key works with or without Shift, and
+with ⌥ Option on a Mac. While you hold the key that shows a tooltip, even Ctrl, Cmd or
+Alt, its numbers go to the tooltip, ahead of Zotero's own shortcuts with that key
+(switching tabs, the reader's tools). Other combinations are left to Zotero, and so is
+AltGr, which types a character ("@" on a French keyboard). A key pressed while you type
+in a text field (an annotation, a note, the search box) never brings up a tooltip. On
+Windows and Linux, letting go of Alt after using it for a tooltip does not move the
+keyboard to the menu bar.
 
 ### 1 · Meanings
 
@@ -96,8 +100,8 @@ its first use usually defines it. Choose a use to go there: the reader turns to 
 and marks the word for a moment, and its Back button takes you back. In Reading Mode the
 jump goes to the page.
 
-To choose, either move the pointer onto the list and click, or let go of the key first
-and then press a number. The key can be Shift, Ctrl/Cmd or Alt (it cannot be "Always": a
+To choose, press a number while still holding the key, or move the pointer onto the
+list and click. The key can be Shift, Ctrl/Cmd or Alt (it cannot be "Always": a
 list under every word you point at would bury the page), and the list can show 1, 3, 5
 or 10 uses. If you updated from 2.1.0 with Ctrl/Cmd set for meanings or database links,
 it takes Shift or Alt instead, so that tooltip looks as it did; choose Ctrl/Cmd yourself

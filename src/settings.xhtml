@@ -40,18 +40,20 @@
                 label="Say where each meaning comes from (&#8220;Defined in this paper&#8221;, &#8220;Common term&#8221;…)"
                 preference="extensions.abbreviation-helper.showMeaningSource"
                 data-search-strings-raw="source, origin, common term, defined in this paper"/>
-      <hbox align="center">
-        <checkbox id="abbrev-settings-library" label="Use definitions from my other papers"
-                  preference="extensions.abbreviation-helper.useLibraryDefinitions"
-                  data-search-strings-raw="library, other papers, learn"/>
-        <html:button id="abbrev-settings-library-forget" class="abbrev-settings-inline"
-                     data-search-strings-raw="forget, library, learned">Forget learned definitions</html:button>
-        <description id="abbrev-settings-library-count" class="abbrev-settings-hint abbrev-settings-inline-note"/>
-      </hbox>
-      <description class="abbrev-settings-hint abbrev-settings-sub">
-        For abbreviations a paper uses without defining them. Learned from the
-        papers you open and kept on this computer.
-      </description>
+      <checkbox id="abbrev-settings-library" label="Use definitions from my other papers"
+                preference="extensions.abbreviation-helper.useLibraryDefinitions"
+                data-search-strings-raw="library, other papers, learn"/>
+      <vbox class="abbrev-settings-sub">
+        <description class="abbrev-settings-hint">
+          For abbreviations a paper uses without defining them. Learned from the
+          papers you open and kept on this computer.
+        </description>
+        <hbox align="center">
+          <html:button id="abbrev-settings-library-forget"
+                       data-search-strings-raw="forget, library, learned">Forget learned definitions</html:button>
+          <description id="abbrev-settings-library-count" class="abbrev-settings-inline-note"/>
+        </hbox>
+      </vbox>
     </vbox>
 
     <label><html:h3>Your own abbreviations</html:h3></label>

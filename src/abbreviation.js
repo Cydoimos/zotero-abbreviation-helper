@@ -3161,16 +3161,27 @@ var AbbreviationHelper = {
     },
 
     /**
-     * Follow the modifier keys in a main window as well. With the keyboard
-     * focus outside the paper (the reader's toolbar, the item pane), the
-     * reader's pages never see the key: a tooltip would not come when its
-     * key is pressed, or go when it is let go, until the mouse moved. Only
-     * modifiers are taken here; reacting to one twice changes nothing.
+     * Follow the keys in a main window as well, ahead of everything else.
+     *
+     * Modifiers: with the keyboard focus outside the paper (the reader's
+     * toolbar, the item pane), the reader's pages never see the key, and a
+     * tooltip would not come when its key is pressed, or go when it is let
+     * go, until the mouse moved. Reacting to one twice changes nothing.
+     *
+     * Numbers: a key pressed in the reader passes through the main window
+     * first, on its way down to the page, and Zotero takes Ctrl/Cmd+1-9
+     * there (to switch tabs) and the reader Alt+1-8 below it (its tools).
+     * A number meant for the tooltip has to be taken here, before them (see
+     * _chooseByNumber); the page's own listener then never sees it.
      */
     _followKeysIn(window) {
         this.keyWindows = this.keyWindows.filter(rec => { try { return !rec.win.closed; } catch (e) { return false; } });
         if (!window || this.keyWindows.some(rec => rec.win === window)) return;
-        const down = (event) => { if (event && this.MODIFIER_KEYS[event.key]) this._onModifierKey(null, event, true); };
+        const down = (event) => {
+            if (!event) return;
+            if (this.MODIFIER_KEYS[event.key]) this._onModifierKey(null, event, true);
+            else this._chooseByNumber(event);
+        };
         const up = (event) => this._onReaderKeyUp(null, event);
         try {
             window.addEventListener('keydown', down, true);
@@ -4339,33 +4350,64 @@ var AbbreviationHelper = {
             this._forgetHover(tipDoc);
             return;
         }
+        this._chooseByNumber(event);
+    },
+
+    /**
+     * 1-9 and 0 (the tenth) choose from a tooltip with choices (database
+     * links, uses); a tooltip with only a meaning leaves the keys alone.
+     * This is the reliable way to choose when the reader makes clicking
+     * hard. Called from the main window first and from the page, so a
+     * number already taken (its default prevented) is left alone.
+     */
+    _chooseByNumber(event) {
+        if (!event || event.defaultPrevented || event.isComposing) return;
         // Keys typed into a text field (an annotation comment, the search
         // box) are never taken.
         if (this._typingInto(event.target)) return;
-
-        // 1-9 and 0 (the tenth) choose from a tooltip with database links or
-        // a list of uses; a tooltip with only a meaning leaves the keys alone.
-        // This is the reliable way to choose when the reader makes clicking
-        // hard.
-        if (!this.hoverInteractiveTooltip || !this._isHoverTooltipVisible(tipDoc)) return;
-        // With Ctrl, Cmd or Alt held a number is Zotero's: Ctrl/Cmd+1-9 switch
-        // tabs and Alt+1-8 the reader's tools. With AltGr it types a
-        // character ("@" is AltGr+0 on a French keyboard). With Shift it is
-        // free: some layouts need Shift to type the digits at all.
-        if (event.ctrlKey || event.metaKey || event.altKey) return;
-        if (typeof event.getModifierState === 'function' && event.getModifierState('AltGraph')) return;
+        const tipDoc = this.hoverPinnedDoc;
+        if (!this.hoverInteractiveTooltip || !tipDoc || !this._isHoverTooltipVisible(tipDoc)) return;
         // The physical key counts, not the character it types, so the
         // shortcut works on every layout: with Shift held, the "1" key types
         // "!" on a German keyboard, and without it "&" on a French one.
         const digit = /^[0-9]$/.test(String(event.key || '')) ? event.key
             : (/^(?:Digit|Numpad)([0-9])$/.exec(String(event.code || '')) || [])[1];
-        if (!digit) return;
+        if (!digit || !this._numberKeyIsOurs(event)) return;
 
         const choose = this.activeChoices[digit === '0' ? 9 : Number(digit) - 1];
         if (!choose) return;
         event.preventDefault();
         event.stopPropagation();
+        if (event.stopImmediatePropagation) event.stopImmediatePropagation();
         choose();
+    },
+
+    /**
+     * May a number pressed with these modifiers choose? With none, yes, and
+     * with Shift, which some layouts need to type a digit at all (French).
+     * With Ctrl, Cmd or Alt, only while that is the key showing the tooltip:
+     * the number is then meant for it, and taken before Zotero switches tabs
+     * (Ctrl/Cmd+1-9) or the reader its tools (Alt+1-8). Any other such
+     * combination stays Zotero's. Outside macOS, AltGr (reported as Ctrl
+     * and Alt together on Windows) types a character, "@" with 0 on a
+     * French keyboard, and the Windows or Super key is never ours.
+     */
+    _numberKeyIsOurs(event) {
+        if (!this._isMac() && typeof event.getModifierState === 'function' && event.getModifierState('AltGraph')) return false;
+        const held = [];
+        if (event.ctrlKey || (event.metaKey && this._isMac())) held.push('ctrl');
+        else if (event.metaKey) return false;
+        if (event.altKey) held.push('alt');
+        const showing = this._keysShowing();
+        return held.every(key => showing.includes(key));
+    },
+
+    /** The keys held now that show a tooltip switched on. */
+    _keysShowing() {
+        return [[this.hoverEnabled, this.tooltipModifier], [this.databaseLinksEnabled, this.databaseLinksModifier],
+            [this.usesEnabled, this.usesModifier]]
+            .filter(([on, key]) => on && key !== 'none' && this._modifierSatisfied(key))
+            .map(([, key]) => key);
     },
 
     /** Is the key going into a text field or an editable element? */

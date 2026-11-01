@@ -43,9 +43,14 @@
   margin-inline-start: 1.6em;
 }
 
+/* A short note beside a button ("Learned from 6 papers so far."): quieter,
+   on one line, and with no margin above or below, which would pull it off
+   the button's centre line. */
 #abbrev-settings-root .abbrev-settings-inline-note {
   margin-block: 0;
   margin-inline-start: 0.8em;
+  opacity: 0.75;
+  white-space: nowrap;
 }
 
 /* A part of a section ("Your own abbreviations" under Meanings). */

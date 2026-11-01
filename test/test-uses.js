@@ -141,7 +141,10 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
   check('and closes the list', !shown());
 
   hover(60, { ctrlKey: true });
-  const taken = ['ctrlKey', 'metaKey', 'altKey'].map(m => { const k = key('1', { code: 'Digit1', [m]: true }); H._onReaderKeyDown(doc, k); return k; });
+  H._isMac = () => false;
+  const others = ['altKey', 'metaKey'].map(m => { const k = key('1', { code: 'Digit1', [m]: true }); H._onReaderKeyDown(doc, k); return k; });
+  check('with Alt, or the Windows key, which do not show the list, a number is left to Zotero (the reader\'s tools)',
+    others.every(k => !k.defaultPrevented) && env.reader.calls.length === 1);
   const altGr = key('@', { code: 'Digit0', getModifierState: m => m === 'AltGraph' });
   H._onReaderKeyDown(doc, altGr);
   check('AltGr with a number key types a character ("@" on a French keyboard), so it is not a choice',
@@ -149,17 +152,36 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
   const composing = key('1', { code: 'Digit1', isComposing: true });
   H._onReaderKeyDown(doc, composing);
   check('a key that is part of composing a character is not a choice', !composing.defaultPrevented);
+  const ctrl1 = key('1', { code: 'Digit1', ctrlKey: true });
+  H._onReaderKeyDown(doc, ctrl1);
+  await wait(5);
+  check('with the key that shows the list still held, a number chooses, kept from Zotero\'s tab switching',
+    ctrl1.defaultPrevented && env.reader.calls.length === 2 && env.reader.calls[1].pageIndex === 1, JSON.stringify(env.reader.calls));
+  H._isMac = () => true;
+  hover(62, { metaKey: true });
+  const cmd2 = key('2', { code: 'Digit2', metaKey: true });
+  H._onReaderKeyDown(doc, cmd2);
+  await wait(5);
+  check('on a Mac, Cmd and a number choose when Cmd shows the list', cmd2.defaultPrevented && env.reader.calls.length === 3);
+  H.usesModifier = 'alt';
+  hover(63, { altKey: true });
+  // Option and the "1" key of a French Mac keyboard: it types a symbol, and
+  // the system may report Option as AltGraph; the key's place is what counts.
+  const option1 = key('\uf8ff', { code: 'Digit1', altKey: true, getModifierState: m => m === 'AltGraph' || m === 'Alt' });
+  H._onReaderKeyDown(doc, option1);
+  await wait(5);
+  check('on a French Mac keyboard, Option and a number key choose when Option shows the list',
+    option1.defaultPrevented && env.reader.calls.length === 4);
+  H.usesModifier = 'ctrl';
   H._forgetHover(doc);
   hover(61);
   H._onReaderKeyDown(doc, { key: 'Control', ctrlKey: true, target: { tagName: 'TEXTAREA' } });
   check('a key pressed while typing in a text field brings no tooltip', !shown());
   H._onReaderKeyUp(doc, { key: 'Control', ctrlKey: false, target: { tagName: 'TEXTAREA' } });
   hover(60, { ctrlKey: true });
-  check('with Ctrl, Cmd or Alt held, a number is left to Zotero (its tabs, the reader\'s tools)',
-    taken.every(k => !k.defaultPrevented) && env.reader.calls.length === 1);
   tip(doc).childNodes[2].childNodes[0]._click({ preventDefault() {}, stopPropagation() {} });
   await wait(5);
-  check('clicking a use goes there', env.reader.calls.length === 2 && env.reader.calls[1].pageIndex === 1);
+  check('clicking a use goes there', env.reader.calls.length === 5 && env.reader.calls[4].pageIndex === 1);
 
   word = 'EVs';
   hover(70, { ctrlKey: true });
@@ -277,6 +299,18 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
     listeners.keyup({ key: 'Control', ctrlKey: false });
     await wait(150);
     check('and letting go hides it', !shown());
+    // A number pressed with the tooltip's key passes through the main
+    // window first: it is taken there, before Zotero switches tabs, and the
+    // page's own listener leaves it alone.
+    hover(111, { ctrlKey: true });
+    const calls = env.reader.calls.length;
+    let stopped = false;
+    const n1 = key('1', { code: 'Digit1', ctrlKey: true, stopImmediatePropagation() { stopped = true; } });
+    listeners.keydown(n1);
+    H._onReaderKeyDown(doc, n1);
+    await wait(5);
+    check('the main window takes a number meant for the tooltip, once, ahead of Zotero',
+      n1.defaultPrevented && stopped && env.reader.calls.length === calls + 1);
     H._removeHoverListeners();
     check('switching off stops following them', !listeners.keydown && H.keyWindows.length === 0);
   }
