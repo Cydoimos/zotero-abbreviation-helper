@@ -34,12 +34,14 @@ function load(pluginFile, dictFile) {
 }
 
 const papers = JSON.parse(fs.readFileSync(path.join(textDir, 'papers.json'), 'utf8')).papers;
-const byDoi = new Map(papers.map(p => [String(p.doi || '').toLowerCase(), p]));
-const byKey = new Map(papers.map(p => [p.file.replace(/\.txt$/, ''), p]));
+// By DOI, or by title for a paper without one (as score.js matches them).
+const byDoi = new Map(papers.filter(p => p.doi).map(p => [String(p.doi).toLowerCase(), p]));
+const title = s => String(s || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+const byTitle = new Map(papers.filter(p => title(p.title)).map(p => [title(p.title), p]));
 const labelDir = path.join(__dirname, 'labels', set);
 const labelled = fs.readdirSync(labelDir).sort()
   .map(f => JSON.parse(fs.readFileSync(path.join(labelDir, f), 'utf8')))
-  .map(L => ({ L, paper: byDoi.get(String(L.doi || '').toLowerCase()) || byKey.get(L.key || '') }))
+  .map(L => ({ L, paper: (L.doi && byDoi.get(String(L.doi).toLowerCase())) || byTitle.get(title(L.title)) }))
   .filter(x => x.paper);
 
 /** Per-paper counts, scored as score.js scores them. */

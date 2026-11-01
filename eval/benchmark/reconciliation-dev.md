@@ -81,10 +81,9 @@ labels.
 
 ## Scoring note
 
-Nothing in the scorer was changed for the dev set beyond allowing a label to
-name the Zotero item key its text was exported under, so a preprint with no
-DOI and no arXiv ID in the library is matched to its text instead of being
-skipped.
+Nothing in the scorer was changed for the dev set beyond matching a paper
+with no DOI and no arXiv ID in the library by its title, so it is scored
+instead of being skipped.
 
 ## Second pass (detector rewrite)
 
