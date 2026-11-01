@@ -140,70 +140,64 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
   check('the file is always the "abbreviations file"',
     (all.match(/[Aa]bbreviations [Ff]ile/g) || []).length >= 2, all.match(/[Aa]bbreviations [Ff]ile/g) + '');
 
-  // ---------- 3b. the default menu is actions only ----------
-  // Settings live in the Settings window; the menu holds what you *do*.
+  // ---------- 3b. actions and the settings of the three tooltips ----------
   check('Settings… is offered', !!findByLabel(root, 'Settings…'));
   check('Scan is offered', !!findByLabel(root, 'Scan This PDF and Copy List'));
   check('Ignore an Abbreviation is offered', !!findByLabel(root, 'Ignore an Abbreviation…'));
   check('the file actions are offered',
     !!findByLabel(root, 'Open Abbreviations File…') && !!findByLabel(root, 'Reload Abbreviations File'));
+  check('no switch for a shorter menu any more', !/every setting/i.test(all) && !('advancedMenu' in H));
 
-  check('no hover switch by default', !findByLabel(root, 'Show meanings on hover'));
-  check('no database switch by default', !findByLabel(root, 'Show database links'));
-  check('no modifier submenu by default', !findByLabel(root, 'When to Show…'));
-  check('no Databases submenu by default', !findByLabel(root, 'Databases'));
-  check('no appearance submenu by default', !findByLabel(root, 'Tooltip Appearance'));
-  check('the simple menu is genuinely short',
-    rootPopup.childNodes.filter(c => c.tagName !== 'menuseparator').length <= 6,
-    rootPopup.childNodes.filter(c => c.tagName !== 'menuseparator').length + ' items');
+  // ---------- 4. one submenu per tooltip, in the order of the Settings window ----------
+  const names = ['1 · Meanings', '2 · Database Links', '3 · Where a Word Is Used', 'Tooltip Appearance'];
+  const topLabels = topItems.map(c => c.label);
+  check('a submenu for each tooltip, then the appearance they share, at the top level',
+    names.every(n => topLabels.indexOf(n) !== -1) && names.map(n => topLabels.indexOf(n)).every((v, i, a) => !i || v > a[i - 1]),
+    topLabels.join(' | '));
+  const meanings = popupOf(findByLabel(root, '1 · Meanings'));
+  const links = popupOf(findByLabel(root, '2 · Database Links'));
+  const usesMenu = popupOf(findByLabel(root, '3 · Where a Word Is Used'));
+  const radiosIn = (popup, name) => popup.childNodes.filter(c => c.getAttribute('type') === 'radio' && c.getAttribute('name') === name);
+  const keys = H._modifierChoices().map(c => c.label);
+  check('each starts with Off, then what shows it: "Always" or a key',
+    radiosIn(meanings, 'abbrev-tooltip-mod').map(c => c.label).join('|') === ['Off', ...keys].join('|')
+    && radiosIn(links, 'abbrev-db-mod').map(c => c.label).join('|') === ['Off', ...keys].join('|'),
+    radiosIn(meanings, 'abbrev-tooltip-mod').map(c => c.label).join('|'));
+  check('where a word is used has no "Always"', radiosIn(usesMenu, 'abbrev-uses-mod').map(c => c.label).join('|')
+    === ['Off', ...keys.slice(1)].join('|'), radiosIn(usesMenu, 'abbrev-uses-mod').map(c => c.label).join('|'));
+  const picked = (popup, name) => (radiosIn(popup, name).find(c => c.getAttribute('checked') === 'true') || {}).label;
+  check('only meanings are on at first, shown without a key', picked(meanings, 'abbrev-tooltip-mod') === 'Always'
+    && picked(links, 'abbrev-db-mod') === 'Off' && picked(usesMenu, 'abbrev-uses-mod') === 'Off');
+  check('their options follow in the same submenu',
+    !!findByLabel(meanings, 'Say where each meaning comes from') && !!findByLabel(meanings, 'Use definitions from my other papers')
+    && !!findByLabel(links, 'Also show them under a meaning') && !!findByLabel(links, 'Databases')
+    && radiosIn(usesMenu, 'abbrev-uses-count').map(c => c.label).join(',') === '1,3,5,10');
 
-  // ---------- 3c. the advanced toggle brings the settings back ----------
-  // Rebuilt on open, so the preference takes effect without a restart.
-  H._setPref('advancedMenu', true);
-  rootPopup.fire('popupshowing', { target: rootPopup });
-  check('the advanced menu is applied without restarting', H.advancedMenu === true);
-
-  const topNow = rootPopup.childNodes;
-  const topItemsNow = topNow.filter(c => c.tagName !== 'menuseparator');
-  check('advanced still keeps the actions', !!findByLabel(root, 'Scan This PDF and Copy List'));
-  check('advanced top level stays manageable', topItemsNow.length <= 12, topItemsNow.length + ' items');
-
-  // ---------- 4. the two switches are top level ----------
-  check('"Show meanings on hover" is top level', topNow.indexOf(findByLabel(root, 'Show meanings on hover')) !== -1);
-  check('"Show database links" is top level', topNow.indexOf(findByLabel(root, 'Show database links')) !== -1);
-
-  // ---------- 5. modifier settings are together, phrased as sentences ----------
-  const when = popupOf(findByLabel(root, 'When to Show\u2026'));
-  check('both modifier groups share one submenu', !!when);
-  const radiosOf = name => when.childNodes.filter(c => c.getAttribute('type') === 'radio' && c.getAttribute('name') === name);
-  const whenRadios = [...radiosOf('abbrev-tooltip-mod'), ...radiosOf('abbrev-db-mod')];
-  check('both groups present', whenRadios.length === 8, whenRadios.length + ' radio items');
-  check('the no-key choice reads "Always"',
-    whenRadios.filter(c => c.label === 'Always').length === 2);
-  const usesRadios = radiosOf('abbrev-uses-mod');
-  check('where a word is used has the same key choices there, Off instead of Always',
-    usesRadios.map(c => c.label).join('|') === ['Off', ...H._modifierChoices().slice(1).map(c => c.label)].join('|'),
-    usesRadios.map(c => c.label).join('|'));
-
-  // ---------- 6. master switch greys out its dependents ----------
-  const dbSwitch = findByLabel(root, 'Show database links');
-  const dbMenu = findByLabel(root, 'Databases');
-  const onAbbr = findByLabel(root, 'Also show links under a meaning');
-  const dbRadios = whenRadios.filter(c => c.getAttribute('name') === 'abbrev-db-mod');
-  check('dependents start enabled', dbMenu.getAttribute('disabled') === 'false');
-
-  dbSwitch.click();
-  check('switching off disables the Databases submenu', dbMenu.getAttribute('disabled') === 'true');
-  check('switching off disables the database modifier choices',
-    dbRadios.every(c => c.getAttribute('disabled') === 'true'));
-  check('switching off disables the abbreviation-links checkbox',
-    onAbbr.getAttribute('disabled') === 'true');
-  check('and the behaviour matches the greying', H._lookupDatabaseLinks('EGFR') === null);
-
-  dbSwitch.click();
-  check('switching back on re-enables them', dbMenu.getAttribute('disabled') === 'false'
-    && dbRadios.every(c => c.getAttribute('disabled') === 'false'));
-  check('and links work again', !!H._lookupDatabaseLinks('EGFR'));
+  // ---------- 5. a tooltip that is off greys out its options ----------
+  const dbMenu = findByLabel(links, 'Databases');
+  const onAbbr = findByLabel(links, 'Also show them under a meaning');
+  check('off at first, so its options are greyed out', dbMenu.getAttribute('disabled') === 'true'
+    && onAbbr.getAttribute('disabled') === 'true');
+  check('and no links are offered', H._lookupDatabaseLinks('EGFR') === null);
+  radiosIn(links, 'abbrev-db-mod').find(c => /Shift/.test(c.label)).click();
+  check('choosing a key switches it on, with that key', H.databaseLinksEnabled === true
+    && H.databaseLinksModifier === 'shift' && env.P.get('extensions.abbreviation-helper.databaseLinksEnabled') === true);
+  check('and its options become available', dbMenu.getAttribute('disabled') === 'false'
+    && onAbbr.getAttribute('disabled') === 'false');
+  check('and links work', !!H._lookupDatabaseLinks('EGFR'));
+  radiosIn(links, 'abbrev-db-mod')[0].click();
+  check('Off switches it off again, keeping the key for next time', H.databaseLinksEnabled === false
+    && H.databaseLinksModifier === 'shift' && dbMenu.getAttribute('disabled') === 'true');
+  radiosIn(links, 'abbrev-db-mod').find(c => c.label === 'Always').click();
+  check('"Always" is a choice of its own', H.databaseLinksEnabled === true && H.databaseLinksModifier === 'none');
+  radiosIn(usesMenu, 'abbrev-uses-count').find(c => c.label === '5').click();
+  check('the number of uses listed can be set here too', H.usesCount === 5);
+  radiosIn(usesMenu, 'abbrev-uses-count').find(c => c.label === '3').click();
+  radiosIn(meanings, 'abbrev-tooltip-mod')[0].click();
+  check('meanings can be switched off too', H.hoverEnabled === false
+    && findByLabel(meanings, 'Use definitions from my other papers').getAttribute('disabled') === 'true');
+  radiosIn(meanings, 'abbrev-tooltip-mod').find(c => c.label === 'Always').click();
+  check('and on again', H.hoverEnabled === true && H.tooltipModifier === 'none');
 
   // ---------- 7. the Databases submenu reflects the file, not startup ----------
   // Regression test: it used to be built once, so a database added to the
@@ -215,10 +209,10 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
   check('the submenu offers editing the file', firstPass.some(l => /Abbreviations File/.test(l)));
 
   H.dictionaries.databases = H.dictionaries.databases.concat(
-    [{ group: 'Gene/protein databases', label: 'Ensembl', url: 'https://ensembl.org/?q={q}', enabled: true }]);
+    [{ group: 'Gene/protein databases', label: 'Ensembl2', url: 'https://ensembl.org/?q={q}', enabled: true }]);
   dbPopup.fire('popupshowing');
   check('a database added after startup appears without a restart',
-    labels(dbPopup).indexOf('Ensembl') !== -1);
+    labels(dbPopup).indexOf('Ensembl2') !== -1);
   check('rebuilding does not duplicate entries',
     labels(dbPopup).filter(l => l === 'UniProt').length === 1);
 
@@ -258,17 +252,15 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
 
   // ---------- 7c. settings do not dismiss the menu ----------
   // XUL closes the whole menu on every command unless told otherwise, which
-  // makes changing several settings needlessly tedious.
+  // makes changing several settings needlessly tedious (outside macOS, whose
+  // native menus always close).
   const stays = (el) => el && el.getAttribute('closemenu') === 'none';
   const everyItem = walk(root).filter(e => e.tagName === 'menuitem');
   const settings = everyItem.filter(e => ['checkbox', 'radio'].indexOf(e.getAttribute('type')) !== -1);
   check('there are settings items to check', settings.length >= 20, settings.length + '');
   check('every checkbox and radio keeps the menu open', settings.every(stays),
     settings.filter(e => !stays(e)).map(e => e.label).join(',') || 'all keep it open');
-
-  check('the hover switch keeps it open', stays(findByLabel(root, 'Show meanings on hover')));
   check('database checkboxes keep it open', stays(findByLabel(dbPopup, 'HGNC')));
-  check('modifier choices keep it open', stays(whenRadios[0]));
 
   // Actions are the opposite: after asking for something to happen, the menu
   // closing is the expected acknowledgement.
@@ -280,20 +272,21 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
 
   // ---------- 8. the menu re-reads state when it opens ----------
   // Preferences are shared between windows, so what the menu drew at startup
-  // can be out of date by the time it is opened.
-  // Written as preferences, not properties: the menu re-reads preferences when
-  // it opens, which is what makes a change in the Settings window show up here.
+  // can be out of date by the time it is opened. Written as preferences, not
+  // properties: the menu re-reads preferences when it opens, which is what
+  // makes a change in the Settings window show up here.
   H._setPref('hoverEnabled', false);
-  H._setPref('databaseLinksEnabled', false);
-  rootPopup.fire('popupshowing', { target: rootPopup });
-  check('hover checkbox re-syncs on open',
-    findByLabel(root, 'Show meanings on hover').getAttribute('checked') === 'false');
-  check('database checkbox re-syncs on open',
-    findByLabel(root, 'Show database links').getAttribute('checked') === 'false');
-  check('dependents re-sync on open',
-    findByLabel(root, 'Databases').getAttribute('disabled') === 'true');
-  H._setPref('hoverEnabled', true);
   H._setPref('databaseLinksEnabled', true);
+  H._setPref('databaseLinksModifier', 'alt');
+  rootPopup.fire('popupshowing', { target: rootPopup });
+  const pickedNow = (label, name) => picked(popupOf(findByLabel(root, label)), name);
+  check('a tooltip switched off elsewhere shows Off', pickedNow('1 · Meanings', 'abbrev-tooltip-mod') === 'Off');
+  check('a key chosen elsewhere is the one ticked', /Alt|Option/.test(pickedNow('2 · Database Links', 'abbrev-db-mod')),
+    pickedNow('2 · Database Links', 'abbrev-db-mod'));
+  check('greying re-syncs on open', findByLabel(popupOf(findByLabel(root, '2 · Database Links')), 'Databases')
+    .getAttribute('disabled') === 'false');
+  H._setPref('hoverEnabled', true);
+  H._setPref('databaseLinksModifier', 'shift');
   rootPopup.fire('popupshowing', { target: rootPopup });
 
   // ---------- 9. the ignore list is visible at a glance ----------

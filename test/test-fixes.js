@@ -347,6 +347,7 @@ const visible = (doc) => !!tipOf(doc) && tipOf(doc).style.display !== 'none';
     H.dictionaries = Object.assign({}, H.dictionaries, { databases: bundled.databases });
     const doc = makeDoc();
     H._setActiveHoverPairs(1, [{ abbr: 'EGFR', term: 'epidermal growth factor receptor' }]);
+    H.databaseLinksEnabled = true;
     H.databaseLinksModifier = 'none';
     let word = 'EGFR';
     H._wordAtPoint = () => word;

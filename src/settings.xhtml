@@ -6,16 +6,22 @@
   <!-- The pane follows the three tooltips the plugin shows in the reader:
        one section each, a switch and a "Show:" choice on the section's first
        line, its options indented under it; then what they share. -->
-  <description class="abbrev-settings-intro">
-    Three kinds of tooltips appear in the reader, each set up below:
-    1 · meanings, 2 · database links and 3 · where a word is used. They look
-    alike, and in each you choose a numbered entry by clicking it or
-    pressing its number.
-  </description>
+  <vbox class="abbrev-settings-intro">
+    <description>Three kinds of tooltips appear in the reader, each set up below:</description>
+    <html:ul>
+      <html:li><html:b>1 · Meanings</html:b> of abbreviations</html:li>
+      <html:li><html:b>2 · Database links</html:b> for genes, proteins, cell lines and chemicals</html:li>
+      <html:li><html:b>3 · Where a word is used</html:b> in the paper, to go there</html:li>
+    </html:ul>
+    <description>
+      Each shows while you point at a word, or while you hold its key. Tooltips
+      shown with the same key appear together, in one tooltip. Choose a
+      numbered entry by clicking it or pressing its number.
+    </description>
+  </vbox>
 
   <groupbox>
     <label><html:h2>1 · Meanings</html:h2></label>
-    <description class="abbrev-settings-hint">The meaning of an abbreviation, when you point at it.</description>
 
     <hbox align="center">
       <checkbox id="abbrev-settings-hover" label="Show meanings"
@@ -107,9 +113,6 @@
 
   <groupbox>
     <label><html:h2>2 · Database links</html:h2></label>
-    <description class="abbrev-settings-hint">
-      Lookup links for gene, protein, cell line and chemical names under the pointer.
-    </description>
 
     <hbox align="center">
       <checkbox id="abbrev-settings-db-enabled" label="Show database links"
@@ -147,8 +150,8 @@
   <groupbox>
     <label><html:h2>3 · Where a word is used</html:h2></label>
     <description class="abbrev-settings-hint">
-      The first uses of any word in the paper, with the sentence around each.
-      Most useful for an abbreviation without a meaning: its first use often defines it.
+      The first uses of any word, with the sentence around each. Most useful for
+      an abbreviation without a meaning: its first use often defines it.
     </description>
 
     <hbox align="center">
@@ -177,8 +180,6 @@
           </menupopup>
         </menulist>
       </hbox>
-      <!-- Filled in when another tooltip is shown by the same key. -->
-      <description id="abbrev-settings-uses-clash" class="abbrev-settings-error"/>
       <description class="abbrev-settings-hint">
         Choose a use to go there; the reader's Back button takes you back.
       </description>
@@ -210,18 +211,6 @@
         </menupopup>
       </menulist>
     </hbox>
-  </groupbox>
-
-  <groupbox>
-    <label><html:h2>Tools menu</html:h2></label>
-
-    <checkbox id="abbrev-settings-advanced-menu"
-              label="Show every setting in the Tools menu"
-              preference="extensions.abbreviation-helper.advancedMenu"/>
-    <description class="abbrev-settings-hint abbrev-settings-sub">
-      Otherwise the menu holds only actions. On macOS it closes after each
-      change, so this window is the easier place for several.
-    </description>
   </groupbox>
 
   <groupbox>

@@ -1255,8 +1255,10 @@ function pageTexts(text) {
 function wordsAround(page, start, end, count) {
     let before = page.slice(Math.max(0, start - 800), start);
     let after = page.slice(end, end + 800);
-    // A sentence ends at . ! or ? followed by a capital, a digit or a bracket.
-    const starts = [...before.matchAll(/[.!?]\s+(?=[\p{Lu}\d(\[])/gu)];
+    // A sentence ends at . ! or ? followed by a capital, a digit or a bracket,
+    // which may be the use itself: one that starts a sentence has no words
+    // before it.
+    const starts = [...(before + page.charAt(start)).matchAll(/[.!?]\s+(?=[\p{Lu}\d(\[])/gu)];
     const sentenceStart = starts.length > 0;
     if (sentenceStart) {
         const last = starts[starts.length - 1];
@@ -1335,8 +1337,10 @@ var AbbreviationHelper = {
     dictionaries: null,
     _dictionariesReady: null,
     // Settings, mirrored from preferences by _loadPrefs (defaults in prefs.js).
-    // Meanings show on hover without any key held; database links ask for
-    // Shift, so ordinary reading stays uncluttered. 'none' means no key.
+    // Three tooltips, each switched on or off and shown with its own key
+    // ('none': no key, while pointing). Only meanings are on at first, shown
+    // without a key; database links ask for Shift once switched on, so
+    // ordinary reading stays uncluttered. Tooltips sharing a key show as one.
     hoverEnabled: true,
     tooltipModifier: 'none',
     databaseLinksModifier: 'shift',
@@ -1347,28 +1351,25 @@ var AbbreviationHelper = {
     // paper", "Common term; ..."). Switching it off leaves the meaning alone.
     showMeaningSource: true,
     // "Where a word is used": while this modifier is held over any word, the
-    // tooltip lists the word's first uses in the paper. Never 'none': shown
-    // for every word, it would hide every meaning. Ctrl also means Cmd.
-    usesEnabled: true,
+    // tooltip lists the word's first uses in the paper. Never 'none': a list
+    // under every word pointed at would bury the page. Ctrl also means Cmd.
+    usesEnabled: false,
     usesModifier: 'ctrl',
     usesCount: 3,          // how many uses the list shows
     // Whether a tooltip for a defined abbreviation also carries database links.
     databaseLinksOnAbbreviations: true,
     // Master switch for the whole database-link layer. When false, no lookup
-    // links are offered at all and the plugin does nothing but expand
-    // abbreviations. Unchecking every database individually has the same
-    // effect, but this is the switch people look for.
-    databaseLinksEnabled: true,
-    // Whether the Tools menu mirrors every setting. Off by default: settings
-    // live in the Settings window, and the menu holds actions. Users who
-    // prefer the menu can turn this on — on Windows and Linux the menu even
-    // stays open between changes.
-    advancedMenu: false,
+    // links are offered at all. Unchecking every database individually has
+    // the same effect, but this is the switch people look for. Off for a new
+    // install; kept on for those updating from 2.1.0 (see _keepOlderDefaults).
+    databaseLinksEnabled: false,
     // Fill in abbreviations a paper uses without defining them with the
     // meanings the user's other papers define (see the library section).
     useLibraryDefinitions: true,
     lastHoverState: null,
     hoverDocs: [],
+    // Main windows that follow the modifier keys too (see _followKeysIn).
+    keyWindows: [],
     autoScanTimer: null,
     autoScanFirstRun: null,
     autoScanInProgress: false,
@@ -1425,8 +1426,12 @@ var AbbreviationHelper = {
         // Seed with a small built-in fallback so the plugin still works if the
         // bundled JSON cannot be read, then load the full and user dictionaries
         // asynchronously. Scans await _dictionariesReady before detecting.
+        // An older version's defaults are settled first: that looks for the
+        // abbreviations file before loading creates it.
         this.dictionaries = this._embeddedFallbackDictionaries();
-        this._dictionariesReady = this._loadDictionaries().catch(e => {
+        this._dictionariesReady = this._keepOlderDefaults()
+            .catch(e => this.log('Could not check for an older version: ' + e))
+            .then(() => this._loadDictionaries()).catch(e => {
             this.log('Dictionary load failed; using built-in fallback: ' + e);
             return this.dictionaries;
         });
@@ -1499,12 +1504,12 @@ var AbbreviationHelper = {
                         // Meanings change for every paper.
                         if (self.useLibraryDefinitions !== libraryWas) self._redetect();
                         self._resetHoverTooltips();
-                        if (!self.hoverEnabled) {
+                        if (!self._anyTooltipOn()) {
                             self._removeHoverListeners();
                             return;
                         }
                         self._refreshHoverFromLastState(null);
-                        // Hover may just have been switched on in Settings.
+                        // A tooltip may just have been switched on in Settings.
                         self._autoScanActiveReader().catch(e => self.log('Auto-scan failed: ' + e));
                     } catch (e) {
                         self.log('Applying a changed preference failed: ' + e);
@@ -1557,7 +1562,6 @@ var AbbreviationHelper = {
         this.databaseLinksModifier = this._getPref('databaseLinksModifier', this.databaseLinksModifier);
         this.databaseLinksOnAbbreviations = this._getPref('databaseLinksOnAbbreviations', this.databaseLinksOnAbbreviations);
         this.databaseLinksEnabled = this._getPref('databaseLinksEnabled', this.databaseLinksEnabled);
-        this.advancedMenu = this._getPref('advancedMenu', this.advancedMenu);
         this.useLibraryDefinitions = this._getPref('useLibraryDefinitions', this.useLibraryDefinitions);
         this.showMeaningSource = this._getPref('showMeaningSource', this.showMeaningSource);
         this.usesEnabled = this._getPref('usesEnabled', this.usesEnabled);
@@ -1582,16 +1586,39 @@ var AbbreviationHelper = {
      * window.
      */
     _settleUsesKey() {
-        let chosen = true;
-        try { chosen = Services.prefs.prefHasUserValue(this.PREF_BRANCH + 'usesModifier'); }
-        catch (e) { chosen = this._getPref('usesModifier', null) !== null; }
-        if (chosen) return;
+        if (this._prefIsSet('usesModifier')) return;
         const taken = [this.tooltipModifier, this.databaseLinksModifier];
         if (!taken.includes(this.usesModifier)) return;
         // Shift before Alt: on Windows, letting go of Alt alone opens the menu bar.
         const free = ['ctrl', 'shift', 'alt'].find(key => !taken.includes(key));
         this.usesModifier = free;
         this._setPref('usesModifier', free);
+    },
+
+    /** Has this setting been changed from its default (and saved)? */
+    _prefIsSet(name) {
+        try { return Services.prefs.prefHasUserValue(this.PREF_BRANCH + name); }
+        catch (e) { return this._getPref(name, null) !== null; }
+    },
+
+    /**
+     * Database links were on by default up to 2.1.0; from 2.2.0 only
+     * meanings are. Someone updating keeps the links they had: the first
+     * time this version runs, if the abbreviations file an older version
+     * made on its first run is there, links never switched off are saved as
+     * on. A new install has no such file and starts with the new defaults.
+     * The version that ran last is recorded, so this happens only once.
+     */
+    async _keepOlderDefaults() {
+        const last = this._getPref('lastVersion', '');
+        const now = String(this.version || '');
+        if (now && last !== now) this._setPref('lastVersion', now);
+        if (last) return;
+        const file = this._userDictionaryPath();
+        if (!file || !(await (await this._getIOUtils()).exists(file))) return;
+        if (this._prefIsSet('databaseLinksEnabled')) return;
+        this.databaseLinksEnabled = true;
+        this._setPref('databaseLinksEnabled', true);
     },
 
     /* ---- Dictionaries: bundled defaults + user-editable overrides ------- */
@@ -2036,38 +2063,23 @@ var AbbreviationHelper = {
             /* ---------------------------------------------------------------
              * Layout.
              *
-             * Ordered by how often something is used, not by how the code is
-             * organised. What you do repeatedly (scan, the two on/off
-             * switches, correcting a wrong detection) stays at the top level;
-             * what you set once and forget (modifier keys, which databases,
-             * tooltip appearance) lives one level down. Separators carry the
+             * Ordered by how often something is used. Actions you take
+             * repeatedly (scan, correcting a wrong detection) stay at the top
+             * level. The settings follow the Settings window: a submenu for
+             * each of the three tooltips, starting with what shows it (Off,
+             * Always or a key) and then its own options, greyed out while it
+             * is off; then the appearance they share. Separators carry the
              * grouping, so no bold pseudo-headers are needed out here.
              *
              * Every reference to the settings file uses the same words —
              * "abbreviations file" — because there is only one of them.
              *
-             * Two shapes, chosen by the "Show every setting in the Tools menu"
-             * preference. Simple (the default) is actions only, with settings
-             * in the Settings window — the only place several can be changed
-             * in one visit on macOS. Advanced mirrors every setting here too.
-             *
              * The menu is rebuilt each time it opens rather than once at
-             * startup, so switching that preference takes effect immediately
-             * and every control reflects current state.
+             * startup, so every control reflects the current settings, which
+             * the Settings window may have changed meanwhile.
              * ------------------------------------------------------------- */
             const buildMenu = () => {
             while (rootPopup.firstChild) rootPopup.removeChild(rootPopup.firstChild);
-            const advanced = !!this.advancedMenu;
-
-            // Collected below, then greyed out together whenever the database
-            // layer is switched off, so no visible control silently does
-            // nothing.
-            const dbDependents = [];
-            const syncDbDependents = () => {
-                for (const el of dbDependents) {
-                    el.setAttribute('disabled', this.databaseLinksEnabled ? 'false' : 'true');
-                }
-            };
 
             /* ---- Settings ---- */
             // macOS renders this menu as a native NSMenu, which always closes
@@ -2086,74 +2098,134 @@ var AbbreviationHelper = {
                     Zotero.alert(window, 'Abbreviation Helper', 'An error occurred while scanning the PDF. See the Zotero log for details.');
                 });
             });
-
-            /* ---- What appears on hover ---- */
-            if (advanced) {
             sep(rootPopup);
-            checkbox(rootPopup, 'abbreviation-helper-hover',
-                'Show meanings on hover', this.hoverEnabled, (item) => {
-                    this.toggleHover(item).catch(err => {
-                        this.log('Error toggling hover: ' + err);
-                        Zotero.alert(window, 'Abbreviation Helper', 'Could not enable hover tooltips. See the Zotero log for details.');
+
+            /* ---- The three tooltips ---- */
+            // One submenu each. Its first choices switch it off or say which
+            // key shows it, in one radio group; its options follow, greyed out
+            // while it is off, so no visible control silently does nothing.
+            const tooltipMenu = (id, label, onName, keyName, groupName, keys, addOptions) => {
+                const popup = submenu(rootPopup, label);
+                popup.parentNode.id = id;
+                const options = [];
+                const sync = () => {
+                    for (const el of options) el.setAttribute('disabled', this[onName] ? 'false' : 'true');
+                };
+                radioGroup(popup, groupName, [{ id: '', label: 'Off' }, ...keys],
+                    this[onName] ? this[keyName] : '', (key) => {
+                        if (key) {
+                            this[keyName] = key;
+                            this._setPref(keyName, key);
+                        }
+                        if (!!key !== this[onName]) this._setTooltipOn(onName, !!key);
+                        else this._refreshHoverFromLastState(doc);
+                        sync();
+                    });
+                sep(popup);
+                addOptions(popup, options);
+                sync();
+            };
+
+            tooltipMenu('abbreviation-helper-meanings', '1 · Meanings', 'hoverEnabled', 'tooltipModifier',
+                'abbrev-tooltip-mod', this._modifierChoices(), (popup, options) => {
+                    options.push(checkbox(popup, 'abbreviation-helper-source',
+                        'Say where each meaning comes from', this.showMeaningSource, (item) => {
+                            this.showMeaningSource = !this.showMeaningSource;
+                            this._setPref('showMeaningSource', this.showMeaningSource);
+                            item.setAttribute('checked', this.showMeaningSource ? 'true' : 'false');
+                            this._refreshHoverFromLastState(doc);
+                        }));
+                    options.push(checkbox(popup, 'abbreviation-helper-library',
+                        'Use definitions from my other papers', this.useLibraryDefinitions, (item) => {
+                            this.useLibraryDefinitions = !this.useLibraryDefinitions;
+                            this._setPref('useLibraryDefinitions', this.useLibraryDefinitions);
+                            item.setAttribute('checked', this.useLibraryDefinitions ? 'true' : 'false');
+                            this._redetect();
+                        }));
+                });
+
+            tooltipMenu('abbreviation-helper-links', '2 · Database Links', 'databaseLinksEnabled',
+                'databaseLinksModifier', 'abbrev-db-mod', this._modifierChoices(), (popup, options) => {
+                    options.push(checkbox(popup, 'abbreviation-helper-db-on-abbr',
+                        'Also show them under a meaning', this.databaseLinksOnAbbreviations, (item) => {
+                            this.databaseLinksOnAbbreviations = !this.databaseLinksOnAbbreviations;
+                            this._setPref('databaseLinksOnAbbreviations', this.databaseLinksOnAbbreviations);
+                            item.setAttribute('checked', this.databaseLinksOnAbbreviations ? 'true' : 'false');
+                            this._refreshHoverFromLastState(doc);
+                        }));
+                    const dbPopup = submenu(popup, 'Databases');
+                    dbPopup.parentNode.id = 'abbreviation-helper-databases';
+                    options.push(dbPopup.parentNode);
+                    // Rebuilt on open rather than at startup, so databases added to
+                    // the abbreviations file show up as soon as it is reloaded
+                    // instead of waiting for a Zotero restart.
+                    dbPopup.addEventListener('popupshowing', () => {
+                        while (dbPopup.firstChild) dbPopup.removeChild(dbPopup.firstChild);
+                        const all = (this.dictionaries && this.dictionaries.databases) || [];
+                        let firstGroup = true;
+                        for (const groupLabel of this._databaseGroups()) {
+                            if (!firstGroup) sep(dbPopup);
+                            firstGroup = false;
+                            header(dbPopup, groupLabel);
+                            for (const db of all.filter(d => (d.group || 'Databases') === groupLabel)) {
+                                checkbox(dbPopup, null, db.label, this._isDatabaseOn(db), (item) => {
+                                    // Derive the new value from stored state, never from
+                                    // the item's `checked` attribute: XUL has already
+                                    // flipped that by the time this runs, so reading it
+                                    // yields the old value and the click undoes itself.
+                                    const nowOn = !this._isDatabaseOn(db);
+                                    this._setDatabaseEnabled(db.label, nowOn);
+                                    item.setAttribute('checked', nowOn ? 'true' : 'false');
+                                    this._hideHoverTooltip(doc);
+                                });
+                            }
+                        }
+                        if (firstGroup) {
+                            const none = doc.createXULElement('menuitem');
+                            none.setAttribute('label', '(none configured)');
+                            none.setAttribute('disabled', 'true');
+                            dbPopup.appendChild(none);
+                        }
+                        sep(dbPopup);
+                        action(dbPopup, null, 'Edit in Abbreviations File\u2026', () => {
+                            this._openUserDictionary(window).catch(e => this.log('Open file failed: ' + e));
+                        });
                     });
                 });
-            checkbox(rootPopup, 'abbreviation-helper-library',
-                'Use definitions from my other papers', this.useLibraryDefinitions, (item) => {
-                    this.useLibraryDefinitions = !this.useLibraryDefinitions;
-                    this._setPref('useLibraryDefinitions', this.useLibraryDefinitions);
-                    item.setAttribute('checked', this.useLibraryDefinitions ? 'true' : 'false');
-                    this._redetect();
-                });
-            checkbox(rootPopup, 'abbreviation-helper-db-enabled',
-                'Show database links', this.databaseLinksEnabled, (item) => {
-                    this.databaseLinksEnabled = !this.databaseLinksEnabled;
-                    this._setPref('databaseLinksEnabled', this.databaseLinksEnabled);
-                    item.setAttribute('checked', this.databaseLinksEnabled ? 'true' : 'false');
-                    syncDbDependents();
-                    this._refreshHoverFromLastState(doc);
+
+            tooltipMenu('abbreviation-helper-uses', '3 · Where a Word Is Used', 'usesEnabled', 'usesModifier',
+                'abbrev-uses-mod', this._usesModifierChoices(), (popup, options) => {
+                    header(popup, 'Uses listed');
+                    // Kept in step with the same list in settings.xhtml.
+                    options.push(...radioGroup(popup, 'abbrev-uses-count',
+                        [1, 3, 5, 10].map(n => ({ id: n, label: String(n) })), Number(this.usesCount), (n) => {
+                            this.usesCount = n;
+                            this._setPref('usesCount', n);
+                            this._refreshHoverFromLastState(doc);
+                        }));
                 });
 
-            // Both modifier settings in one place, so the difference between
-            // them is visible side by side instead of split across two
-            // identical-looking submenus.
-            const whenPopup = submenu(rootPopup, 'When to Show\u2026');
-            header(whenPopup, '1 · Meanings');
-            radioGroup(whenPopup, 'abbrev-tooltip-mod',
-                this._modifierChoices(), this.tooltipModifier, (id) => {
-                    this.tooltipModifier = id;
-                    this._setPref('tooltipModifier', id);
-                    this._hideHoverTooltip(doc);
+            const lookPopup = submenu(rootPopup, 'Tooltip Appearance');
+            header(lookPopup, 'Text size');
+            radioGroup(lookPopup, 'abbrev-font',
+                // Kept in step with the same list in settings.xhtml.
+                [{ id: 10, label: 'Very small' }, { id: 12, label: 'Small' },
+                 { id: 14, label: 'Medium' }, { id: 16, label: 'Large' },
+                 { id: 20, label: 'Very large' }],
+                Number(this.tooltipFontSize), (id) => {
+                    this.tooltipFontSize = id;
+                    this._setPref('tooltipFontSize', id);
+                    this._resetHoverTooltips();
                 });
-            sep(whenPopup);
-            header(whenPopup, '2 · Database links');
-            for (const item of radioGroup(whenPopup, 'abbrev-db-mod',
-                this._modifierChoices(), this.databaseLinksModifier, (id) => {
-                    this.databaseLinksModifier = id;
-                    this._setPref('databaseLinksModifier', id);
-                    this._refreshHoverFromLastState(doc);
-                })) dbDependents.push(item);
-            dbDependents.push(checkbox(whenPopup, 'abbreviation-helper-db-on-abbr',
-                'Also show links under a meaning',
-                this.databaseLinksOnAbbreviations, (item) => {
-                    this.databaseLinksOnAbbreviations = !this.databaseLinksOnAbbreviations;
-                    this._setPref('databaseLinksOnAbbreviations', this.databaseLinksOnAbbreviations);
-                    item.setAttribute('checked', this.databaseLinksOnAbbreviations ? 'true' : 'false');
-                    this._refreshHoverFromLastState(doc);
-                }));
-            sep(whenPopup);
-            header(whenPopup, '3 · Where a word is used');
-            radioGroup(whenPopup, 'abbrev-uses-mod',
-                [{ id: '', label: 'Off' }, ...this._usesModifierChoices()],
-                this.usesEnabled ? this.usesModifier : '', (id) => {
-                    this.usesEnabled = !!id;
-                    this._setPref('usesEnabled', this.usesEnabled);
-                    if (id) {
-                        this.usesModifier = id;
-                        this._setPref('usesModifier', id);
-                    }
-                    this._refreshHoverFromLastState(doc);
+            sep(lookPopup);
+            header(lookPopup, 'Theme');
+            radioGroup(lookPopup, 'abbrev-theme',
+                [{ id: 'dark', label: 'Dark' }, { id: 'light', label: 'Light' }],
+                this.tooltipTheme, (id) => {
+                    this.tooltipTheme = id;
+                    this._setPref('tooltipTheme', id);
+                    this._resetHoverTooltips();
                 });
-            } /* end advanced-only: hover and database settings */
 
             /* ---- Correcting detections ---- */
             sep(rootPopup);
@@ -2198,78 +2270,6 @@ var AbbreviationHelper = {
             };
             ignoredPopup.addEventListener('popupshowing', buildIgnored);
 
-            /* ---- Settings you set once ---- */
-            if (advanced) {
-            sep(rootPopup);
-            const dbPopup = submenu(rootPopup, 'Databases');
-            dbDependents.push(dbPopup.parentNode || dbPopup);
-            // Rebuilt on open rather than at startup, so databases added to the
-            // abbreviations file show up as soon as it is reloaded instead of
-            // waiting for a Zotero restart.
-            dbPopup.addEventListener('popupshowing', () => {
-                while (dbPopup.firstChild) dbPopup.removeChild(dbPopup.firstChild);
-                const all = (this.dictionaries && this.dictionaries.databases) || [];
-                let firstGroup = true;
-                for (const groupLabel of this._databaseGroups()) {
-                    if (!firstGroup) sep(dbPopup);
-                    firstGroup = false;
-                    header(dbPopup, groupLabel);
-                    for (const db of all.filter(d => (d.group || 'Databases') === groupLabel)) {
-                        checkbox(dbPopup, null, db.label, this._isDatabaseOn(db), (item) => {
-                            // Derive the new value from stored state, never from
-                            // the item's `checked` attribute: XUL has already
-                            // flipped that by the time this runs, so reading it
-                            // yields the old value and the click undoes itself.
-                            const nowOn = !this._isDatabaseOn(db);
-                            this._setDatabaseEnabled(db.label, nowOn);
-                            item.setAttribute('checked', nowOn ? 'true' : 'false');
-                            this._hideHoverTooltip(doc);
-                        });
-                    }
-                }
-                if (firstGroup) {
-                    const none = doc.createXULElement('menuitem');
-                    none.setAttribute('label', '(none configured)');
-                    none.setAttribute('disabled', 'true');
-                    dbPopup.appendChild(none);
-                }
-                sep(dbPopup);
-                action(dbPopup, null, 'Edit in Abbreviations File\u2026', () => {
-                    this._openUserDictionary(window).catch(e => this.log('Open file failed: ' + e));
-                });
-            });
-
-            const lookPopup = submenu(rootPopup, 'Tooltip Appearance');
-            header(lookPopup, 'Text size');
-            radioGroup(lookPopup, 'abbrev-font',
-                // Kept in step with the same list in settings.xhtml.
-                [{ id: 10, label: 'Very small' }, { id: 12, label: 'Small' },
-                 { id: 14, label: 'Medium' }, { id: 16, label: 'Large' },
-                 { id: 20, label: 'Very large' }],
-                Number(this.tooltipFontSize), (id) => {
-                    this.tooltipFontSize = id;
-                    this._setPref('tooltipFontSize', id);
-                    this._resetHoverTooltips();
-                });
-            sep(lookPopup);
-            header(lookPopup, 'Theme');
-            radioGroup(lookPopup, 'abbrev-theme',
-                [{ id: 'dark', label: 'Dark' }, { id: 'light', label: 'Light' }],
-                this.tooltipTheme, (id) => {
-                    this.tooltipTheme = id;
-                    this._setPref('tooltipTheme', id);
-                    this._resetHoverTooltips();
-                });
-            sep(lookPopup);
-            checkbox(lookPopup, 'abbreviation-helper-source',
-                'Show where each meaning comes from', this.showMeaningSource, (item) => {
-                    this.showMeaningSource = !this.showMeaningSource;
-                    this._setPref('showMeaningSource', this.showMeaningSource);
-                    item.setAttribute('checked', this.showMeaningSource ? 'true' : 'false');
-                    this._refreshHoverFromLastState(doc);
-                });
-            } /* end advanced-only: databases and appearance */
-
             /* ---- The abbreviations file ---- */
             sep(rootPopup);
             action(rootPopup, 'abbreviation-helper-open-dictionary', 'Open Abbreviations File\u2026', () => {
@@ -2287,14 +2287,12 @@ var AbbreviationHelper = {
             const n = this._ignoreList().length;
             ignoredMenu.setAttribute('label',
                 n ? 'Ignored Abbreviations (' + n + ')' : 'Ignored Abbreviations');
-            syncDbDependents();
             }; /* end buildMenu */
 
             // Rebuilding on open replaces the old re-sync patching: settings
             // are shared between windows and can be changed from the Settings
             // window at any time, so the menu re-reads preferences and redraws
-            // rather than trusting what it drew at startup. This is also what
-            // makes the advanced toggle take effect without a restart.
+            // rather than trusting what it drew at startup.
             rootPopup.addEventListener('popupshowing', (event) => {
                 if (event.target !== rootPopup) return;
                 this._loadPrefs();
@@ -2527,7 +2525,7 @@ var AbbreviationHelper = {
         }
         if (this._stopped) return pairs;
         this._setActiveHoverPairs(info.item.id, pairs);
-        if (this.hoverEnabled) this._installHoverForAllWindows();
+        if (this._anyTooltipOn()) this._installHoverForAllWindows();
         if (!options.silent) this._showDialog(pairs);
         return pairs;
     },
@@ -2902,28 +2900,25 @@ var AbbreviationHelper = {
 
     /* ---- Hover tooltips in the Zotero reader ---------------------------- */
 
+    /** Is at least one of the three tooltips switched on? */
+    _anyTooltipOn() {
+        return !!(this.hoverEnabled || this.databaseLinksEnabled || this.usesEnabled);
+    },
+
     /**
-     * Switch hover tooltips on or off (the Tools menu's checkbox). Switching
-     * on scans the PDF in the reader quietly, then attaches mouse listeners
-     * to the reader pages that show its text.
+     * Switch one of the three tooltips on or off, by its setting's name
+     * (the Tools menu). Switching one on reads the PDF in the reader quietly
+     * and listens to its pages; with all three off, the pages are left alone.
      */
-    async toggleHover(menuitem) {
-        this.hoverEnabled = !this.hoverEnabled;
-        this._setPref('hoverEnabled', this.hoverEnabled);
-        if (menuitem) menuitem.setAttribute('checked', this.hoverEnabled ? 'true' : 'false');
-        if (!this.hoverEnabled) {
+    _setTooltipOn(name, on) {
+        this[name] = !!on;
+        this._setPref(name, !!on);
+        if (!this._anyTooltipOn()) {
             this._removeHoverListeners();
             return;
         }
-
-        // Quietly scan the PDF open in the reader when hover is turned on. Do
-        // not show a popup here; the scan command still shows the normal one.
-        try {
-            await this.scanCurrent({ silent: true, readerOnly: true });
-        } catch (e) {
-            this.log('Silent scan while enabling hover failed: ' + e);
-        }
-        this._installHoverForAllWindows();
+        this._refreshHoverFromLastState(null);
+        this._autoScanActiveReader().catch(e => this.log('Auto-scan failed: ' + e));
     },
 
     /**
@@ -3001,7 +2996,7 @@ var AbbreviationHelper = {
      * scan. Called by the timer, on tab changes and after settings change.
      */
     async _autoScanActiveReader() {
-        if (this._stopped || !this.hoverEnabled) return;
+        if (this._stopped || !this._anyTooltipOn()) return;
         // One scan at a time; a request that arrives meanwhile (a quick second
         // tab switch, say) runs once the current scan has finished.
         if (this.autoScanInProgress) {
@@ -3105,7 +3100,7 @@ var AbbreviationHelper = {
      * map), so this never tears anything down and is cheap to call often.
      */
     _installHoverForAllWindows() {
-        if (this._stopped || !this.hoverEnabled) return;
+        if (this._stopped || !this._anyTooltipOn()) return;
         if ((!this.activeHoverMap || !this.activeHoverMap.size) && !this._enabledDatabases().length
             && !this.usesEnabled) return;
         this._pruneHoverDocs();
@@ -3117,6 +3112,7 @@ var AbbreviationHelper = {
     },
 
     _installHoverInWindow(window) {
+        this._followKeysIn(window);
         const docs = this._getReaderDocuments(window);
         for (let doc of docs) {
             if (!doc || !doc.body) continue;
@@ -3141,6 +3137,25 @@ var AbbreviationHelper = {
             try { if (doc.defaultView) doc.defaultView.addEventListener('blur', blur, true); } catch (e) {}
             this.hoverDocs.push({ doc, move, out, scroll, click, keydown, keyup, keyTarget, blur });
         }
+    },
+
+    /**
+     * Follow the modifier keys in a main window as well. With the keyboard
+     * focus outside the paper (the reader's toolbar, the item pane), the
+     * reader's pages never see the key: a tooltip would not come when its
+     * key is pressed, or go when it is let go, until the mouse moved. Only
+     * modifiers are taken here; reacting to one twice changes nothing.
+     */
+    _followKeysIn(window) {
+        this.keyWindows = this.keyWindows.filter(rec => { try { return !rec.win.closed; } catch (e) { return false; } });
+        if (!window || this.keyWindows.some(rec => rec.win === window)) return;
+        const down = (event) => { if (event && this.MODIFIER_KEYS[event.key]) this._onModifierKey(null, event, true); };
+        const up = (event) => this._onReaderKeyUp(null, event);
+        try {
+            window.addEventListener('keydown', down, true);
+            window.addEventListener('keyup', up, true);
+            this.keyWindows.push({ win: window, down, up });
+        } catch (e) {}
     },
 
     /**
@@ -3206,11 +3221,18 @@ var AbbreviationHelper = {
             } catch (e) {}
         }
         this.hoverDocs = [];
+        for (const rec of this.keyWindows) {
+            try {
+                rec.win.removeEventListener('keydown', rec.down, true);
+                rec.win.removeEventListener('keyup', rec.up, true);
+            } catch (e) {}
+        }
+        this.keyWindows = [];
         this.lastHoverState = null;
     },
 
     _onReaderMouseMove(doc, event) {
-        if (!this.hoverEnabled || this._stopped) return;
+        if (!this._anyTooltipOn() || this._stopped) return;
         this._updateModifierState(event);
         const x = event.clientX, y = event.clientY;
 
@@ -3394,53 +3416,58 @@ var AbbreviationHelper = {
         return this._modifierSatisfied(this.databaseLinksModifier);
     },
 
+    /**
+     * Draw the tooltip for the word under the pointer. Each of the three
+     * tooltips counts on its own: switched on, and its key held (or none
+     * needed). Those that count show together, in one tooltip, so tooltips
+     * that share a key, or that need none, add up rather than replace one
+     * another.
+     */
     _renderHoverFromState(state) {
         if (!state || !state.doc || !state.token) return;
         const doc = state.doc;
         const token = state.token;
-        // Tooltip 3 while its key is held, for any word. It comes first, so
-        // a key it shares with another tooltip shows the uses.
-        if (this.usesEnabled && this._modifierSatisfied(this.usesModifier) && this._renderUses(state)) return;
-
-        if (!this._modifierSatisfied(this.tooltipModifier)) {
+        const meaningOn = this.hoverEnabled && this._modifierSatisfied(this.tooltipModifier);
+        const linksOn = this._databaseLinksCurrentlyAllowed();
+        const usesOn = this.usesEnabled && this._modifierSatisfied(this.usesModifier);
+        if (!meaningOn && !linksOn && !usesOn) {
             this._hideHoverTooltip(doc);
             return;
         }
 
         // Looked up now rather than when the mouse moved, so a tooltip redrawn
         // later (a modifier key pressed, a setting changed) uses the current
-        // meanings.
+        // meanings. Where a word is used looks a word with a meaning up by its
+        // short form, so "EVs" and "anti-EV" find the uses of EV.
         const entry = this._lookupHover(token);
+        const meaning = meaningOn ? entry : null;
+        const usesWord = entry ? entry.abbr : this._trimToken(token);
 
         // The multi-word database phrase is only worked out when links may
         // actually be shown, then remembered for this word.
-        const dbAllowed = this._databaseLinksCurrentlyAllowed();
-        let dbInfo = null;
-        if (dbAllowed) {
+        let links = null;
+        if (linksOn && (!meaning || this.databaseLinksOnAbbreviations)) {
             if (state.dbToken === undefined) {
                 state.dbToken = this._databaseLookupCandidateAtPoint(state.target, token) || token;
             }
-            dbInfo = this._lookupDatabaseLinks(state.dbToken || token);
+            links = this._lookupDatabaseLinks(state.dbToken || token);
         }
-        const includeDbWithAbbr = !!(entry && dbInfo && this.databaseLinksOnAbbreviations);
+        const uses = usesOn ? this._usesOf(usesWord, state) : null;
 
-        if (entry) {
-            // The short form as detected, not as hovered ("DNA." at the end
-            // of a sentence), so ignoring it matches the paper's entry.
-            this.lastHoveredToken = entry.abbr;
-            this._showHoverTooltip(doc, state.x, state.y, this._trimToken(token), entry.term,
-                { groups: includeDbWithAbbr ? dbInfo.groups : null, certainty: entry.certainty });
-            this._renderedSig = this._hoverSignature(token);
-            return;
-        }
-
-        if (!dbInfo) {
+        if (!meaning && !links && !uses) {
             this._renderedSig = null;
             this._scheduleHoverHide(doc, 120);
             return;
         }
-
-        this._showDatabaseTooltip(doc, state.x, state.y, dbInfo);
+        // The short form as detected, not as hovered ("DNA." at the end of a
+        // sentence), so ignoring it matches the paper's entry.
+        if (meaning) this.lastHoveredToken = meaning.abbr;
+        this._showTooltip(doc, state.x, state.y, {
+            word: meaning ? this._trimToken(token) : links ? links.symbol : usesWord,
+            meaning: meaning && { term: meaning.term, certainty: meaning.certainty },
+            links: links && links.groups,
+            uses, usesWord
+        });
         this._renderedSig = this._hoverSignature(token);
     },
 
@@ -3860,7 +3887,8 @@ var AbbreviationHelper = {
      * heading (the word in bold, a dash, what the tooltip says about it),
      * quieter lines under it, and, when there is something to choose,
      * numbered choices. Every choice is taken the same way: click it, or
-     * press its number (1-9). */
+     * press its number (1-9, then 0). Tooltips shown at the same moment
+     * (sharing a key, or needing none) are one tooltip, in parts. */
 
     /** Empty the tooltip and write its heading: "word — says". */
     _startTooltip(doc, word, says) {
@@ -3889,7 +3917,8 @@ var AbbreviationHelper = {
      * Numbered choices, each { label: text or nodes, choose(), href? }.
      * `inline` sets short labels side by side (database names); otherwise
      * each takes a line (a sentence of the paper). Numbers run on across the
-     * lists of one tooltip: the keys reach 1 to 9, a click reaches every one.
+     * lists of one tooltip. The keys reach ten, in the order of the number
+     * row (1 to 9, then 0); a click reaches every one.
      */
     _addChoices(doc, tip, items, inline) {
         const light = this.tooltipTheme === 'light';
@@ -3904,8 +3933,10 @@ var AbbreviationHelper = {
                 display: inline ? 'inline-block' : 'block', margin: inline ? '1px 4px 1px 0' : '2px 0',
                 padding: '1px 4px', borderRadius: '4px', cursor: 'pointer', color: 'inherit', textDecoration: 'none'
             });
+            // A line that wraps continues under the text, not under its number.
+            if (!inline) Object.assign(el.style, { paddingLeft: 'calc(4px + 1.05em)', textIndent: '-1.05em' });
             const badge = el.appendChild(doc.createElement('span'));
-            badge.textContent = n <= 9 ? String(n) : '·';
+            badge.textContent = n <= 9 ? String(n) : n === 10 ? '0' : '·';
             Object.assign(badge.style, { color: accent, fontWeight: '600', marginRight: '0.45em' });
             for (const part of [].concat(item.label)) {
                 el.appendChild(typeof part === 'string' ? doc.createTextNode(part) : part);
@@ -3948,23 +3979,54 @@ var AbbreviationHelper = {
         })), true);
     },
 
+    /** A thin line between two parts of a tooltip. */
+    _addDivider(doc, tip) {
+        const line = doc.createElement('div');
+        Object.assign(line.style, {
+            height: '0', margin: '6px 0 4px', borderTop: '1px solid currentColor', opacity: '0.2'
+        });
+        return tip.appendChild(line);
+    },
+
     /**
-     * Tooltip 1, a meaning. options.certainty (as detection reports it)
-     * decides the line saying where it comes from; options.groups adds the
-     * database links of tooltip 2 under it.
+     * The tooltip for a word, with whichever of its three parts are shown,
+     * always in this order and each set off from the one before by a line:
+     *   1. the meaning, in the heading, and where it comes from under it;
+     *   2. database links, one numbered row;
+     *   3. where the word is used, one numbered line per use.
+     * Numbers run on from one part to the next, so each choice has its own.
+     * parts: { word, meaning: { term, certainty }, links: groups,
+     *          uses: a findUses result, usesWord: the word looked up }.
      */
-    _showHoverTooltip(doc, x, y, abbr, term, options) {
-        const { meaning, origin } = this._meaningAndOrigin(term, options && options.certainty);
-        const tip = this._startTooltip(doc, abbr, meaning);
-        if (this.showMeaningSource) this._addNote(doc, tip, origin);
-        const groups = (options && options.groups) || [];
-        if (groups.length) {
-            this._addLinkGroups(doc, tip, groups);
-            this._finishChoices(doc, tip);
-        } else {
-            this._finishPlain(tip);
+    _showTooltip(doc, x, y, parts) {
+        const { word, meaning, uses } = parts;
+        const links = (parts.links || []).filter(g => g && g.links && g.links.length);
+        const shown = meaning ? this._meaningAndOrigin(meaning.term, meaning.certainty) : null;
+        const says = shown ? shown.meaning
+            : links.length && uses ? 'look it up, or see where it is used'
+            : links.length ? 'look it up in a database'
+            : 'where it is used';
+        const tip = this._startTooltip(doc, word, says);
+        if (shown && this.showMeaningSource) this._addNote(doc, tip, shown.origin);
+        let above = !!shown;
+        if (links.length) {
+            if (above) this._addDivider(doc, tip);
+            this._addLinkGroups(doc, tip, links);
+            above = true;
         }
+        if (uses) {
+            if (above) this._addDivider(doc, tip);
+            this._addUses(doc, tip, uses, parts.usesWord || word, word);
+        }
+        if (this.activeChoices.length) this._finishChoices(doc, tip);
+        else this._finishPlain(tip);
         this._positionHoverTooltip(doc, tip, x, y);
+    },
+
+    /** Tooltip 1, a meaning; options.groups adds tooltip 2's links under it. */
+    _showHoverTooltip(doc, x, y, abbr, term, options) {
+        this._showTooltip(doc, x, y, { word: abbr, meaning: { term, certainty: options && options.certainty },
+            links: options && options.groups });
     },
 
     // The note detection appends to every meaning the paper does not confirm:
@@ -3990,42 +4052,34 @@ var AbbreviationHelper = {
         return { meaning, origin: 'Defined in this paper' };
     },
 
-    /** Tooltip 2 on its own, for a word with no meaning: database links. */
+    /** Tooltip 2 on its own: database links. */
     _showDatabaseTooltip(doc, x, y, info) {
-        const groups = (info && info.groups) || [];
-        if (!groups.length) return;
-        const tip = this._startTooltip(doc, info.symbol, 'look it up in a database');
-        this._addLinkGroups(doc, tip, groups);
-        this._finishChoices(doc, tip);
-        this._positionHoverTooltip(doc, tip, x, y);
+        if (!info || !info.groups || !info.groups.length) return;
+        this._showTooltip(doc, x, y, { word: info.symbol, links: info.groups });
     },
 
     /* ---- Where a word is used ------------------------------------------- */
 
     /**
-     * Tooltip 3 for the word under the pointer: its first uses in the paper.
-     * A word with a meaning is looked up by its short form, so "EVs" and
-     * "anti-EV" find the uses of EV. The paper's text is normally cached
-     * from the scan; if not, it is read and the tooltip drawn once it is
-     * there. Returns false when there is nothing to show yet.
+     * The first uses of a word in the paper on screen (tooltip 3), as
+     * findUses reports them. The paper's text is normally cached from the
+     * scan; if not, it is read and the tooltip drawn again once it is there.
+     * Null when there is nothing to show yet.
      */
-    _renderUses(state) {
-        const entry = this._lookupHover(state.token);
-        const word = entry ? entry.abbr : this._trimToken(state.token);
+    _usesOf(word, state) {
         const itemID = this.activeHoverItemID;
-        if (!word || itemID == null) return false;
+        if (!word || itemID == null) return null;
         const text = this.textCache.get(itemID);
         if (typeof text !== 'string') {
             this._readTextThenRedraw(itemID, state);
-            return false;
+            return null;
         }
         // The last result is kept: pointing at the same word again is free.
         const memo = this._usesMemo;
         const result = memo && memo.itemID === itemID && memo.word === word && memo.count === this.usesCount
             ? memo.result : findUses(text, word, Math.max(1, this.usesCount), 15);
         this._usesMemo = { itemID, word, count: this.usesCount, result };
-        this._showUsesWindow(state, word, entry, result);
-        return true;
+        return result;
     },
 
     /** Read a paper's text again (it was evicted), then redraw if the pointer stayed. */
@@ -4038,32 +4092,29 @@ var AbbreviationHelper = {
             .finally(() => { this._readingText = null; });
     },
 
-    /** Tooltip 3, the first uses of a word, each a choice that goes there. */
-    _showUsesWindow(state, word, entry, result) {
-        const doc = state.doc;
-        const says = entry ? this._meaningAndOrigin(entry.term, entry.certainty).meaning : 'no meaning found';
-        const tip = this._startTooltip(doc, word, says);
+    /**
+     * Tooltip 3's part: how often the word is used, then its first uses,
+     * each a choice that goes there. The word is named when it is not the
+     * one in the heading (the uses of EV under "EVs", or under a database
+     * phrase).
+     */
+    _addUses(doc, tip, result, word, heading) {
         const n = result.total, shown = result.uses.length;
-        this._addNote(doc, tip, !n ? 'Not found in the text of this PDF.'
-            : 'Used ' + n + (n === 1 ? ' time' : ' times') + (shown < n ? '; the first ' + shown + ':' : ':'));
-        if (shown) {
-            this._addChoices(doc, tip, result.uses.map(use => {
-                const page = doc.createElement('span');
-                page.textContent = 'p. ' + (use.pageIndex + 1) + ' · ';
-                page.style.opacity = '0.7';
-                const match = doc.createElement('strong');
-                match.textContent = use.match;
-                return {
-                    label: [page, use.before, match, use.after],
-                    choose: () => this._jumpToUse(doc, use, word).catch(e => this.log('Could not go to the use: ' + e))
-                };
-            }), false);
-            this._finishChoices(doc, tip);
-        } else {
-            this._finishPlain(tip);
-        }
-        this._positionHoverTooltip(doc, tip, state.x, state.y);
-        this._renderedSig = this._hoverSignature(state.token);
+        const count = !n ? 'Not found in the text of this PDF.'
+            : 'Used ' + n + (n === 1 ? ' time' : ' times') + (shown < n ? '; the first ' + shown + ':' : ':');
+        this._addNote(doc, tip, word === heading ? count : word + ': ' + count.charAt(0).toLowerCase() + count.slice(1));
+        if (!shown) return;
+        this._addChoices(doc, tip, result.uses.map(use => {
+            const page = doc.createElement('span');
+            page.textContent = 'p. ' + (use.pageIndex + 1) + ' · ';
+            page.style.opacity = '0.7';
+            const match = doc.createElement('strong');
+            match.textContent = use.match;
+            return {
+                label: [page, use.before, match, use.after],
+                choose: () => this._jumpToUse(doc, use, word).catch(e => this.log('Could not go to the use: ' + e))
+            };
+        }), false);
     },
 
     /**
@@ -4269,9 +4320,10 @@ var AbbreviationHelper = {
         // box) are never taken.
         if (this._typingInto(event.target)) return;
 
-        // 1-9 choose from a tooltip with database links or a list of uses; a
-        // tooltip with only a meaning leaves the keys alone. This is the
-        // reliable way to choose when the reader makes clicking hard.
+        // 1-9 and 0 (the tenth) choose from a tooltip with database links or
+        // a list of uses; a tooltip with only a meaning leaves the keys alone.
+        // This is the reliable way to choose when the reader makes clicking
+        // hard.
         if (!this.hoverInteractiveTooltip || !this._isHoverTooltipVisible(tipDoc)) return;
         // With Ctrl, Cmd or Alt held a number is Zotero's: Ctrl/Cmd+1-9 switch
         // tabs and Alt+1-8 the reader's tools. With Shift it is free.
@@ -4279,11 +4331,11 @@ var AbbreviationHelper = {
         // The physical key counts, not the character it types, so the
         // shortcut works on every layout: with Shift held, the "1" key types
         // "!" on a German keyboard, and without it "&" on a French one.
-        const digit = /^[1-9]$/.test(String(event.key || '')) ? event.key
-            : (/^(?:Digit|Numpad)([1-9])$/.exec(String(event.code || '')) || [])[1];
+        const digit = /^[0-9]$/.test(String(event.key || '')) ? event.key
+            : (/^(?:Digit|Numpad)([0-9])$/.exec(String(event.code || '')) || [])[1];
         if (!digit) return;
 
-        const choose = this.activeChoices[Number(digit) - 1];
+        const choose = this.activeChoices[digit === '0' ? 9 : Number(digit) - 1];
         if (!choose) return;
         event.preventDefault();
         event.stopPropagation();
@@ -4301,7 +4353,20 @@ var AbbreviationHelper = {
     },
 
     _onReaderKeyUp(doc, event) {
-        if (event && this.MODIFIER_KEYS[event.key]) this._onModifierKey(doc, event, false);
+        if (!event || !this.MODIFIER_KEYS[event.key]) return;
+        // On Windows and Linux, letting go of Alt on its own moves the
+        // keyboard to the menu bar, which would then take the number pressed
+        // next. Not when Alt was held for a tooltip still on screen.
+        if (event.key === 'Alt' && this._tooltipShownWith('alt') && event.preventDefault) event.preventDefault();
+        this._onModifierKey(doc, event, false);
+    },
+
+    /** Is a tooltip on screen, and is one of those switched on shown with this key? */
+    _tooltipShownWith(key) {
+        const uses = (this.hoverEnabled && this.tooltipModifier === key)
+            || (this.databaseLinksEnabled && this.databaseLinksModifier === key)
+            || (this.usesEnabled && this.usesModifier === key);
+        return uses && !!this.hoverPinnedDoc && this._isHoverTooltipVisible(this.hoverPinnedDoc);
     },
 
     /**
@@ -4312,11 +4377,14 @@ var AbbreviationHelper = {
      * is, so its choices can still be made after the key is let go.
      */
     _onModifierKey(doc, event, down) {
+        if (this._stopped || !this._anyTooltipOn()) return;
         const before = JSON.stringify(this.modifierState);
         this._updateModifierState(event);
         // The key itself is not reliably reflected in the event's flags yet.
         this.modifierState[this.MODIFIER_KEYS[event.key]] = down;
-        if (JSON.stringify(this.modifierState) !== before && !this._pointerOnTooltip) this._refreshHoverFromLastState(doc);
+        if (JSON.stringify(this.modifierState) !== before && !this._pointerOnTooltip) {
+            this._refreshHoverFromLastState(doc || this.hoverPinnedDoc);
+        }
     },
 
     _onReaderBlur(doc) {

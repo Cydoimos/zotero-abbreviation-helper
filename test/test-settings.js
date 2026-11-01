@@ -169,6 +169,12 @@ const tick = () => new Promise(r => setTimeout(r, 0));
   check('each tooltip is switched on and off the same way, with a "Show:" list',
     ['abbrev-settings-tooltip-modifier', 'abbrev-settings-db-modifier', 'abbrev-settings-uses-modifier']
       .every(id => new RegExp('control="' + id + '" value="Show:"').test(XHTML)));
+  const bullets = XHTML.match(/<html:li>[\s\S]*?<\/html:li>/g) || [];
+  check('the overview names the three tooltips as a list, before the first section',
+    bullets.length === 3 && /1 · Meanings/.test(bullets[0]) && /3 · Where a word is used/.test(bullets[2])
+    && XHTML.indexOf('<html:ul>') < XHTML.indexOf('<html:h2>1 · Meanings'), bullets.length + ' items');
+  check('it says tooltips sharing a key appear together', /same key appear together/.test(XHTML.replace(/\s+/g, ' ')));
+  check('the switch for a shorter Tools menu is gone', !/advancedMenu|every setting in the Tools menu/.test(XHTML));
   check('every menulist is native',
     menulists.every(e => e.getAttribute('native') === 'true'),
     menulists.filter(e => e.getAttribute('native') !== 'true')
@@ -212,6 +218,7 @@ const tick = () => new Promise(r => setTimeout(r, 0));
   check('group headings are shown',
     dbBox.childNodes.filter(r => r.classList.contains('abbrev-settings-group-row')).length >= 2);
 
+  H.databaseLinksEnabled = true;          // off for a new install
   const uniprot = dbRows.map(dbOf).find(d => d.label === 'UniProt').input;
   uniprot.checked = false;                // what the widget does on click
   uniprot.fire('command');
@@ -360,10 +367,10 @@ const tick = () => new Promise(r => setTimeout(r, 0));
   // one thing while the plugin does another.
   const codeDefaults = {
     hoverEnabled: 'true', tooltipModifier: '"none"',
-    databaseLinksEnabled: 'true', databaseLinksModifier: '"shift"',
+    databaseLinksEnabled: 'false', databaseLinksModifier: '"shift"',
     databaseLinksOnAbbreviations: 'true',
     tooltipFontSize: '12', tooltipTheme: '"dark"', useLibraryDefinitions: 'true',
-    showMeaningSource: 'true', usesEnabled: 'true', usesModifier: '"ctrl"', usesCount: '3'
+    showMeaningSource: 'true', usesEnabled: 'false', usesModifier: '"ctrl"', usesCount: '3'
   };
   const mismatched = Object.entries(codeDefaults)
     .filter(([k, v]) => declared.get(H.PREF_BRANCH + k) !== v)

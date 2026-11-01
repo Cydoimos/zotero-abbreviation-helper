@@ -37,16 +37,26 @@ the reader tab you are looking at is scanned, and switching tabs switches the me
 with it. Everything also works in Zotero 10's Reading Mode for PDFs, which shows the same
 paper as reflowed text, including over highlighted text.
 
-The plugin shows three kinds of tooltips. They look alike: the word in bold and what the
-tooltip says about it, quieter lines underneath, and, when there is something to choose,
-numbered choices. Each one appears the same way: while you point at a word, or while you
-hold a key over it (you choose which in the settings), and it goes when you move away or
-let go of the key. Click a choice or press its number (**1–9**); a tooltip with choices
-stays put while you move the pointer onto it, even after you let go of the key. The
-number keys work on every keyboard layout: on a German keyboard Shift+1 chooses the
-first entry although it types "!", and on a French one the 1 key works with or without
-Shift. They are left alone while Ctrl, Cmd or Alt is held, since Zotero uses those
-combinations to switch tabs and reader tools.
+The plugin shows three kinds of tooltips: **meanings**, **database links** and **where a
+word is used**. Only meanings are on at first; switch the others on in the settings. Each
+is switched on and off on its own and appears the same way: while you point at a word, or
+while you hold a key over it (you choose which), and it goes when you move away or let go
+of the key.
+
+Tooltips that appear at the same moment, because they share a key or need none, are one
+tooltip: the meaning first, then the database links, then the uses, each part set off by
+a thin line. Set all three to the same key to see everything about a word at once.
+
+They look alike: the word in bold and what the tooltip says about it, quieter lines
+underneath, and, when there is something to choose, numbered choices, numbered on from
+one part to the next. Click a choice or press its number (**1–9**, then **0** for the
+tenth); a tooltip with choices stays put while you move the pointer onto it, even after
+you let go of the key. The number keys work on every keyboard layout: on a German
+keyboard Shift+1 chooses the first entry although it types "!", and on a French one the
+1 key works with or without Shift. They are left alone while Ctrl, Cmd or Alt is held,
+since Zotero uses those combinations to switch tabs and reader tools. On Windows and
+Linux, letting go of Alt after using it for a tooltip does not move the keyboard to the
+menu bar, so the number you press next still reaches the tooltip.
 
 ### 1 · Meanings
 
@@ -61,42 +71,44 @@ meaning is:
 | Common term; not explicitly defined in this paper | The paper doesn't define it; the built-in glossary does |
 | Your own definition | You defined it in Settings |
 
-**Show where each meaning comes from** in the settings (on by default) turns this line on
+**Say where each meaning comes from** in the settings (on by default) turns this line on
 or off.
 
 ### 2 · Database links
 
-Hold **Shift** (by default) over a gene, protein, cell line or chemical name for links to
-look it up: on their own for a word without a meaning, or under a meaning. The links are
-one numbered row, named after their database. Built in:
+Once switched on in the settings, hold **Shift** (by default) over a gene, protein, cell
+line or chemical name for links to look it up: on their own for a word without a meaning,
+or under a meaning. The links are one numbered row, named after their database. If you
+used 2.1.0 with database links on, they stay on after the update. Built in:
 HGNC, UniProt, GeneCards, NCBI Gene, Cellosaurus, ATCC and PubChem are on; Ensembl,
 InterPro, RCSB PDB, RNAcentral and Addgene are available and off until you tick them in
 the settings.
 
 ### 3 · Where a word is used
 
-Hold **Ctrl** (or **Cmd** on macOS; by default) over any word, and the tooltip lists the
-word's first uses in the paper: the page, and the sentence around each one. It works on
+Once switched on in the settings, hold **Ctrl** (or **Cmd** on macOS; by default) over
+any word, and the tooltip lists the word's first uses in the paper: the page, and the
+sentence around each one. It works on
 every word, and is most useful for an abbreviation the plugin found no meaning for, since
 its first use usually defines it. Choose a use to go there: the reader turns to the page
 and marks the word for a moment, and its Back button takes you back. In Reading Mode the
 jump goes to the page.
 
 To choose, either move the pointer onto the list and click, or let go of the key first
-and then press a number. The key can be Shift, Ctrl/Cmd or Alt, and the list can show 1,
-3, 5 or 10 uses. If one of the other tooltips already uses Ctrl/Cmd, it takes Shift or
-Alt instead. If you give it the same key as another tooltip, this one wins while the key
-is held, and the settings say so. The key needs the keyboard focus in the paper:
-if it does nothing, click the paper once.
+and then press a number. The key can be Shift, Ctrl/Cmd or Alt (it cannot be "Always": a
+list under every word you point at would bury the page), and the list can show 1, 3, 5
+or 10 uses. If you updated from 2.1.0 with Ctrl/Cmd set for meanings or database links,
+it takes Shift or Alt instead, so that tooltip looks as it did; choose Ctrl/Cmd yourself
+to have the two together.
 
 ### Settings
 
 Everything is in **Zotero Settings → Abbreviation Helper** (or **Tools → Abbreviation
 Helper → Settings…**), in the same order: one section for each of the three tooltips,
 each starting with its on/off switch and, on the same line, a **Show:** choice of what
-brings it up, with its options indented under it; then the appearance they share, the
-Tools menu and the abbreviations file. Your own abbreviations and the ignore list are
-under Meanings, editable in place with no JSON to hand-edit. Changes apply immediately.
+brings it up, with its options indented under it; then the appearance they share and the
+abbreviations file. Your own abbreviations and the ignore list are under Meanings,
+editable in place with no JSON to hand-edit. Changes apply immediately.
 
 Definitions you add there are authoritative: they are shown even when a paper defines
 the short form differently. A definition or ignore entry covers the singular and the
@@ -112,22 +124,27 @@ next to it, clears what was learned so far. A paper's supplement counts as the s
 
 ### Tools menu
 
-**Tools → Abbreviation Helper** holds the actions:
+**Tools → Abbreviation Helper** holds the actions, and the settings in the same order as
+the Settings window:
 
 | Menu item | What it does |
 |---|---|
 | Settings… | Opens the pane above |
 | Scan This PDF and Copy List | Copy the full list for the PDF in the reader (or, in the library, the selected item's PDF) to the clipboard |
+| 1 · Meanings | Off, Always or a key; where each meaning comes from; definitions from your other papers |
+| 2 · Database Links | Off, Always or a key; links under a meaning; which databases |
+| 3 · Where a Word Is Used | Off or a key; how many uses are listed |
+| Tooltip Appearance | Text size and theme |
 | Ignore an Abbreviation… | Suppress a wrong detection |
 | Ignored Abbreviations (n) | Click any entry to stop ignoring it |
 | Open Abbreviations File… | Opens your settings file |
 | Reload Abbreviations File | Apply edits without restarting Zotero |
 
-Tick **Show every setting in the Tools menu** in the settings to mirror every
-setting here as well. On Windows and Linux that menu stays open while you change
-several settings; **on macOS it always closes after each one**, because the menu bar
-there is a native `NSMenu` and macOS dismisses those on selection — no plugin can
-override it. That is why settings live in the Settings window.
+A tooltip's options are greyed out while it is off. On Windows and Linux the menu stays
+open while you change several settings; **on macOS it always closes after each one**,
+because the menu bar there is a native `NSMenu` and macOS dismisses those on selection
+— no plugin can override it. The Settings window is the easier place for several
+changes.
 
 **On macOS the Ctrl setting also accepts ⌘ Command**, and the menu labels it that way. One
 saved preference therefore behaves correctly on every platform, which matters if your

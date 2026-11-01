@@ -53,7 +53,6 @@ var AbbrevSettings = {
         this._buildIgnoreList();
         this._buildDatabaseList();
         this._syncDependents();
-        this._showKeyClash();
     },
 
     /* ---- definitions learned from other papers --------------------------- */
@@ -130,27 +129,6 @@ var AbbrevSettings = {
         this._fillMenu('abbrev-settings-tooltip-modifier', modifiers);
         this._fillMenu('abbrev-settings-db-modifier', modifiers);
         this._fillMenu('abbrev-settings-uses-modifier', modifiers.filter(c => c.id !== 'none'));
-    },
-
-    /**
-     * Say so when the key of "where a word is used" also shows another
-     * tooltip: while it is held, the uses are shown instead.
-     */
-    _showKeyClash() {
-        const value = id => { const el = this._byId(id); return el ? String(el.value || '') : ''; };
-        const uses = value('abbrev-settings-uses-modifier');
-        const others = [];
-        if (this._isTicked('abbrev-settings-hover') && value('abbrev-settings-tooltip-modifier') === uses) others.push('meanings');
-        if (this._isTicked('abbrev-settings-db-enabled') && value('abbrev-settings-db-modifier') === uses) others.push('database links');
-        this._error('abbrev-settings-uses-clash', this._isTicked('abbrev-settings-uses') && others.length
-            ? 'The same key shows ' + others.join(' and ') + ': while you hold it, the uses are shown instead.'
-            : '');
-    },
-
-    _isTicked(id) {
-        const el = this._byId(id);
-        if (!el) return false;
-        return (typeof el.checked === 'boolean') ? el.checked : el.getAttribute('checked') === 'true';
     },
 
     _fillMenu(id, choices) {
@@ -375,11 +353,7 @@ var AbbrevSettings = {
 
         for (const [masterId] of this.DEPENDENTS) {
             const master = this._byId(masterId);
-            if (master) master.addEventListener('command', () => { this._syncDependents(); this._showKeyClash(); });
-        }
-        for (const id of ['abbrev-settings-tooltip-modifier', 'abbrev-settings-db-modifier', 'abbrev-settings-uses-modifier']) {
-            const list = this._byId(id);
-            if (list) list.addEventListener('command', () => this._showKeyClash());
+            if (master) master.addEventListener('command', () => this._syncDependents());
         }
 
         this._onClick('abbrev-settings-db-edit', () => this._openFile());
@@ -452,6 +426,12 @@ var AbbrevSettings = {
                 dependent.style.opacity = on ? '' : '0.5';
             }
         }
+    },
+
+    _isTicked(id) {
+        const el = this._byId(id);
+        if (!el) return false;
+        return (typeof el.checked === 'boolean') ? el.checked : el.getAttribute('checked') === 'true';
     }
 };
 

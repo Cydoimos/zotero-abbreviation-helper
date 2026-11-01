@@ -84,13 +84,18 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
   check('long context is cut, and says so', /^…/.test(last.before) && /…$/.test(last.after)
     && last.before.split(' ').length <= 9, JSON.stringify(last));
   check('a word that is not there has no uses', sb.findUses(TEXT, 'XYZ', 3, 15).total === 0);
+  const opening = sb.findUses('It was blocked. EGFR levels fell.', 'EGFR', 3, 15).uses[0];
+  check('a use that starts a sentence has nothing of the sentence before', opening.before === ''
+    && opening.after === ' levels fell.', JSON.stringify(opening));
 
   // ---------- the held key in the reader ----------
   let env = makeEnv();
   let H = env.H;
   H.init({ id: 'x', version: '1', rootURI: 'r://' });
   await H._dictionariesReady;
-  H.databaseLinksEnabled = false;
+  check('off for a new install, like database links: only meanings are on', H.usesEnabled === false
+    && H.databaseLinksEnabled === false && H.hoverEnabled === true);
+  H.usesEnabled = true;
   H.textCache.set(5, TEXT);
   H._setActiveHoverPairs(5, [{ abbr: 'EV', term: 'extracellular vesicle', certainty: 'defined' }]);
   let doc = makeDoc();
@@ -101,12 +106,12 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
   const keyUp = (k, flags) => H._onReaderKeyUp(doc, Object.assign({ key: k }, flags));
   const shown = () => !!tip(doc) && tip(doc).style.display === 'block';
 
-  check('by default it is shown while holding Ctrl (or Cmd on a Mac)', H.usesModifier === 'ctrl');
+  check('it is shown while holding Ctrl (or Cmd on a Mac)', H.usesModifier === 'ctrl');
   hover();
   check('no meaning, so pointing at KD shows nothing', !shown());
   keyDown('Control', { ctrlKey: true });
   check('holding Ctrl over KD lists where it is used', shown()
-    && rows(doc)[0] === 'KD — no meaning found' && rows(doc)[1] === 'Used 3 times:', rows(doc).slice(0, 2).join(' | '));
+    && rows(doc)[0] === 'KD — where it is used' && rows(doc)[1] === 'Used 3 times:', rows(doc).slice(0, 2).join(' | '));
   const choice = i => tip(doc).childNodes[2].childNodes[i];
   check('each use is a numbered choice with its page and words, the word in bold',
     choice(0).textContent === '1p. 2 · The binding was measured as a dissociation constant (KD).'
@@ -118,7 +123,7 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
   check('letting go of the key hides it, as with the other tooltips: no toggle', !shown());
 
   hover(52, { metaKey: true });
-  check('on a Mac, Cmd works for Ctrl', shown() && rows(doc)[0] === 'KD — no meaning found');
+  check('on a Mac, Cmd works for Ctrl', shown() && rows(doc)[0] === 'KD — where it is used');
   const t = tip(doc);
   t.contains = x => x === t;
   H._onReaderMouseMove(doc, { clientX: 70, clientY: 70, target: t, metaKey: true });
@@ -141,31 +146,123 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
 
   word = 'EVs';
   hover(70, { ctrlKey: true });
-  check('over an abbreviation with a meaning, the list says the meaning and finds every form',
-    rows(doc)[0] === 'EV — extracellular vesicle' && rows(doc)[1] === 'Used 3 times:', rows(doc).slice(0, 2).join(' | '));
+  check('over a word with a meaning, the uses come under it, set off by a line, and every form is found',
+    rows(doc).slice(0, 4).join(' | ') === 'EVs — extracellular vesicle | Defined in this paper |  | EV: used 3 times:',
+    rows(doc).slice(0, 4).join(' | '));
   hover(71);
-  check('without the key, its meaning is shown as usual', rows(doc)[0] === 'EVs — extracellular vesicle' && rows(doc).length === 2,
+  check('without the key, only the meaning', rows(doc).join(' | ') === 'EVs — extracellular vesicle | Defined in this paper',
     rows(doc).join(' | '));
 
   H.usesEnabled = false;
   hover(72, { ctrlKey: true });
-  check('switched off, holding the key shows the meaning', rows(doc)[0] === 'EVs — extracellular vesicle');
+  check('switched off, holding the key shows only the meaning', rows(doc).length === 2);
   H.usesEnabled = true;
 
   H.usesModifier = 'alt';
   hover(73, { ctrlKey: true });
-  check('another key can be chosen', rows(doc)[0] === 'EVs — extracellular vesicle');
+  check('another key can be chosen', rows(doc).length === 2);
   hover(74, { altKey: true });
-  check('and works', rows(doc)[0] === 'EV — extracellular vesicle' && rows(doc)[1] === 'Used 3 times:');
-
-  H.databaseLinksEnabled = true;
-  H.databaseLinksModifier = 'shift';
-  H.usesModifier = 'shift';
-  word = 'EGFR';
-  hover(80, { shiftKey: true });
-  check('a key shared with database links shows the uses', rows(doc)[0] === 'EGFR — no meaning found', rows(doc)[0]);
-  H.databaseLinksEnabled = false;
+  check('and works', rows(doc)[3] === 'EV: used 3 times:');
+  const altUp = key('Alt', { code: 'AltLeft' });
+  H._onReaderKeyUp(doc, altUp);
+  check('letting go of Alt does not move the keyboard to the menu bar (Windows, Linux)', altUp.defaultPrevented);
+  H._forgetHover(doc);
+  const altAlone = key('Alt', { code: 'AltLeft' });
+  H._onReaderKeyUp(doc, altAlone);
+  check('but with no tooltip on screen, Alt is left to the menu bar', !altAlone.defaultPrevented);
   H.usesModifier = 'ctrl';
+
+  // ---------- each tooltip on its own, whatever the others are set to ----------
+  {
+    word = 'TP53';
+    H.usesEnabled = false;
+    H.databaseLinksEnabled = true;
+    H.tooltipModifier = 'shift';
+    H.databaseLinksModifier = 'none';
+    hover(90);
+    check('links set to "Always" show while meanings need a key', shown() && rows(doc)[0] === 'TP53 — look it up in a database',
+      shown() && rows(doc)[0]);
+    H.databaseLinksModifier = 'alt';
+    H._refreshHoverFromLastState(doc);   // what a changed setting does
+    hover(91);
+    check('links on Alt (Option) do not show without it', !shown());
+    hover(92, { altKey: true });
+    check('and show while it is held, though meanings need Shift', shown() && rows(doc)[0] === 'TP53 — look it up in a database');
+    H.hoverEnabled = false;
+    hover(93, { altKey: true });
+    check('with meanings switched off, links still work', shown() && rows(doc)[0] === 'TP53 — look it up in a database');
+    H.usesEnabled = true;
+    hover(94, { ctrlKey: true });
+    check('and so does where a word is used', shown() && rows(doc)[0] === 'TP53 — where it is used', shown() && rows(doc)[0]);
+    H.hoverEnabled = true;
+    H.tooltipModifier = 'none';
+  }
+
+  // ---------- tooltips that share a key show as one ----------
+  {
+    const PAPER = 'The epidermal growth factor receptor (EGFR) was blocked. EGFR levels fell.\n\n\n\fEGFR returned on day 3.';
+    H.textCache.set(5, PAPER);
+    H._setActiveHoverPairs(5, [{ abbr: 'EGFR', term: 'epidermal growth factor receptor', certainty: 'defined' }]);
+    H.tooltipModifier = 'shift';
+    H.databaseLinksModifier = 'shift';
+    H.usesModifier = 'shift';
+    word = 'EGFR';
+    hover(100);
+    check('all three on Shift: nothing without it', !shown());
+    hover(101, { shiftKey: true });
+    const r = rows(doc);
+    const on = bundled.databases.filter(d => d.enabled !== false).map(d => d.label);
+    check('with it, one tooltip: the meaning, then a line, the links, a line, the uses, and how to choose',
+      r[0] === 'EGFR — epidermal growth factor receptor' && r[1] === 'Defined in this paper' && r[2] === ''
+      && r[3].startsWith('1HGNC2UniProt') && r[4] === '' && r[5] === 'Used 3 times:'
+      && r[7] === 'Click one, or press its number.' && r.length === 8, r.join(' | '));
+    const uses = tip(doc).childNodes[6].childNodes.map(c => c.childNodes[0].textContent);
+    check('numbers run on from the links to the uses, and the tenth is 0', on.length === 7
+      && uses.join(',') === '8,9,0', uses.join(','));
+    const lines = tip(doc).childNodes.filter((c, i) => i === 2 || i === 4);
+    check('the lines between the parts are thin rules', lines.every(l => /1px solid/.test(l.style.borderTop)));
+    const before = env.reader.calls.length;
+    const zero = key('0', { code: 'Digit0' });
+    H._onReaderKeyDown(doc, zero);
+    await wait(5);
+    check('pressing 0 goes to the tenth choice, the third use', zero.defaultPrevented
+      && env.reader.calls.length === before + 1 && env.reader.calls[before].pageIndex === 1, JSON.stringify(env.reader.calls));
+
+    H.tooltipModifier = 'none';
+    hover(102);
+    check('meanings always, links and uses on Shift: the meaning alone without it', rows(doc).length === 2);
+    hover(103, { shiftKey: true });
+    check('and all three with it', rows(doc).length === 8);
+    H.databaseLinksOnAbbreviations = false;
+    H._refreshHoverFromLastState(doc);
+    hover(104, { shiftKey: true });
+    check('"Also show them under a meaning" off: the links stay away from a word with a meaning',
+      rows(doc).length === 6 && rows(doc)[3] === 'Used 3 times:', rows(doc).join(' | '));
+    H.databaseLinksOnAbbreviations = true;
+    H.databaseLinksEnabled = false;
+    H.usesModifier = 'ctrl';
+    H.textCache.set(5, TEXT);
+    H._setActiveHoverPairs(5, [{ abbr: 'EV', term: 'extracellular vesicle', certainty: 'defined' }]);
+  }
+
+  // ---------- keys pressed with the focus outside the paper ----------
+  {
+    const listeners = {};
+    const win = { closed: false, addEventListener(type, fn) { listeners[type] = fn; }, removeEventListener(type) { delete listeners[type]; } };
+    H._followKeysIn(win);
+    H._followKeysIn(win);
+    check('a main window follows the modifier keys too, once', typeof listeners.keydown === 'function'
+      && H.keyWindows.length === 1);
+    word = 'KD';
+    hover(110);
+    listeners.keydown({ key: 'Control', ctrlKey: true });
+    check('pressing the key there shows the tooltip without moving the mouse', shown() && rows(doc)[0] === 'KD — where it is used');
+    listeners.keyup({ key: 'Control', ctrlKey: false });
+    await wait(150);
+    check('and letting go hides it', !shown());
+    H._removeHoverListeners();
+    check('switching off stops following them', !listeners.keydown && H.keyWindows.length === 0);
+  }
 
   // ---------- one look and one way of choosing for all three tooltips ----------
   {
@@ -177,8 +274,8 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
       { groupLabel: 'Cell line databases', links: [{ label: 'Cellosaurus', url: 'u3' }] }];
     H._showHoverTooltip(doc, 10, 10, 'EGFR', 'epidermal growth factor receptor', { groups, certainty: 'defined' });
     heads.push(tip(doc).childNodes[0]);
-    check('1 · a meaning with links: one row of numbered databases, no group names',
-      rows(doc).join(' | ') === 'EGFR — epidermal growth factor receptor | Defined in this paper | 1HGNC2UniProt3Cellosaurus'
+    check('1 · a meaning with links: a line, then one row of numbered databases, no group names',
+      rows(doc).join(' | ') === 'EGFR — epidermal growth factor receptor | Defined in this paper |  | 1HGNC2UniProt3Cellosaurus'
         + ' | Click one, or press its number.', rows(doc).join(' | '));
     H._onReaderKeyDown(doc, key('3', { code: 'Digit3' }));
     check('pressing 3 opens the third link', opened.join() === 'u3', opened.join());
@@ -195,7 +292,7 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
     heads.push(tip(doc).childNodes[0]);
     const useBadge = tip(doc).childNodes[2].childNodes[0].childNodes[0].style;
     check('3 · uses: the same heading, then numbered choices and the same hint',
-      rows(doc)[0] === 'KD — no meaning found' && rows(doc)[rows(doc).length - 1] === 'Click one, or press its number.');
+      rows(doc)[0] === 'KD — where it is used' && rows(doc)[rows(doc).length - 1] === 'Click one, or press its number.');
     check('every heading is the word in bold, a dash and what the tooltip says',
       heads.every(h => h.childNodes[0].tagName === 'strong' && /^ — /.test(h.childNodes[1].textContent)));
     check('database and use choices are numbered in the same style',

@@ -11,16 +11,15 @@
 
 pref("extensions.abbreviation-helper.hoverEnabled", true);
 pref("extensions.abbreviation-helper.tooltipModifier", "none");
-pref("extensions.abbreviation-helper.databaseLinksEnabled", true);
+pref("extensions.abbreviation-helper.databaseLinksEnabled", false);
 pref("extensions.abbreviation-helper.databaseLinksModifier", "shift");
 pref("extensions.abbreviation-helper.databaseLinksOnAbbreviations", true);
 pref("extensions.abbreviation-helper.tooltipFontSize", 12);
 pref("extensions.abbreviation-helper.tooltipTheme", "dark");
 pref("extensions.abbreviation-helper.disabledDatabases", "");
 pref("extensions.abbreviation-helper.enabledDatabases", "");
-pref("extensions.abbreviation-helper.advancedMenu", false);
 pref("extensions.abbreviation-helper.useLibraryDefinitions", true);
 pref("extensions.abbreviation-helper.showMeaningSource", true);
-pref("extensions.abbreviation-helper.usesEnabled", true);
+pref("extensions.abbreviation-helper.usesEnabled", false);
 pref("extensions.abbreviation-helper.usesModifier", "ctrl");
 pref("extensions.abbreviation-helper.usesCount", 3);

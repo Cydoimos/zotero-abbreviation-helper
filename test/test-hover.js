@@ -34,6 +34,7 @@ const code = fs.readFileSync(__dirname + '/../src/abbreviation.js', 'utf8');
 const sb = { globalThis: {}, Zotero: { debug() {}, launchURL() {} }, console };
 vm.createContext(sb); vm.runInContext(code + '\n;this.__H=AbbreviationHelper;', sb);
 const H = sb.__H;
+H.databaseLinksEnabled = true;      // off for a new install; these tests need it
 
 let pass = true;
 const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d ? '  ' + d : '')); if (!c) pass = false; };

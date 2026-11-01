@@ -28,6 +28,15 @@
   line-height: 1.45;
 }
 
+#abbrev-settings-root .abbrev-settings-intro ul {
+  margin-block: 0.3em 0.5em;
+  padding-inline-start: 1.6em;
+}
+
+#abbrev-settings-root .abbrev-settings-intro li {
+  margin-block: 0.15em;
+}
+
 /* A control placed on the same line as the one before it: a tooltip's
    "Show:" choice next to its switch, the theme next to the text size. */
 #abbrev-settings-root .abbrev-settings-inline {

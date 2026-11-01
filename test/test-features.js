@@ -29,6 +29,9 @@ function makeEnv(files, prefs) {
   };
   vm.createContext(sb);
   vm.runInContext(fs.readFileSync(SRC_DIR + '/abbreviation.js', 'utf8') + '\n;this.__H=AbbreviationHelper;', sb);
+  // Most of these tests are about database links, off for a new install
+  // since 2.2.0: switched on as a user would, unless a saved setting says.
+  sb.__H.databaseLinksEnabled = true;
   return { H: sb.__H, FS, P };
 }
 

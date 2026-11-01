@@ -85,13 +85,50 @@ function start(files, prefs) {
   check('modifier keys are kept', H.tooltipModifier === 'shift' && H.databaseLinksModifier === 'ctrl');
   check('text size stored as text by 2.1.0 still works', H.tooltipFontSize === 16, String(H.tooltipFontSize));
   check('theme and link options are kept', H.tooltipTheme === 'light' && H.databaseLinksOnAbbreviations === false);
-  check('the full Tools menu choice is kept', H.advancedMenu === true);
+  check('the old switch for a shorter Tools menu is left unused: the menu has every setting now',
+    !('advancedMenu' in H));
   const on = H._enabledDatabases().map(d => d.label);
   check('databases switched off stay off', !on.includes('ATCC') && !on.includes('GeneCards'), on.join(','));
   check('the others stay on', ['HGNC', 'UniProt', 'NCBI Gene', 'Cellosaurus', 'PubChem'].every(l => on.includes(l)));
   check('the new databases start off', !['Ensembl', 'InterPro', 'RCSB PDB', 'RNAcentral', 'Addgene'].some(l => on.includes(l)));
   check('new settings take their defaults', H.useLibraryDefinitions === true && H.showMeaningSource === true
-    && H.usesEnabled === true && H.usesCount === 3);
+    && H.usesEnabled === false && H.usesCount === 3);
+  check('the version is recorded', z.P.get(BRANCH + 'lastVersion') === 'new');
+
+  // Database links were on by default in 2.1.0 and are off for a new install
+  // now. Someone who never touched the setting must keep them.
+  {
+    const { databaseLinksEnabled, ...untouched } = PREFS_FROM_2_1_0;
+    const kept = start({ [USER]: FILE_FROM_2_1_0 }, untouched);
+    await kept.sandbox.startup({ id: 'abbreviation-helper@cydoimos.github.io', version: '2.2.0', rootURI: 'r://' });
+    const K = kept.sandbox.AbbreviationHelper;
+    await K._dictionariesReady;
+    check('updating from 2.1.0 keeps database links on, though the default is now off',
+      K.databaseLinksEnabled === true && kept.P.get(BRANCH + 'databaseLinksEnabled') === true
+      && K._enabledDatabases().length > 0);
+    kept.sandbox.shutdown();
+
+    const off = start({ [USER]: FILE_FROM_2_1_0 }, Object.assign({}, untouched, { databaseLinksEnabled: false }));
+    await off.sandbox.startup({ id: 'abbreviation-helper@cydoimos.github.io', version: '2.2.0', rootURI: 'r://' });
+    await off.sandbox.AbbreviationHelper._dictionariesReady;
+    check('links switched off in 2.1.0 stay off', off.sandbox.AbbreviationHelper.databaseLinksEnabled === false);
+    off.sandbox.shutdown();
+
+    const fresh = start({}, {});
+    await fresh.sandbox.startup({ id: 'abbreviation-helper@cydoimos.github.io', version: '2.2.0', rootURI: 'r://' });
+    const F = fresh.sandbox.AbbreviationHelper;
+    await F._dictionariesReady;
+    check('a new install starts with only meanings on', F.hoverEnabled === true && F.databaseLinksEnabled === false
+      && F.usesEnabled === false && !fresh.P.has(BRANCH + 'databaseLinksEnabled'));
+    check('and makes its abbreviations file, as before', USER in fresh.FS);
+    fresh.sandbox.shutdown();
+    // Its second start finds that file, but knows it made it itself.
+    const again = start(fresh.FS, Object.fromEntries([...fresh.P].map(([k, v]) => [k.replace(BRANCH, ''), v])));
+    await again.sandbox.startup({ id: 'abbreviation-helper@cydoimos.github.io', version: '2.2.0', rootURI: 'r://' });
+    await again.sandbox.AbbreviationHelper._dictionariesReady;
+    check('and keeps them so on the next start', again.sandbox.AbbreviationHelper.databaseLinksEnabled === false);
+    again.sandbox.shutdown();
+  }
   // This user holds Ctrl for database links, so "where a word is used" must
   // not take Ctrl, its default: the links would no longer show.
   check('where a word is used keeps off the key the links use, and the settings show it',

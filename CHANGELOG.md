@@ -85,24 +85,33 @@ abbreviations file.
   highlight as a clickable box over the words, which hid them from the plugin.
 
 ### Added
-- **Where a word is used.** Hold Ctrl (Cmd on macOS) over any word to list
-  its first uses in the paper, with their pages and the words around them;
-  click one, or let go of the key and press its number, to go there (the
-  reader marks the word, and its Back button returns). Most useful for
-  abbreviations without a meaning, whose first use usually defines them. It
-  can be switched off, shown with Shift, Ctrl/Cmd or Alt instead, and list
-  1, 3, 5 or 10 uses. If you already hold Ctrl for meanings or database
-  links, it takes Shift or Alt, so they work as before the update.
+- **Where a word is used** (off until switched on). Hold Ctrl (Cmd on
+  macOS) over any word to list its first uses in the paper, with their
+  pages and the words around them; click one, or let go of the key and
+  press its number, to go there (the reader marks the word, and its Back
+  button returns). Most useful for abbreviations without a meaning, whose
+  first use usually defines them. It can be shown with Shift, Ctrl/Cmd or
+  Alt, and list 1, 3, 5 or 10 uses. If you already hold Ctrl for meanings
+  or database links, it takes Shift or Alt, so they look as before.
 - **One look for the three tooltips** (meanings, database links, where a
   word is used): the word in bold and what the tooltip says, quieter lines
   under it, and numbered choices chosen the same way everywhere, by click
-  or by number. Each shows while you point or hold its key, and goes when
-  you move away or let go. Database links are one row of numbered choices,
-  named after their database, instead of underlined links.
-- **The settings follow the three tooltips**: a numbered section for each,
-  its switch and "Show:" choice on one line and its options indented under
-  it, then the shared appearance. Your own abbreviations and the ignore list
-  sit under Meanings.
+  or by number (1–9, then 0 for the tenth). Each shows while you point or
+  hold its key, and goes when you move away or let go. Database links are
+  one row of numbered choices, named after their database, instead of
+  underlined links.
+- **Tooltips that share a key show as one**, in parts set off by thin
+  lines: the meaning, the database links, then the uses. Numbers run on
+  from one part to the next. Set all three to one key to see everything
+  about a word at once.
+- **The settings follow the three tooltips**: an overview listing them, a
+  numbered section for each, its switch and "Show:" choice on one line and
+  its options indented under it, then the shared appearance. Your own
+  abbreviations and the ignore list sit under Meanings.
+- **The Tools menu has every setting, in the same order**: a submenu for
+  each tooltip (Off, Always or a key, then its options, greyed out while it
+  is off) and one for the appearance. The setting **Show every setting in
+  the Tools menu** is gone.
 - **Show where each meaning comes from** (on by default) in the settings
   hides the line under each meaning when turned off.
 - Five more databases, off until ticked in the settings: Ensembl, InterPro,
@@ -121,7 +130,23 @@ abbreviations file.
   38, they raise the undefined abbreviations found from 53.5 % to 60.0 %, at
   0.3 points of precision.
 
+### Changed defaults
+- **Only meanings are on for a new install.** Database links and where a
+  word is used are switched on in the settings. Database links were on by
+  default before: if you update from 2.1.0 and never switched them off,
+  they stay on.
+
 ### Fixed
+- **Database links shown "Always", or with a key other than the one for
+  meanings, now appear.** They only appeared while the meanings' key was
+  held too, and not at all with meanings switched off. Each tooltip now
+  counts on its own.
+- On Windows and Linux, letting go of Alt after holding it for a tooltip no
+  longer moves the keyboard to the menu bar, which took the number pressed
+  next.
+- A tooltip comes and goes with its key even when the keyboard focus is
+  outside the paper (in the reader's toolbar, say); it waited for the mouse
+  to move.
 - **The 1–9 keys open database links on every keyboard layout.** They read
   the character typed, so on a German keyboard Shift+1 ("!") did nothing,
   and on a French one the keys only worked with Shift.
