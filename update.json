@@ -12,6 +12,17 @@
               "strict_max_version": "10.*"
             }
           }
+        },
+        {
+          "version": "2.2.0",
+          "update_link": "https://github.com/Cydoimos/zotero-abbreviation-helper/releases/download/v2.2.0/abbreviation-helper-2.2.0.xpi",
+          "update_hash": "sha256:dc88530cd44f83bb72614fb6f3767d2dab31211cc9477540c44b9c0c7687dae5",
+          "applications": {
+            "zotero": {
+              "strict_min_version": "7.0",
+              "strict_max_version": "10.*"
+            }
+          }
         }
       ]
     }
