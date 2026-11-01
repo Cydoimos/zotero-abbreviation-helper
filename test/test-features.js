@@ -126,6 +126,7 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
   H._updateModifierState({});
   check('no modifier configured -> always allowed', H._databaseLinksCurrentlyAllowed() === true);
   H.databaseLinksModifier = 'ctrl';
+  H._isMac = () => true;
   H._updateModifierState({ metaKey: true });
   check('ctrl setting also accepts Command on macOS', H._databaseLinksCurrentlyAllowed() === true);
   H.databaseLinksModifier = 'alt';
@@ -166,6 +167,13 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
   check('Control satisfies the ctrl setting', H._databaseLinksCurrentlyAllowed() === true);
   H._updateModifierState({ metaKey: true });
   check('Command satisfies the ctrl setting', H._databaseLinksCurrentlyAllowed() === true);
+  H._isMac = () => false;
+  H._updateModifierState({ metaKey: true });
+  check('elsewhere the Windows or Super key does not: letting go of it opens the Start menu',
+    H._databaseLinksCurrentlyAllowed() === false);
+  H._updateModifierState({ ctrlKey: true });
+  check('and Ctrl does', H._databaseLinksCurrentlyAllowed() === true);
+  H._isMac = () => true;
 
   // ---------- 4c. paths work on both separator conventions ----------
   check('POSIX data directory path',

@@ -372,7 +372,7 @@ const visible = (doc) => !!tipOf(doc) && tipOf(doc).style.display !== 'none';
     const old = doc.createElement('div');
     old.id = 'abbreviation-helper-tooltip';
     doc.body.appendChild(old);
-    H._showHoverTooltip(doc, 10, 10, 'PCR', 'polymerase chain reaction', {});
+    H._showTooltip(doc, 10, 10, { word: 'PCR', meaning: { term: 'polymerase chain reaction' } });
     check('upgrade: an old version\'s tooltip is replaced, not reused',
       tipOf(doc) !== old && old.parentNode === null && tipOf(doc).dataset.abbreviationHelperOwner === H._instanceToken);
   }
@@ -387,7 +387,7 @@ const visible = (doc) => !!tipOf(doc) && tipOf(doc).style.display !== 'none';
     H._installHoverForAllWindows();
     check('listeners are attached once per page', H.hoverDocs.length === 1 && doc.listeners.mousemove.length === 1);
     check('P7 key-up is listened for once', !(doc.listeners.keyup || []).length && doc.defaultView.listeners.keyup.length === 1);
-    H._showHoverTooltip(doc, 10, 10, 'GFP', 'green fluorescent protein', {});
+    H._showTooltip(doc, 10, 10, { word: 'GFP', meaning: { term: 'green fluorescent protein' } });
     H._removeHoverListeners();
     check('P7 removing listeners also removes the tooltip', !tipOf(doc) && !doc.listeners.mousemove.length
       && !doc.defaultView.listeners.keyup.length);

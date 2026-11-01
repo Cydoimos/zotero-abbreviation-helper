@@ -86,10 +86,10 @@ abbreviations file.
 
 ### Added
 - **Where a word is used** (off until switched on). Hold Ctrl (Cmd on
-  macOS) over any word to list its first uses in the paper, with their
-  pages and the words around them; click one, or let go of the key and
-  press its number, to go there (the reader marks the word, and its Back
-  button returns). Most useful for abbreviations without a meaning, whose
+  macOS) over any word, in any script ("Müller", "protéine"), to list its
+  first uses in the paper, with their pages and the words around them;
+  click one, or let go of the key and press its number, to go there (the
+  reader marks the word, and its Back button returns). Most useful for abbreviations without a meaning, whose
   first use usually defines them. It can be shown with Shift, Ctrl/Cmd or
   Alt, and list 1, 3, 5 or 10 uses. If you already hold Ctrl for meanings
   or database links, it takes Shift or Alt, so they look as before.
@@ -112,7 +112,7 @@ abbreviations file.
   each tooltip (Off, Always or a key, then its options, greyed out while it
   is off) and one for the appearance. The setting **Show every setting in
   the Tools menu** is gone.
-- **Show where each meaning comes from** (on by default) in the settings
+- **Say where each meaning comes from** (on by default) in the settings
   hides the line under each meaning when turned off.
 - Five more databases, off until ticked in the settings: Ensembl, InterPro,
   RCSB PDB, RNAcentral and Addgene.
@@ -147,6 +147,13 @@ abbreviations file.
 - A tooltip comes and goes with its key even when the keyboard focus is
   outside the paper (in the reader's toolbar, say); it waited for the mouse
   to move.
+- Holding Shift to type a capital in an annotation, a note or the search
+  box no longer brings up the Shift tooltip at the pointer.
+- On Windows and Linux, the Windows or Super key no longer counts as Ctrl
+  (only ⌘ Command on macOS does): letting go of it opens the Start menu.
+- AltGr with a number key (typing "@" on a French keyboard) no longer
+  chooses an entry of an open tooltip, and neither does a key that is part
+  of composing a character.
 - **The 1–9 keys open database links on every keyboard layout.** They read
   the character typed, so on a German keyboard Shift+1 ("!") did nothing,
   and on a French one the keys only worked with Shift.

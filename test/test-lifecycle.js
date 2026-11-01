@@ -44,7 +44,9 @@ function makeDocument() {
 
 function makeZotero() {
   const { doc, tools } = makeDocument();
-  const window = { document: doc, ZoteroPane: {}, Zotero_Tabs: { selectedType: 'library' } };
+  const window = { document: doc, ZoteroPane: {}, Zotero_Tabs: { selectedType: 'library' }, _keys: [],
+    addEventListener(t, fn) { this._keys.push([t, fn]); },
+    removeEventListener(t, fn) { this._keys = this._keys.filter(([u, g]) => !(u === t && g === fn)); } };
   const timers = new Set();
   const panes = { registered: null, unregistered: false };
   const observers = new Set();
@@ -108,8 +110,16 @@ function makeZotero() {
   check('a second announcement does not add a second menu',
     z.tools.childNodes.filter(c => c.id === 'abbreviation-helper-menu').length === 1);
 
+  // The main window follows the modifier keys while a tooltip is on.
+  const H = z.sandbox.AbbreviationHelper;
+  H.usesEnabled = true;
+  H._installHoverForAllWindows();
+  const win = z.Zotero.getMainWindow();
+  check('the main window follows the modifier keys', win._keys.length === 2, win._keys.length + '');
+
   z.sandbox.shutdown();
   await wait(10);
+  check('shutdown stops following them', win._keys.length === 0, win._keys.length + ' left');
   check('shutdown removes the Tools menu', !z.doc.getElementById('abbreviation-helper-menu'));
   check('shutdown unregisters the Settings pane', z.panes.unregistered);
   check('shutdown stops every timer', z.timers.size === 0, z.timers.size + ' left');

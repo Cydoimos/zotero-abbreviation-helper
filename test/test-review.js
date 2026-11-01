@@ -190,8 +190,8 @@ const tip = doc => doc.getElementById('abbreviation-helper-tooltip');
     const shown = makeDoc(), focused = makeDoc();
     const opened = [];
     H._openExternalURL = url => opened.push(url);
-    const showLinks = () => H._showDatabaseTooltip(shown, 10, 10, { symbol: 'EGFR',
-      groups: [{ groupLabel: 'Databases', links: [{ label: 'A', url: 'u1' }, { label: 'B', url: 'u2' }] }] });
+    const showLinks = () => H._showTooltip(shown, 10, 10, { word: 'EGFR',
+      links: [{ groupLabel: 'Databases', links: [{ label: 'A', url: 'u1' }, { label: 'B', url: 'u2' }] }] });
     const key = (k, code, target) => H._onReaderKeyDown(focused,
       { key: k, code, target: target || {}, preventDefault() {}, stopPropagation() {} });
     showLinks();

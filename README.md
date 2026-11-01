@@ -54,7 +54,9 @@ tenth); a tooltip with choices stays put while you move the pointer onto it, eve
 you let go of the key. The number keys work on every keyboard layout: on a German
 keyboard Shift+1 chooses the first entry although it types "!", and on a French one the
 1 key works with or without Shift. They are left alone while Ctrl, Cmd or Alt is held,
-since Zotero uses those combinations to switch tabs and reader tools. On Windows and
+since Zotero uses those combinations to switch tabs and reader tools, and with AltGr,
+which types a character ("@" on a French keyboard). A key pressed while you type in a
+text field (an annotation, a note, the search box) never brings up a tooltip. On Windows and
 Linux, letting go of Alt after using it for a tooltip does not move the keyboard to the
 menu bar, so the number you press next still reaches the tooltip.
 
@@ -146,9 +148,11 @@ because the menu bar there is a native `NSMenu` and macOS dismisses those on sel
 — no plugin can override it. The Settings window is the easier place for several
 changes.
 
-**On macOS the Ctrl setting also accepts ⌘ Command**, and the menu labels it that way. One
-saved preference therefore behaves correctly on every platform, which matters if your
-Zotero profile is synced between machines.
+**On macOS the Ctrl setting also accepts ⌘ Command**, and the menu labels it that way (and
+Alt as ⌥ Option). One saved preference therefore behaves correctly on every platform,
+which matters if your Zotero profile is moved between machines. On Windows and Linux only
+Ctrl counts: the Windows or Super key opens the Start menu or the desktop's overview when
+let go.
 
 ## The abbreviations file
 

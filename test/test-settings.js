@@ -33,6 +33,7 @@ function makeEl(tag, doc) {
     fire(t) { for (const fn of (this._listeners[t] || []).slice()) fn({ target: this }); },
     click() { this.fire('click'); },
     querySelector(sel) { return descend(this).find(e => e.tagName === sel) || null; },
+    querySelectorAll(sel) { const tags = sel.split(',').map(s => s.trim()); return descend(this).filter(e => tags.includes(e.tagName)); },
     get firstChild() { return this.childNodes[0] || null; }
   };
   return el;
@@ -120,7 +121,7 @@ const tick = () => new Promise(r => setTimeout(r, 0));
 
   const readByPlugin = new Set(
     [...fs.readFileSync(SRC_DIR + '/abbreviation.js', 'utf8')
-      .matchAll(/_getPref\('([^']+)'/g)].map(m => m[1]));
+      .matchAll(/(?:_getPref|oneOf)\('([^']+)'/g)].map(m => m[1]));
   const boundNames = bound.map(p => p.slice(H.PREF_BRANCH.length));
   check('every bound preference is one the plugin actually loads',
     boundNames.every(n => readByPlugin.has(n)),
@@ -179,6 +180,22 @@ const tick = () => new Promise(r => setTimeout(r, 0));
     menulists.every(e => e.getAttribute('native') === 'true'),
     menulists.filter(e => e.getAttribute('native') !== 'true')
       .map(e => e.id).join(',') || 'all native');
+
+  // ---------- 4b. a tooltip's options wait while it is off ----------
+  {
+    const master = doc.getElementById('abbrev-settings-db-enabled');
+    const options = ['abbrev-settings-db-modifier', 'abbrev-settings-db-on-abbr', 'abbrev-settings-db-edit']
+      .map(id => doc.getElementById(id));
+    master.checked = true; master.fire('command');
+    check('a tooltip switched on has its options enabled', options.every(o => o && !o.disabled));
+    master.checked = false; master.fire('command');
+    check('switched off, they are disabled, not just greyed', options.every(o => o.disabled)
+      && doc.getElementById('abbrev-settings-db-dependent').style.opacity === '0.5');
+    const meanings = doc.getElementById('abbrev-settings-hover');
+    meanings.checked = false; meanings.fire('command');
+    check('the forget button waits while meanings are off', doc.getElementById('abbrev-settings-library-forget').disabled);
+    meanings.checked = true; meanings.fire('command');
+  }
 
   // ---------- 4c. tooltip sizes ----------
   const sizeList = doc.getElementById('abbrev-settings-font');

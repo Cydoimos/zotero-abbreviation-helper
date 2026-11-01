@@ -128,6 +128,26 @@ function start(files, prefs) {
     await again.sandbox.AbbreviationHelper._dictionariesReady;
     check('and keeps them so on the next start', again.sandbox.AbbreviationHelper.databaseLinksEnabled === false);
     again.sandbox.shutdown();
+
+    // If the file cannot be checked, nothing is decided: it is checked again
+    // at the next start rather than links being lost for good.
+    const unsure = start({ [USER]: FILE_FROM_2_1_0 }, untouched);
+    unsure.sandbox.IOUtils.exists = async () => { throw new Error('disk busy'); };
+    await unsure.sandbox.startup({ id: 'abbreviation-helper@cydoimos.github.io', version: '2.2.0', rootURI: 'r://' });
+    await unsure.sandbox.AbbreviationHelper._dictionariesReady;
+    check('when the check fails, it is not marked as done', !unsure.P.has(BRANCH + 'lastVersion'));
+    unsure.sandbox.shutdown();
+  }
+
+  // ---------- values no version writes ----------
+  {
+    const odd = start({}, { tooltipModifier: 'cmd', databaseLinksModifier: 7, usesModifier: 'none', tooltipTheme: 'blue' });
+    await odd.sandbox.startup({ id: 'abbreviation-helper@cydoimos.github.io', version: '2.2.0', rootURI: 'r://' });
+    const O = odd.sandbox.AbbreviationHelper;
+    check('a hand-edited key or theme no version writes falls back to the default',
+      O.tooltipModifier === 'none' && O.databaseLinksModifier === 'shift' && O.usesModifier === 'ctrl'
+      && O.tooltipTheme === 'dark', [O.tooltipModifier, O.databaseLinksModifier, O.usesModifier, O.tooltipTheme].join(','));
+    odd.sandbox.shutdown();
   }
   // This user holds Ctrl for database links, so "where a word is used" must
   // not take Ctrl, its default: the links would no longer show.

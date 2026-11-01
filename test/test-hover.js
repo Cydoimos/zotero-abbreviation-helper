@@ -45,7 +45,7 @@ const origEnsure = H._ensureHoverTooltip.bind(H);
 H._ensureHoverTooltip = function (d) { const tip = origEnsure(d); if (d._register) d._register(tip); return tip; };
 
 // 1) Plain abbreviation tooltip.
-H._showHoverTooltip(doc, 100, 100, 'PDT', 'photodynamic therapy', {});
+H._showTooltip(doc, 100, 100, { word: 'PDT', meaning: { term: 'photodynamic therapy' } });
 let tip = doc.getElementById('abbreviation-helper-tooltip');
 check('abbreviation tooltip created', !!tip);
 check('tooltip is visible', tip && tip.style.display === 'block', 'display=' + (tip && tip.style.display));
@@ -57,13 +57,13 @@ H.dictionaries = require('../src/data/abbreviations.json');
 const info = H._lookupDatabaseLinks('EGFR');
 check('database lookup returns groups', !!(info && info.groups && info.groups.length),
   'groups=' + (info && info.groups ? info.groups.length : 0));
-H._showHoverTooltip(doc, 120, 120, 'EGFR', 'epidermal growth factor receptor', { groups: info.groups });
+H._showTooltip(doc, 120, 120, { word: 'EGFR', meaning: { term: 'epidermal growth factor receptor' }, links: info.groups });
 tip = doc.getElementById('abbreviation-helper-tooltip');
 check('tooltip with links is interactive', tip && tip.dataset.abbreviationHelperInteractive === 'true');
 check('numbered choices registered', H.activeChoices.length > 0, 'n=' + H.activeChoices.length);
 
 // 3) Database-only tooltip (the signature that lost its hoverKey argument).
-H._showDatabaseTooltip(doc, 140, 140, info);
+H._showTooltip(doc, 140, 140, { word: info.symbol, links: info.groups });
 tip = doc.getElementById('abbreviation-helper-tooltip');
 check('database-only tooltip renders', !!tip && tip.style.display === 'block');
 check('database-only tooltip is interactive', tip && tip.dataset.abbreviationHelperInteractive === 'true');

@@ -122,6 +122,10 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
   await wait(150);     // the same short hide delay as the other tooltips
   check('letting go of the key hides it, as with the other tooltips: no toggle', !shown());
 
+  H._isMac = () => false;
+  hover(51, { metaKey: true });
+  check('on Windows and Linux, the Windows or Super key is not Ctrl', !shown());
+  H._isMac = () => true;
   hover(52, { metaKey: true });
   check('on a Mac, Cmd works for Ctrl', shown() && rows(doc)[0] === 'KD — where it is used');
   const t = tip(doc);
@@ -138,6 +142,19 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
 
   hover(60, { ctrlKey: true });
   const taken = ['ctrlKey', 'metaKey', 'altKey'].map(m => { const k = key('1', { code: 'Digit1', [m]: true }); H._onReaderKeyDown(doc, k); return k; });
+  const altGr = key('@', { code: 'Digit0', getModifierState: m => m === 'AltGraph' });
+  H._onReaderKeyDown(doc, altGr);
+  check('AltGr with a number key types a character ("@" on a French keyboard), so it is not a choice',
+    !altGr.defaultPrevented);
+  const composing = key('1', { code: 'Digit1', isComposing: true });
+  H._onReaderKeyDown(doc, composing);
+  check('a key that is part of composing a character is not a choice', !composing.defaultPrevented);
+  H._forgetHover(doc);
+  hover(61);
+  H._onReaderKeyDown(doc, { key: 'Control', ctrlKey: true, target: { tagName: 'TEXTAREA' } });
+  check('a key pressed while typing in a text field brings no tooltip', !shown());
+  H._onReaderKeyUp(doc, { key: 'Control', ctrlKey: false, target: { tagName: 'TEXTAREA' } });
+  hover(60, { ctrlKey: true });
   check('with Ctrl, Cmd or Alt held, a number is left to Zotero (its tabs, the reader\'s tools)',
     taken.every(k => !k.defaultPrevented) && env.reader.calls.length === 1);
   tip(doc).childNodes[2].childNodes[0]._click({ preventDefault() {}, stopPropagation() {} });
@@ -272,7 +289,7 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
     H._openExternalURL = url => opened.push(url);
     const groups = [{ groupLabel: 'Gene/protein databases', links: [{ label: 'HGNC', url: 'u1' }, { label: 'UniProt', url: 'u2' }] },
       { groupLabel: 'Cell line databases', links: [{ label: 'Cellosaurus', url: 'u3' }] }];
-    H._showHoverTooltip(doc, 10, 10, 'EGFR', 'epidermal growth factor receptor', { groups, certainty: 'defined' });
+    H._showTooltip(doc, 10, 10, { word: 'EGFR', meaning: { term: 'epidermal growth factor receptor', certainty: 'defined' }, links: groups });
     heads.push(tip(doc).childNodes[0]);
     check('1 · a meaning with links: a line, then one row of numbered databases, no group names',
       rows(doc).join(' | ') === 'EGFR — epidermal growth factor receptor | Defined in this paper |  | 1HGNC2UniProt3Cellosaurus'
@@ -280,7 +297,7 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
     H._onReaderKeyDown(doc, key('3', { code: 'Digit3' }));
     check('pressing 3 opens the third link', opened.join() === 'u3', opened.join());
 
-    H._showDatabaseTooltip(doc, 10, 10, { symbol: 'TP53', groups });
+    H._showTooltip(doc, 10, 10, { word: 'TP53', links: groups });
     heads.push(tip(doc).childNodes[0]);
     check('2 · database links alone: the same heading, row and hint',
       rows(doc).join(' | ') === 'TP53 — look it up in a database | 1HGNC2UniProt3Cellosaurus | Click one, or press its number.',

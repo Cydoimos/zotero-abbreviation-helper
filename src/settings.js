@@ -6,9 +6,9 @@
  * code. This file supplies the parts that cannot be static markup:
  *
  *   - the "Show:" lists: modifier keys, named for the platform (Command,
- *     Option on macOS), and a warning when two tooltips share one
+ *     Option on macOS)
  *   - forgetting the definitions learned from other papers
- *   - greying out controls whose checkbox is off
+ *   - disabling a tooltip's options while it is switched off
  *   - your own abbreviations, editable in place
  *   - the ignore list, editable in place
  *   - the database list, which comes from the abbreviations file
@@ -61,7 +61,9 @@ var AbbrevSettings = {
         const n = (H && H._libraryPaperCount) ? H._libraryPaperCount() : 0;
         const el = this._byId('abbrev-settings-library-count');
         if (el) el.textContent = n ? 'Learned from ' + n + (n === 1 ? ' paper' : ' papers') + ' so far.' : 'Nothing learned yet.';
-        this._setDisabled('abbrev-settings-library-forget', !n);
+        // Nothing learned, nothing to forget; and like every option of
+        // meanings, it waits while meanings are off.
+        this._setDisabled('abbrev-settings-library-forget', !n || !this._isTicked('abbrev-settings-hover'));
     },
 
     _forgetLibrary() {
@@ -412,8 +414,8 @@ var AbbrevSettings = {
     ],
 
     /**
-     * Grey out the controls that only apply while their tooltip is switched
-     * on, so no visible control silently does nothing.
+     * Disable, and grey out, the controls that only apply while their tooltip
+     * is switched on, so no visible control silently does nothing.
      */
     _syncDependents() {
         for (const [masterId, dependentIds] of this.DEPENDENTS) {
@@ -424,8 +426,17 @@ var AbbrevSettings = {
                 if (!dependent) continue;
                 dependent.setAttribute('disabled', on ? 'false' : 'true');
                 dependent.style.opacity = on ? '' : '0.5';
+                for (const control of this._controlsIn(dependent)) control.disabled = !on;
             }
         }
+        // The forget button has a rule of its own on top.
+        this._showLibraryCount();
+    },
+
+    /** The checkboxes, lists, buttons and fields inside an element. */
+    _controlsIn(el) {
+        try { return Array.from(el.querySelectorAll('checkbox, menulist, button, input')); }
+        catch (e) { return []; }
     },
 
     _isTicked(id) {

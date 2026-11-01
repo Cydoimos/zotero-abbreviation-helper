@@ -2,25 +2,35 @@
  * Abbreviation Helper — main implementation.
  *
  * Extracts abbreviation/definition pairs from the PDF open in the Zotero
- * reader, then shows the meaning of an abbreviation on hover so a paper can be
- * skimmed without hunting for where each term was defined.  A second, separate
- * layer offers database lookup links (gene/protein, cell line, chemical) for
- * code-like tokens under the cursor.
+ * reader, so a paper can be skimmed without hunting for where each term was
+ * defined. Three kinds of tooltips appear over the words of the paper:
+ *   1 · the meaning of an abbreviation,
+ *   2 · database lookup links (gene/protein, cell line, chemical) for
+ *       code-like names,
+ *   3 · where a word is used in the paper, to go there.
+ * Each is switched on and off on its own and shown while pointing or while
+ * its key is held; those shown at the same moment are one tooltip, in parts.
  *
  * Layout of this file:
  *
  *   1. Detection           detectAbbreviations() and its helpers: pure
  *                          functions with no dependency on Zotero or on
  *                          plugin state, built once at load time.
- *   2. AbbreviationHelper  Everything stateful, grouped into sections:
+ *   2. Where a word is     findUses() and its helpers, pure as well.
+ *      used
+ *   3. AbbreviationHelper  Everything stateful, grouped into sections:
  *                            - preference pane and preferences
  *                            - dictionaries (bundled + user-editable)
  *                            - Zotero UI (Tools menu)
+ *                            - the abbreviations file, edited from Settings
  *                            - scanning and PDF text extraction
  *                            - abbreviation detection
  *                            - definitions from the user's other papers
- *                            - hover tooltips
+ *                            - hover: listeners and the word under the pointer
  *                            - database lookup links
+ *                            - the three tooltips, built alike
+ *                            - where a word is used: going to a use
+ *                            - the tooltip element, clicks and keys
  *
  * Detection pairs every short form with the text next to it and keeps the
  * pair only if the short form's letters align with that text (an extension of
@@ -1228,8 +1238,8 @@ function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 /* ============================================================================
  * Where a word is used
  *
- * For the reader's "show where a word is used" key: the first uses of a word
- * in a paper, with their pages and the words around them. Most useful for an
+ * For tooltip 3, "where a word is used": the first uses of a word in a
+ * paper, with their pages and the words around them. Most useful for an
  * abbreviation the detector could not explain: its first use usually holds
  * the definition, in whatever words the authors chose.
  * ============================================================================ */
@@ -1377,10 +1387,10 @@ var AbbreviationHelper = {
     activeHoverItemID: null,
     hoverHideTimer: null,
     hoverPinnedDoc: null,
-    // Interactive tooltips contain clickable gene/protein database links.
-    // They are allowed to remain visible while the cursor travels from
-    // the PDF text to the tooltip. Plain abbreviation-only tooltips keep
-    // the normal transient hover behavior.
+    // Whether the open tooltip has choices (database links, uses). Such a
+    // tooltip holds still while the pointer travels from the word to it,
+    // and can be clicked; one with only a meaning follows the pointer and
+    // lets clicks through to the page.
     hoverInteractiveTooltip: false,
     // Whether the pointer is on the tooltip itself; it then stays as it is
     // when a modifier key goes up or down (see _onModifierKey).
@@ -1557,33 +1567,41 @@ var AbbreviationHelper = {
     },
 
     _loadPrefs() {
+        // A value no version of the plugin writes (a hand-edited preference)
+        // falls back to the default rather than hiding a tooltip for good.
+        const oneOf = (name, allowed, fallback) => {
+            const value = this._getPref(name, fallback);
+            return allowed.includes(value) ? value : fallback;
+        };
         this.hoverEnabled = this._getPref('hoverEnabled', this.hoverEnabled);
-        this.tooltipModifier = this._getPref('tooltipModifier', this.tooltipModifier);
-        this.databaseLinksModifier = this._getPref('databaseLinksModifier', this.databaseLinksModifier);
+        this.tooltipModifier = oneOf('tooltipModifier', this.MODIFIERS, 'none');
+        this.databaseLinksModifier = oneOf('databaseLinksModifier', this.MODIFIERS, 'shift');
         this.databaseLinksOnAbbreviations = this._getPref('databaseLinksOnAbbreviations', this.databaseLinksOnAbbreviations);
         this.databaseLinksEnabled = this._getPref('databaseLinksEnabled', this.databaseLinksEnabled);
         this.useLibraryDefinitions = this._getPref('useLibraryDefinitions', this.useLibraryDefinitions);
         this.showMeaningSource = this._getPref('showMeaningSource', this.showMeaningSource);
         this.usesEnabled = this._getPref('usesEnabled', this.usesEnabled);
-        const usesModifier = this._getPref('usesModifier', this.usesModifier);
-        this.usesModifier = ['shift', 'ctrl', 'alt'].includes(usesModifier) ? usesModifier : 'ctrl';
+        this.usesModifier = oneOf('usesModifier', this.MODIFIERS.filter(m => m !== 'none'), 'ctrl');
         this.usesCount = Number(this._getPref('usesCount', this.usesCount)) || 3;
         // A menulist in the preference pane stores its value as a string,
         // while the menu's radio items store a number. Coerce so both routes
         // to the same setting produce the same type.
         this.tooltipFontSize = Number(this._getPref('tooltipFontSize', this.tooltipFontSize)) || 12;
-        this.tooltipTheme = this._getPref('tooltipTheme', this.tooltipTheme);
+        this.tooltipTheme = oneOf('tooltipTheme', ['dark', 'light'], 'dark');
     },
+
+    // What can show a tooltip, as the settings store it: no key, or a key held.
+    MODIFIERS: ['none', 'shift', 'ctrl', 'alt'],
 
     /**
      * Keep "where a word is used" off a key another tooltip already uses.
      * Version 2.1.0 offered Ctrl for meanings and database links, and Ctrl is
-     * also this tooltip's default: holding it would then show the uses in
-     * place of what it showed before the update. Until you pick this key
-     * yourself, it moves to the first free one, saved so the settings show
-     * it. A key you picked is kept, and the settings point out the clash.
-     * Run at startup only, so the key never changes under an open Settings
-     * window.
+     * also this tooltip's default: once switched on, holding Ctrl would add
+     * the uses to what that key showed before the update. Until you pick
+     * this key yourself, it moves to the first free one, saved so the
+     * settings show it. A key you picked is kept: sharing a key is how the
+     * tooltips are shown together. Run at startup only, so the key never
+     * changes under an open Settings window.
      */
     _settleUsesKey() {
         if (this._prefIsSet('usesModifier')) return;
@@ -1611,14 +1629,17 @@ var AbbreviationHelper = {
      */
     async _keepOlderDefaults() {
         const last = this._getPref('lastVersion', '');
+        if (!last && !this._prefIsSet('databaseLinksEnabled')) {
+            const file = this._userDictionaryPath();
+            if (file && await (await this._getIOUtils()).exists(file)) {
+                this.databaseLinksEnabled = true;
+                this._setPref('databaseLinksEnabled', true);
+            }
+        }
+        // Recorded only once that check has run: if it failed, it runs again
+        // at the next start.
         const now = String(this.version || '');
         if (now && last !== now) this._setPref('lastVersion', now);
-        if (last) return;
-        const file = this._userDictionaryPath();
-        if (!file || !(await (await this._getIOUtils()).exists(file))) return;
-        if (this._prefIsSet('databaseLinksEnabled')) return;
-        this.databaseLinksEnabled = true;
-        this._setPref('databaseLinksEnabled', true);
     },
 
     /* ---- Dictionaries: bundled defaults + user-editable overrides ------- */
@@ -2518,7 +2539,7 @@ var AbbreviationHelper = {
         if (this._stopped) return;
         let pairs;
         try {
-            pairs = await this._pairsForItem(info.item, info.path);
+            pairs = await this._pairsForItem(info.item);
         } catch (err) {
             this.log('Failed to extract text: ' + err);
             throw err;
@@ -2535,9 +2556,9 @@ var AbbreviationHelper = {
      * extracted text is cached separately (see textCache), so after a change
      * to the dictionaries only detection runs again, not extraction.
      */
-    async _pairsForItem(item, path) {
+    async _pairsForItem(item) {
         if (this.cache.has(item.id)) return this.cache.get(item.id);
-        const text = await this._textForItem(item, path);
+        const text = await this._textForItem(item);
         try { await this._libraryReady; } catch (e) {}
         const pairs = this._detectAbbreviations(text, item);
         this._cacheResult(item.id, pairs);
@@ -2546,7 +2567,7 @@ var AbbreviationHelper = {
     },
 
     /** Full text of an attachment, kept for the few most recently used items. */
-    async _textForItem(item, path) {
+    async _textForItem(item) {
         const cached = this.textCache.get(item.id);
         if (typeof cached === 'string') {
             // Refresh its place so the least recently used text is evicted first.
@@ -2554,7 +2575,7 @@ var AbbreviationHelper = {
             this.textCache.set(item.id, cached);
             return cached;
         }
-        const text = await this._extractTextForItem(item, path);
+        const text = await this._extractTextForItem(item);
         this.textCache.set(item.id, text);
         while (this.textCache.size > this.TEXT_CACHE_LIMIT) {
             this.textCache.delete(this.textCache.keys().next().value);
@@ -2881,7 +2902,7 @@ var AbbreviationHelper = {
             copied = true;
         } catch (e) {
             try {
-                Services.clipboard.copyString(fullMessage);
+                Zotero.Utilities.Internal.copyTextToClipboard(fullMessage);
                 copied = true;
             } catch (e2) {
                 this.log('Could not copy abbreviations to clipboard: ' + e2);
@@ -3029,7 +3050,7 @@ var AbbreviationHelper = {
             const failed = this._lastAutoScanFailure;
             if (failed && failed.itemID === itemID && Date.now() - failed.time < 30000) return;
 
-            const pairs = await this._pairsForItem(info.item, info.path);
+            const pairs = await this._pairsForItem(info.item);
             if (this._stopped) return;
             this._lastAutoScanFailure = null;
             this._setActiveHoverPairs(itemID, pairs);
@@ -3399,15 +3420,17 @@ var AbbreviationHelper = {
     /**
      * True when the configured modifier for a feature is satisfied.
      *
-     * The 'ctrl' setting accepts either Control or Command, so a single stored
-     * preference behaves correctly on macOS, Windows and Linux and a synced
-     * profile does not need per-platform settings.
+     * On macOS the 'ctrl' setting accepts Command as well as Control, so one
+     * stored preference behaves as each platform names it and a profile
+     * moved between machines needs no change. Elsewhere Meta is the Windows
+     * or Super key, which opens the Start menu or the desktop's overview when
+     * let go, and only Ctrl counts.
      */
     _modifierSatisfied(which) {
         const name = String(which || 'none');
         if (name === 'none') return true;
         const m = this.modifierState || {};
-        if (name === 'ctrl') return !!(m.ctrl || m.meta);
+        if (name === 'ctrl') return !!(m.ctrl || (m.meta && this._isMac()));
         return !!m[name];
     },
 
@@ -3808,8 +3831,10 @@ var AbbreviationHelper = {
      * means something itself ("LC-MS/MS").
      */
     _wordAtPoint(doc, x, y) {
-        const WORD_CHAR = /[A-Za-z0-9βΒαΑγΓδΔεΕζΖηΗθΘκΚλΛμΜνΝξΞπΠρΡσΣτΤυΥφΦχΧψΨωΩ\-‑–—⋅·.\/]/;
-        const WORDS = new RegExp(WORD_CHAR.source + '+', 'g');
+        // Letters and digits of any script ("Müller", "protéine", "β-actin"),
+        // and what joins the parts of a short form ("IL-6", "RAW264.7", "CD4/CD8").
+        const WORD_CHAR = /[\p{L}\p{M}\p{N}\-‐‑–—⋅·.\/]/u;
+        const WORDS = new RegExp(WORD_CHAR.source + '+', 'gu');
 
         // Is (x, y) on the rendered text from start to end? Text layers can
         // return the nearest text even over blank space, so every word is
@@ -4023,11 +4048,6 @@ var AbbreviationHelper = {
         this._positionHoverTooltip(doc, tip, x, y);
     },
 
-    /** Tooltip 1, a meaning; options.groups adds tooltip 2's links under it. */
-    _showHoverTooltip(doc, x, y, abbr, term, options) {
-        this._showTooltip(doc, x, y, { word: abbr, meaning: { term, certainty: options && options.certainty },
-            links: options && options.groups });
-    },
 
     // The note detection appends to every meaning the paper does not confirm:
     // "... (common term; not explicitly defined in this paper)".
@@ -4052,11 +4072,6 @@ var AbbreviationHelper = {
         return { meaning, origin: 'Defined in this paper' };
     },
 
-    /** Tooltip 2 on its own: database links. */
-    _showDatabaseTooltip(doc, x, y, info) {
-        if (!info || !info.groups || !info.groups.length) return;
-        this._showTooltip(doc, x, y, { word: info.symbol, links: info.groups });
-    },
 
     /* ---- Where a word is used ------------------------------------------- */
 
@@ -4184,6 +4199,12 @@ var AbbreviationHelper = {
         setTimeout(() => { for (const m of marks) if (m.parentNode) m.parentNode.removeChild(m); }, 2100);
     },
 
+    /* ---- The tooltip element, clicks and keys ---------------------------
+     * One tooltip element per reader page, shown, moved and hidden here.
+     * Clicks outside a tooltip with choices close it; Escape closes it; the
+     * number keys choose; modifier keys bring tooltips up and take them away
+     * (see _onModifierKey). */
+
     _ensureHoverTooltip(doc) {
         let tip = doc.getElementById('abbreviation-helper-tooltip');
         // A tooltip made by another copy of the plugin (an earlier version
@@ -4211,8 +4232,8 @@ var AbbreviationHelper = {
                 + '"Segoe UI", Cantarell, Ubuntu, "Liberation Sans", "DejaVu Sans", sans-serif';
             tip.style.lineHeight = '1.35';
             tip.style.boxShadow = '0 2px 8px rgba(0,0,0,.35)';
-            // The mouse passes through by default. A tooltip with database
-            // links switches this to 'auto' when shown (see _showHoverTooltip)
+            // The mouse passes through by default. A tooltip with choices
+            // switches this to 'auto' when shown (see _finishChoices)
             // so its links can be clicked; the handlers below then keep it
             // open while the pointer is over it.
             tip.style.pointerEvents = 'none';
@@ -4304,7 +4325,9 @@ var AbbreviationHelper = {
     MODIFIER_KEYS: { Shift: 'shift', Control: 'ctrl', Alt: 'alt', Meta: 'meta' },
 
     _onReaderKeyDown(doc, event) {
-        if (!event) return;
+        // Keys that are part of composing a character (an input method, a
+        // dead key) are not shortcuts.
+        if (!event || event.isComposing) return;
         if (this.MODIFIER_KEYS[event.key]) {
             this._onModifierKey(doc, event, true);
             return;
@@ -4326,8 +4349,11 @@ var AbbreviationHelper = {
         // hard.
         if (!this.hoverInteractiveTooltip || !this._isHoverTooltipVisible(tipDoc)) return;
         // With Ctrl, Cmd or Alt held a number is Zotero's: Ctrl/Cmd+1-9 switch
-        // tabs and Alt+1-8 the reader's tools. With Shift it is free.
+        // tabs and Alt+1-8 the reader's tools. With AltGr it types a
+        // character ("@" is AltGr+0 on a French keyboard). With Shift it is
+        // free: some layouts need Shift to type the digits at all.
         if (event.ctrlKey || event.metaKey || event.altKey) return;
+        if (typeof event.getModifierState === 'function' && event.getModifierState('AltGraph')) return;
         // The physical key counts, not the character it types, so the
         // shortcut works on every layout: with Shift held, the "1" key types
         // "!" on a German keyboard, and without it "&" on a French one.
@@ -4378,6 +4404,10 @@ var AbbreviationHelper = {
      */
     _onModifierKey(doc, event, down) {
         if (this._stopped || !this._anyTooltipOn()) return;
+        // Shift pressed for a capital in an annotation, a note or a search
+        // box is typing, not a request for a tooltip at the pointer. Letting
+        // go is always followed, so nothing stays shown.
+        if (down && this._typingInto(event.target)) return;
         const before = JSON.stringify(this.modifierState);
         this._updateModifierState(event);
         // The key itself is not reliably reflected in the event's flags yet.
