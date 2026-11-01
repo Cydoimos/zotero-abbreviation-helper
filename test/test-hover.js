@@ -74,8 +74,8 @@ check('link shortcuts cleared', H.activeGeneLinks.length === 0);
 
 // 5) Hover map still resolves plurals/variants.
 H._setActiveHoverPairs(1, [{ abbr: 'EV', term: 'extracellular vesicle' }]);
-check('hover map resolves exact', H.activeHoverMap.get('EV') === 'extracellular vesicle');
-check('hover map resolves plural', H.activeHoverMap.get('EVs') === 'extracellular vesicle');
+check('hover map resolves exact', H.activeHoverMap.get('EV').term === 'extracellular vesicle');
+check('hover map resolves plural', H.activeHoverMap.get('EVs').term === 'extracellular vesicle');
 
 console.log('\n' + (pass ? 'ALL HOVER SMOKE TESTS PASSED' : 'SOME TESTS FAILED'));
 process.exit(pass ? 0 : 1);

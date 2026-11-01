@@ -55,15 +55,16 @@ tooltip appearance, and — editable in place, with no JSON to hand-edit — **y
 abbreviations** and the **ignore list**. Changes apply immediately.
 
 Definitions you add there are authoritative: they are shown even when a paper defines
-the short form differently.
+the short form differently. A definition or ignore entry covers the singular and the
+plural ("EV" also covers "EVs").
 
 **Use definitions from my other papers** (on by default) remembers the definitions in
 the papers you open and offers them for papers that use an abbreviation without
 defining it. Researchers tend to read many papers from one field, where an abbreviation
 usually means the same thing. A meaning from your library is only used when the paper
 mentions what it is about, and never where the paper defines the abbreviation itself.
-Turning the setting off stops both remembering and using; delete
-`library-definitions.json` (next to your abbreviations file) to forget what was learned.
+Turning the setting off stops both remembering and using. **Forget learned definitions**,
+next to it, clears what was learned so far. A paper's supplement counts as the same paper.
 
 ### Tools menu
 
@@ -224,10 +225,10 @@ undefined abbreviations found from 53.5 % to 60.0 %, with 95.1 % of those meanin
 correct, at a cost of 0.3 points of precision.
 
 Known limitations: long forms that do not contain the short form's letters in order
-("dissociation constant (KD)", "NRF2 (NFE2L2)"), definitions that only describe ("a
-cytoprotective transcription factor (ATF4)"), names in other languages ("Zentrum für
-Molekulare Biologie (ZMBH)"), and abbreviations missing from the glossary. The ignore list
-deals with wrong ones case by case.
+("dissociation constant (KD)", "NRF2 (NFE2L2)"), names in other languages ("Zentrum für
+Molekulare Biologie (ZMBH)"), and abbreviations missing from the glossary. Definitions
+that only describe ("a cytoprotective transcription factor (ATF4)") are offered as
+probable meanings only. The ignore list deals with wrong ones case by case.
 
 ## Development
 
@@ -242,6 +243,8 @@ node test/test-menu.js       # Tools menu structure and wording (fake XUL DOM)
 node test/test-settings.js   # Settings pane wiring, parsed from settings.xhtml
 node test/test-fixes.js      # active tab, settings file safety, background scan, tooltips
 node test/test-certainty.js  # probable meanings, definitions from other papers, tooltip origin line
+node test/test-review.js     # singular/plural entries, hovered words, the library store
+node test/test-lifecycle.js  # startup and shutdown through bootstrap.js
 
 node eval/benchmark/score.js dev <dir>   # accuracy on the benchmark (needs the texts)
 node eval/benchmark/intervals.js dev <dir>   # 95 % intervals, and old-vs-new differences

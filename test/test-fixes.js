@@ -221,7 +221,7 @@ const visible = (doc) => !!tipOf(doc) && tipOf(doc).style.display !== 'none';
     await H._autoScanActiveReader();
     await H._setUserDefinition('GFP', 'my own meaning');
     check('P3 adding a definition does not extract the PDF again', env.worker.calls === 1, 'calls=' + env.worker.calls);
-    check('P3 the open paper uses the new definition', H.activeHoverMap.get('GFP') === 'my own meaning');
+    check('P3 the open paper uses the new definition', H.activeHoverMap.get('GFP').term === 'my own meaning');
   }
 
   // ---------- B2: a file that cannot be read is never overwritten ----------
@@ -281,10 +281,10 @@ const visible = (doc) => !!tipOf(doc) && tipOf(doc).style.display !== 'none';
     const env = makeEnv({});
     const H = await started(env);
     const m = H._buildHoverMap([{ abbr: 'A\u03b2', term: 'amyloid beta' }, { abbr: 'Ab', term: 'antibody' }]);
-    check('B12 the paper\'s own "Ab" is kept', m.get('Ab') === 'antibody');
-    check('B12 "A\u03b2" still resolves', m.get('A\u03b2') === 'amyloid beta');
+    check('B12 the paper\'s own "Ab" is kept', m.get('Ab').term === 'antibody');
+    check('B12 "A\u03b2" still resolves', m.get('A\u03b2').term === 'amyloid beta');
     const p = H._buildHoverMap([{ abbr: 'EV', term: 'extracellular vesicle' }]);
-    check('B12 plural variants still work', p.get('EVs') === 'extracellular vesicle');
+    check('B12 plural variants still work', p.get('EVs').term === 'extracellular vesicle');
   }
 
   // ---------- B13: nothing happens after shutdown ----------

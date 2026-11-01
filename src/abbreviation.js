@@ -13,11 +13,12 @@
  *                          functions with no dependency on Zotero or on
  *                          plugin state, built once at load time.
  *   2. AbbreviationHelper  Everything stateful, grouped into sections:
- *                            - preferences (persisted via Zotero.Prefs)
+ *                            - preference pane and preferences
  *                            - dictionaries (bundled + user-editable)
  *                            - Zotero UI (Tools menu)
  *                            - scanning and PDF text extraction
  *                            - abbreviation detection
+ *                            - definitions from the user's other papers
  *                            - hover tooltips
  *                            - database lookup links
  *
@@ -1181,15 +1182,18 @@ function detectAbbreviations(text, dicts) {
         });
     }
 
-    // 5. The user's own definitions win, for short forms the paper uses.
+    // 5. The user's own definitions win, for short forms the paper uses. A
+    //    definition of "EV" also covers a paper that writes "EVs".
+    const sameShortForm = (a, b) => (singularShortForm(a) || a) === (singularShortForm(b) || b);
     for (const [abbr, term] of Object.entries(dicts.userDefs || {})) {
-        if (!abbr || !term || !countOf(abbr)) continue;
-        const existing = pairs.find(p => p.abbr === abbr);
+        if (!abbr || !term || !forms(abbr).some(countOf)) continue;
+        const existing = pairs.find(p => sameShortForm(p.abbr, abbr));
         if (existing) Object.assign(existing, { term, source: 'user', confidence: 'high', certainty: 'user' });
         else pairs.push({ abbr, term, source: 'user', confidence: 'high', certainty: 'user' });
     }
-    const ignored = new Set(dicts.ignore || []);
-    return ignored.size ? pairs.filter(p => !ignored.has(p.abbr)) : pairs;
+    // Ignoring a short form ignores its singular and plural too.
+    const ignored = dicts.ignore || [];
+    return ignored.length ? pairs.filter(p => !ignored.some(i => sameShortForm(i, p.abbr))) : pairs;
 }
 
 /** Does the paper talk about the subject a glossary meaning belongs to? */
@@ -1208,44 +1212,33 @@ function flatten(s) { return String(s).toLowerCase().replace(/[^\p{L}\p{N}]+/gu,
 
 function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
-// Create a global namespace.  Zotero assigns global variables per
-// add-on into a shared scope.  We deliberately avoid polluting the
-// global namespace beyond this object.
+// Everything stateful lives on this one object. bootstrap.js loads this file
+// into the plugin's own scope, and the Settings pane reaches the object
+// through Zotero.AbbreviationHelper (see init).
 var AbbreviationHelper = {
     id: null,
     version: null,
     rootURI: null,
     initialized: false,
     addedElementIDs: [],
+    // Detected pairs per attachment item id. Bounded so a long session with
+    // many PDFs cannot grow memory without limit; oldest entries are evicted.
     cache: new Map(),
-    // Scanned results per attachment. Bounded so a long session with many
-    // PDFs cannot grow memory without limit; oldest entries are evicted.
     CACHE_LIMIT: 50,
     // Abbreviation dictionaries, loaded from the bundled data/abbreviations.json
     // plus an optional user-editable copy in the Zotero data directory.
     dictionaries: null,
     _dictionariesReady: null,
-    // Hover is enabled by default. The plugin auto-scans the active reader
-    // silently so users can hover abbreviations without first using a menu.
+    // Settings, mirrored from preferences by _loadPrefs (defaults in prefs.js).
+    // Meanings show on hover without any key held; database links ask for
+    // Shift, so ordinary reading stays uncluttered. 'none' means no key.
     hoverEnabled: true,
-    // Optional safety mode: when enabled, even abbreviation tooltips require
-    // Shift.  It is off by default.  Database lookup links are handled
-    // separately and are shown only while Shift is held, so normal
-    // abbreviation reading stays quiet and fast.
-    // Modifier gating. 'none' means no key needs to be held. Abbreviation
-    // meanings appear freely by default; database links ask for Shift so
-    // ordinary reading stays uncluttered.
     tooltipModifier: 'none',
     databaseLinksModifier: 'shift',
     modifierState: { shift: false, ctrl: false, alt: false, meta: false },
-    // Tooltip appearance.
     tooltipFontSize: 12,
     tooltipTheme: 'dark',
-    // Database lookup links have their own modifier behavior.  By default
-    // abbreviation meanings appear normally, while database sections only
-    // appear while Shift is held.  This keeps ordinary reading uncluttered
-    // but still lets users get database shortcuts for the token under the
-    // cursor.
+    // Whether a tooltip for a defined abbreviation also carries database links.
     databaseLinksOnAbbreviations: true,
     // Master switch for the whole database-link layer. When false, no lookup
     // links are offered at all and the plugin does nothing but expand
@@ -1420,11 +1413,10 @@ var AbbreviationHelper = {
         this._prefObserver = null;
     },
 
-    // ---- Persistent preferences ------------------------------------------
-    // Settings are stored under the extensions.abbreviation-helper.* branch via
-    // Zotero.Prefs so they survive restarts. Each is read on startup and written
-    // whenever the matching menu checkbox is toggled.
-    /* ---- Preferences (persisted via Zotero.Prefs) ---- */
+    /* ---- Preferences ------------------------------------------------------
+     * Stored under extensions.abbreviation-helper.* through Zotero.Prefs, so
+     * they survive restarts. Read at startup and whenever one changes (see
+     * _watchPrefs); written by the Tools menu and the Settings pane. */
     PREF_BRANCH: 'extensions.abbreviation-helper.',
 
     _getPref(name, fallback) {
@@ -1459,13 +1451,14 @@ var AbbreviationHelper = {
         this.tooltipTheme = this._getPref('tooltipTheme', this.tooltipTheme);
     },
 
+    /* ---- Dictionaries: bundled defaults + user-editable overrides ------- */
+
     /**
      * Minimal general-purpose fallback used only if both the bundled JSON and
      * the user dictionary fail to load. Locally defined abbreviations are still
      * detected without any dictionary; this only preserves a few very common
      * glossary lookups so hover never comes up completely empty.
      */
-    /* ---- Dictionaries: bundled defaults + user-editable overrides ---- */
     _embeddedFallbackDictionaries() {
         return {
             userDefs: {},
@@ -1540,7 +1533,7 @@ var AbbreviationHelper = {
         // 2) Optional user-editable override in the Zotero data directory. It is
         //    created on first run; its entries extend/override the defaults.
         try {
-            const userDicts = await this._loadOrCreateUserDictionary(dicts);
+            const userDicts = await this._loadOrCreateUserDictionary();
             if (userDicts) dicts = this._mergeDictionaries(dicts, userDicts);
         } catch (e) {
             this.log('Could not read user dictionary: ' + e);
@@ -1575,7 +1568,7 @@ var AbbreviationHelper = {
      * or null. Throws (after recording userFileError) if the file exists but
      * cannot be read, so the caller falls back to the bundled defaults.
      */
-    async _loadOrCreateUserDictionary(defaults) {
+    async _loadOrCreateUserDictionary() {
         const file = this._userDictionaryPath();
         if (!file) return null;
         const io = await this._getIOUtils();
@@ -1824,12 +1817,14 @@ var AbbreviationHelper = {
         Zotero.debug("Abbreviation Helper: " + msg);
     },
 
+    /* ---- Zotero UI: Tools menu ------------------------------------------ */
+
     /**
-     * Insert our menu item into the Tools menu of a Zotero window.
+     * Insert the Abbreviation Helper menu into the Tools menu of a Zotero
+     * window. Does nothing if it is already there.
      *
      * @param {Window} window The Zotero window to modify.
      */
-    /* ---- Zotero UI: Tools menu ---- */
     addToWindow(window) {
         const doc = window.document;
         try {
@@ -1921,8 +1916,8 @@ var AbbreviationHelper = {
              * tooltip appearance) lives one level down. Separators carry the
              * grouping, so no bold pseudo-headers are needed out here.
              *
-             * Every reference to the settings file uses the same words \u2014
-             * "abbreviations file" \u2014 because there is only one of them.
+             * Every reference to the settings file uses the same words —
+             * "abbreviations file" — because there is only one of them.
              *
              * Two shapes, chosen by the "Show every setting in the Tools menu"
              * preference. Simple (the default) is actions only, with settings
@@ -2347,6 +2342,8 @@ var AbbreviationHelper = {
         this._cancelHoverHide();
     },
 
+    /* ---- Scanning and PDF text extraction ------------------------------ */
+
     /**
      * Scan a PDF for abbreviation definitions: the one open in the active
      * reader tab, or, when the library is showing, the first PDF of the
@@ -2354,7 +2351,6 @@ var AbbreviationHelper = {
      * options.silent is set, the list is copied to the clipboard and a preview
      * is shown. Results are cached per item.
      */
-    /* ---- Scanning and PDF text extraction ---- */
     async scanCurrent(options) {
         options = options || {};
         const info = await this._getCurrentAttachment({ readerOnly: !!options.readerOnly });
@@ -2505,15 +2501,19 @@ var AbbreviationHelper = {
         return path ? { item: att, path } : null;
     },
 
-    /* ---- abbreviation detection ---- */
+    /* ---- Abbreviation detection ----------------------------------------- */
 
     /**
      * Abbreviation/definition pairs for a paper's text. The detection itself
      * is the pure function detectAbbreviations() at the top of this file; this
-     * adds the loaded dictionaries (bundled defaults merged with the user's).
+     * adds the loaded dictionaries (bundled defaults merged with the user's)
+     * and, when the setting is on, the definitions of the user's other papers,
+     * then remembers the ones this paper gives.
      *
      * @param {string} text Text extracted from the PDF
-     * @returns {Array<{abbr: string, term: string, source: string, confidence: string}>}
+     * @param {_ZoteroTypes.Item} [item] The PDF attachment, which identifies
+     *   the paper in the library store; without it the library is not used.
+     * @returns {Array<{abbr: string, term: string, source: string, confidence: string, certainty: string}>}
      */
     _detectAbbreviations(text, item) {
         const dicts = this.dictionaries || {};
@@ -2524,15 +2524,15 @@ var AbbreviationHelper = {
         return pairs;
     },
 
-    /* ---- Definitions from the user's other papers ---- */
-    //
-    // Researchers read many papers from one field, where an abbreviation
-    // usually means the same thing. So the definitions each paper gives (only
-    // those the letters confirm) are kept, per paper, in a file next to the
-    // abbreviations file, and offered for papers that use an abbreviation
-    // without defining it, marked as coming from the library. Nothing is kept
-    // or used while the setting is off. Only papers opened in the reader are
-    // read; the library is never scanned as a whole.
+    /* ---- Definitions from the user's other papers -----------------------
+     * Researchers read many papers from one field, where an abbreviation
+     * usually means the same thing. So the definitions each paper gives (only
+     * those the letters confirm) are kept, per PDF, in library-definitions.json
+     * next to the abbreviations file, and offered for papers that use an
+     * abbreviation without defining it, marked as coming from the library.
+     * Nothing is kept or used while the setting is off. Only papers that are
+     * opened (or scanned from the Tools menu) are read; the library is never
+     * scanned as a whole. */
 
     LIBRARY_SAVE_DELAY: 2000,
 
@@ -2542,11 +2542,21 @@ var AbbreviationHelper = {
         return dataDir ? this._joinPath(dataDir, 'abbreviation-helper', 'library-definitions.json') : null;
     },
 
-    /** A paper's key in the store: stable across sessions and sync. */
+    /**
+     * A PDF's key in the store, stable across sessions and sync:
+     * "library/paper/attachment". The paper is the parent item, so a paper's
+     * supplement counts as the same paper, not as another one.
+     */
     _libraryKey(item) {
         if (!item) return null;
-        if (item.key) return (item.libraryID != null ? item.libraryID + '/' : '') + item.key;
-        return item.id != null ? 'id:' + item.id : null;
+        if (!item.key) return item.id != null ? 'id:' + item.id : null;
+        return (item.libraryID != null ? item.libraryID : '') + '/' + (item.parentKey || item.key) + '/' + item.key;
+    },
+
+    /** The paper a store key belongs to: "library/paper"; any other key is its own paper. */
+    _paperOfKey(key) {
+        const parts = String(key || '').split('/');
+        return parts.length === 3 ? parts[0] + '/' + parts[1] : String(key || '');
     },
 
     async _loadLibrary() {
@@ -2567,35 +2577,65 @@ var AbbreviationHelper = {
 
     /**
      * Meanings the user's other papers define, as detectAbbreviations()
-     * expects them: short form -> [{ term, papers }], leaving out `exceptKey`.
+     * expects them: short form -> [{ term, papers }], counting papers rather
+     * than PDFs and leaving out the paper `exceptKey` belongs to.
      */
     _libraryDefinitions(exceptKey) {
         this.libraryStore = this.libraryStore || { items: {} };
         if (!this._libraryIndex) {
-            // short form -> spelling-independent meaning -> { term, keys }
+            // short form -> spelling-independent meaning -> { term, papers }
             const index = new Map();
-            for (const [key, defs] of Object.entries((this.libraryStore || {}).items || {})) {
+            for (const [key, defs] of Object.entries(this.libraryStore.items || {})) {
+                const paper = this._paperOfKey(key);
                 for (const [abbr, term] of Object.entries(defs || {})) {
                     const sf = singularShortForm(abbr) || abbr;
                     const id = flatten(term).replace(/s$/, '');
                     if (!index.has(sf)) index.set(sf, new Map());
                     const byMeaning = index.get(sf);
-                    if (!byMeaning.has(id)) byMeaning.set(id, { term, keys: new Set() });
-                    byMeaning.get(id).keys.add(key);
+                    if (!byMeaning.has(id)) byMeaning.set(id, { term, papers: new Set() });
+                    byMeaning.get(id).papers.add(paper);
                 }
             }
             this._libraryIndex = index;
         }
+        const own = this._paperOfKey(exceptKey);
         const out = {};
         for (const [sf, byMeaning] of this._libraryIndex) {
             const options = [];
             for (const m of byMeaning.values()) {
-                const papers = m.keys.size - (m.keys.has(exceptKey) ? 1 : 0);
+                const papers = m.papers.size - (m.papers.has(own) ? 1 : 0);
                 if (papers > 0) options.push({ term: m.term, papers });
             }
             if (options.length) out[sf] = options;
         }
         return out;
+    },
+
+    /** How many papers definitions have been learned from (for Settings). */
+    _libraryPaperCount() {
+        const items = (this.libraryStore && this.libraryStore.items) || {};
+        return new Set(Object.keys(items).map(k => this._paperOfKey(k))).size;
+    },
+
+    /**
+     * Forget every definition learned so far, in memory and on disk, then
+     * read the open paper again. Deleting the file by hand while Zotero runs
+     * would not be enough: the copy in memory would be saved again.
+     */
+    async _forgetLibrary() {
+        if (this._librarySaveTimer) clearTimeout(this._librarySaveTimer);
+        this._librarySaveTimer = null;
+        this.libraryStore = { items: {} };
+        this._libraryIndex = null;
+        await this._queueLibraryWrite(async () => {
+            const file = this._libraryPath();
+            if (!file) return;
+            const io = await this._getIOUtils();
+            if (await io.exists(file)) await io.remove(file);
+        });
+        try { this.cache.clear(); } catch (e) {}
+        this._setActiveHoverPairs(null, []);
+        try { await this._autoScanActiveReader(); } catch (e) {}
     },
 
     /** Keep the definitions a paper gives (only those the letters confirm). */
@@ -2611,6 +2651,7 @@ var AbbreviationHelper = {
         this._scheduleLibrarySave();
     },
 
+    /** Save a moment after the last change, so opening papers in a row writes once. */
     _scheduleLibrarySave() {
         if (this._librarySaveTimer) clearTimeout(this._librarySaveTimer);
         this._librarySaveTimer = setTimeout(() => {
@@ -2627,22 +2668,35 @@ var AbbreviationHelper = {
         this._saveLibrary().catch(e => this.log('Could not save the library definitions: ' + e));
     },
 
-    async _saveLibrary() {
-        const file = this._libraryPath();
-        if (!file) return;
-        const io = await this._getIOUtils();
-        await io.makeDirectory(this._joinPath(Zotero.DataDirectory.dir, 'abbreviation-helper'), { ignoreExisting: true });
-        const text = JSON.stringify({
-            _comment: 'Definitions read in the papers you opened, used for papers that do not define an '
-                + 'abbreviation. Kept by Abbreviation Helper; delete this file to forget them.',
-            version: 1,
-            items: this.libraryStore.items
+    /**
+     * Run writes to the library file one after another, so a save at
+     * shutdown or after "Forget" never overlaps one already under way.
+     */
+    _queueLibraryWrite(write) {
+        const run = this._libraryWrites ? this._libraryWrites.then(write, write) : write();
+        this._libraryWrites = run.catch(() => {});
+        return run;
+    },
+
+    _saveLibrary() {
+        return this._queueLibraryWrite(async () => {
+            const file = this._libraryPath();
+            if (!file) return;
+            const io = await this._getIOUtils();
+            await io.makeDirectory(this._joinPath(Zotero.DataDirectory.dir, 'abbreviation-helper'), { ignoreExisting: true });
+            // Taken when the write starts, so it holds every change made until then.
+            const text = JSON.stringify({
+                _comment: 'Definitions read in the papers you opened, used for papers that do not define an '
+                    + 'abbreviation. Kept by Abbreviation Helper; forget them in its settings.',
+                version: 1,
+                items: this.libraryStore.items
+            });
+            try {
+                await io.writeUTF8(file, text, { tmpPath: file + '.tmp' });
+            } catch (e) {
+                await io.writeUTF8(file, text);
+            }
         });
-        try {
-            await io.writeUTF8(file, text, { tmpPath: file + '.tmp' });
-        } catch (e) {
-            await io.writeUTF8(file, text);
-        }
     },
 
     /**
@@ -2689,15 +2743,13 @@ var AbbreviationHelper = {
         Zotero.alert(null, 'Abbreviation Helper', header + '\n\n' + preview);
     },
 
+    /* ---- Hover tooltips in the Zotero reader ---------------------------- */
 
     /**
-     * Enable/disable hover tooltips.  Hover integration is intentionally
-     * optional because it touches the Zotero reader DOM, which is less stable
-     * than the PDF text extraction and menu APIs.  When enabling, we silently
-     * scan the PDF open in the reader and then attach mouse listeners to
-     * reader documents that contain PDF.js text-layer spans.
+     * Switch hover tooltips on or off (the Tools menu's checkbox). Switching
+     * on scans the PDF in the reader quietly, then attaches mouse listeners
+     * to the reader pages that show its text.
      */
-    /* ---- Hover tooltips in the Zotero reader ---- */
     async toggleHover(window, menuitem) {
         this.hoverEnabled = !this.hoverEnabled;
         this._setPref('hoverEnabled', this.hoverEnabled);
@@ -2850,52 +2902,47 @@ var AbbreviationHelper = {
         this._mapGeneration = (this._mapGeneration || 0) + 1;
     },
 
+    /**
+     * Index a paper's meanings by every spelling a reader may hover. Each
+     * value is { abbr, term, certainty }: the short form as detected (what
+     * "Ignore an Abbreviation…" offers), the meaning, and how sure it is.
+     */
     _buildHoverMap(pairs) {
         const map = new Map();
         const entries = [];
-        for (let pair of pairs || []) {
-            if (!pair || !pair.abbr || !pair.term) continue;
-            const abbr = String(pair.abbr).trim();
-            const term = String(pair.term).trim();
-            if (!abbr || !term) continue;
-            entries.push([abbr, term]);
+        for (const pair of pairs || []) {
+            const abbr = String((pair && pair.abbr) || '').trim();
+            const term = String((pair && pair.term) || '').trim();
+            if (abbr && term) entries.push({ abbr, term, certainty: pair.certainty || 'defined' });
         }
         // Every short form exactly as detected goes in first, so a variant
         // made from one entry can never replace another entry of the paper:
         // the "Ab" variant of "Aβ" must not overwrite "Ab = antibody".
-        for (const [abbr, term] of entries) map.set(abbr, term);
-        const addVariant = (key, term) => {
-            if (key && !map.has(key)) map.set(key, term);
+        for (const e of entries) map.set(e.abbr, e);
+        const addVariant = (key, e) => {
+            if (key && !map.has(key)) map.set(key, e);
         };
-        for (const [abbr, term] of entries) {
-            // Common PDF extraction/reader variants
-            addVariant(abbr.replace(/β/g, 'b').replace(/Β/g, 'B'), term);
-            addVariant(abbr.replace(/-/g, '‑'), term);
-            addVariant(abbr.replace(/‑/g, '-'), term);
-            // Plural handling: academic papers often define only one number
-            // but use both forms while reading, e.g. “extracellular vesicles
-            // (EVs)” followed by “EV”, or “extracellular vesicle (EV)”
-            // followed by “EVs”.  Add both aliases to the hover map without
-            // changing the detected/displayed entry.
-            addVariant(this.singularShortForm(abbr), term);
-            if (!abbr.endsWith('s')) {
-                addVariant(abbr + 's', term);
-                addVariant(abbr + 'S', term);
+        for (const e of entries) {
+            // Spellings PDF text extraction produces.
+            addVariant(e.abbr.replace(/β/g, 'b').replace(/Β/g, 'B'), e);
+            addVariant(e.abbr.replace(/-/g, '‑'), e);
+            addVariant(e.abbr.replace(/‑/g, '-'), e);
+            // Papers define one number and use both: "extracellular vesicles
+            // (EVs)" then "EV", or "extracellular vesicle (EV)" then "EVs".
+            addVariant(singularShortForm(e.abbr), e);
+            if (!e.abbr.endsWith('s')) {
+                addVariant(e.abbr + 's', e);
+                addVariant(e.abbr + 'S', e);
             }
         }
         return map;
     },
 
-    /** The same rule the detector uses (see the singularShortForm function above). */
-    singularShortForm(abbr) {
-        return singularShortForm(String(abbr || ''));
-    },
-
     /**
      * Attach hover listeners to every reader page that shows PDF text (the
-     * PDF view or its Reading Mode) and does not have them yet. Listeners stay attached while the meanings change
-     * (they always read the current map), so this never tears anything down
-     * and is cheap to call often.
+     * PDF view or its Reading Mode) and does not have them yet. Listeners
+     * stay attached while the meanings change (they always read the current
+     * map), so this never tears anything down and is cheap to call often.
      */
     _installHoverForAllWindows() {
         if (this._stopped || !this.hoverEnabled) return;
@@ -3055,7 +3102,7 @@ var AbbreviationHelper = {
             return;
         }
 
-        this.lastHoverState = { doc, x, y, token, dbToken: undefined, term: null, target };
+        this.lastHoverState = { doc, x, y, token, dbToken: undefined, target };
         this._renderHoverFromState(this.lastHoverState);
     },
 
@@ -3131,16 +3178,12 @@ var AbbreviationHelper = {
     },
 
     /**
-     * Modifier choices for the menu, in display order.
-     *
-     * On macOS the Control setting is labelled for Command, because that is the
-     * key Mac users reach for and both are accepted (see _modifierSatisfied).
-     * Alt is called Option on macOS.
-     */
-    /**
-     * The gating choices, phrased to complete the heading they sit under
-     * ("Meanings: Always" / "Meanings: Only while holding Shift"). The ids are
-     * what gets persisted and must not change.
+     * The modifier choices for the Tools menu and the Settings pane, in
+     * display order, phrased to complete the heading they sit under
+     * ("Meanings: Always" / "Meanings: Only while holding Shift"). The ids
+     * are what gets persisted and must not change. On macOS the Control
+     * setting is labelled for Command, the key Mac users reach for (both are
+     * accepted, see _modifierSatisfied), and Alt is called Option.
      */
     _modifierChoices() {
         const mac = this._isMac();
@@ -3197,8 +3240,7 @@ var AbbreviationHelper = {
         // Looked up now rather than when the mouse moved, so a tooltip redrawn
         // later (a modifier key pressed, a setting changed) uses the current
         // meanings.
-        const term = (this.activeHoverMap && this.activeHoverMap.size) ? this._lookupHoverTerm(token) : null;
-        state.term = term;
+        const entry = this._lookupHover(token);
 
         // The multi-word database phrase is only worked out when links may
         // actually be shown, then remembered for this word.
@@ -3210,12 +3252,14 @@ var AbbreviationHelper = {
             }
             dbInfo = this._lookupDatabaseLinks(state.dbToken || token);
         }
-        const includeDbWithAbbr = !!(term && dbInfo && this.databaseLinksOnAbbreviations);
+        const includeDbWithAbbr = !!(entry && dbInfo && this.databaseLinksOnAbbreviations);
 
-        if (term) {
-            this.lastHoveredToken = token;
-            this._showHoverTooltip(doc, state.x, state.y, token, term,
-                { groups: includeDbWithAbbr ? dbInfo.groups : null });
+        if (entry) {
+            // The short form as detected, not as hovered ("DNA." at the end
+            // of a sentence), so ignoring it matches the paper's entry.
+            this.lastHoveredToken = entry.abbr;
+            this._showHoverTooltip(doc, state.x, state.y, this._trimToken(token), entry.term,
+                { groups: includeDbWithAbbr ? dbInfo.groups : null, certainty: entry.certainty });
             this._renderedSig = this._hoverSignature(token);
             return;
         }
@@ -3356,7 +3400,8 @@ var AbbreviationHelper = {
         return true;
     },
 
-    /* ---- External database lookup links ---- */
+    /* ---- External database lookup links -------------------------------- */
+
     /** Databases from the abbreviations file, minus any switched off. */
     _enabledDatabases() {
         // The master switch short-circuits everything downstream: link lookup,
@@ -3497,104 +3542,65 @@ var AbbreviationHelper = {
         return true;
     },
 
-    _lookupHoverTerm(word) {
-        if (!word) return null;
-        const candidates = [];
-        let cleaned = String(word).trim()
-            .replace(/^[\s\(\[\{<"'“‘]+/, '')
-            .replace(/[\s\)\]\}>"'”’.,;:]+$/, '');
-        if (!cleaned) return null;
-        candidates.push(cleaned);
-        candidates.push(cleaned.replace(/‑/g, '-'));
-        candidates.push(cleaned.replace(/β/g, 'b').replace(/Β/g, 'B'));
-        candidates.push(cleaned.replace(/–|—/g, '-'));
+    /** A hovered word without the brackets, quotes and punctuation around it. */
+    _trimToken(word) {
+        return String(word || '').trim()
+            .replace(/^[\s([{<"'“‘]+/, '')
+            .replace(/[\s)\]}>"'”’.,;:]+$/, '');
+    },
 
-        // Direct match: the hovered token is exactly a known abbreviation.
-        for (let c of candidates) {
-            if (this.activeHoverMap.has(c)) return this.activeHoverMap.get(c);
-        }
+    // A known short form with one of these suffixes is explained too while
+    // hovering ("EV-specific": specific to extracellular vesicles); X stands
+    // for the meaning. Such forms are never added to the detected list.
+    HOVER_SUFFIXES: {
+        specific: 'specific to X', mediated: 'mediated by X', dependent: 'dependent on X',
+        independent: 'independent of X', induced: 'induced by X', responsive: 'responsive to X',
+        associated: 'associated with X', related: 'related to X', derived: 'derived from X',
+        targeted: 'X-targeted', targeting: 'targeting X', expressing: 'expressing X',
+        positive: 'X-positive', negative: 'X-negative', binding: 'binding X', bound: 'bound to X',
+        deficient: 'deficient in X', enriched: 'enriched in X', depleted: 'depleted of X'
+    },
 
-        // Affixed abbreviation match.  Academic PDFs often contain a known
-        // abbreviation inside a larger hyphenated modifier, e.g. “anti-EGFR”,
-        // “EV-specific”, “T2D-associated”, or “miRNA-mediated”.  Do not add
-        // these forms to the detected abbreviation list.  At hover time, only
-        // interpret them when the base abbreviation is already known from the
-        // current paper or the high-confidence fallback glossary.  This keeps
-        // the feature useful without making abbreviation detection less
-        // precise.
-        const getBaseTerm = (base) => {
-            if (!base) return null;
-            const baseCandidates = [
-                base,
-                base.replace(/‑/g, '-'),
-                base.replace(/–|—/g, '-'),
-                base.replace(/β/g, 'b').replace(/Β/g, 'B')
-            ];
-            for (let b of baseCandidates) {
-                if (this.activeHoverMap.has(b)) return this.activeHoverMap.get(b);
+    /**
+     * The meaning of a hovered word in the paper on screen, as a hover-map
+     * entry { abbr, term, certainty }, or null. Besides the short form itself,
+     * "anti-X", "non-X" and X with one of HOVER_SUFFIXES are explained when X
+     * is a short form the paper has a meaning for. Broader prefixes ("pre-",
+     * "post-") are left out because they are often part of an ordinary word.
+     */
+    _lookupHover(word) {
+        const map = this.activeHoverMap;
+        const cleaned = this._trimToken(word);
+        if (!cleaned || !map || !map.size) return null;
+        const find = (s) => {
+            for (const v of [s, s.replace(/[‑–—]/g, '-'), s.replace(/β/g, 'b').replace(/Β/g, 'B')]) {
+                if (map.has(v)) return map.get(v);
             }
             return null;
         };
+        const direct = find(cleaned);
+        if (direct) return direct;
 
-        const composeSuffix = (suffix, term) => {
-            suffix = String(suffix || '').toLowerCase();
-            if (suffix === 'specific') return `specific to ${term}`;
-            if (suffix === 'mediated') return `mediated by ${term}`;
-            if (suffix === 'dependent') return `dependent on ${term}`;
-            if (suffix === 'independent') return `independent of ${term}`;
-            if (suffix === 'induced') return `induced by ${term}`;
-            if (suffix === 'responsive') return `responsive to ${term}`;
-            if (suffix === 'associated') return `associated with ${term}`;
-            if (suffix === 'related') return `related to ${term}`;
-            if (suffix === 'derived') return `derived from ${term}`;
-            if (suffix === 'targeted') return `${term}-targeted`;
-            if (suffix === 'targeting') return `targeting ${term}`;
-            if (suffix === 'expressing') return `expressing ${term}`;
-            if (suffix === 'positive') return `${term}-positive`;
-            if (suffix === 'negative') return `${term}-negative`;
-            if (suffix === 'binding') return `binding ${term}`;
-            if (suffix === 'bound') return `bound to ${term}`;
-            if (suffix === 'deficient') return `deficient in ${term}`;
-            if (suffix === 'enriched') return `enriched in ${term}`;
-            if (suffix === 'depleted') return `depleted of ${term}`;
-            return `${term}-${suffix}`;
-        };
-
-        const safeSuffixes = new Set([
-            'specific', 'mediated', 'dependent', 'independent', 'induced',
-            'responsive', 'associated', 'related', 'derived', 'targeted',
-            'targeting', 'expressing', 'positive', 'negative', 'binding',
-            'bound', 'deficient', 'enriched', 'depleted'
-        ]);
-
-        for (let c of candidates) {
-            // Prefix forms: anti-X and non-X.  These are treated only if X is
-            // already a known abbreviation.  We intentionally keep the prefix
-            // list short because broad prefixes such as “pre-” or “post-” can
-            // be ordinary words rather than abbreviation modifiers.
-            let prefixMatch = c.match(/^(anti|non)[-‑–—](.+)$/i);
-            if (prefixMatch) {
-                const prefix = prefixMatch[1].toLowerCase();
-                const base = prefixMatch[2];
-                const baseTerm = getBaseTerm(base);
-                if (baseTerm) {
-                    return prefix === 'anti' ? `anti–${baseTerm}` : `non-${baseTerm}`;
-                }
-            }
-
-            // Suffix forms: X-specific, X-mediated, etc.  Only accept suffixes
-            // from a small, explicit list and only if X is already known.
-            let suffixMatch = c.match(/^(.+)[-‑–—]([A-Za-z]+)$/);
-            if (suffixMatch) {
-                const base = suffixMatch[1];
-                const suffix = suffixMatch[2];
-                if (safeSuffixes.has(suffix.toLowerCase())) {
-                    const baseTerm = getBaseTerm(base);
-                    if (baseTerm) return composeSuffix(suffix, baseTerm);
-                }
-            }
+        const prefix = /^(anti|non)[-‑–—](.+)$/i.exec(cleaned);
+        const prefixed = prefix && find(prefix[2]);
+        if (prefixed) {
+            const lead = prefix[1].toLowerCase() === 'anti' ? 'anti–' : 'non-';
+            return this._affixed(prefixed, m => lead + m);
         }
+        const suffix = /^(.+)[-‑–—]([A-Za-z]+)$/.exec(cleaned);
+        const pattern = suffix && this.HOVER_SUFFIXES[suffix[2].toLowerCase()];
+        const suffixed = pattern && find(suffix[1]);
+        if (suffixed) return this._affixed(suffixed, m => pattern.replace('X', () => m));
         return null;
+    },
+
+    /**
+     * An entry reworded for an affixed form. The note on where the meaning
+     * comes from stays at the end, where the tooltip looks for it.
+     */
+    _affixed(entry, reword) {
+        const { meaning, note } = this._splitNote(entry.term);
+        return { abbr: entry.abbr, term: reword(meaning) + (note ? ' (' + note + ')' : ''), certainty: entry.certainty };
     },
 
     _wordAtPoint(doc, x, y, target) {
@@ -3637,13 +3643,24 @@ var AbbreviationHelper = {
             return false;
         }
 
-        function tokenFromCaretNode(node, offset) {
+        // Short forms joined by slashes ("CD4/CD8", "PI3K/AKT") are explained
+        // one at a time: unless the whole word means something, the part
+        // under the pointer is the word.
+        const explained = t => !!this._lookupHover(t) || !!this._lookupDatabaseLinks(t);
+        const tokenFromCaretNode = (node, offset) => {
             if (!node || node.nodeType !== 3) return '';
             const tb = tokenBounds(node.nodeValue, offset);
             if (!tb || !tb.token) return '';
             if (!pointInTokenRange(node, tb.start, tb.end, x, y)) return '';
+            if (tb.token.includes('/') && !explained(tb.token)) {
+                const at = Math.min(Math.max(offset, tb.start), tb.end) - tb.start;
+                const from = at > 0 ? tb.token.lastIndexOf('/', at - 1) + 1 : 0;
+                const to = tb.token.indexOf('/', at);
+                const part = tb.token.slice(from, to < 0 ? tb.token.length : to);
+                if (part) return part;
+            }
             return tb.token;
-        }
+        };
 
         try {
             if (doc.caretPositionFromPoint) {
@@ -3678,11 +3695,7 @@ var AbbreviationHelper = {
 
                 if (text && !isContainer && hasDirectText && underPoint && text.length <= 120) {
                     const tokens = text.match(/[A-Za-z0-9βΒαΑγΓ][A-Za-z0-9βΒαΑγΓ\-‑–—⋅·.\/]{1,30}/g) || [];
-                    const hits = tokens.filter(t => {
-                        const hasAbbrev = this.activeHoverMap && this.activeHoverMap.size && !!this._lookupHoverTerm(t);
-                        const hasDatabaseLink = !!this._lookupDatabaseLinks(t);
-                        return hasAbbrev || hasDatabaseLink;
-                    });
+                    const hits = tokens.filter(explained);
                     if (hits.length === 1) return hits[0];
                 }
 
@@ -3695,12 +3708,17 @@ var AbbreviationHelper = {
         return '';
     },
 
+    /**
+     * Show a meaning. options.groups adds database links; options.certainty
+     * (as detection reports it) decides the line saying where the meaning
+     * comes from.
+     */
     _showHoverTooltip(doc, x, y, abbr, term, options) {
         const tip = this._ensureHoverTooltip(doc);
         while (tip.firstChild) tip.removeChild(tip.firstChild);
         this.activeGeneLinks = [];
 
-        const { meaning, origin } = this._meaningAndOrigin(term);
+        const { meaning, origin } = this._meaningAndOrigin(term, options && options.certainty);
         const main = doc.createElement('div');
         const strong = doc.createElement('strong');
         strong.textContent = String(abbr || '');
@@ -3727,18 +3745,27 @@ var AbbreviationHelper = {
         this._positionHoverTooltip(doc, tip, x, y);
     },
 
-    /**
-     * Split a meaning from the note on where it comes from, which detection
-     * appends to every meaning the paper does not confirm ("... (common term;
-     * not explicitly defined in this paper)"). Without a note the meaning is
-     * the user's own or one the paper defines.
-     */
-    _meaningAndOrigin(term) {
+    // The note detection appends to every meaning the paper does not confirm:
+    // "... (common term; not explicitly defined in this paper)".
+    NOTE_RE: /^(.*?)\s+\(((?:probable meaning|possible meanings from|from another paper|from \d+ other papers|common term|common possible meanings)[^()]*)\)$/,
+
+    /** A meaning and the note on where it comes from ('' when it has none). */
+    _splitNote(term) {
         const text = String(term || '');
-        const m = /^(.*?)\s+\(((?:probable meaning|possible meanings from|from another paper|from \d+ other papers|common term|common possible meanings)[^()]*)\)$/.exec(text);
-        if (m) return { meaning: m[1], origin: m[2].charAt(0).toUpperCase() + m[2].slice(1) };
-        const own = Object.values((this.dictionaries && this.dictionaries.userDefs) || {}).includes(text);
-        return { meaning: text, origin: own ? 'Your own definition' : 'Defined in this paper' };
+        const m = this.NOTE_RE.exec(text);
+        return m ? { meaning: m[1], note: m[2] } : { meaning: text, note: '' };
+    },
+
+    /**
+     * The meaning to show and the line under it saying where it comes from:
+     * the note, when there is one; otherwise the user's own definition or one
+     * the paper gives.
+     */
+    _meaningAndOrigin(term, certainty) {
+        if (certainty === 'user') return { meaning: String(term || ''), origin: 'Your own definition' };
+        const { meaning, note } = this._splitNote(term);
+        if (note) return { meaning, origin: note.charAt(0).toUpperCase() + note.slice(1) };
+        return { meaning, origin: 'Defined in this paper' };
     },
 
     _showDatabaseTooltip(doc, x, y, info) {
@@ -3764,7 +3791,8 @@ var AbbreviationHelper = {
     _appendDatabaseLinks(doc, tip, info) {
         const line = doc.createElement('div');
         line.style.marginTop = '4px';
-        line.style.fontSize = '11px';
+        // Relative, so the links follow the chosen tooltip text size.
+        line.style.fontSize = '0.9em';
         line.style.opacity = '0.98';
         const groupLabel = (info && info.groupLabel) ? info.groupLabel : 'Gene/protein databases';
         line.appendChild(doc.createTextNode(groupLabel + ': '));

@@ -28,8 +28,10 @@
   gap: 0.4em;
 }
 
+/* Zotero 7+ defines --accent-red for both themes; the fallback is for older
+   builds. (A comma list here is invalid CSS and was silently dropped.) */
 #abbrev-settings-root .abbrev-settings-error:not(:empty) {
-  color: -moz-mac-focusring, #b3261e;
+  color: var(--accent-red, #d32f2f);
   margin-block-start: 0.3em;
 }
 

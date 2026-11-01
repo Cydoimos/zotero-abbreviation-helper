@@ -73,7 +73,9 @@ abbreviations file.
   defining it. A meaning is only used when the paper mentions what it is
   about, never where the paper defines the abbreviation itself, and for a
   field-dependent glossary entry it only picks among the glossary's meanings.
-  Turning the setting off stops both learning and using.
+  Turning the setting off stops both learning and using. Settings show how
+  many papers it has learned from, with a button to forget them. A paper's
+  supplement counts as the same paper.
 
 ### Reading Mode
 - Tooltips work in Zotero 10's Reading Mode for PDFs, which shows the paper as
@@ -93,6 +95,19 @@ abbreviations file.
   0.3 points of precision.
 
 ### Fixed
+- **Ignoring an abbreviation hides its singular and plural too**: ignoring
+  "EV" also hides "EVs". Likewise, your own definition of "EV" is now used in
+  a paper that writes "EVs"; it was ignored there.
+- **"Ignore an Abbreviation…" suggested the word as hovered**, punctuation
+  included ("DNA."), which then matched nothing. It now suggests the
+  abbreviation as detected, and the tooltip names it without the punctuation.
+- The meaning shown for an affixed form ("DNA-positive") no longer has the
+  "(common term; …)" note in the middle of it.
+- Each abbreviation in a pair joined by a slash ("CD4/CD8", "PI3K/AKT") is
+  explained on its own; hovering either showed nothing.
+- Error messages in Settings are red, as intended: the colour was invalid CSS
+  and was dropped.
+- Database links follow the tooltip text size instead of a fixed 11 px.
 - **Meanings now come from the paper you are reading.** The plugin looked for
   the active reader tab in a place Zotero does not provide to plugins, so it
   always used the item selected in the library instead. With several tabs open,
@@ -128,8 +143,9 @@ abbreviations file.
 - The abbreviations file is written through a temporary file.
 - Removed two fallback text extractors that could not work in any supported
   Zotero version. `Zotero.PDFWorker.getFullText` is used, as before.
-- New regression tests (`test/test-fixes.js`) and a GitHub workflow that runs
-  every test on each push.
+- New regression tests (`test/test-fixes.js`, `test/test-review.js`), a test
+  of startup and shutdown through `bootstrap.js` (`test/test-lifecycle.js`),
+  and a GitHub workflow that runs every test on each push.
 
 ## [2.1.0] — 2026-08-28
 

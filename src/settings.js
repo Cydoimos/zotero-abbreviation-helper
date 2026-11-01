@@ -6,6 +6,7 @@
  * code. This file supplies the parts that cannot be static markup:
  *
  *   - modifier-key labels, which differ on macOS (Command / Option)
+ *   - forgetting the definitions learned from other papers
  *   - your own abbreviations, editable in place
  *   - the ignore list, editable in place
  *   - the database list, which comes from the abbreviations file
@@ -45,10 +46,35 @@ var AbbrevSettings = {
     /** Rebuild everything driven by the abbreviations file. */
     refresh() {
         this._showFileStatus();
+        this._showLibraryCount();
         this._buildDefinitionList();
         this._buildIgnoreList();
         this._buildDatabaseList();
         this._syncDependents();
+    },
+
+    /* ---- definitions learned from other papers --------------------------- */
+    _showLibraryCount() {
+        const H = this.helper;
+        const n = (H && H._libraryPaperCount) ? H._libraryPaperCount() : 0;
+        const el = this._byId('abbrev-settings-library-count');
+        if (el) el.textContent = n ? 'Learned from ' + n + (n === 1 ? ' paper' : ' papers') + ' so far.' : 'Nothing learned yet.';
+        this._setDisabled('abbrev-settings-library-forget', !n);
+    },
+
+    _forgetLibrary() {
+        const H = this.helper;
+        if (!H || !H._forgetLibrary) return;
+        const n = H._libraryPaperCount ? H._libraryPaperCount() : 0;
+        const question = 'Forget the definitions learned from ' + n + (n === 1 ? ' paper' : ' papers')
+            + '? Papers you open from now on are learned from again while the setting is on.';
+        let ok = false;
+        try { ok = Services.prompt.confirm(this.doc.defaultView, 'Abbreviation Helper', question); }
+        catch (e) { this._log('No confirmation dialog: ' + e); }
+        if (!ok) return;
+        Promise.resolve(H._forgetLibrary())
+            .then(() => this._showLibraryCount())
+            .catch(e => this._log('Could not forget the learned definitions: ' + e));
     },
 
     /**
@@ -311,6 +337,8 @@ var AbbrevSettings = {
                 })
                 .catch(e => this._saveError('abbrev-settings-ignore-error', e, 'clear the ignore list'));
         });
+
+        this._onClick('abbrev-settings-library-forget', () => this._forgetLibrary());
 
         const master = this._byId('abbrev-settings-db-enabled');
         if (master) master.addEventListener('command', () => this._syncDependents());

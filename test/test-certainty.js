@@ -81,7 +81,7 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
   env.H._flushLibrary();
   await new Promise(r => setTimeout(r, 10));
   const saved = JSON.parse(env.FS[LIBRARY] || '{}');
-  check('definitions are kept in a file next to the abbreviations file', !!(saved.items && saved.items['1/AAAA1111']));
+  check('definitions are kept in a file next to the abbreviations file', !!(saved.items && saved.items['1/AAAA1111/AAAA1111']));
   // The same paper, read again without its definition: only its own entry
   // knows ZZT, and a paper is never its own library.
   const a2 = env.H._detectAbbreviations('ZZT is mentioned here. ZZT twice. zinc zap tool words.', { libraryID: 1, key: 'AAAA1111' })
@@ -96,7 +96,7 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
   env.H._detectAbbreviations('A new tool (NTL) was used. NTL twice.', { libraryID: 1, key: 'CCCC3333' });
   env.H._flushLibrary();
   await new Promise(r => setTimeout(r, 10));
-  check('with the setting off, nothing is learned', !JSON.parse(env.FS[LIBRARY]).items['1/CCCC3333']);
+  check('with the setting off, nothing is learned', !JSON.parse(env.FS[LIBRARY]).items['1/CCCC3333/CCCC3333']);
 
   // ---------- 4. the tooltip says where a meaning comes from ----------
   env = makeEnv({});
@@ -106,8 +106,9 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
     && /^Common term/.test(origin('deoxyribonucleic acid (common term; not explicitly defined in this paper)').origin));
   check('tooltip: from the library', origin('zinc zap tool (from 2 other papers in your library)').origin === 'From 2 other papers in your library');
   check('tooltip: probable', /^Probable meaning/.test(origin(atf.term).origin) && origin(atf.term).meaning === 'cytoprotective transcription factor');
-  env.H.dictionaries = { userDefs: { ZZT: 'my meaning' } };
-  check('tooltip: your own definition', origin('my meaning').origin === 'Your own definition');
+  check('tooltip: your own definition', env.H._meaningAndOrigin('my meaning', 'user').origin === 'Your own definition');
+  check('tooltip: a paper\'s meaning that matches one of yours is still the paper\'s',
+    env.H._meaningAndOrigin('my meaning', 'defined').origin === 'Defined in this paper');
 
   console.log('\n' + (pass ? 'ALL CERTAINTY TESTS PASSED' : 'SOME TESTS FAILED'));
   process.exit(pass ? 0 : 1);
