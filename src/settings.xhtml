@@ -3,145 +3,129 @@
       id="abbrev-settings-root"
       onload="AbbrevSettings.init()">
 
-  <!-- The pane follows the three tooltips the plugin shows in the reader,
-       one section each, then what they share. -->
+  <!-- The pane follows the three tooltips the plugin shows in the reader:
+       one section each, a switch and a "Show:" choice on the section's first
+       line, its options indented under it; then what they share. -->
   <description class="abbrev-settings-intro">
-    Abbreviation Helper shows three kinds of tooltips in the reader, each set
-    up in its own section below: 1 · the meaning of an abbreviation, when you
-    point at it; 2 · database links for gene, protein, cell line and chemical
-    names; 3 · where a word is used in the paper, when you press a key over
-    it. All three look alike, and in all three you choose a numbered entry
-    by clicking it or pressing its number.
+    Three kinds of tooltips appear in the reader, each set up below:
+    1 · meanings, 2 · database links and 3 · where a word is used. They look
+    alike, and in each you choose a numbered entry by clicking it or
+    pressing its number.
   </description>
 
   <groupbox>
     <label><html:h2>1 · Meanings</html:h2></label>
-    <description class="abbrev-settings-hint">
-      The meaning of an abbreviation, when you point at it.
-    </description>
+    <description class="abbrev-settings-hint">The meaning of an abbreviation, when you point at it.</description>
 
-    <checkbox id="abbrev-settings-hover"
-              label="Show meanings"
-              preference="extensions.abbreviation-helper.hoverEnabled"/>
-
-    <vbox class="abbrev-settings-sub" id="abbrev-settings-hover-dependent">
-      <hbox align="center">
+    <hbox align="center">
+      <checkbox id="abbrev-settings-hover" label="Show meanings"
+                preference="extensions.abbreviation-helper.hoverEnabled"/>
+      <hbox align="center" class="abbrev-settings-inline" id="abbrev-settings-hover-show">
         <label control="abbrev-settings-tooltip-modifier" value="Show:"/>
         <menulist native="true" id="abbrev-settings-tooltip-modifier"
                   preference="extensions.abbreviation-helper.tooltipModifier">
           <menupopup/>
         </menulist>
       </hbox>
+    </hbox>
 
+    <vbox class="abbrev-settings-sub" id="abbrev-settings-hover-dependent">
       <checkbox id="abbrev-settings-source"
-                label="Show where each meaning comes from"
+                label="Say where each meaning comes from (&#8220;Defined in this paper&#8221;, &#8220;Common term&#8221;…)"
                 preference="extensions.abbreviation-helper.showMeaningSource"
                 data-search-strings-raw="source, origin, common term, defined in this paper"/>
+      <hbox align="center">
+        <checkbox id="abbrev-settings-library" label="Use definitions from my other papers"
+                  preference="extensions.abbreviation-helper.useLibraryDefinitions"
+                  data-search-strings-raw="library, other papers, learn"/>
+        <html:button id="abbrev-settings-library-forget" class="abbrev-settings-inline"
+                     data-search-strings-raw="forget, library, learned">Forget learned definitions</html:button>
+        <description id="abbrev-settings-library-count" class="abbrev-settings-hint abbrev-settings-inline-note"/>
+      </hbox>
       <description class="abbrev-settings-hint abbrev-settings-sub">
-        A second line under each meaning: "Defined in this paper", "Probable
-        meaning", "Common term", "From 3 other papers in your library" and so on.
+        For abbreviations a paper uses without defining them. Learned from the
+        papers you open and kept on this computer.
       </description>
     </vbox>
 
-    <checkbox id="abbrev-settings-library"
-              label="Use definitions from my other papers"
-              preference="extensions.abbreviation-helper.useLibraryDefinitions"
-              data-search-strings-raw="library, other papers, learn"/>
-    <description class="abbrev-settings-hint abbrev-settings-sub">
-      When a paper uses an abbreviation without defining it, show the meaning
-      your other papers give it. Learned from the papers you open in the
-      reader and kept on this computer.
-    </description>
-    <hbox align="center" class="abbrev-settings-sub abbrev-settings-add-row">
-      <html:button id="abbrev-settings-library-forget"
-                   data-search-strings-raw="forget, library, learned">Forget learned definitions</html:button>
-      <description id="abbrev-settings-library-count" class="abbrev-settings-hint"/>
-    </hbox>
-
     <label><html:h3>Your own abbreviations</html:h3></label>
-    <description class="abbrev-settings-hint">
-      Meanings you define here are always used, even when a paper defines the
-      short form differently.
-    </description>
-
-    <!-- Filled in only when the abbreviations file cannot be read. -->
-    <description id="abbrev-settings-file-error" class="abbrev-settings-error"/>
-
-    <html:div class="abbrev-settings-listbox" id="abbrev-settings-def-box">
-      <html:table class="abbrev-settings-table">
-        <html:thead>
-          <html:tr>
-            <html:th class="abbrev-settings-col-short">Short form</html:th>
-            <html:th>Meaning</html:th>
-            <html:th class="abbrev-settings-col-action"/>
-          </html:tr>
-        </html:thead>
-        <html:tbody id="abbrev-settings-def-list"/>
-      </html:table>
-    </html:div>
-
-    <hbox align="center" class="abbrev-settings-add-row">
-      <html:input id="abbrev-settings-def-abbr" type="text"
-                  class="abbrev-settings-short-input" placeholder="Short form"/>
-      <html:input id="abbrev-settings-def-term" type="text"
-                  class="abbrev-settings-wide-input" placeholder="What it means"/>
-      <html:button id="abbrev-settings-def-add">Add</html:button>
-    </hbox>
-    <description id="abbrev-settings-def-error" class="abbrev-settings-error"/>
+    <vbox class="abbrev-settings-sub">
+      <description class="abbrev-settings-hint">
+        Always used, even when a paper defines the short form differently.
+      </description>
+      <!-- Filled in only when the abbreviations file cannot be read. -->
+      <description id="abbrev-settings-file-error" class="abbrev-settings-error"/>
+      <html:div class="abbrev-settings-listbox" id="abbrev-settings-def-box">
+        <html:table class="abbrev-settings-table">
+          <html:thead>
+            <html:tr>
+              <html:th class="abbrev-settings-col-short">Short form</html:th>
+              <html:th>Meaning</html:th>
+              <html:th class="abbrev-settings-col-action"/>
+            </html:tr>
+          </html:thead>
+          <html:tbody id="abbrev-settings-def-list"/>
+        </html:table>
+      </html:div>
+      <hbox align="center" class="abbrev-settings-add-row">
+        <html:input id="abbrev-settings-def-abbr" type="text"
+                    class="abbrev-settings-short-input" placeholder="Short form"/>
+        <html:input id="abbrev-settings-def-term" type="text"
+                    class="abbrev-settings-wide-input" placeholder="What it means"/>
+        <html:button id="abbrev-settings-def-add">Add</html:button>
+      </hbox>
+      <description id="abbrev-settings-def-error" class="abbrev-settings-error"/>
+    </vbox>
 
     <label><html:h3>Ignored abbreviations</html:h3></label>
-    <description class="abbrev-settings-hint">
-      Short forms the plugin should never explain — for wrong detections, such
-      as a supplier name that happens to look like an abbreviation.
-    </description>
-
-    <html:div class="abbrev-settings-listbox abbrev-settings-listbox-short"
-              id="abbrev-settings-ignore-box">
-      <html:table class="abbrev-settings-table">
-        <html:thead>
-          <html:tr>
-            <html:th>Short form</html:th>
-            <html:th class="abbrev-settings-col-action"/>
-          </html:tr>
-        </html:thead>
-        <html:tbody id="abbrev-settings-ignore-list"/>
-      </html:table>
-    </html:div>
-
-    <hbox align="center" class="abbrev-settings-add-row">
-      <html:input id="abbrev-settings-ignore-input" type="text"
-                  class="abbrev-settings-short-input" placeholder="Short form"/>
-      <html:button id="abbrev-settings-ignore-add">Ignore</html:button>
-      <spacer flex="1"/>
-      <html:button id="abbrev-settings-ignore-clear">Stop ignoring all</html:button>
-    </hbox>
-    <description id="abbrev-settings-ignore-error" class="abbrev-settings-error"/>
+    <vbox class="abbrev-settings-sub">
+      <description class="abbrev-settings-hint">
+        Never explained: for wrong detections, such as a supplier's name.
+      </description>
+      <html:div class="abbrev-settings-listbox abbrev-settings-listbox-short"
+                id="abbrev-settings-ignore-box">
+        <html:table class="abbrev-settings-table">
+          <html:thead>
+            <html:tr>
+              <html:th>Short form</html:th>
+              <html:th class="abbrev-settings-col-action"/>
+            </html:tr>
+          </html:thead>
+          <html:tbody id="abbrev-settings-ignore-list"/>
+        </html:table>
+      </html:div>
+      <hbox align="center" class="abbrev-settings-add-row">
+        <html:input id="abbrev-settings-ignore-input" type="text"
+                    class="abbrev-settings-short-input" placeholder="Short form"/>
+        <html:button id="abbrev-settings-ignore-add">Ignore</html:button>
+        <spacer flex="1"/>
+        <html:button id="abbrev-settings-ignore-clear">Stop ignoring all</html:button>
+      </hbox>
+      <description id="abbrev-settings-ignore-error" class="abbrev-settings-error"/>
+    </vbox>
   </groupbox>
 
   <groupbox>
     <label><html:h2>2 · Database links</html:h2></label>
     <description class="abbrev-settings-hint">
-      Lookup links for gene, protein, cell line and chemical names under the
-      pointer: on their own for a word without a meaning, or under a meaning.
+      Lookup links for gene, protein, cell line and chemical names under the pointer.
     </description>
 
-    <checkbox id="abbrev-settings-db-enabled"
-              label="Show database links"
-              preference="extensions.abbreviation-helper.databaseLinksEnabled"/>
-
-    <vbox class="abbrev-settings-sub" id="abbrev-settings-db-dependent">
-      <hbox align="center">
+    <hbox align="center">
+      <checkbox id="abbrev-settings-db-enabled" label="Show database links"
+                preference="extensions.abbreviation-helper.databaseLinksEnabled"/>
+      <hbox align="center" class="abbrev-settings-inline" id="abbrev-settings-db-show">
         <label control="abbrev-settings-db-modifier" value="Show:"/>
         <menulist native="true" id="abbrev-settings-db-modifier"
                   preference="extensions.abbreviation-helper.databaseLinksModifier">
           <menupopup/>
         </menulist>
       </hbox>
+    </hbox>
 
-      <checkbox id="abbrev-settings-db-on-abbr"
-                label="Also show them under a meaning"
+    <vbox class="abbrev-settings-sub" id="abbrev-settings-db-dependent">
+      <checkbox id="abbrev-settings-db-on-abbr" label="Also show them under a meaning"
                 preference="extensions.abbreviation-helper.databaseLinksOnAbbreviations"/>
-
       <html:div class="abbrev-settings-listbox" id="abbrev-settings-db-box">
         <html:table class="abbrev-settings-table">
           <html:thead>
@@ -153,12 +137,9 @@
           <html:tbody id="abbrev-settings-db-list"/>
         </html:table>
       </html:div>
-
       <hbox class="abbrev-settings-add-row">
         <html:button id="abbrev-settings-db-edit"
-                     data-search-strings-raw="database, add, remove, url">
-          Add or remove databases…
-        </html:button>
+                     data-search-strings-raw="database, add, remove, url">Add or remove databases…</html:button>
       </hbox>
     </vbox>
   </groupbox>
@@ -166,34 +147,24 @@
   <groupbox>
     <label><html:h2>3 · Where a word is used</html:h2></label>
     <description class="abbrev-settings-hint">
-      The first uses of any word in the paper, with the sentence around each,
-      when you press a key over it. Most useful for an abbreviation without a
-      meaning: its first use often defines it.
+      The first uses of any word in the paper, with the sentence around each.
+      Most useful for an abbreviation without a meaning: its first use often defines it.
     </description>
 
-    <checkbox id="abbrev-settings-uses"
-              label="Show where a word is used"
-              preference="extensions.abbreviation-helper.usesEnabled"
-              data-search-strings-raw="uses, occurrences, first use, jump, shortcut, key"/>
-
-    <vbox class="abbrev-settings-sub" id="abbrev-settings-uses-dependent">
-      <hbox align="center">
-        <label control="abbrev-settings-uses-key" value="Show:"/>
-        <menulist native="true" id="abbrev-settings-uses-key"
-                  preference="extensions.abbreviation-helper.usesKey">
+    <hbox align="center">
+      <checkbox id="abbrev-settings-uses" label="Show where a word is used"
+                preference="extensions.abbreviation-helper.usesEnabled"
+                data-search-strings-raw="uses, occurrences, first use, jump, shortcut, key"/>
+      <hbox align="center" class="abbrev-settings-inline" id="abbrev-settings-uses-show">
+        <label control="abbrev-settings-uses-modifier" value="Show:"/>
+        <menulist native="true" id="abbrev-settings-uses-modifier"
+                  preference="extensions.abbreviation-helper.usesModifier">
           <menupopup/>
         </menulist>
       </hbox>
-      <hbox align="center">
-        <label control="abbrev-settings-uses-action" value="The key:"/>
-        <menulist native="true" id="abbrev-settings-uses-action"
-                  preference="extensions.abbreviation-helper.usesAction">
-          <menupopup>
-            <menuitem value="list" label="Lists the first uses"/>
-            <menuitem value="jump" label="Goes to the first use"/>
-          </menupopup>
-        </menulist>
-      </hbox>
+    </hbox>
+
+    <vbox class="abbrev-settings-sub" id="abbrev-settings-uses-dependent">
       <hbox align="center">
         <label control="abbrev-settings-uses-count" value="Uses listed:"/>
         <menulist native="true" id="abbrev-settings-uses-count"
@@ -206,10 +177,10 @@
           </menupopup>
         </menulist>
       </hbox>
+      <!-- Filled in when another tooltip is shown by the same key. -->
+      <description id="abbrev-settings-uses-clash" class="abbrev-settings-error"/>
       <description class="abbrev-settings-hint">
-        To go to a use, click it or press its number; the reader's Back button
-        takes you back. The key needs the keyboard focus in the paper: if it
-        does nothing, click the paper once.
+        Choose a use to go there; the reader's Back button takes you back.
       </description>
     </vbox>
   </groupbox>
@@ -230,10 +201,7 @@
           <menuitem value="20" label="Very large"/>
         </menupopup>
       </menulist>
-    </hbox>
-
-    <hbox align="center">
-      <label control="abbrev-settings-theme" value="Theme:"/>
+      <label control="abbrev-settings-theme" value="Theme:" class="abbrev-settings-inline"/>
       <menulist native="true" id="abbrev-settings-theme"
                 preference="extensions.abbreviation-helper.tooltipTheme">
         <menupopup>
@@ -250,29 +218,21 @@
     <checkbox id="abbrev-settings-advanced-menu"
               label="Show every setting in the Tools menu"
               preference="extensions.abbreviation-helper.advancedMenu"/>
-
     <description class="abbrev-settings-hint abbrev-settings-sub">
-      Off by default: the Tools menu holds only actions, and settings live
-      here. Turn it on to get every setting in the menu as well. On macOS the
-      menu closes after each change — a system behaviour for native menus that
-      no plugin can override — so this window is the easier place to change
-      several at once.
+      Otherwise the menu holds only actions. On macOS it closes after each
+      change, so this window is the easier place for several.
     </description>
   </groupbox>
 
   <groupbox>
     <label><html:h2>Abbreviations file</html:h2></label>
-
     <description class="abbrev-settings-hint">
-      Your own abbreviations, the ignored ones and the databases are stored in
-      one JSON file. Edit it directly if you prefer, then reload.
+      Your own and ignored abbreviations and the databases, as one JSON file.
     </description>
 
     <hbox class="abbrev-settings-add-row">
       <html:button id="abbrev-settings-open-file"
-                   data-search-strings-raw="custom, dictionary, json, file">
-        Open abbreviations file…
-      </html:button>
+                   data-search-strings-raw="custom, dictionary, json, file">Open abbreviations file…</html:button>
       <html:button id="abbrev-settings-reload-file">Reload from file</html:button>
     </hbox>
   </groupbox>

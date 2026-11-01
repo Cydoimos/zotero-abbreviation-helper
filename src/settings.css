@@ -28,6 +28,17 @@
   line-height: 1.45;
 }
 
+/* A control placed on the same line as the one before it: a tooltip's
+   "Show:" choice next to its switch, the theme next to the text size. */
+#abbrev-settings-root .abbrev-settings-inline {
+  margin-inline-start: 1.6em;
+}
+
+#abbrev-settings-root .abbrev-settings-inline-note {
+  margin-block: 0;
+  margin-inline-start: 0.8em;
+}
+
 /* A part of a section ("Your own abbreviations" under Meanings). */
 #abbrev-settings-root groupbox label > h3 {
   font-size: 13px;

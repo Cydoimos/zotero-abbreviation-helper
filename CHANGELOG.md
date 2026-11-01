@@ -85,21 +85,24 @@ abbreviations file.
   highlight as a clickable box over the words, which hid them from the plugin.
 
 ### Added
-- **Where a word is used.** Press O with the pointer on any word to list its
-  first uses in the paper, with their pages and the words around them; click
-  one, or press its number, to go there (the reader marks the word, and its
-  Back button returns). Most useful for abbreviations without a meaning,
-  whose first use usually defines them. It can be switched off, put on any
-  letter Zotero's reader leaves free (A–G, I, L, M, O, Q, T, V–Z), set to go
-  straight to the first use, and list 1, 3, 5 or 10 uses.
+- **Where a word is used.** Hold Ctrl (Cmd on macOS) over any word to list
+  its first uses in the paper, with their pages and the words around them;
+  click one, or let go of the key and press its number, to go there (the
+  reader marks the word, and its Back button returns). Most useful for
+  abbreviations without a meaning, whose first use usually defines them. It
+  can be switched off, shown with Shift, Ctrl/Cmd or Alt instead, and list
+  1, 3, 5 or 10 uses. If you already hold Ctrl for meanings or database
+  links, it takes Shift or Alt, so they work as before the update.
 - **One look for the three tooltips** (meanings, database links, where a
   word is used): the word in bold and what the tooltip says, quieter lines
   under it, and numbered choices chosen the same way everywhere, by click
-  or by number. Database links are numbered choices instead of underlined
-  links, grouped by kind.
+  or by number. Each shows while you point or hold its key, and goes when
+  you move away or let go. Database links are one row of numbered choices,
+  named after their database, instead of underlined links.
 - **The settings follow the three tooltips**: a numbered section for each,
-  with its own switch and a "Show:" choice, then the shared appearance.
-  Your own abbreviations and the ignore list sit under Meanings.
+  its switch and "Show:" choice on one line and its options indented under
+  it, then the shared appearance. Your own abbreviations and the ignore list
+  sit under Meanings.
 - **Show where each meaning comes from** (on by default) in the settings
   hides the line under each meaning when turned off.
 - Five more databases, off until ticked in the settings: Ensembl, InterPro,

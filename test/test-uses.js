@@ -1,7 +1,7 @@
 'use strict';
-/* "Show where a word is used": finding a word's uses in the text of a PDF,
- * and the key that lists them next to the pointer or goes to the first one,
- * in a faked reader. The finder and the plugin are the real code. */
+/* "Where a word is used": finding a word's uses in the text of a PDF, and
+ * the tooltip that lists them while a modifier key is held, in a faked
+ * reader. The finder and the plugin are the real code. */
 const SRC_DIR = require('path').join(__dirname, '..', 'src');
 const fs = require('fs'), vm = require('vm');
 const bundled = JSON.parse(fs.readFileSync(SRC_DIR + '/data/abbreviations.json', 'utf8'));
@@ -85,7 +85,7 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
     && last.before.split(' ').length <= 9, JSON.stringify(last));
   check('a word that is not there has no uses', sb.findUses(TEXT, 'XYZ', 3, 15).total === 0);
 
-  // ---------- the key in the reader ----------
+  // ---------- the held key in the reader ----------
   let env = makeEnv();
   let H = env.H;
   H.init({ id: 'x', version: '1', rootURI: 'r://' });
@@ -96,14 +96,16 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
   let doc = makeDoc();
   let word = 'KD';
   H._wordAtPoint = () => word;
-  const hover = (x) => H._onReaderMouseMove(doc, { clientX: x || 50, clientY: 50, target: null });
-  const press = async (k, extra) => { const e = key(k, extra); H._onReaderKeyDown(doc, e); await wait(5); return e; };
+  const hover = (x, mods) => H._onReaderMouseMove(doc, Object.assign({ clientX: x || 50, clientY: 50, target: null }, mods));
+  const keyDown = (k, flags) => H._onReaderKeyDown(doc, Object.assign({ key: k }, flags));
+  const keyUp = (k, flags) => H._onReaderKeyUp(doc, Object.assign({ key: k }, flags));
+  const shown = () => !!tip(doc) && tip(doc).style.display === 'block';
 
+  check('by default it is shown while holding Ctrl (or Cmd on a Mac)', H.usesModifier === 'ctrl');
   hover();
-  check('no meaning, so hovering KD shows nothing', !tip(doc) || tip(doc).style.display === 'none');
-  let e = await press('o');
-  check('the key is taken', e.defaultPrevented);
-  check('pressing O over KD lists where it is used', tip(doc) && tip(doc).style.display === 'block'
+  check('no meaning, so pointing at KD shows nothing', !shown());
+  keyDown('Control', { ctrlKey: true });
+  check('holding Ctrl over KD lists where it is used', shown()
     && rows(doc)[0] === 'KD — no meaning found' && rows(doc)[1] === 'Used 3 times:', rows(doc).slice(0, 2).join(' | '));
   const choice = i => tip(doc).childNodes[2].childNodes[i];
   check('each use is a numbered choice with its page and words, the word in bold',
@@ -111,59 +113,59 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
     && choice(0).childNodes[0].textContent === '1' && choice(0).childNodes[3].tagName === 'strong', choice(0).textContent);
   check('and the tooltip says how to choose', rows(doc)[3] === 'Click one, or press its number.', rows(doc)[3]);
   check('the list can be clicked', tip(doc).style.pointerEvents === 'auto');
+  keyUp('Control', { ctrlKey: false });
+  await wait(150);     // the same short hide delay as the other tooltips
+  check('letting go of the key hides it, as with the other tooltips: no toggle', !shown());
 
-  H._onReaderKeyDown(doc, { key: 'Shift', shiftKey: true });
-  check('pressing a modifier keeps the list open', rows(doc)[0] === 'KD — no meaning found');
-  hover(51);
-  check('moving within the word keeps it too', rows(doc)[0] === 'KD — no meaning found');
+  hover(52, { metaKey: true });
+  check('on a Mac, Cmd works for Ctrl', shown() && rows(doc)[0] === 'KD — no meaning found');
+  const t = tip(doc);
+  t.contains = x => x === t;
+  H._onReaderMouseMove(doc, { clientX: 70, clientY: 70, target: t, metaKey: true });
+  keyUp('Meta', { metaKey: false });
+  check('with the pointer on the list, letting go keeps it, so a use can still be chosen', shown());
+  let e = key('2', { code: 'Digit2' });
+  H._onReaderKeyDown(doc, e);
+  await wait(5);
+  check('a number goes to that use', e.defaultPrevented && env.reader.calls.length === 1
+    && env.reader.calls[0].pageIndex === 2, JSON.stringify(env.reader.calls));
+  check('and closes the list', !shown());
 
-  e = await press('2', { code: 'Digit2' });
-  check('a number goes to that use', env.reader.calls.length === 1 && env.reader.calls[0].pageIndex === 2,
-    JSON.stringify(env.reader.calls));
-  check('and closes the list', tip(doc).style.display === 'none');
-
-  hover(60);
-  await press('o');
+  hover(60, { ctrlKey: true });
+  const taken = ['ctrlKey', 'metaKey', 'altKey'].map(m => { const k = key('1', { code: 'Digit1', [m]: true }); H._onReaderKeyDown(doc, k); return k; });
+  check('with Ctrl, Cmd or Alt held, a number is left to Zotero (its tabs, the reader\'s tools)',
+    taken.every(k => !k.defaultPrevented) && env.reader.calls.length === 1);
   tip(doc).childNodes[2].childNodes[0]._click({ preventDefault() {}, stopPropagation() {} });
   await wait(5);
   check('clicking a use goes there', env.reader.calls.length === 2 && env.reader.calls[1].pageIndex === 1);
 
   word = 'EVs';
-  hover(70);
-  await press('O', { shiftKey: true });
+  hover(70, { ctrlKey: true });
   check('over an abbreviation with a meaning, the list says the meaning and finds every form',
     rows(doc)[0] === 'EV — extracellular vesicle' && rows(doc)[1] === 'Used 3 times:', rows(doc).slice(0, 2).join(' | '));
-  word = 'binding';
-  hover(90);
-  check('moving to another word closes the list', !H.usesWindow);
-
-  const ignored = [key('o', { ctrlKey: true }), key('o', { metaKey: true }), key('o', { altKey: true }),
-    key('o', { repeat: true }), key('o', { target: { tagName: 'INPUT' } }), key('x')];
-  hover(100);
-  for (const k of ignored) H._onReaderKeyDown(doc, k);
-  await wait(5);
-  check('with Ctrl, Cmd or Alt, repeated, in a text field, or another key: left alone',
-    ignored.every(k => !k.defaultPrevented) && !H.usesWindow);
+  hover(71);
+  check('without the key, its meaning is shown as usual', rows(doc)[0] === 'EVs — extracellular vesicle' && rows(doc).length === 2,
+    rows(doc).join(' | '));
 
   H.usesEnabled = false;
-  e = await press('o');
-  check('switched off, the key is left alone', !e.defaultPrevented && !H.usesWindow);
+  hover(72, { ctrlKey: true });
+  check('switched off, holding the key shows the meaning', rows(doc)[0] === 'EVs — extracellular vesicle');
   H.usesEnabled = true;
 
-  H.usesKey = 'w';
-  word = 'KD';
-  hover(110);
-  e = await press('o');
-  check('another key can be chosen', !e.defaultPrevented);
-  e = await press('w');
-  check('and works', e.defaultPrevented && !!H.usesWindow);
+  H.usesModifier = 'alt';
+  hover(73, { ctrlKey: true });
+  check('another key can be chosen', rows(doc)[0] === 'EVs — extracellular vesicle');
+  hover(74, { altKey: true });
+  check('and works', rows(doc)[0] === 'EV — extracellular vesicle' && rows(doc)[1] === 'Used 3 times:');
 
-  H.usesAction = 'jump';
-  H._forgetHover(doc);
-  hover(120);
-  await press('w');
-  check('"goes to the first use" goes straight there', env.reader.calls.length === 3 && env.reader.calls[2].pageIndex === 1
-    && !H.usesWindow, JSON.stringify(env.reader.calls[2]));
+  H.databaseLinksEnabled = true;
+  H.databaseLinksModifier = 'shift';
+  H.usesModifier = 'shift';
+  word = 'EGFR';
+  hover(80, { shiftKey: true });
+  check('a key shared with database links shows the uses', rows(doc)[0] === 'EGFR — no meaning found', rows(doc)[0]);
+  H.databaseLinksEnabled = false;
+  H.usesModifier = 'ctrl';
 
   // ---------- one look and one way of choosing for all three tooltips ----------
   {
@@ -175,26 +177,21 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
       { groupLabel: 'Cell line databases', links: [{ label: 'Cellosaurus', url: 'u3' }] }];
     H._showHoverTooltip(doc, 10, 10, 'EGFR', 'epidermal growth factor receptor', { groups, certainty: 'defined' });
     heads.push(tip(doc).childNodes[0]);
-    const meaningChoices = tip(doc).childNodes.filter(c => c.childNodes.length && c.childNodes[0].childNodes
-      && c.childNodes[0].childNodes[0] && c.childNodes[0].childNodes[0].style && c.childNodes[0].childNodes[0].style.fontWeight === '600');
-    check('1 · a meaning with links: groups named, numbers run on across them',
-      rows(doc).join(' | ') === 'EGFR — epidermal growth factor receptor | Defined in this paper | Gene/protein databases | 1HGNC2UniProt'
-        + ' | Cell line databases | 3Cellosaurus | Click one, or press its number.', rows(doc).join(' | '));
+    check('1 · a meaning with links: one row of numbered databases, no group names',
+      rows(doc).join(' | ') === 'EGFR — epidermal growth factor receptor | Defined in this paper | 1HGNC2UniProt3Cellosaurus'
+        + ' | Click one, or press its number.', rows(doc).join(' | '));
     H._onReaderKeyDown(doc, key('3', { code: 'Digit3' }));
-    check('pressing 3 opens the third link, in the second group', opened.join() === 'u3', opened.join());
+    check('pressing 3 opens the third link', opened.join() === 'u3', opened.join());
 
     H._showDatabaseTooltip(doc, 10, 10, { symbol: 'TP53', groups });
     heads.push(tip(doc).childNodes[0]);
-    check('2 · database links alone: the same heading, groups and hint',
-      rows(doc).join(' | ') === 'TP53 — look it up in a database | Gene/protein databases | 1HGNC2UniProt'
-        + ' | Cell line databases | 3Cellosaurus | Click one, or press its number.', rows(doc).join(' | '));
-    const linkBadge = tip(doc).childNodes[2].childNodes[0].childNodes[0].style;
+    check('2 · database links alone: the same heading, row and hint',
+      rows(doc).join(' | ') === 'TP53 — look it up in a database | 1HGNC2UniProt3Cellosaurus | Click one, or press its number.',
+      rows(doc).join(' | '));
+    const linkBadge = tip(doc).childNodes[1].childNodes[0].childNodes[0].style;
 
-    H.usesAction = 'list';
-    H.usesKey = 'o';
     word = 'KD';
-    hover(130);
-    await press('o');
+    hover(130, { ctrlKey: true });
     heads.push(tip(doc).childNodes[0]);
     const useBadge = tip(doc).childNodes[2].childNodes[0].childNodes[0].style;
     check('3 · uses: the same heading, then numbered choices and the same hint',

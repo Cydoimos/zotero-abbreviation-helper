@@ -22,6 +22,5 @@ pref("extensions.abbreviation-helper.advancedMenu", false);
 pref("extensions.abbreviation-helper.useLibraryDefinitions", true);
 pref("extensions.abbreviation-helper.showMeaningSource", true);
 pref("extensions.abbreviation-helper.usesEnabled", true);
-pref("extensions.abbreviation-helper.usesKey", "o");
-pref("extensions.abbreviation-helper.usesAction", "list");
+pref("extensions.abbreviation-helper.usesModifier", "ctrl");
 pref("extensions.abbreviation-helper.usesCount", 3);

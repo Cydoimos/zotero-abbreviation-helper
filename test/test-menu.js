@@ -180,12 +180,10 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
   check('both groups present', whenRadios.length === 8, whenRadios.length + ' radio items');
   check('the no-key choice reads "Always"',
     whenRadios.filter(c => c.label === 'Always').length === 2);
-  const keyMenu = popupOf(findByLabel(when, 'Key'));
-  const keyRadios = keyMenu ? keyMenu.childNodes.filter(c => c.getAttribute('type') === 'radio') : [];
-  check('the "where a word is used" key is offered there too: Off and every free letter',
-    keyRadios.length === 1 + H.USES_KEYS.length && keyRadios[0].label === 'Off'
-    && keyRadios[1].label === 'When I press A' && radiosOf('abbrev-uses-action').length === 2,
-    keyRadios.map(c => c.label).slice(0, 3).join(','));
+  const usesRadios = radiosOf('abbrev-uses-mod');
+  check('where a word is used has the same key choices there, Off instead of Always',
+    usesRadios.map(c => c.label).join('|') === ['Off', ...H._modifierChoices().slice(1).map(c => c.label)].join('|'),
+    usesRadios.map(c => c.label).join('|'));
 
   // ---------- 6. master switch greys out its dependents ----------
   const dbSwitch = findByLabel(root, 'Show database links');

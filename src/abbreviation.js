@@ -1346,18 +1346,12 @@ var AbbreviationHelper = {
     // The line under a meaning saying where it comes from ("Defined in this
     // paper", "Common term; ..."). Switching it off leaves the meaning alone.
     showMeaningSource: true,
-    // "Show where a word is used": a key pressed while the pointer is on any
-    // word lists the word's first uses in the paper, or goes to the first.
+    // "Where a word is used": while this modifier is held over any word, the
+    // tooltip lists the word's first uses in the paper. Never 'none': shown
+    // for every word, it would hide every meaning. Ctrl also means Cmd.
     usesEnabled: true,
-    usesKey: 'o',          // one of USES_KEYS, matched by the character it types
-    usesAction: 'list',    // 'list' or 'jump'
+    usesModifier: 'ctrl',
     usesCount: 3,          // how many uses the list shows
-    // The letters the key can be: every letter Zotero's reader leaves free.
-    // It uses h, s and u itself (tools, read aloud) and blocks pdf.js's j, k,
-    // n, p and r, so those are left out.
-    USES_KEYS: 'abcdefgilmoqtvwxyz',
-    // The open list of uses: { state, word, doc }, or null.
-    usesWindow: null,
     // Whether a tooltip for a defined abbreviation also carries database links.
     databaseLinksOnAbbreviations: true,
     // Master switch for the whole database-link layer. When false, no lookup
@@ -1387,6 +1381,9 @@ var AbbreviationHelper = {
     // the PDF text to the tooltip. Plain abbreviation-only tooltips keep
     // the normal transient hover behavior.
     hoverInteractiveTooltip: false,
+    // Whether the pointer is on the tooltip itself; it then stays as it is
+    // when a modifier key goes up or down (see _onModifierKey).
+    _pointerOnTooltip: false,
     // What each numbered choice of the open tooltip does (see _addChoices).
     activeChoices: [],
     // Extracted text per attachment, so a change to your definitions or the
@@ -1424,6 +1421,7 @@ var AbbreviationHelper = {
         // Restore saved user preferences (hover mode, Shift behavior, enabled
         // database groups) so they persist across Zotero restarts.
         this._loadPrefs();
+        this._settleUsesKey();
         // Seed with a small built-in fallback so the plugin still works if the
         // bundled JSON cannot be read, then load the full and user dictionaries
         // asynchronously. Scans await _dictionariesReady before detecting.
@@ -1563,15 +1561,37 @@ var AbbreviationHelper = {
         this.useLibraryDefinitions = this._getPref('useLibraryDefinitions', this.useLibraryDefinitions);
         this.showMeaningSource = this._getPref('showMeaningSource', this.showMeaningSource);
         this.usesEnabled = this._getPref('usesEnabled', this.usesEnabled);
-        const key = String(this._getPref('usesKey', this.usesKey) || '').toLowerCase();
-        this.usesKey = key.length === 1 && this.USES_KEYS.includes(key) ? key : 'o';
-        this.usesAction = this._getPref('usesAction', this.usesAction) === 'jump' ? 'jump' : 'list';
+        const usesModifier = this._getPref('usesModifier', this.usesModifier);
+        this.usesModifier = ['shift', 'ctrl', 'alt'].includes(usesModifier) ? usesModifier : 'ctrl';
         this.usesCount = Number(this._getPref('usesCount', this.usesCount)) || 3;
         // A menulist in the preference pane stores its value as a string,
         // while the menu's radio items store a number. Coerce so both routes
         // to the same setting produce the same type.
         this.tooltipFontSize = Number(this._getPref('tooltipFontSize', this.tooltipFontSize)) || 12;
         this.tooltipTheme = this._getPref('tooltipTheme', this.tooltipTheme);
+    },
+
+    /**
+     * Keep "where a word is used" off a key another tooltip already uses.
+     * Version 2.1.0 offered Ctrl for meanings and database links, and Ctrl is
+     * also this tooltip's default: holding it would then show the uses in
+     * place of what it showed before the update. Until you pick this key
+     * yourself, it moves to the first free one, saved so the settings show
+     * it. A key you picked is kept, and the settings point out the clash.
+     * Run at startup only, so the key never changes under an open Settings
+     * window.
+     */
+    _settleUsesKey() {
+        let chosen = true;
+        try { chosen = Services.prefs.prefHasUserValue(this.PREF_BRANCH + 'usesModifier'); }
+        catch (e) { chosen = this._getPref('usesModifier', null) !== null; }
+        if (chosen) return;
+        const taken = [this.tooltipModifier, this.databaseLinksModifier];
+        if (!taken.includes(this.usesModifier)) return;
+        // Shift before Alt: on Windows, letting go of Alt alone opens the menu bar.
+        const free = ['ctrl', 'shift', 'alt'].find(key => !taken.includes(key));
+        this.usesModifier = free;
+        this._setPref('usesModifier', free);
     },
 
     /* ---- Dictionaries: bundled defaults + user-editable overrides ------- */
@@ -2122,21 +2142,16 @@ var AbbreviationHelper = {
                 }));
             sep(whenPopup);
             header(whenPopup, '3 · Where a word is used');
-            radioGroup(submenu(whenPopup, 'Key'), 'abbrev-uses-key',
-                [{ id: '', label: 'Off' }, ...[...this.USES_KEYS].map(k => ({ id: k, label: 'When I press ' + k.toUpperCase() }))],
-                this.usesEnabled ? this.usesKey : '', (id) => {
+            radioGroup(whenPopup, 'abbrev-uses-mod',
+                [{ id: '', label: 'Off' }, ...this._usesModifierChoices()],
+                this.usesEnabled ? this.usesModifier : '', (id) => {
                     this.usesEnabled = !!id;
                     this._setPref('usesEnabled', this.usesEnabled);
                     if (id) {
-                        this.usesKey = id;
-                        this._setPref('usesKey', id);
+                        this.usesModifier = id;
+                        this._setPref('usesModifier', id);
                     }
-                });
-            radioGroup(whenPopup, 'abbrev-uses-action',
-                [{ id: 'list', label: 'List the first uses' }, { id: 'jump', label: 'Go to the first use' }],
-                this.usesAction, (id) => {
-                    this.usesAction = id;
-                    this._setPref('usesAction', id);
+                    this._refreshHoverFromLastState(doc);
                 });
             } /* end advanced-only: hover and database settings */
 
@@ -3199,10 +3214,11 @@ var AbbreviationHelper = {
         this._updateModifierState(event);
         const x = event.clientX, y = event.clientY;
 
-        // Over the tooltip itself. Only a tooltip with database links can be
-        // under the pointer (a plain one lets the mouse pass through), and it
-        // stays open so the links can be clicked.
-        if (this._eventInTooltip(doc, event)) {
+        // Over the tooltip itself. Only a tooltip with choices can be under
+        // the pointer (a plain one lets the mouse pass through), and it stays
+        // open, even when its key is let go, so a choice can be made.
+        this._pointerOnTooltip = this._eventInTooltip(doc, event);
+        if (this._pointerOnTooltip) {
             this._cancelHoverHide();
             this._clearCorridor();
             return;
@@ -3248,7 +3264,6 @@ var AbbreviationHelper = {
             return;
         }
 
-        this.usesWindow = null;
         this.lastHoverState = { doc, x, y, token, dbToken: undefined, target };
         this._renderHoverFromState(this.lastHoverState);
     },
@@ -3343,6 +3358,11 @@ var AbbreviationHelper = {
         ];
     },
 
+    /** The choices for tooltip 3: those of the other two, except "Always". */
+    _usesModifierChoices() {
+        return this._modifierChoices().filter(c => c.id !== 'none');
+    },
+
     /** Record which modifiers are down, from any mouse or keyboard event. */
     _updateModifierState(event) {
         if (!event) return;
@@ -3378,9 +3398,9 @@ var AbbreviationHelper = {
         if (!state || !state.doc || !state.token) return;
         const doc = state.doc;
         const token = state.token;
-        // An open list of uses stays as it is (a modifier key going up or
-        // down must not replace it); it closes when the pointer moves on.
-        if (this.usesWindow && this.usesWindow.state === state && this._isHoverTooltipVisible(doc)) return;
+        // Tooltip 3 while its key is held, for any word. It comes first, so
+        // a key it shares with another tooltip shows the uses.
+        if (this.usesEnabled && this._modifierSatisfied(this.usesModifier) && this._renderUses(state)) return;
 
         if (!this._modifierSatisfied(this.tooltipModifier)) {
             this._hideHoverTooltip(doc);
@@ -3917,14 +3937,15 @@ var AbbreviationHelper = {
         this.hoverInteractiveTooltip = false;
     },
 
-    /** Database links as choices: each group's name, then its databases. */
+    /**
+     * Database links as one row of choices, in the order of their groups.
+     * The group names stay in the settings: in the tooltip, a database's
+     * name says what it holds.
+     */
     _addLinkGroups(doc, tip, groups) {
-        for (const g of groups) {
-            this._addNote(doc, tip, g.groupLabel);
-            this._addChoices(doc, tip, g.links.map(link => ({
-                label: link.label, href: link.url, choose: () => this._openExternalURL(link.url)
-            })), true);
-        }
+        this._addChoices(doc, tip, [].concat(...groups.map(g => g.links)).map(link => ({
+            label: link.label, href: link.url, choose: () => this._openExternalURL(link.url)
+        })), true);
     },
 
     /**
@@ -3982,29 +4003,42 @@ var AbbreviationHelper = {
     /* ---- Where a word is used ------------------------------------------- */
 
     /**
-     * The "where is it used" key was pressed on a word: list its first uses
-     * next to the pointer, or go straight to the first one (usesAction). A
-     * word with a meaning is looked up by its short form, so "EVs" and
-     * "anti-EV" find the uses of EV.
+     * Tooltip 3 for the word under the pointer: its first uses in the paper.
+     * A word with a meaning is looked up by its short form, so "EVs" and
+     * "anti-EV" find the uses of EV. The paper's text is normally cached
+     * from the scan; if not, it is read and the tooltip drawn once it is
+     * there. Returns false when there is nothing to show yet.
      */
-    async _showUses(state) {
+    _renderUses(state) {
         const entry = this._lookupHover(state.token);
         const word = entry ? entry.abbr : this._trimToken(state.token);
         const itemID = this.activeHoverItemID;
-        if (!word || itemID == null) return;
-        // The text is normally cached from the scan; otherwise it is read again.
-        const text = await this._textForItem(await Zotero.Items.getAsync(itemID));
-        // The pointer may have moved on while the text was read.
-        if (this._stopped || this.lastHoverState !== state) return;
-        const result = findUses(text, word, Math.max(1, this.usesCount), 15);
-        if (this.usesAction === 'jump' && result.uses.length) {
-            await this._jumpToUse(state.doc, result.uses[0], word);
-            return;
+        if (!word || itemID == null) return false;
+        const text = this.textCache.get(itemID);
+        if (typeof text !== 'string') {
+            this._readTextThenRedraw(itemID, state);
+            return false;
         }
+        // The last result is kept: pointing at the same word again is free.
+        const memo = this._usesMemo;
+        const result = memo && memo.itemID === itemID && memo.word === word && memo.count === this.usesCount
+            ? memo.result : findUses(text, word, Math.max(1, this.usesCount), 15);
+        this._usesMemo = { itemID, word, count: this.usesCount, result };
         this._showUsesWindow(state, word, entry, result);
+        return true;
     },
 
-    /** Tooltip 3, the first uses of a word; it stays open so a use can be chosen. */
+    /** Read a paper's text again (it was evicted), then redraw if the pointer stayed. */
+    _readTextThenRedraw(itemID, state) {
+        if (this._readingText) return;
+        this._readingText = Zotero.Items.getAsync(itemID)
+            .then(item => this._textForItem(item))
+            .then(() => { if (!this._stopped && this.lastHoverState === state) this._renderHoverFromState(state); })
+            .catch(e => this.log('Could not read the text for where a word is used: ' + e))
+            .finally(() => { this._readingText = null; });
+    },
+
+    /** Tooltip 3, the first uses of a word, each a choice that goes there. */
     _showUsesWindow(state, word, entry, result) {
         const doc = state.doc;
         const says = entry ? this._meaningAndOrigin(entry.term, entry.certainty).meaning : 'no meaning found';
@@ -4029,7 +4063,6 @@ var AbbreviationHelper = {
             this._finishPlain(tip);
         }
         this._positionHoverTooltip(doc, tip, state.x, state.y);
-        this.usesWindow = { state, word, doc };
         this._renderedSig = this._hoverSignature(state.token);
     },
 
@@ -4138,6 +4171,7 @@ var AbbreviationHelper = {
                 this._cancelHoverHide();
             });
             tip.addEventListener('mouseleave', () => {
+                this._pointerOnTooltip = false;
                 this._scheduleHoverHide(doc, 250);
             });
             doc.body.appendChild(tip);
@@ -4235,18 +4269,13 @@ var AbbreviationHelper = {
         // box) are never taken.
         if (this._typingInto(event.target)) return;
 
-        // The "where is it used" key, with the pointer on a word.
-        if (this._isUsesKey(event) && this.lastHoverState) {
-            event.preventDefault();
-            event.stopPropagation();
-            this._showUses(this.lastHoverState).catch(e => this.log('Could not show where a word is used: ' + e));
-            return;
-        }
-
         // 1-9 choose from a tooltip with database links or a list of uses; a
         // tooltip with only a meaning leaves the keys alone. This is the
         // reliable way to choose when the reader makes clicking hard.
         if (!this.hoverInteractiveTooltip || !this._isHoverTooltipVisible(tipDoc)) return;
+        // With Ctrl, Cmd or Alt held a number is Zotero's: Ctrl/Cmd+1-9 switch
+        // tabs and Alt+1-8 the reader's tools. With Shift it is free.
+        if (event.ctrlKey || event.metaKey || event.altKey) return;
         // The physical key counts, not the character it types, so the
         // shortcut works on every layout: with Shift held, the "1" key types
         // "!" on a German keyboard, and without it "&" on a French one.
@@ -4271,39 +4300,29 @@ var AbbreviationHelper = {
         }
     },
 
-    /**
-     * The key of "Show where a word is used", pressed on its own (Shift
-     * allowed, since a modifier may be held for database links). With Ctrl,
-     * Cmd or Alt it is someone else's shortcut. A held key repeats; only the
-     * first press counts.
-     */
-    _isUsesKey(event) {
-        return !!(this.usesEnabled && !event.repeat && !event.ctrlKey && !event.metaKey && !event.altKey
-            && String(event.key || '').toLowerCase() === this.usesKey);
-    },
-
     _onReaderKeyUp(doc, event) {
         if (event && this.MODIFIER_KEYS[event.key]) this._onModifierKey(doc, event, false);
     },
 
     /**
-     * A modifier went down or up: redraw the tooltip, whose content may
-     * depend on it (database links appear while Shift is held). Only a real
-     * change redraws it, so a held key, which repeats its key-down, does not
-     * rebuild the tooltip again and again.
+     * A modifier went down or up: redraw the tooltip, whose kind depends on
+     * it (database links while Shift is held, say). Only a real change
+     * redraws it, so a held key, which repeats its key-down, does not rebuild
+     * the tooltip again and again. A tooltip the pointer is on stays as it
+     * is, so its choices can still be made after the key is let go.
      */
     _onModifierKey(doc, event, down) {
         const before = JSON.stringify(this.modifierState);
         this._updateModifierState(event);
         // The key itself is not reliably reflected in the event's flags yet.
         this.modifierState[this.MODIFIER_KEYS[event.key]] = down;
-        if (JSON.stringify(this.modifierState) !== before) this._refreshHoverFromLastState(doc);
+        if (JSON.stringify(this.modifierState) !== before && !this._pointerOnTooltip) this._refreshHoverFromLastState(doc);
     },
 
     _onReaderBlur(doc) {
         const before = JSON.stringify(this.modifierState);
         this.modifierState = { shift: false, ctrl: false, alt: false, meta: false };
-        if (JSON.stringify(this.modifierState) !== before) this._refreshHoverFromLastState(doc);
+        if (JSON.stringify(this.modifierState) !== before && !this._pointerOnTooltip) this._refreshHoverFromLastState(doc);
     },
 
     _openExternalURL(url) {
@@ -4348,7 +4367,7 @@ var AbbreviationHelper = {
     _hideHoverTooltip(doc) {
         this._cancelHoverHide();
         this._clearCorridor();
-        this.usesWindow = null;
+        this._pointerOnTooltip = false;
         this.hoverPinnedDoc = null;
         this.hoverInteractiveTooltip = false;
         this.activeChoices = [];

@@ -91,7 +91,27 @@ function start(files, prefs) {
   check('the others stay on', ['HGNC', 'UniProt', 'NCBI Gene', 'Cellosaurus', 'PubChem'].every(l => on.includes(l)));
   check('the new databases start off', !['Ensembl', 'InterPro', 'RCSB PDB', 'RNAcentral', 'Addgene'].some(l => on.includes(l)));
   check('new settings take their defaults', H.useLibraryDefinitions === true && H.showMeaningSource === true
-    && H.usesEnabled === true && H.usesKey === 'o' && H.usesAction === 'list' && H.usesCount === 3);
+    && H.usesEnabled === true && H.usesCount === 3);
+  // This user holds Ctrl for database links, so "where a word is used" must
+  // not take Ctrl, its default: the links would no longer show.
+  check('where a word is used keeps off the key the links use, and the settings show it',
+    H.usesModifier === 'alt' && z.P.get(BRANCH + 'usesModifier') === 'alt', H.usesModifier);
+  {
+    const free = start({}, { tooltipModifier: 'none', databaseLinksModifier: 'shift' });
+    await free.sandbox.startup({ id: 'abbreviation-helper@cydoimos.github.io', version: 'new', rootURI: 'r://' });
+    const F = free.sandbox.AbbreviationHelper;
+    check('with the usual keys it takes Ctrl, and saves nothing',
+      F.usesModifier === 'ctrl' && !free.P.has(BRANCH + 'usesModifier'));
+    free.sandbox.shutdown();
+    const ctrl = start({}, { tooltipModifier: 'none', databaseLinksModifier: 'ctrl' });
+    await ctrl.sandbox.startup({ id: 'abbreviation-helper@cydoimos.github.io', version: 'new', rootURI: 'r://' });
+    check('with only Ctrl taken it takes Shift', ctrl.sandbox.AbbreviationHelper.usesModifier === 'shift');
+    ctrl.sandbox.shutdown();
+    const mine = start({}, { tooltipModifier: 'ctrl', databaseLinksModifier: 'shift', usesModifier: 'ctrl' });
+    await mine.sandbox.startup({ id: 'abbreviation-helper@cydoimos.github.io', version: 'new', rootURI: 'r://' });
+    check('a key picked on purpose is kept', mine.sandbox.AbbreviationHelper.usesModifier === 'ctrl');
+    mine.sandbox.shutdown();
+  }
 
   // ---------- the abbreviations file carries over ----------
   check('the file is read without complaint', H.userFileError === null, String(H.userFileError));

@@ -6,7 +6,7 @@
  * code. This file supplies the parts that cannot be static markup:
  *
  *   - the "Show:" lists: modifier keys, named for the platform (Command,
- *     Option on macOS), and the letters for where a word is used
+ *     Option on macOS), and a warning when two tooltips share one
  *   - forgetting the definitions learned from other papers
  *   - greying out controls whose checkbox is off
  *   - your own abbreviations, editable in place
@@ -53,6 +53,7 @@ var AbbrevSettings = {
         this._buildIgnoreList();
         this._buildDatabaseList();
         this._syncDependents();
+        this._showKeyClash();
     },
 
     /* ---- definitions learned from other papers --------------------------- */
@@ -114,8 +115,9 @@ var AbbrevSettings = {
     /* ---- what shows each tooltip ------------------------------------------ */
     /**
      * The "Show:" list of each tooltip, built here because its entries come
-     * from the plugin: the modifier keys (named for the platform) for
-     * meanings and database links, the letters for where a word is used.
+     * from the plugin: the modifier keys, named for the platform. Where a
+     * word is used has no "Always": shown for every word, it would hide
+     * every meaning.
      */
     _fillModifierMenus() {
         const H = this.helper;
@@ -125,11 +127,30 @@ var AbbrevSettings = {
             { id: 'ctrl', label: 'Only while holding Ctrl' },
             { id: 'alt', label: 'Only while holding Alt' }
         ];
-        const letters = [...((H && H.USES_KEYS) || 'o')]
-            .map(k => ({ id: k, label: 'When I press ' + k.toUpperCase() }));
         this._fillMenu('abbrev-settings-tooltip-modifier', modifiers);
         this._fillMenu('abbrev-settings-db-modifier', modifiers);
-        this._fillMenu('abbrev-settings-uses-key', letters);
+        this._fillMenu('abbrev-settings-uses-modifier', modifiers.filter(c => c.id !== 'none'));
+    },
+
+    /**
+     * Say so when the key of "where a word is used" also shows another
+     * tooltip: while it is held, the uses are shown instead.
+     */
+    _showKeyClash() {
+        const value = id => { const el = this._byId(id); return el ? String(el.value || '') : ''; };
+        const uses = value('abbrev-settings-uses-modifier');
+        const others = [];
+        if (this._isTicked('abbrev-settings-hover') && value('abbrev-settings-tooltip-modifier') === uses) others.push('meanings');
+        if (this._isTicked('abbrev-settings-db-enabled') && value('abbrev-settings-db-modifier') === uses) others.push('database links');
+        this._error('abbrev-settings-uses-clash', this._isTicked('abbrev-settings-uses') && others.length
+            ? 'The same key shows ' + others.join(' and ') + ': while you hold it, the uses are shown instead.'
+            : '');
+    },
+
+    _isTicked(id) {
+        const el = this._byId(id);
+        if (!el) return false;
+        return (typeof el.checked === 'boolean') ? el.checked : el.getAttribute('checked') === 'true';
     },
 
     _fillMenu(id, choices) {
@@ -354,7 +375,11 @@ var AbbrevSettings = {
 
         for (const [masterId] of this.DEPENDENTS) {
             const master = this._byId(masterId);
-            if (master) master.addEventListener('command', () => this._syncDependents());
+            if (master) master.addEventListener('command', () => { this._syncDependents(); this._showKeyClash(); });
+        }
+        for (const id of ['abbrev-settings-tooltip-modifier', 'abbrev-settings-db-modifier', 'abbrev-settings-uses-modifier']) {
+            const list = this._byId(id);
+            if (list) list.addEventListener('command', () => this._showKeyClash());
         }
 
         this._onClick('abbrev-settings-db-edit', () => this._openFile());
@@ -404,28 +429,28 @@ var AbbrevSettings = {
         el.setAttribute('hidden', text ? 'false' : 'true');
     },
 
-    // Checkboxes, each with the controls that only apply while it is ticked.
+    // Each tooltip's switch, with its "Show:" choice on the same line and
+    // the options indented under it: they only apply while it is ticked.
     DEPENDENTS: [
-        ['abbrev-settings-hover', 'abbrev-settings-hover-dependent'],
-        ['abbrev-settings-db-enabled', 'abbrev-settings-db-dependent'],
-        ['abbrev-settings-uses', 'abbrev-settings-uses-dependent']
+        ['abbrev-settings-hover', ['abbrev-settings-hover-show', 'abbrev-settings-hover-dependent']],
+        ['abbrev-settings-db-enabled', ['abbrev-settings-db-show', 'abbrev-settings-db-dependent']],
+        ['abbrev-settings-uses', ['abbrev-settings-uses-show', 'abbrev-settings-uses-dependent']]
     ],
 
     /**
-     * Grey out the controls that only apply while their checkbox is ticked
-     * (each of the three tooltips), so no visible control silently does
-     * nothing.
+     * Grey out the controls that only apply while their tooltip is switched
+     * on, so no visible control silently does nothing.
      */
     _syncDependents() {
-        for (const [masterId, dependentId] of this.DEPENDENTS) {
-            const master = this._byId(masterId);
-            const dependent = this._byId(dependentId);
-            if (!master || !dependent) continue;
-            const on = (typeof master.checked === 'boolean')
-                ? master.checked
-                : master.getAttribute('checked') === 'true';
-            dependent.setAttribute('disabled', on ? 'false' : 'true');
-            dependent.style.opacity = on ? '' : '0.5';
+        for (const [masterId, dependentIds] of this.DEPENDENTS) {
+            if (!this._byId(masterId)) continue;
+            const on = this._isTicked(masterId);
+            for (const id of dependentIds) {
+                const dependent = this._byId(id);
+                if (!dependent) continue;
+                dependent.setAttribute('disabled', on ? 'false' : 'true');
+                dependent.style.opacity = on ? '' : '0.5';
+            }
         }
     }
 };

@@ -39,10 +39,14 @@ paper as reflowed text, including over highlighted text.
 
 The plugin shows three kinds of tooltips. They look alike: the word in bold and what the
 tooltip says about it, quieter lines underneath, and, when there is something to choose,
-numbered choices. Click a choice or press its number (**1–9**); a tooltip with choices
-stays put while you move the pointer onto it. The number keys work on every keyboard
-layout: on a German keyboard Shift+1 chooses the first entry although it types "!", and
-on a French one the 1 key works with or without Shift.
+numbered choices. Each one appears the same way: while you point at a word, or while you
+hold a key over it (you choose which in the settings), and it goes when you move away or
+let go of the key. Click a choice or press its number (**1–9**); a tooltip with choices
+stays put while you move the pointer onto it, even after you let go of the key. The
+number keys work on every keyboard layout: on a German keyboard Shift+1 chooses the
+first entry although it types "!", and on a French one the 1 key works with or without
+Shift. They are left alone while Ctrl, Cmd or Alt is held, since Zotero uses those
+combinations to switch tabs and reader tools.
 
 ### 1 · Meanings
 
@@ -63,34 +67,36 @@ or off.
 ### 2 · Database links
 
 Hold **Shift** (by default) over a gene, protein, cell line or chemical name for links to
-look it up: on their own for a word without a meaning, or under a meaning. Built in:
+look it up: on their own for a word without a meaning, or under a meaning. The links are
+one numbered row, named after their database. Built in:
 HGNC, UniProt, GeneCards, NCBI Gene, Cellosaurus, ATCC and PubChem are on; Ensembl,
 InterPro, RCSB PDB, RNAcentral and Addgene are available and off until you tick them in
 the settings.
 
 ### 3 · Where a word is used
 
-Press **O** with the pointer on any word, and the tooltip lists the word's first uses in
-the paper: the page, and the sentence around each one. It works on every word, and is
-most useful for an abbreviation the plugin found no meaning for, since its first use
-usually defines it. Choose a use to go there: the reader turns to the page and marks the
-word for a moment, and its Back button takes you back. In Reading Mode the jump goes to
-the page.
+Hold **Ctrl** (or **Cmd** on macOS; by default) over any word, and the tooltip lists the
+word's first uses in the paper: the page, and the sentence around each one. It works on
+every word, and is most useful for an abbreviation the plugin found no meaning for, since
+its first use usually defines it. Choose a use to go there: the reader turns to the page
+and marks the word for a moment, and its Back button takes you back. In Reading Mode the
+jump goes to the page.
 
-The key can be any letter Zotero's reader does not use itself: A–G, I, L, M, O, Q, T and
-V–Z. It can also go straight to the first use instead of listing, and the list can show
-1, 3, 5 or 10 uses. The key needs the keyboard focus in the paper: if it does nothing,
-click the paper once. It is never taken while you type in a text field, or with Ctrl,
-Cmd or Alt held.
+To choose, either move the pointer onto the list and click, or let go of the key first
+and then press a number. The key can be Shift, Ctrl/Cmd or Alt, and the list can show 1,
+3, 5 or 10 uses. If one of the other tooltips already uses Ctrl/Cmd, it takes Shift or
+Alt instead. If you give it the same key as another tooltip, this one wins while the key
+is held, and the settings say so. The key needs the keyboard focus in the paper:
+if it does nothing, click the paper once.
 
 ### Settings
 
 Everything is in **Zotero Settings → Abbreviation Helper** (or **Tools → Abbreviation
 Helper → Settings…**), in the same order: one section for each of the three tooltips,
-each with its own on/off switch and a **Show:** choice of what brings it up, then the
-appearance they share, the Tools menu and the abbreviations file. Your own
-abbreviations and the ignore list are under Meanings, editable in place with no JSON to
-hand-edit. Changes apply immediately.
+each starting with its on/off switch and, on the same line, a **Show:** choice of what
+brings it up, with its options indented under it; then the appearance they share, the
+Tools menu and the abbreviations file. Your own abbreviations and the ignore list are
+under Meanings, editable in place with no JSON to hand-edit. Changes apply immediately.
 
 Definitions you add there are authoritative: they are shown even when a paper defines
 the short form differently. A definition or ignore entry covers the singular and the
@@ -281,7 +287,7 @@ node test/test-certainty.js  # probable meanings, definitions from other papers,
 node test/test-review.js     # singular/plural entries, hovered words, the library store
 node test/test-lifecycle.js  # startup and shutdown through bootstrap.js
 node test/test-upgrade.js    # updating from 2.1.0: settings and abbreviations file carry over
-node test/test-uses.js       # where a word is used: finding uses, the key, the list and the jump
+node test/test-uses.js       # where a word is used: finding uses, the held key, the list and the jump
 
 node eval/benchmark/score.js dev <dir>   # accuracy on the benchmark (needs the texts)
 node eval/benchmark/intervals.js dev <dir>   # 95 % intervals, and old-vs-new differences
