@@ -88,9 +88,10 @@ abbreviations file.
 - **Where a word is used** (off until switched on). Hold Ctrl (Cmd on
   macOS) over any word, in any script ("Müller", "protéine"), to list its
   first uses in the paper, with their pages and the words around them;
-  click one, or let go of the key and press its number, to go there (the
-  reader marks the word, and its Back button returns). Most useful for abbreviations without a meaning, whose
-  first use usually defines them. It can be shown with Shift, Ctrl/Cmd or
+  click one, or press its number, to go there (the word is marked in the
+  green of a search match, and the reader's Back button returns). Most
+  useful for abbreviations without a meaning, whose first use usually
+  defines them. It can be shown with Shift, Ctrl/Cmd or
   Alt, and list 1, 3, 5 or 10 uses. If you already hold Ctrl for meanings
   or database links, it takes Shift or Alt, so they look as before.
 - **One look for the three tooltips** (meanings, database links, where a

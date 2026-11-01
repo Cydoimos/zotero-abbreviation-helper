@@ -97,8 +97,8 @@ any word, and the tooltip lists the word's first uses in the paper: the page, an
 sentence around each one. It works on
 every word, and is most useful for an abbreviation the plugin found no meaning for, since
 its first use usually defines it. Choose a use to go there: the reader turns to the page
-and marks the word for a moment, and its Back button takes you back. In Reading Mode the
-jump goes to the page.
+and marks the word for a moment, in the green of a search match (Ctrl/Cmd+F), and its
+Back button takes you back. In Reading Mode the jump goes to the page.
 
 To choose, press a number while still holding the key, or move the pointer onto the
 list and click. The key can be Shift, Ctrl/Cmd or Alt (it cannot be "Always": a

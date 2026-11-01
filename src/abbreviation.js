@@ -4190,17 +4190,32 @@ var AbbreviationHelper = {
         }
     },
 
-    /** A short-lived yellow mark over a range of a page's text. */
+    // The colour Zotero's reader gives the current match of a search
+    // (Ctrl/Cmd+F), so a use you went to looks like a word you searched for:
+    // green, stronger on a dark page. From zotero/reader, src/common/defines.js
+    // (FIND_RESULT_COLOR_CURRENT_LIGHT and _DARK).
+    FOUND_COLOR_LIGHT: 'rgba(0, 100, 0, 0.3)',
+    FOUND_COLOR_DARK: 'rgba(0, 100, 0, 0.6)',
+
+    /**
+     * A short-lived mark over a range of a page's text, drawn as the reader
+     * draws a search match: the match's own boxes, in its colour, with its
+     * corners (5 device pixels).
+     */
     _flashRange(doc, layer, range) {
         const page = (layer.closest && layer.closest('.page')) || layer.parentNode;
         const box = page.getBoundingClientRect();
+        const color = this._pageIsDark(doc) ? this.FOUND_COLOR_DARK : this.FOUND_COLOR_LIGHT;
+        let ratio = 1;
+        try { ratio = (doc.defaultView && doc.defaultView.devicePixelRatio) || 1; } catch (e) {}
+        const radius = Math.max(1, Math.round(5 / ratio)) + 'px';
         const marks = [];
         for (const r of range.getClientRects()) {
             const mark = doc.createElement('div');
             Object.assign(mark.style, {
-                position: 'absolute', left: (r.left - box.left - 2) + 'px', top: (r.top - box.top - 2) + 'px',
-                width: (r.width + 4) + 'px', height: (r.height + 4) + 'px', borderRadius: '3px',
-                background: 'rgba(255, 196, 0, 0.5)', pointerEvents: 'none', zIndex: '3', transition: 'opacity 0.6s'
+                position: 'absolute', left: (r.left - box.left) + 'px', top: (r.top - box.top) + 'px',
+                width: r.width + 'px', height: r.height + 'px', borderRadius: radius,
+                background: color, pointerEvents: 'none', zIndex: '3', transition: 'opacity 0.6s'
             });
             marks.push(page.appendChild(mark));
         }
@@ -4208,6 +4223,34 @@ var AbbreviationHelper = {
         if (holder && holder.scrollIntoView) holder.scrollIntoView({ block: 'center', inline: 'nearest' });
         setTimeout(() => { for (const m of marks) m.style.opacity = '0'; }, 1400);
         setTimeout(() => { for (const m of marks) if (m.parentNode) m.parentNode.removeChild(m); }, 2100);
+    },
+
+    /**
+     * Is the page shown dark? The reader decides it the same way, from the
+     * background of the page theme in use, which it puts on the page as
+     * --background-color (a dark theme, or dark mode for PDFs). Without one,
+     * as before page themes, the page is light.
+     */
+    _pageIsDark(doc) {
+        try {
+            const root = doc.documentElement;
+            const value = doc.defaultView.getComputedStyle(root).getPropertyValue('--background-color').trim();
+            let rgb = null;
+            const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(value);
+            if (hex) {
+                const h = hex[1].length === 3 ? hex[1].replace(/./g, c => c + c) : hex[1];
+                rgb = [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16));
+            } else {
+                const m = /rgba?\(\s*(\d+)[\s,]+(\d+)[\s,]+(\d+)/i.exec(value);
+                if (m) rgb = m.slice(1, 4).map(Number);
+            }
+            if (!rgb) return !!(root.dataset && root.dataset.colorScheme === 'dark');
+            // Relative luminance, as the reader computes it.
+            const [r, g, b] = rgb.map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+            return 0.2126 * r + 0.7152 * g + 0.0722 * b < 0.3;
+        } catch (e) {
+            return false;
+        }
     },
 
     /* ---- The tooltip element, clicks and keys ---------------------------

@@ -364,11 +364,25 @@ const key = (k, extra) => Object.assign({ key: k, code: 'Key' + k.toUpperCase(),
       createTreeWalker: () => { let i = -1; return { nextNode: () => nodes[++i] || null }; },
       createRange: () => ({ setStart(n, s) { this.n = n; this.s = s; }, setEnd() {}, get startContainer() { return this.n; },
         getClientRects() { return [{ left: 150 + this.s, top: 1200, width: 20, height: 12 }]; } }),
-      createElement: () => ({ style: {}, parentNode: null })
+      createElement: () => ({ style: {}, parentNode: null }),
+      documentElement: { dataset: {} },
+      defaultView: { devicePixelRatio: 2, getComputedStyle: () => ({ getPropertyValue: () => pdf.background }) },
+      background: ''
     };
     await H._markUse(pdf, { pageIndex: 1, nthOnPage: 1 }, 'KD');
-    check('after a jump, the use is marked on its page', marks.length === 1 && marks[0].style.left === '56px'
-      && marks[0].style.top === '198px', JSON.stringify(marks[0] && marks[0].style));
+    check('after a jump, the use is marked on its page, over the word itself', marks.length === 1
+      && marks[0].style.left === '58px' && marks[0].style.top === '200px' && marks[0].style.width === '20px',
+      JSON.stringify(marks[0] && marks[0].style));
+    check('in the colour and shape of a search match in Zotero (Ctrl/Cmd+F)',
+      marks[0].style.background === 'rgba(0, 100, 0, 0.3)' && marks[0].style.borderRadius === '3px', JSON.stringify(marks[0].style));
+    marks.length = 0;
+    pdf.background = '#1e1e1e';     // a dark page theme
+    await H._markUse(pdf, { pageIndex: 1, nthOnPage: 1 }, 'KD');
+    check('stronger on a dark page, as there', marks[0].style.background === 'rgba(0, 100, 0, 0.6)', marks[0].style.background);
+    marks.length = 0;
+    pdf.background = '#F4ECD8';     // sepia
+    await H._markUse(pdf, { pageIndex: 1, nthOnPage: 1 }, 'KD');
+    check('and light on a light theme', marks[0].style.background === 'rgba(0, 100, 0, 0.3)');
     check('and brought to the middle of the view', span.scrolled && span.scrolled.block === 'center');
     const none = await H._markUse({ querySelector: () => null }, { pageIndex: 0, nthOnPage: 0 }, 'KD').then(() => true);
     check('in Reading Mode (no pages), the jump to the page is all', none);
