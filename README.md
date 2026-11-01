@@ -9,8 +9,9 @@ over it — so you can skim a PDF without scrolling back to hunt for the first u
 The rest are mixed-case forms (`sgRNA`, `dCas9`), clippings (`Pfu`), blends (`cryo-EM`)
 and symbols — all of which this plugin handles.
 
-It also offers optional database lookup links (gene, protein, cell line, chemical) for
-code-like tokens under the cursor.
+It can also offer database lookup links (gene, protein, cell line, chemical) for the
+name under the pointer, and list where any word is used in the paper, so you can jump to
+its first use.
 
 Works on **macOS, Windows and Linux**. Requires **Zotero 7 or newer**
 (tested on Zotero 10.0.1).
@@ -49,9 +50,9 @@ a thin line. Set all three to the same key to see everything about a word at onc
 
 They look alike: the word in bold and what the tooltip says about it, quieter lines
 underneath, and, when there is something to choose, numbered choices, numbered on from
-one part to the next. Click a choice or press its number (**1–9**, then **0** for the
-tenth), while still holding the tooltip's key or after letting go; a tooltip with choices
-stays put while you move the pointer onto it, even after you let go of the key.
+one part to the next. Press a choice's number (**1–9**, then **0** for the tenth), while
+still holding the tooltip's key if it has one, or click it: a tooltip with choices stays
+put while you move the pointer onto it, even after you let go of the key.
 
 The number keys work on every keyboard layout and system. What counts is the key's
 place, not the character it types: on a German keyboard Shift+1 chooses the first entry
@@ -94,9 +95,8 @@ the settings.
 
 Once switched on in the settings, hold **Ctrl** (or **Cmd** on macOS; by default) over
 any word, and the tooltip lists the word's first uses in the paper: the page, and the
-sentence around each one. It works on
-every word, and is most useful for an abbreviation the plugin found no meaning for, since
-its first use usually defines it. Choose a use to go there: the reader turns to the page
+sentence around each one. It works on every word, and is most useful for an abbreviation
+the plugin found no meaning for, since its first use usually defines it. Choose a use to go there: the reader turns to the page
 and marks the word for a moment, in the green of a search match (Ctrl/Cmd+F), and its
 Back button takes you back. In Reading Mode the jump goes to the page.
 
@@ -126,7 +126,7 @@ defining it. Researchers tend to read many papers from one field, where an abbre
 usually means the same thing. A meaning from your library is only used when the paper
 mentions what it is about, and never where the paper defines the abbreviation itself.
 Turning the setting off stops both remembering and using. **Forget learned definitions**,
-next to it, clears what was learned so far. A paper's supplement counts as the same paper.
+under it, clears what was learned so far. A paper's supplement counts as the same paper.
 
 ### Tools menu
 

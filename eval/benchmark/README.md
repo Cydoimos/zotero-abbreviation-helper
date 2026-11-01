@@ -2,14 +2,15 @@
 
 Papers for measuring how well the plugin finds abbreviations and gets their
 meaning right. Paper texts are never committed (they are copyrighted); this
-folder holds only the paper lists, the export script and, later, the labels.
+folder holds the paper lists, the labels, and the scripts that export the
+texts from Zotero and score the plugin against the labels.
 
 ## The two sets
 
 - **dev**: for working on the detector; measure on it as often as you like.
   It holds the 22 papers already labelled in `../gold-standard.json` (the
-  detector was tuned on them) plus papers from your own library: about 15–20,
-  at most 2 per journal, research articles and reviews mixed.
+  detector was tuned on them) plus 14 papers from the author's library, at
+  most 2 per journal, research articles and reviews mixed: 36 in all.
 - **test**: 39 open-access papers drawn at random from 37 journals, 21
   publishers and fields from microbiology to physics, plus one medRxiv and one
   arXiv preprint. Measure on it only before a release, never while tuning, so
@@ -44,5 +45,9 @@ plugin sees, from Zotero's own PDF worker, unlike the old `pdftotext` corpus.
 | `test-papers.csv`, `dev-papers.csv` | The same papers with field, journal, year and title |
 | `export-from-zotero.js` | Saves the papers' text from Zotero |
 | `attach-missing-pdfs.js` | Attaches open-access PDFs Zotero could not fetch by itself (run before exporting) |
+| `labels/dev/`, `labels/test/` | The labels: one JSON file per paper, named after its DOI |
+| `GUIDELINES.md` | The labelling rules |
+| `reconciliation-dev.md`, `reconciliation-test.md` | Every label changed after the blind pass, and why |
+| `candidates.js` | Lists every place a paper might define or use an abbreviation, for labelling by hand |
 | `score.js` | Scores a version of the plugin against the labels |
 | `intervals.js` | 95 % intervals by resampling papers, and the difference between two versions |

@@ -6,9 +6,11 @@ This project follows [Semantic Versioning](https://semver.org/).
 ## [2.2.0] — 2026-11-01
 
 A rewritten abbreviation detector, tooltips that say how sure a meaning is,
-meanings learned from your other papers, and bug fixes from a code audit.
-Still supports Zotero 7.0 to 10.*, with the same settings and the same
-abbreviations file.
+meanings learned from your other papers, a new tooltip that shows where a
+word is used, tooltips that combine when they share a key, and bug fixes
+from a code audit. Still supports Zotero 7.0 to 10.*. Your settings and
+your abbreviations file carry over unchanged; only a new install starts
+differently (see Changed defaults).
 
 ### Detection
 - **One scorer for every kind of definition.** Each short form is paired with
@@ -91,8 +93,8 @@ abbreviations file.
   click one, or press its number, to go there (the word is marked in the
   green of a search match, and the reader's Back button returns). Most
   useful for abbreviations without a meaning, whose first use usually
-  defines them. It can be shown with Shift, Ctrl/Cmd or
-  Alt, and list 1, 3, 5 or 10 uses. If you already hold Ctrl for meanings
+  defines them. It can be shown with Shift, Ctrl/Cmd or Alt, and list 1,
+  3, 5 or 10 uses. If you already hold Ctrl for meanings
   or database links, it takes Shift or Alt, so they look as before.
 - **One look for the three tooltips** (meanings, database links, where a
   word is used): the word in bold and what the tooltip says, quieter lines
@@ -119,6 +121,12 @@ abbreviations file.
   RCSB PDB, RNAcentral and Addgene.
 - Lines between the sections of the settings, as in Zotero's own panes.
 
+### Changed defaults
+- **Only meanings are on for a new install.** Database links and where a
+  word is used are switched on in the settings. Database links were on by
+  default before: if you update from 2.1.0 and never switched them off,
+  they stay on.
+
 ### Measured
 - On the new benchmark (`eval/benchmark/`), on 39 test papers not used for
   tuning: defined abbreviations found rose from 82.6 % to 88.6 % (+5.9 points,
@@ -130,12 +138,6 @@ abbreviations file.
   figures. Simulated by giving each test paper the definitions of the other
   38, they raise the undefined abbreviations found from 53.5 % to 60.0 %, at
   0.3 points of precision.
-
-### Changed defaults
-- **Only meanings are on for a new install.** Database links and where a
-  word is used are switched on in the settings. Database links were on by
-  default before: if you update from 2.1.0 and never switched them off,
-  they stay on.
 
 ### Fixed
 - **Database links shown "Always", or with a key other than the one for
@@ -218,12 +220,13 @@ abbreviations file.
   Zotero version. `Zotero.PDFWorker.getFullText` is used, as before.
 - Removed code that did nothing in Zotero: a second watcher for new windows
   (Zotero already calls the plugin for each one), a word lookup that only
-  Chrome supports, and unused fields. Three old evaluation scripts replaced
+  Chrome supports, and unused fields. Four old evaluation scripts replaced
   by `eval/benchmark/` are gone too.
-- New regression tests (`test/test-fixes.js`, `test/test-review.js`), a test
-  of startup and shutdown through `bootstrap.js` (`test/test-lifecycle.js`),
-  a test of updating from 2.1.0 (`test/test-upgrade.js`), and a GitHub
-  workflow that runs every test on each push.
+- New tests: regressions (`test/test-fixes.js`, `test/test-review.js`), how
+  sure a meaning is (`test/test-certainty.js`), where a word is used and the
+  keys (`test/test-uses.js`), startup and shutdown through `bootstrap.js`
+  (`test/test-lifecycle.js`) and updating from 2.1.0 (`test/test-upgrade.js`),
+  with a GitHub workflow that runs every test on each push.
 
 ## [2.1.0] — 2026-08-28
 
