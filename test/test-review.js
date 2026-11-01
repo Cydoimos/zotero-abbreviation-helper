@@ -65,6 +65,7 @@ const tip = doc => doc.getElementById('abbreviation-helper-tooltip');
   const dicts = { staticDefs: bundled.staticDefs, commonKnownDefs: bundled.commonKnownDefs };
   const detect = (text, extra) => sb.detectAbbreviations(text, Object.assign({}, dicts, extra));
   const realWordAtPoint = H._wordAtPoint;
+  check('the line saying where a meaning comes from is on by default', H.showMeaningSource === true);
   const EVS = 'We isolated extracellular vesicles (EVs) from plasma. EVs were counted. The EVs were lysed.';
 
   // ---------- singular and plural in your own entries ----------

@@ -254,6 +254,7 @@ node test/test-fixes.js      # active tab, settings file safety, background scan
 node test/test-certainty.js  # probable meanings, definitions from other papers, tooltip origin line
 node test/test-review.js     # singular/plural entries, hovered words, the library store
 node test/test-lifecycle.js  # startup and shutdown through bootstrap.js
+node test/test-upgrade.js    # updating from 2.1.0: settings and abbreviations file carry over
 
 node eval/benchmark/score.js dev <dir>   # accuracy on the benchmark (needs the texts)
 node eval/benchmark/intervals.js dev <dir>   # 95 % intervals, and old-vs-new differences

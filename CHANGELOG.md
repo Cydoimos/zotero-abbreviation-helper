@@ -169,7 +169,8 @@ abbreviations file.
   by `eval/benchmark/` are gone too.
 - New regression tests (`test/test-fixes.js`, `test/test-review.js`), a test
   of startup and shutdown through `bootstrap.js` (`test/test-lifecycle.js`),
-  and a GitHub workflow that runs every test on each push.
+  a test of updating from 2.1.0 (`test/test-upgrade.js`), and a GitHub
+  workflow that runs every test on each push.
 
 ## [2.1.0] — 2026-08-28
 
