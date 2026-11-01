@@ -539,9 +539,9 @@ var BREAK = '\u2029';
  * Running headers and footers ("ACCEPTED MANUSCRIPT", "Page 3 of 12") sit
  * next to page breaks (form feeds) and interrupt sentences that run across
  * pages. A line (up to a long licence footer) found near three or more page
- * breaks is one.
+ * breaks is one. Returns the indices of those lines.
  */
-function dropRunningHeaders(lines) {
+function runningHeaderLines(lines) {
     const NEAR = 4;                     // non-empty lines on either side of a break
     const shape = l => l.replace(/\f/g, '').trim().replace(/\d+/g, '#');
     const filled = [];
@@ -553,9 +553,28 @@ function dropRunningHeaders(lines) {
     });
     const count = new Map();
     for (const i of near) count.set(shape(lines[i]), (count.get(shape(lines[i])) || 0) + 1);
-    const isHeader = (l, i) => near.has(i) && shape(l) && shape(l).length <= 250 && count.get(shape(l)) >= 3;
-    // A removed line keeps its page break, so the break is still seen later.
-    return lines.flatMap((l, i) => !isHeader(l, i) ? [l] : l.includes('\f') ? ['\f'] : []);
+    const headers = new Set();
+    for (const i of near) {
+        const s = shape(lines[i]);
+        if (s && s.length <= 250 && count.get(s) >= 3) headers.add(i);
+    }
+    return headers;
+}
+
+/** The lines without running headers; a removed line keeps its page break. */
+function dropRunningHeaders(lines) {
+    const headers = runningHeaderLines(lines);
+    return lines.flatMap((l, i) => !headers.has(i) ? [l] : l.includes('\f') ? ['\f'] : []);
+}
+
+/** Soft hyphens, odd spaces and ligatures, as PDF text extraction leaves them. */
+function fixCharacters(text) {
+    return String(text || '')
+        .replace(/[\u00ad\u200b\u200c\u200d\u2060\ufeff]/g, '')
+        .replace(/[\u00a0\u2007\u2009\u202f]/g, ' ')
+        .replace(/\ufb00/g, 'ff').replace(/\ufb01/g, 'fi').replace(/\ufb02/g, 'fl')
+        .replace(/\ufb03/g, 'ffi').replace(/\ufb04/g, 'ffl').replace(/[\ufb05\ufb06]/g, 'st')
+        .normalize('NFC');
 }
 
 /**
@@ -564,12 +583,7 @@ function dropRunningHeaders(lines) {
  * PDF worker returns it.
  */
 function cleanText(text) {
-    const cleaned = String(text || '')
-        .replace(/[\u00ad\u200b\u200c\u200d\u2060\ufeff]/g, '')
-        .replace(/[\u00a0\u2007\u2009\u202f]/g, ' ')
-        .replace(/\ufb00/g, 'ff').replace(/\ufb01/g, 'fi').replace(/\ufb02/g, 'fl')
-        .replace(/\ufb03/g, 'ffi').replace(/\ufb04/g, 'ffl').replace(/[\ufb05\ufb06]/g, 'st')
-        .normalize('NFC');
+    const cleaned = fixCharacters(text);
     // Page breaks (form feeds) locate the headers. Then the blank lines around
     // a page break are dropped, since a list or paragraph continues on the
     // next page, and the break itself becomes a space.
@@ -1211,6 +1225,98 @@ function flatten(s) { return String(s).toLowerCase().replace(/[^\p{L}\p{N}]+/gu,
 
 function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
+/* ============================================================================
+ * Where a word is used
+ *
+ * For the reader's "show where a word is used" key: the first uses of a word
+ * in a paper, with their pages and the words around them. Most useful for an
+ * abbreviation the detector could not explain: its first use usually holds
+ * the definition, in whatever words the authors chose.
+ * ============================================================================ */
+
+/**
+ * The text of each page (index 0 is the PDF's first page), cleaned as for
+ * detection: running headers and footers removed, all whitespace single
+ * spaces. A word broken over two lines keeps its hyphen.
+ */
+function pageTexts(text) {
+    const lines = fixCharacters(text).split('\n');
+    const headers = runningHeaderLines(lines);
+    // A header line goes, but its page breaks stay, so page numbers hold.
+    return lines.map((l, i) => headers.has(i) ? l.replace(/[^\f]/g, '') : l).join('\n')
+        .split('\f')
+        .map(page => page.replace(/-\n(?=\p{Ll})/gu, '-').replace(/\s+/g, ' ').trim());
+}
+
+/**
+ * The words around a match: back to the start of its sentence and on to its
+ * end, but at most `count` words each way, with "…" where more was cut.
+ */
+function wordsAround(page, start, end, count) {
+    let before = page.slice(Math.max(0, start - 800), start);
+    let after = page.slice(end, end + 800);
+    // A sentence ends at . ! or ? followed by a capital, a digit or a bracket.
+    const starts = [...before.matchAll(/[.!?]\s+(?=[\p{Lu}\d(\[])/gu)];
+    const sentenceStart = starts.length > 0;
+    if (sentenceStart) {
+        const last = starts[starts.length - 1];
+        before = before.slice(last.index + last[0].length);
+    }
+    const stop = /[.!?](?=\s+[\p{Lu}\d(\[]|$)/u.exec(after);
+    if (stop) after = after.slice(0, stop.index + 1);
+    const bw = before.match(/\S+\s*/g) || [];
+    const aw = after.match(/\s*\S+/g) || [];
+    const cutBefore = bw.length > count || (!sentenceStart && start > before.length);
+    const cutAfter = aw.length > count || (!stop && end + after.length < page.length);
+    return {
+        before: (cutBefore ? '…' : '') + bw.slice(-count).join('').replace(/^\s+/, ''),
+        after: aw.slice(0, count).join('').replace(/\s+$/, '') + (cutAfter ? '…' : '')
+    };
+}
+
+/**
+ * A pattern for a word as a whole word, in its singular and plural forms and
+ * with any kind of dash, or null for no word.
+ */
+function usesPattern(word) {
+    const w = String(word || '').trim();
+    if (!w) return null;
+    // Longest form first, so "EVs" is not found as "EV" followed by "s".
+    const forms = [...new Set([w, singularShortForm(w) || w, ...pluralShortForms(w)])]
+        .sort((a, b) => b.length - a.length)
+        .map(f => escapeRegExp(f).replace(/[-‐‑–—]/g, '[-‐‑–—]'));
+    return new RegExp('(?<![\\p{L}\\p{N}])(?:' + forms.join('|') + ')(?![\\p{L}\\p{N}])', 'gu');
+}
+
+/**
+ * Where a word is used: how often, and its first `limit` uses, each with its
+ * page (0-based), which use of the word on that page it is, the form found
+ * and the words around it. The singular and plural count ("EV", "EVs"), and
+ * so do uses inside compounds ("EV-derived"); case matters.
+ *
+ * @returns {{ total: number, uses: Array<{pageIndex: number, nthOnPage: number,
+ *            match: string, before: string, after: string}> }}
+ */
+function findUses(text, word, limit, contextWords) {
+    const re = usesPattern(word);
+    if (!re) return { total: 0, uses: [] };
+    const uses = [];
+    let total = 0;
+    pageTexts(text).forEach((page, pageIndex) => {
+        let m, nth = 0;
+        re.lastIndex = 0;
+        while ((m = re.exec(page))) {
+            total++;
+            if (uses.length < limit) {
+                const around = wordsAround(page, m.index, m.index + m[0].length, contextWords || 15);
+                uses.push({ pageIndex, nthOnPage: nth, match: m[0], before: around.before, after: around.after });
+            }
+            nth++;
+        }
+    });
+    return { total, uses };
+}
+
 // Everything stateful lives on this one object. bootstrap.js loads this file
 // into the plugin's own scope, and the Settings pane reaches the object
 // through Zotero.AbbreviationHelper (see init).
@@ -1240,6 +1346,14 @@ var AbbreviationHelper = {
     // The line under a meaning saying where it comes from ("Defined in this
     // paper", "Common term; ..."). Switching it off leaves the meaning alone.
     showMeaningSource: true,
+    // "Show where a word is used": a key pressed while the pointer is on any
+    // word lists the word's first uses in the paper, or goes to the first.
+    usesEnabled: true,
+    usesKey: 'o',          // a letter, matched by the character it types
+    usesAction: 'list',    // 'list' or 'jump'
+    usesCount: 3,          // how many uses the list shows
+    // The open list of uses: { state, uses, word, doc }, or null.
+    usesWindow: null,
     // Whether a tooltip for a defined abbreviation also carries database links.
     databaseLinksOnAbbreviations: true,
     // Master switch for the whole database-link layer. When false, no lookup
@@ -1443,6 +1557,10 @@ var AbbreviationHelper = {
         this.advancedMenu = this._getPref('advancedMenu', this.advancedMenu);
         this.useLibraryDefinitions = this._getPref('useLibraryDefinitions', this.useLibraryDefinitions);
         this.showMeaningSource = this._getPref('showMeaningSource', this.showMeaningSource);
+        this.usesEnabled = this._getPref('usesEnabled', this.usesEnabled);
+        this.usesKey = String(this._getPref('usesKey', this.usesKey) || 'o').toLowerCase();
+        this.usesAction = this._getPref('usesAction', this.usesAction) === 'jump' ? 'jump' : 'list';
+        this.usesCount = Number(this._getPref('usesCount', this.usesCount)) || 3;
         // A menulist in the preference pane stores its value as a string,
         // while the menu's radio items store a number. Coerce so both routes
         // to the same setting produce the same type.
@@ -1996,6 +2114,24 @@ var AbbreviationHelper = {
                     item.setAttribute('checked', this.databaseLinksOnAbbreviations ? 'true' : 'false');
                     this._refreshHoverFromLastState(doc);
                 }));
+            sep(whenPopup);
+            header(whenPopup, 'Where a word is used');
+            radioGroup(whenPopup, 'abbrev-uses-key',
+                [{ id: '', label: 'Off' }, ...['o', 'w', 'f', 'e'].map(k => ({ id: k, label: 'Press ' + k.toUpperCase() }))],
+                this.usesEnabled ? this.usesKey : '', (id) => {
+                    this.usesEnabled = !!id;
+                    this._setPref('usesEnabled', this.usesEnabled);
+                    if (id) {
+                        this.usesKey = id;
+                        this._setPref('usesKey', id);
+                    }
+                });
+            radioGroup(whenPopup, 'abbrev-uses-action',
+                [{ id: 'list', label: 'List the first uses' }, { id: 'jump', label: 'Go to the first use' }],
+                this.usesAction, (id) => {
+                    this.usesAction = id;
+                    this._setPref('usesAction', id);
+                });
             } /* end advanced-only: hover and database settings */
 
             /* ---- Correcting detections ---- */
@@ -2436,13 +2572,18 @@ var AbbreviationHelper = {
      * sandbox that does not contain it, so it is read from the window.
      */
     _activeReaderItemID() {
+        const reader = this._activeReader();
+        return (reader && reader.itemID) || null;
+    },
+
+    /** The reader in the selected tab, or null when the library is showing. */
+    _activeReader() {
         let win = null;
         try { win = Zotero.getMainWindow ? Zotero.getMainWindow() : null; } catch (e) {}
         const tabs = win && win.Zotero_Tabs;
         if (!tabs || tabs.selectedType !== 'reader') return null;
-        const reader = (Zotero.Reader && typeof Zotero.Reader.getByTabID === 'function')
-            ? Zotero.Reader.getByTabID(tabs.selectedID) : null;
-        return (reader && reader.itemID) || null;
+        return (Zotero.Reader && typeof Zotero.Reader.getByTabID === 'function')
+            ? Zotero.Reader.getByTabID(tabs.selectedID) || null : null;
     },
 
     /**
@@ -2944,7 +3085,8 @@ var AbbreviationHelper = {
      */
     _installHoverForAllWindows() {
         if (this._stopped || !this.hoverEnabled) return;
-        if ((!this.activeHoverMap || !this.activeHoverMap.size) && !this._enabledDatabases().length) return;
+        if ((!this.activeHoverMap || !this.activeHoverMap.size) && !this._enabledDatabases().length
+            && !this.usesEnabled) return;
         this._pruneHoverDocs();
         let windows = [];
         try { windows = Zotero.getMainWindows(); } catch (e) { windows = []; }
@@ -3100,6 +3242,7 @@ var AbbreviationHelper = {
             return;
         }
 
+        this.usesWindow = null;
         this.lastHoverState = { doc, x, y, token, dbToken: undefined, target };
         this._renderHoverFromState(this.lastHoverState);
     },
@@ -3229,6 +3372,9 @@ var AbbreviationHelper = {
         if (!state || !state.doc || !state.token) return;
         const doc = state.doc;
         const token = state.token;
+        // An open list of uses stays as it is (a modifier key going up or
+        // down must not replace it); it closes when the pointer moves on.
+        if (this.usesWindow && this.usesWindow.state === state && this._isHoverTooltipVisible(doc)) return;
 
         if (!this._modifierSatisfied(this.tooltipModifier)) {
             this._hideHoverTooltip(doc);
@@ -3765,6 +3911,149 @@ var AbbreviationHelper = {
         this._positionHoverTooltip(doc, tip, x, y);
     },
 
+    /* ---- Where a word is used ------------------------------------------- */
+
+    /**
+     * The "where is it used" key was pressed on a word: list its first uses
+     * next to the pointer, or go straight to the first one (usesAction). A
+     * word with a meaning is looked up by its short form, so "EVs" and
+     * "anti-EV" find the uses of EV.
+     */
+    async _showUses(state) {
+        const entry = this._lookupHover(state.token);
+        const word = entry ? entry.abbr : this._trimToken(state.token);
+        const itemID = this.activeHoverItemID;
+        if (!word || itemID == null) return;
+        // The text is normally cached from the scan; otherwise it is read again.
+        const text = await this._textForItem(await Zotero.Items.getAsync(itemID));
+        // The pointer may have moved on while the text was read.
+        if (this._stopped || this.lastHoverState !== state) return;
+        const result = findUses(text, word, Math.max(1, this.usesCount), 15);
+        if (this.usesAction === 'jump' && result.uses.length) {
+            await this._jumpToUse(state.doc, result.uses[0], word);
+            return;
+        }
+        this._showUsesWindow(state, word, entry, result);
+    },
+
+    /** The list of uses, in the tooltip, which stays open so a use can be clicked. */
+    _showUsesWindow(state, word, entry, result) {
+        const doc = state.doc;
+        const tip = this._ensureHoverTooltip(doc);
+        while (tip.firstChild) tip.removeChild(tip.firstChild);
+        this.activeGeneLinks = [];
+        const note = (text) => {
+            const div = doc.createElement('div');
+            div.textContent = text;
+            Object.assign(div.style, { fontSize: '0.85em', opacity: '0.7', marginTop: '2px' });
+            return tip.appendChild(div);
+        };
+
+        const head = tip.appendChild(doc.createElement('div'));
+        const strong = doc.createElement('strong');
+        strong.textContent = word;
+        head.appendChild(strong);
+        head.appendChild(doc.createTextNode(' — ' + (entry ? this._meaningAndOrigin(entry.term, entry.certainty).meaning
+            : 'no meaning found')));
+        const n = result.total, shown = result.uses.length;
+        note(!n ? 'Not found in the text of this PDF.'
+            : 'Used ' + n + (n === 1 ? ' time' : ' times') + (shown < n ? '; the first ' + shown + ':' : ':'));
+        result.uses.forEach((use, i) => {
+            const row = doc.createElement('div');
+            row.style.marginTop = '4px';
+            row.style.cursor = 'pointer';
+            const where = doc.createElement('span');
+            where.textContent = (i + 1) + ' · p. ' + (use.pageIndex + 1) + '  ';
+            where.style.opacity = '0.7';
+            row.appendChild(where);
+            row.appendChild(doc.createTextNode(use.before));
+            const match = doc.createElement('strong');
+            match.textContent = use.match;
+            row.appendChild(match);
+            row.appendChild(doc.createTextNode(use.after));
+            row.addEventListener('click', (event) => {
+                event.stopPropagation();
+                this._jumpToUse(doc, use, word).catch(e => this.log('Could not go to the use: ' + e));
+            });
+            tip.appendChild(row);
+        });
+        if (shown) note('Click a use or press its number to go there.');
+
+        tip.dataset.abbreviationHelperInteractive = 'true';
+        tip.style.pointerEvents = 'auto';
+        this.hoverInteractiveTooltip = true;
+        this._positionHoverTooltip(doc, tip, state.x, state.y);
+        this.usesWindow = { state, uses: result.uses, word, doc };
+        this._renderedSig = this._hoverSignature(state.token);
+    },
+
+    /**
+     * Go to a use: the reader turns to its page, keeping the place you came
+     * from for its Back button, then the word is marked for a moment.
+     */
+    async _jumpToUse(doc, use, word) {
+        const reader = this._activeReader();
+        this._forgetHover(this.hoverPinnedDoc || doc);
+        if (!reader || typeof reader.navigate !== 'function') return;
+        await reader.navigate({ pageIndex: use.pageIndex });
+        await this._markUse(doc, use, word);
+    },
+
+    /**
+     * Mark a use on its page for a moment and bring it to the middle of the
+     * view, in the PDF view. The page may still be drawing after the jump, so
+     * its text is waited for, up to 2 s. Reading Mode has no pages to search,
+     * so there the jump to the page is all.
+     */
+    async _markUse(doc, use, word) {
+        const selector = '.page[data-page-number="' + (use.pageIndex + 1) + '"] .textLayer';
+        let layer = null;
+        for (let i = 0; i < 20 && !this._stopped; i++) {
+            try { layer = doc.querySelector(selector); } catch (e) { return; }
+            if (layer && layer.textContent.trim()) break;
+            layer = null;
+            await new Promise(r => setTimeout(r, 100));
+        }
+        if (!layer || this._stopped) return;
+        // The use's place among the word's uses on the page, counted again in
+        // the pieces of text the page is drawn with.
+        const re = usesPattern(word);
+        let seen = 0;
+        const walker = doc.createTreeWalker(layer, 4 /* NodeFilter.SHOW_TEXT */);
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+            re.lastIndex = 0;
+            let m;
+            while ((m = re.exec(node.nodeValue))) {
+                if (seen++ < use.nthOnPage) continue;
+                const range = doc.createRange();
+                range.setStart(node, m.index);
+                range.setEnd(node, m.index + m[0].length);
+                this._flashRange(doc, layer, range);
+                return;
+            }
+        }
+    },
+
+    /** A short-lived yellow mark over a range of a page's text. */
+    _flashRange(doc, layer, range) {
+        const page = (layer.closest && layer.closest('.page')) || layer.parentNode;
+        const box = page.getBoundingClientRect();
+        const marks = [];
+        for (const r of range.getClientRects()) {
+            const mark = doc.createElement('div');
+            Object.assign(mark.style, {
+                position: 'absolute', left: (r.left - box.left - 2) + 'px', top: (r.top - box.top - 2) + 'px',
+                width: (r.width + 4) + 'px', height: (r.height + 4) + 'px', borderRadius: '3px',
+                background: 'rgba(255, 196, 0, 0.5)', pointerEvents: 'none', zIndex: '3', transition: 'opacity 0.6s'
+            });
+            marks.push(page.appendChild(mark));
+        }
+        const holder = range.startContainer.parentElement;
+        if (holder && holder.scrollIntoView) holder.scrollIntoView({ block: 'center', inline: 'nearest' });
+        setTimeout(() => { for (const m of marks) m.style.opacity = '0'; }, 1400);
+        setTimeout(() => { for (const m of marks) if (m.parentNode) m.parentNode.removeChild(m); }, 2100);
+    },
+
     _appendDatabaseLinks(doc, tip, info) {
         const line = doc.createElement('div');
         line.style.marginTop = '4px';
@@ -3930,10 +4219,21 @@ var AbbreviationHelper = {
             this._forgetHover(tipDoc);
             return;
         }
+        // Keys typed into a text field (an annotation comment, the search
+        // box) are never taken.
+        if (this._typingInto(event.target)) return;
 
-        // 1-9 open the links of a tooltip with database links; a tooltip with
-        // only a meaning leaves the keys alone. This is the reliable way to
-        // open a link when the reader makes the tooltip hard to click.
+        // The "where is it used" key, with the pointer on a word.
+        if (this._isUsesKey(event) && this.lastHoverState) {
+            event.preventDefault();
+            event.stopPropagation();
+            this._showUses(this.lastHoverState).catch(e => this.log('Could not show where a word is used: ' + e));
+            return;
+        }
+
+        // 1-9 choose from a tooltip with database links or a list of uses; a
+        // tooltip with only a meaning leaves the keys alone. This is the
+        // reliable way to choose when the reader makes clicking hard.
         if (!this.hoverInteractiveTooltip || !this._isHoverTooltipVisible(tipDoc)) return;
         // The physical key counts, not the character it types, so the
         // shortcut works on every layout: with Shift held, the "1" key types
@@ -3942,21 +4242,42 @@ var AbbreviationHelper = {
             : (/^(?:Digit|Numpad)([1-9])$/.exec(String(event.code || '')) || [])[1];
         if (!digit) return;
 
-        // Do not intercept number typing inside text fields, search boxes,
-        // annotation editors, or contenteditable elements.
-        try {
-            const target = event.target;
-            const tag = target && target.tagName ? String(target.tagName).toLowerCase() : '';
-            if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
-            if (target && target.isContentEditable) return;
-        } catch (e) {}
-
+        if (this.usesWindow) {
+            const use = this.usesWindow.uses[Number(digit) - 1];
+            if (!use) return;
+            event.preventDefault();
+            event.stopPropagation();
+            this._jumpToUse(this.usesWindow.doc, use, this.usesWindow.word)
+                .catch(e => this.log('Could not go to the use: ' + e));
+            return;
+        }
         const link = this.activeGeneLinks && this.activeGeneLinks[Number(digit) - 1];
         if (!link || !link.url) return;
 
         event.preventDefault();
         event.stopPropagation();
         this._openExternalURL(link.url);
+    },
+
+    /** Is the key going into a text field or an editable element? */
+    _typingInto(target) {
+        try {
+            const tag = target && target.tagName ? String(target.tagName).toLowerCase() : '';
+            return tag === 'input' || tag === 'textarea' || tag === 'select' || !!(target && target.isContentEditable);
+        } catch (e) {
+            return false;
+        }
+    },
+
+    /**
+     * The key of "Show where a word is used", pressed on its own (Shift
+     * allowed, since a modifier may be held for database links). With Ctrl,
+     * Cmd or Alt it is someone else's shortcut. A held key repeats; only the
+     * first press counts.
+     */
+    _isUsesKey(event) {
+        return !!(this.usesEnabled && !event.repeat && !event.ctrlKey && !event.metaKey && !event.altKey
+            && String(event.key || '').toLowerCase() === this.usesKey);
     },
 
     _onReaderKeyUp(doc, event) {
@@ -4025,6 +4346,7 @@ var AbbreviationHelper = {
     _hideHoverTooltip(doc) {
         this._cancelHoverHide();
         this._clearCorridor();
+        this.usesWindow = null;
         this.hoverPinnedDoc = null;
         this.hoverInteractiveTooltip = false;
         this.activeGeneLinks = [];

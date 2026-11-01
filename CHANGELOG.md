@@ -85,6 +85,13 @@ abbreviations file.
   highlight as a clickable box over the words, which hid them from the plugin.
 
 ### Added
+- **Where a word is used.** Press O with the pointer on any word to list its
+  first uses in the paper, with their pages and the words around them; click
+  one, or press its number, to go there (the reader marks the word, and its
+  Back button returns). Most useful for abbreviations without a meaning,
+  whose first use usually defines them. It can be switched off, put on
+  another key (O, W, F or E), set to go straight to the first use, and list
+  1, 3, 5 or 10 uses.
 - **Show where each meaning comes from** (on by default) in the settings
   hides the line under each meaning when turned off.
 - Five more databases, off until ticked in the settings: Ensembl, InterPro,

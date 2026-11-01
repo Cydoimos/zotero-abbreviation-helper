@@ -45,6 +45,57 @@
   </groupbox>
 
   <groupbox>
+    <label><html:h2>Where a word is used</html:h2></label>
+
+    <checkbox id="abbrev-settings-uses"
+              label="Show where a word is used when I press a key over it"
+              preference="extensions.abbreviation-helper.usesEnabled"
+              data-search-strings-raw="uses, occurrences, first use, jump, shortcut, key"/>
+
+    <vbox class="abbrev-settings-sub" id="abbrev-settings-uses-dependent">
+      <hbox align="center">
+        <label control="abbrev-settings-uses-key" value="Key:"/>
+        <menulist native="true" id="abbrev-settings-uses-key"
+                  preference="extensions.abbreviation-helper.usesKey">
+          <menupopup>
+            <menuitem value="o" label="O"/>
+            <menuitem value="w" label="W"/>
+            <menuitem value="f" label="F"/>
+            <menuitem value="e" label="E"/>
+          </menupopup>
+        </menulist>
+      </hbox>
+      <hbox align="center">
+        <label control="abbrev-settings-uses-action" value="The key:"/>
+        <menulist native="true" id="abbrev-settings-uses-action"
+                  preference="extensions.abbreviation-helper.usesAction">
+          <menupopup>
+            <menuitem value="list" label="lists the first uses"/>
+            <menuitem value="jump" label="goes to the first use"/>
+          </menupopup>
+        </menulist>
+      </hbox>
+      <hbox align="center">
+        <label control="abbrev-settings-uses-count" value="Uses listed:"/>
+        <menulist native="true" id="abbrev-settings-uses-count"
+                  preference="extensions.abbreviation-helper.usesCount">
+          <menupopup>
+            <menuitem value="1" label="1"/>
+            <menuitem value="3" label="3"/>
+            <menuitem value="5" label="5"/>
+            <menuitem value="10" label="10"/>
+          </menupopup>
+        </menulist>
+      </hbox>
+      <description class="abbrev-settings-hint">
+        Works on any word, including abbreviations the plugin found no meaning
+        for: their first use often defines them. Click a use, or press its
+        number, to go there; the reader's Back button takes you back.
+      </description>
+    </vbox>
+  </groupbox>
+
+  <groupbox>
     <label><html:h2>Your abbreviations</html:h2></label>
 
     <description class="abbrev-settings-hint">

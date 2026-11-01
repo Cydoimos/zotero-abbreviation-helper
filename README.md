@@ -50,6 +50,20 @@ Under each meaning, the tooltip says how sure it is:
 
 **Show where each meaning comes from** in the settings turns this line off.
 
+### Where a word is used
+
+Press **O** with the pointer on any word, and a small window lists the word's first uses
+in the paper: the page, and the words around each one. It works on every word, and is
+most useful for an abbreviation the plugin found no meaning for, since its first use
+usually defines it. Click a use, or press its number, to go there: the reader turns to
+the page and marks the word for a moment, and its Back button takes you back. In
+Reading Mode the jump goes to the page.
+
+In the settings you can switch it off, choose another key (O, W, F or E), make the key
+go straight to the first use instead of listing, and list 1, 3, 5 or 10 uses. The key
+needs the keyboard focus in the paper: if it does nothing, click the paper once. It is
+never taken while you type in a text field, or with Ctrl, Cmd or Alt held.
+
 ### Settings
 
 Everything is in **Zotero Settings → Abbreviation Helper** (or **Tools → Abbreviation
@@ -255,6 +269,7 @@ node test/test-certainty.js  # probable meanings, definitions from other papers,
 node test/test-review.js     # singular/plural entries, hovered words, the library store
 node test/test-lifecycle.js  # startup and shutdown through bootstrap.js
 node test/test-upgrade.js    # updating from 2.1.0: settings and abbreviations file carry over
+node test/test-uses.js       # where a word is used: finding uses, the key, the list and the jump
 
 node eval/benchmark/score.js dev <dir>   # accuracy on the benchmark (needs the texts)
 node eval/benchmark/intervals.js dev <dir>   # 95 % intervals, and old-vs-new differences

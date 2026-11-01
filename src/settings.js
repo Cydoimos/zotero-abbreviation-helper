@@ -7,6 +7,7 @@
  *
  *   - modifier-key labels, which differ on macOS (Command / Option)
  *   - forgetting the definitions learned from other papers
+ *   - greying out controls whose checkbox is off
  *   - your own abbreviations, editable in place
  *   - the ignore list, editable in place
  *   - the database list, which comes from the abbreviations file
@@ -340,8 +341,10 @@ var AbbrevSettings = {
 
         this._onClick('abbrev-settings-library-forget', () => this._forgetLibrary());
 
-        const master = this._byId('abbrev-settings-db-enabled');
-        if (master) master.addEventListener('command', () => this._syncDependents());
+        for (const [masterId] of this.DEPENDENTS) {
+            const master = this._byId(masterId);
+            if (master) master.addEventListener('command', () => this._syncDependents());
+        }
 
         this._onClick('abbrev-settings-db-edit', () => this._openFile());
         this._onClick('abbrev-settings-open-file', () => this._openFile());
@@ -390,19 +393,28 @@ var AbbrevSettings = {
         el.setAttribute('hidden', text ? 'false' : 'true');
     },
 
+    // Checkboxes, each with the controls that only apply while it is ticked.
+    DEPENDENTS: [
+        ['abbrev-settings-db-enabled', 'abbrev-settings-db-dependent'],
+        ['abbrev-settings-uses', 'abbrev-settings-uses-dependent']
+    ],
+
     /**
-     * Grey out the controls that only apply while database links are on, so
-     * no visible control silently does nothing.
+     * Grey out the controls that only apply while their checkbox is ticked
+     * (database links, where a word is used), so no visible control silently
+     * does nothing.
      */
     _syncDependents() {
-        const master = this._byId('abbrev-settings-db-enabled');
-        const dependent = this._byId('abbrev-settings-db-dependent');
-        if (!master || !dependent) return;
-        const on = (typeof master.checked === 'boolean')
-            ? master.checked
-            : master.getAttribute('checked') === 'true';
-        dependent.setAttribute('disabled', on ? 'false' : 'true');
-        dependent.style.opacity = on ? '' : '0.5';
+        for (const [masterId, dependentId] of this.DEPENDENTS) {
+            const master = this._byId(masterId);
+            const dependent = this._byId(dependentId);
+            if (!master || !dependent) continue;
+            const on = (typeof master.checked === 'boolean')
+                ? master.checked
+                : master.getAttribute('checked') === 'true';
+            dependent.setAttribute('disabled', on ? 'false' : 'true');
+            dependent.style.opacity = on ? '' : '0.5';
+        }
     }
 };
 

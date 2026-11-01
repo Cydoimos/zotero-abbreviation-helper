@@ -175,12 +175,14 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
   // ---------- 5. modifier settings are together, phrased as sentences ----------
   const when = popupOf(findByLabel(root, 'When to Show\u2026'));
   check('both modifier groups share one submenu', !!when);
-  const whenRadios = when.childNodes.filter(c => c.getAttribute('type') === 'radio');
+  const radiosOf = name => when.childNodes.filter(c => c.getAttribute('type') === 'radio' && c.getAttribute('name') === name);
+  const whenRadios = [...radiosOf('abbrev-tooltip-mod'), ...radiosOf('abbrev-db-mod')];
   check('both groups present', whenRadios.length === 8, whenRadios.length + ' radio items');
-  check('two distinct radio group names',
-    new Set(whenRadios.map(c => c.getAttribute('name'))).size === 2);
   check('the no-key choice reads "Always"',
     whenRadios.filter(c => c.label === 'Always').length === 2);
+  check('the "where a word is used" key is offered there too, with Off',
+    radiosOf('abbrev-uses-key').map(c => c.label).join(',') === 'Off,Press O,Press W,Press F,Press E'
+    && radiosOf('abbrev-uses-action').length === 2);
 
   // ---------- 6. master switch greys out its dependents ----------
   const dbSwitch = findByLabel(root, 'Show database links');

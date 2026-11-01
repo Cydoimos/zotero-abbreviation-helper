@@ -154,7 +154,7 @@ const tick = () => new Promise(r => setTimeout(r, 0));
   // platform control; without it a menulist renders as a plain grey pill and
   // looks nothing like the rest of Zotero's settings.
   const menulists = descend(frag).filter(e => e.tagName === 'menulist');
-  check('the pane has menulists', menulists.length === 4, menulists.length + '');
+  check('the pane has menulists', menulists.length === 7, menulists.length + '');
   check('every menulist is native',
     menulists.every(e => e.getAttribute('native') === 'true'),
     menulists.filter(e => e.getAttribute('native') !== 'true')
@@ -349,7 +349,7 @@ const tick = () => new Promise(r => setTimeout(r, 0));
     databaseLinksEnabled: 'true', databaseLinksModifier: '"shift"',
     databaseLinksOnAbbreviations: 'true',
     tooltipFontSize: '12', tooltipTheme: '"dark"', useLibraryDefinitions: 'true',
-    showMeaningSource: 'true'
+    showMeaningSource: 'true', usesEnabled: 'true', usesKey: '"o"', usesAction: '"list"', usesCount: '3'
   };
   const mismatched = Object.entries(codeDefaults)
     .filter(([k, v]) => declared.get(H.PREF_BRANCH + k) !== v)

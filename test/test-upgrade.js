@@ -90,7 +90,8 @@ function start(files, prefs) {
   check('databases switched off stay off', !on.includes('ATCC') && !on.includes('GeneCards'), on.join(','));
   check('the others stay on', ['HGNC', 'UniProt', 'NCBI Gene', 'Cellosaurus', 'PubChem'].every(l => on.includes(l)));
   check('the new databases start off', !['Ensembl', 'InterPro', 'RCSB PDB', 'RNAcentral', 'Addgene'].some(l => on.includes(l)));
-  check('new settings take their defaults', H.useLibraryDefinitions === true && H.showMeaningSource === true);
+  check('new settings take their defaults', H.useLibraryDefinitions === true && H.showMeaningSource === true
+    && H.usesEnabled === true && H.usesKey === 'o' && H.usesAction === 'list' && H.usesCount === 3);
 
   // ---------- the abbreviations file carries over ----------
   check('the file is read without complaint', H.userFileError === null, String(H.userFileError));
