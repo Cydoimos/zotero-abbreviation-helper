@@ -5,9 +5,20 @@
  * layout is specified here.
  */
 
-/* ---- section rhythm ----------------------------------------------------- */
+/* ---- section rhythm -----------------------------------------------------
+   A line between sections, drawn the way Zotero separates its own panes
+   (scss/preferences.scss, .main-section); the heading below it keeps the
+   space Zotero puts above every section heading, a little reduced. */
 #abbrev-settings-root > groupbox {
   margin-block-end: 1.2em;
+}
+
+#abbrev-settings-root > groupbox:not(:first-of-type) {
+  border-top: var(--material-panedivider, 1px solid rgba(128, 128, 128, 0.35));
+}
+
+#abbrev-settings-root > groupbox:not(:first-of-type) label > h2 {
+  margin-top: 1em !important;
 }
 
 #abbrev-settings-root .abbrev-settings-hint {

@@ -99,8 +99,8 @@ function makeZotero() {
   check('startup adds the Tools menu', !!z.doc.getElementById('abbreviation-helper-menu'));
   check('startup registers the Settings pane', z.panes.registered && z.panes.registered.src === 'settings.xhtml');
   check('the Settings pane can reach the plugin', z.Zotero.AbbreviationHelper === z.sandbox.AbbreviationHelper);
-  check('startup watches preferences, tabs and new windows',
-    z.prefObservers.size === 1 && z.observers.size === 1 && z.listeners.size === 1);
+  check('startup watches preferences and tabs (Zotero itself announces new windows)',
+    z.prefObservers.size === 1 && z.observers.size === 1 && z.listeners.size === 0);
   check('the background scan is running', z.timers.size >= 1);
 
   // A main window loading later gets the menu once, however it is announced.
@@ -113,7 +113,7 @@ function makeZotero() {
   check('shutdown removes the Tools menu', !z.doc.getElementById('abbreviation-helper-menu'));
   check('shutdown unregisters the Settings pane', z.panes.unregistered);
   check('shutdown stops every timer', z.timers.size === 0, z.timers.size + ' left');
-  check('shutdown stops watching preferences, tabs and windows',
+  check('shutdown stops watching preferences and tabs',
     z.prefObservers.size === 0 && z.observers.size === 0 && z.listeners.size === 0);
   check('shutdown leaves nothing on the Zotero object', !('AbbreviationHelper' in z.Zotero));
 

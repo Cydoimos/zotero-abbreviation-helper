@@ -81,6 +81,15 @@ abbreviations file.
 - Tooltips work in Zotero 10's Reading Mode for PDFs, which shows the paper as
   reflowed text in a page of its own. Reading Mode for web snapshots is left
   alone, since the meanings come from a PDF.
+- Tooltips also work over highlighted text there. Reading Mode draws each
+  highlight as a clickable box over the words, which hid them from the plugin.
+
+### Added
+- **Show where each meaning comes from** (on by default) in the settings
+  hides the line under each meaning when turned off.
+- Five more databases, off until ticked in the settings: Ensembl, InterPro,
+  RCSB PDB, RNAcentral and Addgene.
+- Lines between the sections of the settings, as in Zotero's own panes.
 
 ### Measured
 - On the new benchmark (`eval/benchmark/`), on 39 test papers not used for
@@ -95,6 +104,17 @@ abbreviations file.
   0.3 points of precision.
 
 ### Fixed
+- **The 1–9 keys open database links on every keyboard layout.** They read
+  the character typed, so on a German keyboard Shift+1 ("!") did nothing,
+  and on a French one the keys only worked with Shift.
+- Escape, and a click elsewhere, close a tooltip with links even when another
+  page of the reader (the PDF or its Reading Mode) has the keyboard focus.
+- Holding a modifier key no longer rebuilds the tooltip on every key repeat
+  (Windows and Linux repeat them); it is redrawn only when the key changes.
+- A tooltip still showing the previous paper's meaning is hidden when you
+  switch tabs.
+- A dash at the edge of a word is not part of the abbreviation: hovering the
+  "EV-" of "EV- and exosome-derived" explains EV.
 - **Ignoring an abbreviation hides its singular and plural too**: ignoring
   "EV" also hides "EVs". Likewise, your own definition of "EV" is now used in
   a paper that writes "EVs"; it was ignored there.
@@ -143,6 +163,10 @@ abbreviations file.
 - The abbreviations file is written through a temporary file.
 - Removed two fallback text extractors that could not work in any supported
   Zotero version. `Zotero.PDFWorker.getFullText` is used, as before.
+- Removed code that did nothing in Zotero: a second watcher for new windows
+  (Zotero already calls the plugin for each one), a word lookup that only
+  Chrome supports, and unused fields. Three old evaluation scripts replaced
+  by `eval/benchmark/` are gone too.
 - New regression tests (`test/test-fixes.js`, `test/test-review.js`), a test
   of startup and shutdown through `bootstrap.js` (`test/test-lifecycle.js`),
   and a GitHub workflow that runs every test on each push.

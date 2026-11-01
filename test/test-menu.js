@@ -295,8 +295,7 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
 
   // ---------- 9. the ignore list is visible at a glance ----------
   check('ignored submenu present', !!findByLabel(root, 'Ignored Abbreviations'));
-  await H._updateUserConfig({ ignore: ['NEB', 'PTEN'] });
-  await H._reloadDictionaries(null);
+  for (const a of ['NEB', 'PTEN']) await H._ignoreAbbreviation(a);
   rootPopup.fire('popupshowing', { target: rootPopup });
   // Re-queried after the rebuild: the earlier element is no longer in the tree.
   const ignored = walk(root).find(e => /^Ignored Abbreviations/.test(e.getAttribute('label') || ''));

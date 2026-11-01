@@ -151,9 +151,78 @@ const tip = doc => doc.getElementById('abbreviation-helper-tooltip');
     check('and the file, which a pending save does not bring back', !env.FS[LIBRARY], env.FS[LIBRARY]);
   }
 
+  // ---------- the line saying where a meaning comes from can be hidden ----------
+  {
+    const doc = makeDoc();
+    H._wordAtPoint = () => 'GFP';
+    H._setActiveHoverPairs(1, [{ abbr: 'GFP', term: 'green fluorescent protein', certainty: 'defined' }]);
+    H.showMeaningSource = false;
+    H._onReaderMouseMove(doc, { clientX: 80, clientY: 80, target: null });
+    check('the source line can be switched off', tip(doc).childNodes.length === 1
+      && tip(doc).childNodes[0].textContent === 'GFP — green fluorescent protein', tip(doc).childNodes.map(c => c.textContent).join(' | '));
+    H.showMeaningSource = true;
+  }
+
+  // ---------- a highlight drawn over the words (Reading Mode) ----------
+  {
+    H._wordAtPoint = realWordAtPoint;
+    H._setActiveHoverPairs(1, [{ abbr: 'EGFR', term: 'epidermal growth factor receptor' }]);
+    // One line of text, 10 px per character, under a highlight box.
+    const text = { nodeType: 3, nodeValue: 'binding of EGFR ligands' };
+    const paragraph = { nodeType: 1, childNodes: [text], closest: () => null };
+    const highlight = { nodeType: 1, childNodes: [], closest: () => null };
+    const doc = {
+      caretPositionFromPoint: () => ({ offsetNode: highlight, offset: 0 }),
+      elementsFromPoint: () => [highlight, paragraph],
+      createRange: () => ({
+        setStart(n, s) { this.s = s; }, setEnd(n, e) { this.e = e; },
+        getClientRects() { return [{ left: this.s * 10, right: this.e * 10, top: 0, bottom: 20 }]; }
+      })
+    };
+    check('a word under a highlight is still found', H._wordAtPoint(doc, 125, 10) === 'EGFR', H._wordAtPoint(doc, 125, 10));
+    check('blank space under a highlight finds nothing', H._wordAtPoint(doc, 125, 40) === '');
+    check('a dash at the edge of a word is not part of it', H._lookupHover('EGFR-') && H._lookupHover('EGFR-').abbr === 'EGFR');
+  }
+
+  // ---------- keys ----------
+  {
+    const shown = makeDoc(), focused = makeDoc();
+    const opened = [];
+    H._openExternalURL = url => opened.push(url);
+    const showLinks = () => H._showDatabaseTooltip(shown, 10, 10, { symbol: 'EGFR',
+      groups: [{ groupLabel: 'Databases', links: [{ label: 'A', url: 'u1' }, { label: 'B', url: 'u2' }] }] });
+    const key = (k, code, target) => H._onReaderKeyDown(focused,
+      { key: k, code, target: target || {}, preventDefault() {}, stopPropagation() {} });
+    showLinks();
+    key('"', 'Digit2');
+    check('Shift+2 on a German keyboard opens link 2', opened.join() === 'u2', opened.join());
+    key('é', 'Digit2');
+    check('the 2 key on a French keyboard opens link 2', opened.join() === 'u2,u2', opened.join());
+    key('2', 'Digit2', { tagName: 'INPUT' });
+    check('typing a digit into a field is left alone', opened.length === 2);
+    key('Escape', 'Escape');
+    check('Escape hides the tooltip even when another page has the focus', tip(shown).style.display === 'none');
+
+    const doc = makeDoc();
+    H._wordAtPoint = () => 'EGFR';
+    H._onReaderMouseMove(doc, { clientX: 10, clientY: 10, target: null });
+    let renders = 0;
+    const render = H._renderHoverFromState;
+    H._renderHoverFromState = function (s) { renders++; return render.call(this, s); };
+    const mod = (down, repeat) => (down ? H._onReaderKeyDown : H._onReaderKeyUp).call(H, doc,
+      { key: 'Shift', shiftKey: down, repeat });
+    mod(true); mod(true, true); mod(true, true);
+    check('holding Shift redraws the tooltip once, not on every repeat', renders === 1, renders + ' redraws');
+    mod(false); mod(false);
+    check('and releasing it once more', renders === 2, renders + ' redraws');
+    H._renderHoverFromState = render;
+  }
+
   // ---------- the Settings pane ----------
   {
     const css = fs.readFileSync(SRC_DIR + '/settings.css', 'utf8');
+    check('sections are separated by a line, as in Zotero\'s own panes',
+      /groupbox:not\(:first-of-type\)\s*\{[^}]*border-top:\s*var\(--material-panedivider/.test(css));
     // A comma outside var() makes a colour declaration invalid, and it is dropped.
     const colours = (css.replace(/var\([^)]*\)/g, 'v').match(/\bcolor:[^;]*/g) || []);
     check('error messages have a valid colour', colours.length && colours.every(c => !c.includes(',')), colours.join(' | '));

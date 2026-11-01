@@ -20,3 +20,4 @@ pref("extensions.abbreviation-helper.disabledDatabases", "");
 pref("extensions.abbreviation-helper.enabledDatabases", "");
 pref("extensions.abbreviation-helper.advancedMenu", false);
 pref("extensions.abbreviation-helper.useLibraryDefinitions", true);
+pref("extensions.abbreviation-helper.showMeaningSource", true);

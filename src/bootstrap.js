@@ -45,11 +45,9 @@ async function startup({ id, version, rootURI }) {
     // the Tools menu is a native NSMenu and always dismisses on selection.
     AbbreviationHelper.registerPreferencePane();
 
-    // Listen for new main windows opening so the plugin can insert
-    // its menu item automatically. Register this before the first UI
-    // injection attempt so restart-time window creation is not missed.
-    Services.wm.addListener(windowListener);
-
+    // Main windows opened later get the menu through onMainWindowLoad below,
+    // which Zotero calls for every one of them.
+    //
     // During normal manual installation, the main Zotero window is already
     // ready, so addToAllWindows() works immediately. During app startup,
     // however, Zotero can start the add-on before ZoteroPane and the Tools
@@ -60,7 +58,7 @@ async function startup({ id, version, rootURI }) {
     addUIWhenReady().catch(e => log("Delayed UI registration failed: " + e));
 }
 
-
+/** Add the menu once a main window with a Tools menu exists (up to 20 s). */
 async function addUIWhenReady() {
     for (let attempt = 0; attempt < 40; attempt++) {
         if (!AbbreviationHelper) return;
@@ -92,9 +90,6 @@ async function addUIWhenReady() {
  */
 function shutdown() {
     log("Shutting down");
-    try {
-        Services.wm.removeListener(windowListener);
-    } catch (e) {}
     if (AbbreviationHelper) {
         // First, so a scan still waiting on Zotero's PDF worker cannot attach
         // listeners after everything below has been removed.
@@ -107,10 +102,8 @@ function shutdown() {
     }
 }
 
-// Window hooks for Zotero 7+. These are called when the main Zotero
-// window is opened or closed. Without these hooks Zotero will log
-// warnings about missing methods. We simply delegate to our existing
-// functions to add or remove UI.
+// Window hooks, called by Zotero 7+ for every main window opened or closed
+// after startup (it watches the windows itself and calls these).
 
 function onMainWindowLoad({ window }) {
     try {
@@ -134,23 +127,3 @@ function onMainWindowUnload({ window }) {
         log('onMainWindowUnload error: ' + e);
     }
 }
-
-// Listener used to detect when new Zotero windows open.  When a new
-// window opens we wait for it to finish loading before injecting our
-// menu item.  Without this listener the menu item would only be added
-// to windows that were open when the plugin loaded.
-var windowListener = {
-    onOpenWindow(xulWindow) {
-        // Defer until the window's document is ready.  When using
-        // nsIWindowMediator listeners you must query the interface this way.
-        let window = xulWindow.docShell.domWindow;
-        window.addEventListener("load", function () {
-            // The plugin may have been disabled while this window loaded.
-            if (AbbreviationHelper && window.ZoteroPane) {
-                AbbreviationHelper.addToWindow(window);
-            }
-        }, { once: true });
-    },
-    onCloseWindow() {},
-    onWindowTitleChange() {}
-};

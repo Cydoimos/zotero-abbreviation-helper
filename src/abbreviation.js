@@ -1032,7 +1032,8 @@ var NOTES = {
  * @param {string} text  the extracted text of the PDF
  * @param {{staticDefs:Object, commonKnownDefs:Object, userDefs?:Object, ignore?:string[],
  *          library?:Object<string, Array<{term:string, papers:number}>>}} dicts
- * @returns {Array<{abbr:string, term:string, source:string, confidence:string, certainty:string}>}
+ * @returns {Array<{abbr:string, term:string, source:string, certainty:string}>} source is the kind
+ *   of evidence ('forward', 'list', ..., 'probable', 'library', 'common-known' or 'user').
  */
 function detectAbbreviations(text, dicts) {
     const staticDefs = dicts.staticDefs || {};
@@ -1105,8 +1106,8 @@ function detectAbbreviations(text, dicts) {
     const pairs = [...accepted.values()]
         .sort((a, b) => a.pos - b.pos)
         .map(p => p.source === 'probable'
-            ? { abbr: p.abbr, term: p.term + ' (' + NOTES.probable + ')', source: 'probable', confidence: 'low', certainty: 'probable' }
-            : { abbr: p.abbr, term: p.term, source: p.source, confidence: p.rank <= 2 ? 'high' : 'medium', certainty: 'defined' });
+            ? { abbr: p.abbr, term: p.term + ' (' + NOTES.probable + ')', source: 'probable', certainty: 'probable' }
+            : { abbr: p.abbr, term: p.term, source: p.source, certainty: 'defined' });
 
     // Short forms the paper uses at least twice without defining them get a
     // meaning from the user's other papers, else from the glossary. A
@@ -1148,7 +1149,6 @@ function detectAbbreviations(text, dicts) {
             term: shown.map(o => o.term).join(' / ') + ' (' + (shown.length > 1 ? 'possible meanings ' : '') +
                 'from ' + (papers === 1 ? 'another paper' : papers + ' other papers') + ' in your library)',
             source: 'library',
-            confidence: shown.length > 1 ? 'low' : 'medium',
             certainty: 'library'
         });
     }
@@ -1177,7 +1177,6 @@ function detectAbbreviations(text, dicts) {
             abbr,
             term: terms.join(' / ') + ' (' + (terms.length > 1 ? NOTES.commonSeveral : NOTES.common) + ')',
             source: 'common-known',
-            confidence: terms.length > 1 ? 'low' : 'medium',
             certainty: 'common'
         });
     }
@@ -1188,8 +1187,8 @@ function detectAbbreviations(text, dicts) {
     for (const [abbr, term] of Object.entries(dicts.userDefs || {})) {
         if (!abbr || !term || !forms(abbr).some(countOf)) continue;
         const existing = pairs.find(p => sameShortForm(p.abbr, abbr));
-        if (existing) Object.assign(existing, { term, source: 'user', confidence: 'high', certainty: 'user' });
-        else pairs.push({ abbr, term, source: 'user', confidence: 'high', certainty: 'user' });
+        if (existing) Object.assign(existing, { term, source: 'user', certainty: 'user' });
+        else pairs.push({ abbr, term, source: 'user', certainty: 'user' });
     }
     // Ignoring a short form ignores its singular and plural too.
     const ignored = dicts.ignore || [];
@@ -1238,6 +1237,9 @@ var AbbreviationHelper = {
     modifierState: { shift: false, ctrl: false, alt: false, meta: false },
     tooltipFontSize: 12,
     tooltipTheme: 'dark',
+    // The line under a meaning saying where it comes from ("Defined in this
+    // paper", "Common term; ..."). Switching it off leaves the meaning alone.
+    showMeaningSource: true,
     // Whether a tooltip for a defined abbreviation also carries database links.
     databaseLinksOnAbbreviations: true,
     // Master switch for the whole database-link layer. When false, no lookup
@@ -1377,12 +1379,8 @@ var AbbreviationHelper = {
                     try {
                         const libraryWas = self.useLibraryDefinitions;
                         self._loadPrefs();
-                        if (self.useLibraryDefinitions !== libraryWas) {
-                            // Meanings change for every paper: detect again
-                            // (the PDF text is cached, so it is not re-read).
-                            try { self.cache.clear(); } catch (e) {}
-                            self._setActiveHoverPairs(null, []);
-                        }
+                        // Meanings change for every paper.
+                        if (self.useLibraryDefinitions !== libraryWas) self._redetect();
                         self._resetHoverTooltips();
                         if (!self.hoverEnabled) {
                             self._removeHoverListeners();
@@ -1444,6 +1442,7 @@ var AbbreviationHelper = {
         this.databaseLinksEnabled = this._getPref('databaseLinksEnabled', this.databaseLinksEnabled);
         this.advancedMenu = this._getPref('advancedMenu', this.advancedMenu);
         this.useLibraryDefinitions = this._getPref('useLibraryDefinitions', this.useLibraryDefinitions);
+        this.showMeaningSource = this._getPref('showMeaningSource', this.showMeaningSource);
         // A menulist in the preference pane stores its value as a string,
         // while the menu's radio items store a number. Coerce so both routes
         // to the same setting produce the same type.
@@ -1644,29 +1643,6 @@ var AbbreviationHelper = {
     },
 
     /**
-     * Merge a patch into the abbreviations file on disk. Arrays are merged
-     * without duplicates, objects are merged, and keys named in replaceKeys
-     * are replaced outright. The caller reloads afterwards.
-     */
-    async _updateUserConfig(patch, replaceKeys) {
-        const replace = new Set(replaceKeys || []);
-        return this._editUserConfig((current) => {
-            for (const [k, v] of Object.entries(patch || {})) {
-                if (replace.has(k)) {
-                    current[k] = v;
-                } else if (Array.isArray(v)) {
-                    const merged = [].concat(current[k] || [], v);
-                    current[k] = merged.filter((x, i) => merged.indexOf(x) === i);
-                } else if (v && typeof v === 'object') {
-                    current[k] = Object.assign({}, current[k], v);
-                } else {
-                    current[k] = v;
-                }
-            }
-        });
-    },
-
-    /**
      * Change the abbreviations file. `mutate` receives what is on disk now
      * (with any missing section filled in) and edits it in place; returning
      * false means there is nothing to change, and the file is not written.
@@ -1774,11 +1750,7 @@ var AbbreviationHelper = {
         try {
             this._dictionariesReady = this._loadDictionaries();
             await this._dictionariesReady;
-            try { this.cache.clear(); } catch (e) {}
-            // The PDF text is still cached, so the open paper is re-detected
-            // with the new dictionaries without being read again.
-            this._setActiveHoverPairs(null, []);
-            try { await this._autoScanActiveReader(); } catch (e) {}
+            await this._redetect();
             if (window && this.userFileError) {
                 Zotero.alert(window, 'Abbreviation Helper',
                     'Your abbreviations file could not be read, so your own entries are not in use.\n\n'
@@ -1794,6 +1766,17 @@ var AbbreviationHelper = {
             this.log('Reload failed: ' + e);
             if (window) Zotero.alert(window, 'Abbreviation Helper', 'Could not reload the abbreviations file. See the Zotero log for details.');
         }
+    },
+
+    /**
+     * Detect again in every paper, after something detection depends on has
+     * changed: the open paper at once (its text is cached, so the PDF is not
+     * read again), the others when they are next opened.
+     */
+    _redetect() {
+        try { this.cache.clear(); } catch (e) {}
+        this._setActiveHoverPairs(null, []);
+        return this._autoScanActiveReader().catch(e => this.log('Auto-scan failed: ' + e));
     },
 
     /** Store a scan result, evicting the oldest entry past CACHE_LIMIT. */
@@ -1965,10 +1948,17 @@ var AbbreviationHelper = {
             sep(rootPopup);
             checkbox(rootPopup, 'abbreviation-helper-hover',
                 'Show meanings on hover', this.hoverEnabled, (item) => {
-                    this.toggleHover(window, item).catch(err => {
+                    this.toggleHover(item).catch(err => {
                         this.log('Error toggling hover: ' + err);
                         Zotero.alert(window, 'Abbreviation Helper', 'Could not enable hover tooltips. See the Zotero log for details.');
                     });
+                });
+            checkbox(rootPopup, 'abbreviation-helper-library',
+                'Use definitions from my other papers', this.useLibraryDefinitions, (item) => {
+                    this.useLibraryDefinitions = !this.useLibraryDefinitions;
+                    this._setPref('useLibraryDefinitions', this.useLibraryDefinitions);
+                    item.setAttribute('checked', this.useLibraryDefinitions ? 'true' : 'false');
+                    this._redetect();
                 });
             checkbox(rootPopup, 'abbreviation-helper-db-enabled',
                 'Show database links', this.databaseLinksEnabled, (item) => {
@@ -2112,6 +2102,14 @@ var AbbreviationHelper = {
                     this.tooltipTheme = id;
                     this._setPref('tooltipTheme', id);
                     this._resetHoverTooltips();
+                });
+            sep(lookPopup);
+            checkbox(lookPopup, 'abbreviation-helper-source',
+                'Show where each meaning comes from', this.showMeaningSource, (item) => {
+                    this.showMeaningSource = !this.showMeaningSource;
+                    this._setPref('showMeaningSource', this.showMeaningSource);
+                    item.setAttribute('checked', this.showMeaningSource ? 'true' : 'false');
+                    this._refreshHoverFromLastState(doc);
                 });
             } /* end advanced-only: databases and appearance */
 
@@ -2282,13 +2280,12 @@ var AbbreviationHelper = {
         const abbr = ok && value.value ? String(value.value).trim() : '';
         if (!abbr) return;
         try {
-            await this._updateUserConfig({ ignore: [abbr] });
+            await this._ignoreAbbreviation(abbr);
         } catch (e) {
             this.log('Could not add to the ignore list: ' + e);
             Zotero.alert(window, 'Abbreviation Helper', this._saveFailedMessage());
             return;
         }
-        await this._reloadDictionaries(null);
         Zotero.alert(window, 'Abbreviation Helper', '\u201c' + abbr + '\u201d will no longer be shown.');
     },
 
@@ -2513,7 +2510,7 @@ var AbbreviationHelper = {
      * @param {string} text Text extracted from the PDF
      * @param {_ZoteroTypes.Item} [item] The PDF attachment, which identifies
      *   the paper in the library store; without it the library is not used.
-     * @returns {Array<{abbr: string, term: string, source: string, confidence: string, certainty: string}>}
+     * @returns {Array<{abbr: string, term: string, source: string, certainty: string}>}
      */
     _detectAbbreviations(text, item) {
         const dicts = this.dictionaries || {};
@@ -2633,9 +2630,7 @@ var AbbreviationHelper = {
             const io = await this._getIOUtils();
             if (await io.exists(file)) await io.remove(file);
         });
-        try { this.cache.clear(); } catch (e) {}
-        this._setActiveHoverPairs(null, []);
-        try { await this._autoScanActiveReader(); } catch (e) {}
+        await this._redetect();
     },
 
     /** Keep the definitions a paper gives (only those the letters confirm). */
@@ -2750,7 +2745,7 @@ var AbbreviationHelper = {
      * on scans the PDF in the reader quietly, then attaches mouse listeners
      * to the reader pages that show its text.
      */
-    async toggleHover(window, menuitem) {
+    async toggleHover(menuitem) {
         this.hoverEnabled = !this.hoverEnabled;
         this._setPref('hoverEnabled', this.hoverEnabled);
         if (menuitem) menuitem.setAttribute('checked', this.hoverEnabled ? 'true' : 'false');
@@ -2895,6 +2890,9 @@ var AbbreviationHelper = {
     },
 
     _setActiveHoverPairs(itemID, pairs) {
+        // A tooltip still showing another paper's meaning goes (after a quick
+        // tab switch, the pointer may not have moved since).
+        if (itemID !== this.activeHoverItemID && this.hoverPinnedDoc) this._forgetHover(this.hoverPinnedDoc);
         this.activeHoverItemID = itemID;
         this.activeHoverMap = this._buildHoverMap(pairs || []);
         // The meanings changed, so the next mouse move redraws the tooltip.
@@ -3082,7 +3080,7 @@ var AbbreviationHelper = {
 
     /** Show, keep or hide the tooltip for whatever is under (x, y). */
     _hoverAt(doc, x, y, target) {
-        const token = this._wordAtPoint(doc, x, y, target);
+        const token = this._wordAtPoint(doc, x, y);
         if (!token) {
             this.lastHoverState = null;
             this._scheduleHoverHide(doc, 120);
@@ -3248,7 +3246,7 @@ var AbbreviationHelper = {
         let dbInfo = null;
         if (dbAllowed) {
             if (state.dbToken === undefined) {
-                state.dbToken = this._databaseLookupCandidateAtPoint(doc, state.x, state.y, state.target, token) || token;
+                state.dbToken = this._databaseLookupCandidateAtPoint(state.target, token) || token;
             }
             dbInfo = this._lookupDatabaseLinks(state.dbToken || token);
         }
@@ -3293,7 +3291,7 @@ var AbbreviationHelper = {
      * layer can be more permissive than the abbreviation detector while still
      * avoiding obvious PDF/navigation noise.
      */
-    _databaseLookupCandidateAtPoint(doc, x, y, target, baseToken) {
+    _databaseLookupCandidateAtPoint(target, baseToken) {
         // Multi-word database lookup phrases are handled by a generic
         // biomedical-name rule. This is lookup-only: it does not create new
         // abbreviation definitions and it does not assert that the phrase is a
@@ -3302,7 +3300,7 @@ var AbbreviationHelper = {
         //   2. a biological head noun.
         // That keeps ordinary title-case prose from becoming database links.
         try {
-            if (!doc || !target || !baseToken) return '';
+            if (!target || !baseToken) return '';
             let el = target.nodeType === 1 ? target : target.parentElement;
             if (!el) return '';
             if (el.closest) {
@@ -3466,7 +3464,7 @@ var AbbreviationHelper = {
         const isPhrase = /\s/.test(token);
         if (isPhrase) {
             if (!this._isPlausibleBiomoleculeLookupPhrase(token)) return null;
-        } else if (!this._isPlausibleDatabaseLookupToken(token, token)) {
+        } else if (!this._isPlausibleDatabaseLookupToken(token)) {
             return null;
         }
 
@@ -3486,10 +3484,10 @@ var AbbreviationHelper = {
             const links = enabled
                 .filter(d => (d.group || 'Databases') === groupLabel)
                 .map(d => ({ label: d.label, url: expand(d.url) }));
-            if (links.length) groups.push({ symbol: token, search: searchToken, note: 'database lookup candidate', groupLabel, links });
+            if (links.length) groups.push({ groupLabel, links });
         }
         if (!groups.length) return null;
-        return { symbol: token, search: searchToken, groups };
+        return { symbol: token, groups };
     },
 
     _cleanDatabaseLookupToken(word, maxLen) {
@@ -3512,10 +3510,9 @@ var AbbreviationHelper = {
         return token;
     },
 
-    _isPlausibleDatabaseLookupToken(symbol, original) {
-        if (!symbol) return false;
-        const raw = String(original || symbol).trim();
-        const normalized = raw.replace(/[‑–—]/g, '-');
+    _isPlausibleDatabaseLookupToken(token) {
+        if (!token) return false;
+        const normalized = String(token).trim().replace(/[‑–—]/g, '-');
         const compact = normalized.replace(/[-_.]/g, '');
         if (compact.length < 3 || compact.length > 32) return false;
 
@@ -3542,11 +3539,14 @@ var AbbreviationHelper = {
         return true;
     },
 
-    /** A hovered word without the brackets, quotes and punctuation around it. */
+    /**
+     * A hovered word without the brackets, quotes, punctuation and dashes
+     * around it ("(EVs).", the "EV-" of "EV- and exosome-derived").
+     */
     _trimToken(word) {
         return String(word || '').trim()
-            .replace(/^[\s([{<"'“‘]+/, '')
-            .replace(/[\s)\]}>"'”’.,;:]+$/, '');
+            .replace(/^[\s([{<"'“‘\-‐‑–—]+/, '')
+            .replace(/[\s)\]}>"'”’.,;:\-‐‑–—]+$/, '');
     },
 
     // A known short form with one of these suffixes is explained too while
@@ -3603,106 +3603,81 @@ var AbbreviationHelper = {
         return { abbr: entry.abbr, term: reword(meaning) + (note ? ' (' + note + ')' : ''), certainty: entry.certainty };
     },
 
-    _wordAtPoint(doc, x, y, target) {
-        const tokenChars = /[A-Za-z0-9βΒαΑγΓδΔεΕζΖηΗθΘκΚλΛμΜνΝξΞπΠρΡσΣτΤυΥφΦχΧψΨωΩ\-‑–—⋅·.\/]/;
+    /**
+     * The word under (x, y) in a reader page, or ''. Short forms joined by a
+     * slash ("CD4/CD8") give the part under the pointer, unless the whole word
+     * means something itself ("LC-MS/MS").
+     */
+    _wordAtPoint(doc, x, y) {
+        const WORD_CHAR = /[A-Za-z0-9βΒαΑγΓδΔεΕζΖηΗθΘκΚλΛμΜνΝξΞπΠρΡσΣτΤυΥφΦχΧψΨωΩ\-‑–—⋅·.\/]/;
+        const WORDS = new RegExp(WORD_CHAR.source + '+', 'g');
 
-        function tokenBounds(text, offset) {
-            if (!text) return null;
-            offset = Math.max(0, Math.min(offset == null ? 0 : offset, text.length));
-            let start = offset;
-            let end = offset;
-            while (start > 0 && tokenChars.test(text[start - 1])) start--;
-            while (end < text.length && tokenChars.test(text[end])) end++;
-            const token = text.slice(start, end);
-            if (!token) return null;
-            return { token, start, end };
-        }
-
-        // PDF.js/Zotero text layers sometimes return the nearest text node even
-        // when the cursor is in blank space on the page.  Without a geometry
-        // check, that can make one abbreviation appear everywhere on a page.
-        // Accept a caret-derived token only when the token's actual rendered
-        // range is under the mouse pointer.
-        function pointInTokenRange(node, start, end, x, y) {
+        // Is (x, y) on the rendered text from start to end? Text layers can
+        // return the nearest text even over blank space, so every word is
+        // checked against where it is drawn. A few pixels of tolerance absorb
+        // text-layer rounding; `exact` drops it when choosing between neighbours.
+        const isUnder = (node, start, end, exact) => {
+            const padX = exact ? 0 : 3, padY = exact ? 0 : 4;
             try {
                 const range = doc.createRange();
                 range.setStart(node, start);
                 range.setEnd(node, end);
-                const rects = range.getClientRects ? range.getClientRects() : [];
-                for (let rect of rects) {
-                    // A small tolerance helps with PDF text-layer quirks and
-                    // subpixel positioning, but still rejects whole-page hits.
-                    const padX = 3;
-                    const padY = 4;
-                    if (x >= rect.left - padX && x <= rect.right + padX &&
-                        y >= rect.top - padY && y <= rect.bottom + padY) {
-                        return true;
-                    }
+                for (const r of range.getClientRects()) {
+                    if (x >= r.left - padX && x <= r.right + padX && y >= r.top - padY && y <= r.bottom + padY) return true;
                 }
             } catch (e) {}
             return false;
-        }
-
-        // Short forms joined by slashes ("CD4/CD8", "PI3K/AKT") are explained
-        // one at a time: unless the whole word means something, the part
-        // under the pointer is the word.
+        };
         const explained = t => !!this._lookupHover(t) || !!this._lookupDatabaseLinks(t);
-        const tokenFromCaretNode = (node, offset) => {
-            if (!node || node.nodeType !== 3) return '';
-            const tb = tokenBounds(node.nodeValue, offset);
-            if (!tb || !tb.token) return '';
-            if (!pointInTokenRange(node, tb.start, tb.end, x, y)) return '';
-            if (tb.token.includes('/') && !explained(tb.token)) {
-                const at = Math.min(Math.max(offset, tb.start), tb.end) - tb.start;
-                const from = at > 0 ? tb.token.lastIndexOf('/', at - 1) + 1 : 0;
-                const to = tb.token.indexOf('/', at);
-                const part = tb.token.slice(from, to < 0 ? tb.token.length : to);
+        // The word around a character offset in a text node.
+        const wordAt = (node, offset) => {
+            const text = node.nodeValue || '';
+            let start = Math.max(0, Math.min(offset, text.length)), end = start;
+            while (start > 0 && WORD_CHAR.test(text[start - 1])) start--;
+            while (end < text.length && WORD_CHAR.test(text[end])) end++;
+            const word = text.slice(start, end);
+            if (!word || !isUnder(node, start, end)) return '';
+            if (word.includes('/') && !explained(word)) {
+                const at = Math.min(Math.max(offset, start), end) - start;
+                const from = at > 0 ? word.lastIndexOf('/', at - 1) + 1 : 0;
+                const to = word.indexOf('/', at);
+                const part = word.slice(from, to < 0 ? word.length : to);
                 if (part) return part;
             }
-            return tb.token;
+            return word;
         };
 
+        // The caret position under the pointer: the usual case.
         try {
-            if (doc.caretPositionFromPoint) {
-                const pos = doc.caretPositionFromPoint(x, y);
-                const tok = pos ? tokenFromCaretNode(pos.offsetNode, pos.offset) : '';
-                if (tok) return tok;
-            }
-            if (doc.caretRangeFromPoint) {
-                const range = doc.caretRangeFromPoint(x, y);
-                const tok = range ? tokenFromCaretNode(range.startContainer, range.startOffset) : '';
-                if (tok) return tok;
+            const pos = doc.caretPositionFromPoint ? doc.caretPositionFromPoint(x, y) : null;
+            const node = pos ? pos.offsetNode : null;
+            if (node && node.nodeType === 3) {
+                const word = wordAt(node, pos.offset);
+                if (word) return word;
             }
         } catch (e) {}
 
-        // Fallback for PDF.js text-layer spans.  Keep this deliberately narrow:
-        // only inspect the small text-bearing element directly under the cursor,
-        // not the whole page or textLayer container.  The older broad fallback
-        // could scan a full page; if there was exactly one abbreviation on that
-        // page, it appeared no matter where the cursor was.
+        // Something laid over the words hides them from the caret: in Reading
+        // Mode (and EPUB and snapshot views) each highlight is a clickable box
+        // over its text. Then the word is found by position, in the text of
+        // the elements under the pointer, topmost first.
         try {
-            const pointEl = doc.elementFromPoint ? doc.elementFromPoint(x, y) : null;
-            let el = pointEl || (target && target.nodeType === 1 ? target : (target && target.parentElement));
-            const original = el;
-            while (el && el !== doc.body) {
-                const text = (el.textContent || '').trim();
-                const cls = String(el.className || '');
-                const isContainer = /(^|\s)(page|textLayer|annotationLayer|canvasWrapper)(\s|$)/.test(cls) ||
-                    /textLayer|annotationLayer|page/.test(cls);
-                const hasDirectText = Array.prototype.some.call(el.childNodes || [], n => n.nodeType === 3 && n.nodeValue && n.nodeValue.trim());
-                const rect = el.getBoundingClientRect ? el.getBoundingClientRect() : null;
-                const underPoint = rect && x >= rect.left - 2 && x <= rect.right + 2 && y >= rect.top - 3 && y <= rect.bottom + 3;
-
-                if (text && !isContainer && hasDirectText && underPoint && text.length <= 120) {
-                    const tokens = text.match(/[A-Za-z0-9βΒαΑγΓ][A-Za-z0-9βΒαΑγΓ\-‑–—⋅·.\/]{1,30}/g) || [];
-                    const hits = tokens.filter(explained);
-                    if (hits.length === 1) return hits[0];
+            for (const el of doc.elementsFromPoint ? doc.elementsFromPoint(x, y) : []) {
+                if (el.closest && el.closest('#abbreviation-helper-tooltip')) continue;
+                for (const node of el.childNodes || []) {
+                    if (node.nodeType !== 3 || !node.nodeValue.trim()) continue;
+                    if (!isUnder(node, 0, node.nodeValue.length, true)) continue;
+                    WORDS.lastIndex = 0;
+                    let m;
+                    while ((m = WORDS.exec(node.nodeValue))) {
+                        if (!isUnder(node, m.index, m.index + m[0].length, true)) continue;
+                        let offset = m.index;
+                        for (let i = m.index; i < m.index + m[0].length; i++) {
+                            if (isUnder(node, i, i + 1, true)) { offset = i; break; }
+                        }
+                        return wordAt(node, offset);
+                    }
                 }
-
-                // If the cursor started inside a high-level page/textLayer
-                // container, do not climb and inspect the whole container text.
-                if (el === original && isContainer) break;
-                el = el.parentElement;
             }
         } catch (e) {}
         return '';
@@ -3726,12 +3701,14 @@ var AbbreviationHelper = {
         main.appendChild(doc.createTextNode(' — ' + meaning));
         tip.appendChild(main);
         // How certain the meaning is, in a quieter line underneath.
-        const originLine = doc.createElement('div');
-        originLine.textContent = origin;
-        originLine.style.fontSize = '0.85em';
-        originLine.style.opacity = '0.7';
-        originLine.style.marginTop = '2px';
-        tip.appendChild(originLine);
+        if (this.showMeaningSource) {
+            const originLine = doc.createElement('div');
+            originLine.textContent = origin;
+            originLine.style.fontSize = '0.85em';
+            originLine.style.opacity = '0.7';
+            originLine.style.marginTop = '2px';
+            tip.appendChild(originLine);
+        }
 
         const groups = (options && options.groups) || null;
         const interactive = !!(groups && groups.length);
@@ -3777,9 +3754,9 @@ var AbbreviationHelper = {
 
         const main = doc.createElement('div');
         const strong = doc.createElement('strong');
-        strong.textContent = info.symbol || info.search || '';
+        strong.textContent = info.symbol || '';
         main.appendChild(strong);
-        main.appendChild(doc.createTextNode(' \u2014 ' + (info.note || 'possible database match')));
+        main.appendChild(doc.createTextNode(' \u2014 possible database match'));
         tip.appendChild(main);
         tip.dataset.abbreviationHelperInteractive = 'true';
         tip.style.pointerEvents = 'auto';
@@ -3932,34 +3909,38 @@ var AbbreviationHelper = {
                 return;
             }
         } catch (e) {}
-        // Clicking anywhere else dismisses interactive link tooltips.  This is
-        // what prevents sticky gene/protein tooltips from lingering forever,
-        // while abbreviation-only hover tooltips keep their normal behavior.
-        if (this.hoverInteractiveTooltip) this._forgetHover(doc);
+        // Clicking anywhere else, in this page or another, dismisses a tooltip
+        // with links, so it cannot linger; a plain one follows the pointer.
+        if (this.hoverInteractiveTooltip) this._forgetHover(this.hoverPinnedDoc || doc);
     },
+
+    // The modifier each key sets, named as the settings name them.
+    MODIFIER_KEYS: { Shift: 'shift', Control: 'ctrl', Alt: 'alt', Meta: 'meta' },
 
     _onReaderKeyDown(doc, event) {
         if (!event) return;
-        if (event.key === 'Shift' || event.key === 'Control' || event.key === 'Alt' || event.key === 'Meta') {
-            this._updateModifierState(event);
-            // The pressed key is not yet reflected in the event flags.
-            const map = { Shift: 'shift', Control: 'ctrl', Alt: 'alt', Meta: 'meta' };
-            this.modifierState[map[event.key]] = true;
-            this._refreshHoverFromLastState(doc);
+        if (this.MODIFIER_KEYS[event.key]) {
+            this._onModifierKey(doc, event, true);
             return;
         }
+        // The tooltip may be in another page of the reader than the one with
+        // the keyboard focus (the PDF view and its Reading Mode).
+        const tipDoc = this.hoverPinnedDoc || doc;
         if (event.key === 'Escape') {
-            this._forgetHover(doc);
+            this._forgetHover(tipDoc);
             return;
         }
 
-        // Number shortcuts are deliberately limited to interactive
-        // gene/protein-link tooltips.  Abbreviation-only tooltips keep their
-        // normal hover behavior and do not capture keys.  This gives users a
-        // reliable way to open database links even when the Zotero reader DOM
-        // makes the tooltip hard to click.
-        if (!this.hoverInteractiveTooltip || !this._isHoverTooltipVisible(doc)) return;
-        if (!/^[1-9]$/.test(String(event.key || ''))) return;
+        // 1-9 open the links of a tooltip with database links; a tooltip with
+        // only a meaning leaves the keys alone. This is the reliable way to
+        // open a link when the reader makes the tooltip hard to click.
+        if (!this.hoverInteractiveTooltip || !this._isHoverTooltipVisible(tipDoc)) return;
+        // The physical key counts, not the character it types, so the
+        // shortcut works on every layout: with Shift held, the "1" key types
+        // "!" on a German keyboard, and without it "&" on a French one.
+        const digit = /^[1-9]$/.test(String(event.key || '')) ? event.key
+            : (/^(?:Digit|Numpad)([1-9])$/.exec(String(event.code || '')) || [])[1];
+        if (!digit) return;
 
         // Do not intercept number typing inside text fields, search boxes,
         // annotation editors, or contenteditable elements.
@@ -3970,8 +3951,7 @@ var AbbreviationHelper = {
             if (target && target.isContentEditable) return;
         } catch (e) {}
 
-        const idx = parseInt(event.key, 10) - 1;
-        const link = this.activeGeneLinks && this.activeGeneLinks[idx];
+        const link = this.activeGeneLinks && this.activeGeneLinks[Number(digit) - 1];
         if (!link || !link.url) return;
 
         event.preventDefault();
@@ -3980,20 +3960,27 @@ var AbbreviationHelper = {
     },
 
     _onReaderKeyUp(doc, event) {
-        if (!event) return;
-        const map = { Shift: 'shift', Control: 'ctrl', Alt: 'alt', Meta: 'meta' };
-        if (!map[event.key]) return;
+        if (event && this.MODIFIER_KEYS[event.key]) this._onModifierKey(doc, event, false);
+    },
+
+    /**
+     * A modifier went down or up: redraw the tooltip, whose content may
+     * depend on it (database links appear while Shift is held). Only a real
+     * change redraws it, so a held key, which repeats its key-down, does not
+     * rebuild the tooltip again and again.
+     */
+    _onModifierKey(doc, event, down) {
+        const before = JSON.stringify(this.modifierState);
         this._updateModifierState(event);
-        this.modifierState[map[event.key]] = false;
-        // Database links should disappear immediately when Shift is released.
-        // If the cursor is over an abbreviation, fall back to the plain
-        // abbreviation tooltip; if it is over a lookup-only token, hide it.
-        this._refreshHoverFromLastState(doc);
+        // The key itself is not reliably reflected in the event's flags yet.
+        this.modifierState[this.MODIFIER_KEYS[event.key]] = down;
+        if (JSON.stringify(this.modifierState) !== before) this._refreshHoverFromLastState(doc);
     },
 
     _onReaderBlur(doc) {
+        const before = JSON.stringify(this.modifierState);
         this.modifierState = { shift: false, ctrl: false, alt: false, meta: false };
-        this._refreshHoverFromLastState(doc);
+        if (JSON.stringify(this.modifierState) !== before) this._refreshHoverFromLastState(doc);
     },
 
     _openExternalURL(url) {

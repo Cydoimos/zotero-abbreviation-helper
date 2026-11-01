@@ -35,7 +35,8 @@ Works on **macOS, Windows and Linux**. Requires **Zotero 7 or newer**
 Open a PDF in the Zotero reader. The plugin scans it in the background; hover over any
 abbreviation to see its meaning. Only the PDF in the reader tab you are looking at is
 scanned, and switching tabs switches the meanings with it. Tooltips also work in Zotero
-10's Reading Mode for PDFs, which shows the same paper as reflowed text.
+10's Reading Mode for PDFs, which shows the same paper as reflowed text, including over
+highlighted text.
 
 Under each meaning, the tooltip says how sure it is:
 
@@ -46,6 +47,8 @@ Under each meaning, the tooltip says how sure it is:
 | From 3 other papers in your library | The paper doesn't define it; your other papers do |
 | Common term; not explicitly defined in this paper | The paper doesn't define it; the built-in glossary does |
 | Your own definition | You defined it in Settings |
+
+**Show where each meaning comes from** in the settings turns this line off.
 
 ### Settings
 
@@ -90,7 +93,13 @@ saved preference therefore behaves correctly on every platform, which matters if
 Zotero profile is synced between machines.
 
 While a tooltip with database links is showing, click a link or press **1–9** to open
-the matching one. The tooltip stays put while you move the pointer onto it.
+the matching one. The tooltip stays put while you move the pointer onto it. The number
+keys work on every keyboard layout: on a German keyboard Shift+1 opens the first link
+although it types "!", and on a French one the 1 key works with or without Shift.
+
+Built-in databases: HGNC, UniProt, GeneCards, NCBI Gene, Cellosaurus, ATCC and PubChem
+are on; Ensembl, InterPro, RCSB PDB, RNAcentral and Addgene are available and off until
+you tick them in the settings.
 
 ## The abbreviations file
 

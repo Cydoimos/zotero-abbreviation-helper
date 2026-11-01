@@ -28,6 +28,18 @@
       "enabled": true
     },
     {
+      "group": "Gene/protein databases",
+      "label": "Ensembl",
+      "url": "https://www.ensembl.org/Multi/Search/Results?q={raw};site=ensembl",
+      "enabled": false
+    },
+    {
+      "group": "Gene/protein databases",
+      "label": "InterPro",
+      "url": "https://www.ebi.ac.uk/interpro/search/text/{raw}/",
+      "enabled": false
+    },
+    {
       "group": "Cell line databases",
       "label": "Cellosaurus",
       "url": "https://www.cellosaurus.org/search?input={raw}",
@@ -44,6 +56,24 @@
       "label": "PubChem",
       "url": "https://pubchem.ncbi.nlm.nih.gov/#query={raw}",
       "enabled": true
+    },
+    {
+      "group": "Structure databases",
+      "label": "RCSB PDB",
+      "url": "https://www.rcsb.org/search?request=%7B%22query%22%3A%7B%22type%22%3A%22group%22%2C%22logical_operator%22%3A%22and%22%2C%22nodes%22%3A%5B%7B%22type%22%3A%22group%22%2C%22label%22%3A%22text%22%2C%22logical_operator%22%3A%22and%22%2C%22nodes%22%3A%5B%7B%22type%22%3A%22terminal%22%2C%22service%22%3A%22full_text%22%2C%22parameters%22%3A%7B%22value%22%3A%22{raw}%22%7D%7D%5D%7D%5D%7D%2C%22return_type%22%3A%22entry%22%7D",
+      "enabled": false
+    },
+    {
+      "group": "RNA and plasmid databases",
+      "label": "RNAcentral",
+      "url": "https://rnacentral.org/search?q={raw}",
+      "enabled": false
+    },
+    {
+      "group": "RNA and plasmid databases",
+      "label": "Addgene",
+      "url": "https://www.addgene.org/search/catalog/all/?q={raw}",
+      "enabled": false
     }
   ],
   "staticDefs": {

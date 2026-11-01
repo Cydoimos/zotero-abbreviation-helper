@@ -191,7 +191,10 @@ const tick = () => new Promise(r => setTimeout(r, 0));
   });
   check('every database is listed', dbRows.length === bundled.databases.length,
     dbRows.length + ' of ' + bundled.databases.length);
-  check('databases start checked', dbRows.every(r => dbOf(r).input.checked));
+  const shippedOn = new Map(bundled.databases.map(d => [d.label, d.enabled !== false]));
+  check('databases start as the file says, the extra ones off',
+    dbRows.map(dbOf).every(d => d.input.checked === shippedOn.get(d.label))
+    && [...shippedOn.values()].some(on => !on));
   check('group headings are shown',
     dbBox.childNodes.filter(r => r.classList.contains('abbrev-settings-group-row')).length >= 2);
 
@@ -207,8 +210,7 @@ const tick = () => new Promise(r => setTimeout(r, 0));
     H._enabledDatabases().map(d => d.label).indexOf('UniProt') !== -1);
 
   // ---------- 6. ignore list renders and clears ----------
-  await H._updateUserConfig({ ignore: ['NEB', 'PTEN'] });
-  await H._reloadDictionaries(null);
+  for (const a of ['NEB', 'PTEN']) await H._ignoreAbbreviation(a);
   Pane.refresh();
   const ignoreBox = doc.getElementById('abbrev-settings-ignore-list');
   const named = (body) => body.childNodes
@@ -346,7 +348,8 @@ const tick = () => new Promise(r => setTimeout(r, 0));
     hoverEnabled: 'true', tooltipModifier: '"none"',
     databaseLinksEnabled: 'true', databaseLinksModifier: '"shift"',
     databaseLinksOnAbbreviations: 'true',
-    tooltipFontSize: '12', tooltipTheme: '"dark"', useLibraryDefinitions: 'true'
+    tooltipFontSize: '12', tooltipTheme: '"dark"', useLibraryDefinitions: 'true',
+    showMeaningSource: 'true'
   };
   const mismatched = Object.entries(codeDefaults)
     .filter(([k, v]) => declared.get(H.PREF_BRANCH + k) !== v)

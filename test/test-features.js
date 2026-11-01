@@ -71,14 +71,12 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
   H = env.H;
   H.init({ id: 'x', version: '1', rootURI: 'r://' });
   await H._dictionariesReady;
-  await H._updateUserConfig({ ignore: ['NEB'] });
-  await H._reloadDictionaries(null);
+  await H._ignoreAbbreviation('NEB');
   check('ignore write persists to disk', /NEB/.test(env.FS[USER] || ''));
   check('ignore list is live after reload', (H.dictionaries.ignore || []).indexOf('NEB') !== -1);
 
   // ---------- 2b. removing entries again (the round trip) ----------
-  await H._updateUserConfig({ ignore: ['PTEN'] });
-  await H._reloadDictionaries(null);
+  await H._ignoreAbbreviation('PTEN');
   check('second entry added', H._ignoreList().sort().join(',') === 'NEB,PTEN', H._ignoreList().join(','));
 
   await H._stopIgnoring('NEB');
@@ -91,16 +89,14 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
   await H._stopIgnoring('PTEN');
   check('clearing the last entry leaves an empty list', H._ignoreList().length === 0);
 
-  await H._updateUserConfig({ ignore: ['ZZT'] });
-  await H._reloadDictionaries(null);
+  await H._ignoreAbbreviation('ZZT');
   const hidden = new Map(H._detectAbbreviations(paper).map(p => [p.abbr, p.term]));
   check('re-ignored abbreviation disappears again', !hidden.has('ZZT'));
   await H._stopIgnoring('ZZT');
   const back = new Map(H._detectAbbreviations(paper).map(p => [p.abbr, p.term]));
   check('and comes back once un-ignored', back.has('ZZT'), '-> ' + back.get('ZZT'));
 
-  await H._updateUserConfig({ ignore: ['A', 'B', 'C'] });
-  await H._reloadDictionaries(null);
+  for (const a of ['A', 'B', 'C']) await H._ignoreAbbreviation(a);
   await H._setIgnoreList([]);
   check('stop ignoring all empties the list', H._ignoreList().length === 0);
   check('empty list is persisted', (JSON.parse(env.FS[USER]).ignore || []).length === 0);
@@ -184,7 +180,9 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
   await H._dictionariesReady;
   let info = H._lookupDatabaseLinks('EGFR');
   const labels = info.groups.flatMap(g => g.links.map(l => l.label));
-  check('all configured databases offered', labels.length === bundled.databases.length, labels.join(','));
+  const shippedOn = bundled.databases.filter(d => d.enabled !== false).map(d => d.label);
+  check('every database switched on is offered, and only those',
+    labels.join(',') === shippedOn.join(','), labels.join(','));
   check('URL placeholders expanded', info.groups[0].links[0].url.indexOf('{q}') === -1);
 
   // Disabling one from the menu removes it.
@@ -222,8 +220,8 @@ const check = (n, c, d) => { console.log((c ? 'PASS' : 'FAIL') + ' - ' + n + (d 
     H._databaseLinksCurrentlyAllowed() === false);
 
   H.databaseLinksEnabled = true;
-  check('turning it back on restores every database',
-    H._enabledDatabases().length === bundled.databases.length);
+  check('turning it back on restores every database that was on',
+    H._enabledDatabases().length === bundled.databases.filter(d => d.enabled !== false).length);
   check('turning it back on restores the gate', H._databaseLinksCurrentlyAllowed() === true);
 
   // The setting survives a restart.
