@@ -19,3 +19,4 @@ pref("extensions.abbreviation-helper.tooltipTheme", "dark");
 pref("extensions.abbreviation-helper.disabledDatabases", "");
 pref("extensions.abbreviation-helper.enabledDatabases", "");
 pref("extensions.abbreviation-helper.advancedMenu", false);
+pref("extensions.abbreviation-helper.useLibraryDefinitions", true);

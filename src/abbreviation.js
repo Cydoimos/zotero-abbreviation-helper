@@ -52,10 +52,14 @@
  *   key       SF = long form       (table footnotes)
  *   list      Abbreviations: SF, long form; SF, long form ...
  *
- * then short forms the paper uses but never defines are looked up in the
- * curated glossary. Nothing is decided in a fixed order and no short form is
- * blocked by a failed attempt: every candidate is scored, and for each short
- * form the most reliable acceptable candidate is kept.
+ * Nothing is decided in a fixed order and no short form is blocked by a failed
+ * attempt: every candidate is scored, and for each short form the most
+ * reliable acceptable candidate is kept. What the letters cannot confirm is
+ * then filled in, less certain at each step and marked as such:
+ *
+ *   probable  the words before an abbreviation's first bracket
+ *   library   definitions from the user's other papers
+ *   common    the curated glossary of well-known abbreviations
  * ============================================================================ */
 
 // ---- characters -------------------------------------------------------------
@@ -718,7 +722,7 @@ function bracketCandidates(text, add) {
         for (const sf of forward) {
             if (!looksLikeShortForm(sf)) continue;
             if (window === null) window = windowBefore(text, g.open);
-            add(sf, window, 'end', 'forward', g.open);
+            add(sf, window, 'end', 'forward', g.open, whole);
         }
         // inside: (long form, SF)
         if (parts.length > 1 && looksLikeShortForm(last)) {
@@ -954,6 +958,49 @@ function restatesShortForm(sf, lf) {
     return !/\s/.test(lf) && (lf.match(/\p{Lu}/gu) || []).length >= 2 && !/\p{Ll}{4}/u.test(lf);
 }
 
+/**
+ * Shaped like an abbreviation, as needed to trust the phrase before it without
+ * letter evidence: one token, at least two capitals, more letters than digits.
+ * Positions and mutations ("A3", "6F"), names ("GeneCopoeia") and versions
+ * are excluded.
+ */
+function isAbbreviationLike(sf) {
+    const upper = (sf.match(/\p{Lu}/gu) || []).length;
+    const letters = (sf.match(/\p{L}/gu) || []).length, digits = (sf.match(/\d/g) || []).length;
+    return !/\s/.test(sf) && upper >= 2 && letters > digits && !/\p{Ll}{4}/u.test(sf);
+}
+
+// Words that end a noun phrase when reading backwards from a bracket.
+var PHRASE_STOP = new Set(['a', 'an', 'the', 'this', 'that', 'these', 'those', 'its', 'their', 'our',
+    'his', 'her', 'which', 'who', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'has', 'have',
+    'had', 'called', 'termed', 'named', 'known', 'using', 'used', 'use', 'via', 'by', 'with', 'from',
+    'into', 'onto', 'for', 'as', 'to', 'at', 'on', 'in', 'and', 'or', 'but', 'than', 'also', 'both',
+    'between', 'such', 'including', 'include', 'includes', 'contains', 'containing', 'we', 'it', 'of',
+    'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten']);
+
+/**
+ * The noun phrase that ends a window of text: the words back to a
+ * determiner, preposition, verb or punctuation, two to six of them.
+ */
+function phraseBefore(window) {
+    const words = String(window).trim().split(/\s+/);
+    const out = [];
+    for (let i = words.length - 1; i >= 0 && out.length < 6; i--) {
+        const w = words[i];
+        if (/[,;:.)\]"”]$/.test(w) && out.length) break;
+        const bare = w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '').toLowerCase();
+        if (!bare || PHRASE_STOP.has(bare) || /^[\d.,]/.test(bare)) break;
+        // A capitalised word after a lowercase one starts the name or sentence:
+        // "...pool homeostasis Mitochondrial carrier family members (SLC25)".
+        if (out.length && /^\p{Ll}/u.test(w) && /^\p{Lu}\p{Ll}/u.test(out[0])) break;
+        out.unshift(w);
+        if (/^["“‘(\[]/.test(w)) break;
+    }
+    const phrase = out.join(' ').replace(/^[\s"“‘'(\[]+|[\s"”’',;:]+$/g, '');
+    // One word alone is too often a verb, a unit or a name ("calculated (Fluo/CBB)").
+    return out.length >= 2 && /\p{L}{3}/u.test(phrase) ? phrase : '';
+}
+
 /** The first of `meanings` that the text ends (or starts) with, or ''. */
 function knownMeaningInText(text, meanings) {
     if (!meanings.length) return '';
@@ -965,12 +1012,26 @@ function knownMeaningInText(text, meanings) {
     return '';
 }
 
+// Notes added to a meaning that the paper does not confirm, so that where it
+// comes from travels with it (tooltips, the copied list).
+var NOTES = {
+    probable: 'probable meaning: the words before the bracketed abbreviation',
+    common: 'common term; not explicitly defined in this paper',
+    commonSeveral: 'common possible meanings; not explicitly defined in this paper'
+};
+
 /**
  * Find abbreviation definitions in a paper's text.
  *
+ * Each result says how certain it is: 'defined' (the paper defines it and
+ * the letters confirm it), 'probable' (the words before the abbreviation's
+ * first bracket), 'library' (defined in the user's other papers), 'common'
+ * (the curated glossary) or 'user' (the user's own definition).
+ *
  * @param {string} text  the extracted text of the PDF
- * @param {{staticDefs:Object, commonKnownDefs:Object, userDefs?:Object, ignore?:string[]}} dicts
- * @returns {Array<{abbr:string, term:string, source:string, confidence:string}>}
+ * @param {{staticDefs:Object, commonKnownDefs:Object, userDefs?:Object, ignore?:string[],
+ *          library?:Object<string, Array<{term:string, papers:number}>>}} dicts
+ * @returns {Array<{abbr:string, term:string, source:string, confidence:string, certainty:string}>}
  */
 function detectAbbreviations(text, dicts) {
     const staticDefs = dicts.staticDefs || {};
@@ -992,9 +1053,14 @@ function detectAbbreviations(text, dicts) {
     // Short forms the paper sets out to define, whether or not the definition
     // could be read. A reverse "SF (...)" does not count: most are not definitions.
     const attempted = new Set();
-    const add = (sf, lfText, mode, kind, pos) => {
+    const firstBracket = new Map();   // key -> { sf, window, pos } of its first "text (SF)"
+    const add = (sf, lfText, mode, kind, pos, whole) => {
         sf = sf.trim();
         if (kind !== 'reverse') attempted.add(singularShortForm(sf) || sf);
+        if (kind === 'forward' && whole === sf) {
+            const k = singularShortForm(sf) || sf;
+            if (!firstBracket.has(k) || firstBracket.get(k).pos > pos) firstBracket.set(k, { sf, window: lfText, pos });
+        }
         const term = judgeCandidate(sf, lfText, mode, kind, known);
         if (!term || term.length > 160 || !/\p{L}{3}/u.test(term)) return;
         if (kind === 'key' && isAuthor(term)) return;
@@ -1019,23 +1085,78 @@ function detectAbbreviations(text, dicts) {
         return (body.match(re) || []).length;
     };
     const compoundUses = sf => counts.inCompounds.get(sf) || 0;
+    const forms = sf => [sf, singularShortForm(sf) || sf, ...pluralShortForms(sf)];
+
+    // 2. A short form the paper puts in brackets on first use, without a
+    //    definition the letters confirm: the phrase before the bracket is
+    //    probably its meaning ("a cytoprotective transcription factor (ATF4)").
+    //    Not where a curated meaning holds in every field.
+    for (const [k, b] of firstBracket) {
+        if (accepted.has(k) || !isAbbreviationLike(b.sf) || (glossary[k] || []).some(o => o.ambiguity === 'low')) continue;
+        const first = body.search(new RegExp('(?:^|[^\\p{L}\\p{N}])' + escapeRegExp(b.sf) + '(?=$|[^\\p{L}\\p{N}])', 'u'));
+        if (first >= 0 && first < b.pos - b.sf.length - 2) continue;      // used before: not where it is introduced
+        if (countOf(b.sf) + forms(b.sf).slice(2).reduce((n, f) => n + countOf(f), 0) < 2) continue;
+        const phrase = phraseBefore(b.window);
+        if (!phrase || restatesShortForm(b.sf, phrase)) continue;
+        accepted.set(k, { abbr: b.sf, term: phrase, source: 'probable', rank: 4, pos: b.pos });
+    }
 
     const pairs = [...accepted.values()]
         .sort((a, b) => a.pos - b.pos)
-        .map(p => ({ abbr: p.abbr, term: p.term, source: p.source, confidence: p.rank <= 2 ? 'high' : 'medium' }));
+        .map(p => p.source === 'probable'
+            ? { abbr: p.abbr, term: p.term + ' (' + NOTES.probable + ')', source: 'probable', confidence: 'low', certainty: 'probable' }
+            : { abbr: p.abbr, term: p.term, source: p.source, confidence: p.rank <= 2 ? 'high' : 'medium', certainty: 'defined' });
 
-    // 2. Well-known abbreviations the paper uses at least twice but never
-    // defines. A definition the paper gives always wins, so the glossary only
-    // fills gaps; how far it may go depends on how ambiguous the entry is.
+    // Short forms the paper uses at least twice without defining them get a
+    // meaning from the user's other papers, else from the glossary. A
+    // definition the paper gives always wins. Where the paper sets out to
+    // define a short form in words that could not be read, a meaning from
+    // elsewhere is given only if the paper also writes it out.
     const lowerBody = body.toLowerCase();
     const flatBody = flatten(body);
     const taken = new Set(accepted.keys());
-    const forms = sf => [sf, singularShortForm(sf) || sf, ...pluralShortForms(sf)];
+    const isTaken = sf => forms(sf).some(f => taken.has(f));
+    const usedTwice = sf => [...new Set(forms(sf))].reduce((n, f) => n + countOf(f), 0) + compoundUses(sf) >= 2;
+    const selfDefinedHere = sf => forms(sf).some(f => attempted.has(f));
+    const writtenOut = term => flatBody.includes(flatten(term));
+    const aboutThisPaper = term => (term.toLowerCase().match(/\p{L}{4,}/gu) || [])
+        .every(w => lowerBody.includes(w.replace(/(?:es|s)$/, '')));
+
+    // 3. Definitions from the user's other papers (dicts.library: short form
+    //    -> [{ term, papers }]), the meanings used in the user's own field.
+    for (let [abbr, options] of Object.entries(dicts.library || {})) {
+        if (!options || !options.length || isTaken(abbr) || !usedTwice(abbr)) continue;
+        // Where the glossary knows the short form, the library only chooses
+        // among the glossary's meanings (the one the user's field uses); a
+        // meaning the glossary does not list is not trusted over it.
+        const curated = (glossary[abbr] || []).map(o => o.term);
+        if (curated.length) options = options.filter(o => curated.some(t => sameMeaning(t, o.term)))
+            .map(o => ({ term: curated.find(t => sameMeaning(t, o.term)), papers: o.papers }));
+        // The meaning must belong to this paper's subject: every content word
+        // of it occurs somewhere in the paper ("Golgi apparatus" for GA only
+        // in a paper that mentions the Golgi).
+        const usable = options.filter(o => (!selfDefinedHere(abbr) || writtenOut(o.term)) && aboutThisPaper(o.term))
+            .sort((a, b) => b.papers - a.papers);
+        if (!usable.length) continue;
+        // Meanings seen in about as many papers as the most common one are all shown.
+        const shown = usable.filter(o => o.papers * 2 >= usable[0].papers).slice(0, 3);
+        const papers = shown.reduce((n, o) => n + o.papers, 0);
+        taken.add(abbr);
+        pairs.push({
+            abbr,
+            term: shown.map(o => o.term).join(' / ') + ' (' + (shown.length > 1 ? 'possible meanings ' : '') +
+                'from ' + (papers === 1 ? 'another paper' : papers + ' other papers') + ' in your library)',
+            source: 'library',
+            confidence: shown.length > 1 ? 'low' : 'medium',
+            certainty: 'library'
+        });
+    }
+
+    // 4. The curated glossary of well-known abbreviations. How far it may go
+    //    depends on how ambiguous the entry is.
     for (const [abbr, options] of Object.entries(glossary)) {
-        if (!options || !options.length || forms(abbr).some(f => taken.has(f))) continue;
-        const uses = [...new Set(forms(abbr))].reduce((n, f) => n + countOf(f), 0) + compoundUses(abbr);
-        if (uses < 2) continue;
-        const selfDefined = forms(abbr).some(f => attempted.has(f));
+        if (!options || !options.length || isTaken(abbr) || !usedTwice(abbr)) continue;
+        const selfDefined = selfDefinedHere(abbr);
         const terms = [];
         for (const opt of options) {
             if (opt.ambiguity === 'low') {
@@ -1046,27 +1167,26 @@ function detectAbbreviations(text, dicts) {
             // the paper, and is never given where the paper defines the short
             // form itself, unless the paper also writes that meaning out.
             if (!hasContextSupport(opt, lowerBody)) continue;
-            if (selfDefined && !flatBody.includes(flatten(opt.term))) continue;
+            if (selfDefined && !writtenOut(opt.term)) continue;
             if (!terms.includes(opt.term)) terms.push(opt.term);
         }
         if (!terms.length) continue;
         taken.add(abbr);   // so the plural entry of the glossary is not added as well
         pairs.push({
             abbr,
-            term: terms.join(' / ') + (terms.length > 1
-                ? ' (common possible meanings; not explicitly defined in this paper)'
-                : ' (common term; not explicitly defined in this paper)'),
+            term: terms.join(' / ') + ' (' + (terms.length > 1 ? NOTES.commonSeveral : NOTES.common) + ')',
             source: 'common-known',
-            confidence: terms.length > 1 ? 'low' : 'medium'
+            confidence: terms.length > 1 ? 'low' : 'medium',
+            certainty: 'common'
         });
     }
 
-    // 3. The user's own definitions win, for short forms the paper uses.
+    // 5. The user's own definitions win, for short forms the paper uses.
     for (const [abbr, term] of Object.entries(dicts.userDefs || {})) {
         if (!abbr || !term || !countOf(abbr)) continue;
         const existing = pairs.find(p => p.abbr === abbr);
-        if (existing) Object.assign(existing, { term, source: 'user', confidence: 'high' });
-        else pairs.push({ abbr, term, source: 'user', confidence: 'high' });
+        if (existing) Object.assign(existing, { term, source: 'user', confidence: 'high', certainty: 'user' });
+        else pairs.push({ abbr, term, source: 'user', confidence: 'high', certainty: 'user' });
     }
     const ignored = new Set(dicts.ignore || []);
     return ignored.size ? pairs.filter(p => !ignored.has(p.abbr)) : pairs;
@@ -1079,6 +1199,9 @@ function hasContextSupport(option, lowerBody) {
     for (const c of ctx) if (lowerBody.includes(String(c).toLowerCase())) return true;
     return false;
 }
+
+/** Two spellings of one meaning: case, hyphens, spaces and a plural -s aside. */
+function sameMeaning(a, b) { return flatten(a).replace(/s$/, '') === flatten(b).replace(/s$/, ''); }
 
 /** Lowercase letters and digits only, for comparing spellings. */
 function flatten(s) { return String(s).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ''); }
@@ -1134,6 +1257,9 @@ var AbbreviationHelper = {
     // prefer the menu can turn this on — on Windows and Linux the menu even
     // stays open between changes.
     advancedMenu: false,
+    // Fill in abbreviations a paper uses without defining them with the
+    // meanings the user's other papers define (see the library section).
+    useLibraryDefinitions: true,
     lastHoverState: null,
     hoverDocs: [],
     autoScanTimer: null,
@@ -1192,6 +1318,7 @@ var AbbreviationHelper = {
             this.log('Dictionary load failed; using built-in fallback: ' + e);
             return this.dictionaries;
         });
+        this._libraryReady = this._loadLibrary();
         // The preference pane runs in the Settings window, a separate document
         // with no reference to this scope. Zotero is the one object both can
         // see, so the pane reaches the plugin through it.
@@ -1255,7 +1382,14 @@ var AbbreviationHelper = {
                 observe(subject, topic, data) {
                     if (topic !== 'nsPref:changed' || self._stopped) return;
                     try {
+                        const libraryWas = self.useLibraryDefinitions;
                         self._loadPrefs();
+                        if (self.useLibraryDefinitions !== libraryWas) {
+                            // Meanings change for every paper: detect again
+                            // (the PDF text is cached, so it is not re-read).
+                            try { self.cache.clear(); } catch (e) {}
+                            self._setActiveHoverPairs(null, []);
+                        }
                         self._resetHoverTooltips();
                         if (!self.hoverEnabled) {
                             self._removeHoverListeners();
@@ -1317,6 +1451,7 @@ var AbbreviationHelper = {
         this.databaseLinksOnAbbreviations = this._getPref('databaseLinksOnAbbreviations', this.databaseLinksOnAbbreviations);
         this.databaseLinksEnabled = this._getPref('databaseLinksEnabled', this.databaseLinksEnabled);
         this.advancedMenu = this._getPref('advancedMenu', this.advancedMenu);
+        this.useLibraryDefinitions = this._getPref('useLibraryDefinitions', this.useLibraryDefinitions);
         // A menulist in the preference pane stores its value as a string,
         // while the menu's radio items store a number. Coerce so both routes
         // to the same setting produce the same type.
@@ -2206,6 +2341,7 @@ var AbbreviationHelper = {
      */
     stop() {
         this._stopped = true;
+        this._flushLibrary();
         this._stopAutoScanTimer();
         this._clearCorridor();
         this._cancelHoverHide();
@@ -2254,7 +2390,8 @@ var AbbreviationHelper = {
     async _pairsForItem(item, path) {
         if (this.cache.has(item.id)) return this.cache.get(item.id);
         const text = await this._textForItem(item, path);
-        const pairs = this._detectAbbreviations(text);
+        try { await this._libraryReady; } catch (e) {}
+        const pairs = this._detectAbbreviations(text, item);
         this._cacheResult(item.id, pairs);
         this.log(`Scanned item ${item.id}: ${pairs.length} abbreviation definitions found.`);
         return pairs;
@@ -2378,8 +2515,134 @@ var AbbreviationHelper = {
      * @param {string} text Text extracted from the PDF
      * @returns {Array<{abbr: string, term: string, source: string, confidence: string}>}
      */
-    _detectAbbreviations(text) {
-        return detectAbbreviations(text, this.dictionaries || {});
+    _detectAbbreviations(text, item) {
+        const dicts = this.dictionaries || {};
+        const key = item ? this._libraryKey(item) : null;
+        if (!this.useLibraryDefinitions || !key) return detectAbbreviations(text, dicts);
+        const pairs = detectAbbreviations(text, Object.assign({}, dicts, { library: this._libraryDefinitions(key) }));
+        this._rememberDefinitions(key, pairs);
+        return pairs;
+    },
+
+    /* ---- Definitions from the user's other papers ---- */
+    //
+    // Researchers read many papers from one field, where an abbreviation
+    // usually means the same thing. So the definitions each paper gives (only
+    // those the letters confirm) are kept, per paper, in a file next to the
+    // abbreviations file, and offered for papers that use an abbreviation
+    // without defining it, marked as coming from the library. Nothing is kept
+    // or used while the setting is off. Only papers opened in the reader are
+    // read; the library is never scanned as a whole.
+
+    LIBRARY_SAVE_DELAY: 2000,
+
+    _libraryPath() {
+        let dataDir;
+        try { dataDir = Zotero.DataDirectory && Zotero.DataDirectory.dir; } catch (e) {}
+        return dataDir ? this._joinPath(dataDir, 'abbreviation-helper', 'library-definitions.json') : null;
+    },
+
+    /** A paper's key in the store: stable across sessions and sync. */
+    _libraryKey(item) {
+        if (!item) return null;
+        if (item.key) return (item.libraryID != null ? item.libraryID + '/' : '') + item.key;
+        return item.id != null ? 'id:' + item.id : null;
+    },
+
+    async _loadLibrary() {
+        this.libraryStore = { items: {} };
+        this._libraryIndex = null;
+        const file = this._libraryPath();
+        if (!file) return;
+        try {
+            const io = await this._getIOUtils();
+            if (!(await io.exists(file))) return;
+            const raw = JSON.parse(await io.readUTF8(file));
+            if (raw && raw.items && typeof raw.items === 'object') this.libraryStore.items = raw.items;
+        } catch (e) {
+            // A damaged file only costs the meanings learned so far.
+            this.log('Could not read the library definitions; starting afresh: ' + e);
+        }
+    },
+
+    /**
+     * Meanings the user's other papers define, as detectAbbreviations()
+     * expects them: short form -> [{ term, papers }], leaving out `exceptKey`.
+     */
+    _libraryDefinitions(exceptKey) {
+        this.libraryStore = this.libraryStore || { items: {} };
+        if (!this._libraryIndex) {
+            // short form -> spelling-independent meaning -> { term, keys }
+            const index = new Map();
+            for (const [key, defs] of Object.entries((this.libraryStore || {}).items || {})) {
+                for (const [abbr, term] of Object.entries(defs || {})) {
+                    const sf = singularShortForm(abbr) || abbr;
+                    const id = flatten(term).replace(/s$/, '');
+                    if (!index.has(sf)) index.set(sf, new Map());
+                    const byMeaning = index.get(sf);
+                    if (!byMeaning.has(id)) byMeaning.set(id, { term, keys: new Set() });
+                    byMeaning.get(id).keys.add(key);
+                }
+            }
+            this._libraryIndex = index;
+        }
+        const out = {};
+        for (const [sf, byMeaning] of this._libraryIndex) {
+            const options = [];
+            for (const m of byMeaning.values()) {
+                const papers = m.keys.size - (m.keys.has(exceptKey) ? 1 : 0);
+                if (papers > 0) options.push({ term: m.term, papers });
+            }
+            if (options.length) out[sf] = options;
+        }
+        return out;
+    },
+
+    /** Keep the definitions a paper gives (only those the letters confirm). */
+    _rememberDefinitions(key, pairs) {
+        const defs = {};
+        for (const p of pairs || []) if (p.certainty === 'defined') defs[p.abbr] = p.term;
+        this.libraryStore = this.libraryStore || { items: {} };
+        const items = this.libraryStore.items;
+        if (JSON.stringify(items[key] || {}) === JSON.stringify(defs)) return;
+        if (Object.keys(defs).length) items[key] = defs;
+        else delete items[key];
+        this._libraryIndex = null;
+        this._scheduleLibrarySave();
+    },
+
+    _scheduleLibrarySave() {
+        if (this._librarySaveTimer) clearTimeout(this._librarySaveTimer);
+        this._librarySaveTimer = setTimeout(() => {
+            this._librarySaveTimer = null;
+            this._saveLibrary().catch(e => this.log('Could not save the library definitions: ' + e));
+        }, this.LIBRARY_SAVE_DELAY);
+    },
+
+    /** Save now if a save is pending (at shutdown). */
+    _flushLibrary() {
+        if (!this._librarySaveTimer) return;
+        clearTimeout(this._librarySaveTimer);
+        this._librarySaveTimer = null;
+        this._saveLibrary().catch(e => this.log('Could not save the library definitions: ' + e));
+    },
+
+    async _saveLibrary() {
+        const file = this._libraryPath();
+        if (!file) return;
+        const io = await this._getIOUtils();
+        await io.makeDirectory(this._joinPath(Zotero.DataDirectory.dir, 'abbreviation-helper'), { ignoreExisting: true });
+        const text = JSON.stringify({
+            _comment: 'Definitions read in the papers you opened, used for papers that do not define an '
+                + 'abbreviation. Kept by Abbreviation Helper; delete this file to forget them.',
+            version: 1,
+            items: this.libraryStore.items
+        });
+        try {
+            await io.writeUTF8(file, text, { tmpPath: file + '.tmp' });
+        } catch (e) {
+            await io.writeUTF8(file, text);
+        }
     },
 
     /**
@@ -3437,12 +3700,20 @@ var AbbreviationHelper = {
         while (tip.firstChild) tip.removeChild(tip.firstChild);
         this.activeGeneLinks = [];
 
+        const { meaning, origin } = this._meaningAndOrigin(term);
         const main = doc.createElement('div');
         const strong = doc.createElement('strong');
         strong.textContent = String(abbr || '');
         main.appendChild(strong);
-        main.appendChild(doc.createTextNode(' — ' + String(term || '')));
+        main.appendChild(doc.createTextNode(' — ' + meaning));
         tip.appendChild(main);
+        // How certain the meaning is, in a quieter line underneath.
+        const originLine = doc.createElement('div');
+        originLine.textContent = origin;
+        originLine.style.fontSize = '0.85em';
+        originLine.style.opacity = '0.7';
+        originLine.style.marginTop = '2px';
+        tip.appendChild(originLine);
 
         const groups = (options && options.groups) || null;
         const interactive = !!(groups && groups.length);
@@ -3454,6 +3725,20 @@ var AbbreviationHelper = {
         for (const g of groups || []) this._appendDatabaseLinks(doc, tip, g);
 
         this._positionHoverTooltip(doc, tip, x, y);
+    },
+
+    /**
+     * Split a meaning from the note on where it comes from, which detection
+     * appends to every meaning the paper does not confirm ("... (common term;
+     * not explicitly defined in this paper)"). Without a note the meaning is
+     * the user's own or one the paper defines.
+     */
+    _meaningAndOrigin(term) {
+        const text = String(term || '');
+        const m = /^(.*?)\s+\(((?:probable meaning|possible meanings from|from another paper|from \d+ other papers|common term|common possible meanings)[^()]*)\)$/.exec(text);
+        if (m) return { meaning: m[1], origin: m[2].charAt(0).toUpperCase() + m[2].slice(1) };
+        const own = Object.values((this.dictionaries && this.dictionaries.userDefs) || {}).includes(text);
+        return { meaning: text, origin: own ? 'Your own definition' : 'Defined in this paper' };
     },
 
     _showDatabaseTooltip(doc, x, y, info) {

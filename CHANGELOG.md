@@ -5,9 +5,10 @@ This project follows [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-A rewritten abbreviation detector, and bug fixes from a code audit. Still
-supports Zotero 7.0 to 10.*, with the same settings and the same abbreviations
-file.
+A rewritten abbreviation detector, tooltips that say how sure a meaning is,
+meanings learned from your other papers, and bug fixes from a code audit.
+Still supports Zotero 7.0 to 10.*, with the same settings and the same
+abbreviations file.
 
 ### Detection
 - **One scorer for every kind of definition.** Each short form is paired with
@@ -56,6 +57,24 @@ file.
   SNP sodium nitroprusside, and CTL often means "control". The others are GDP,
   ALS, CTLs, MMPs and SNPs.
 
+### How sure a meaning is
+- **Each tooltip says where its meaning comes from**, in a muted line under the
+  meaning: defined in this paper, a probable meaning, from your other papers,
+  a common term, or your own definition. The same note is kept when meanings
+  are copied.
+- **Probable meanings.** When a paper introduces an abbreviation in brackets
+  but its letters don't match the words before it ("a cytoprotective
+  transcription factor (ATF4)"), those words are offered as its probable
+  meaning, if the abbreviation is used again and not before the bracket.
+- **Definitions from your other papers** (new setting **Use definitions from
+  my other papers**, on by default). The definitions found in the papers you
+  open are remembered in `library-definitions.json`, next to your
+  abbreviations file, and offered for papers that use an abbreviation without
+  defining it. A meaning is only used when the paper mentions what it is
+  about, never where the paper defines the abbreviation itself, and for a
+  field-dependent glossary entry it only picks among the glossary's meanings.
+  Turning the setting off stops both learning and using.
+
 ### Reading Mode
 - Tooltips work in Zotero 10's Reading Mode for PDFs, which shows the paper as
   reflowed text in a page of its own. Reading Mode for web snapshots is left
@@ -63,11 +82,15 @@ file.
 
 ### Measured
 - On the new benchmark (`eval/benchmark/`), on 39 test papers not used for
-  tuning: defined abbreviations found rose from 82.6 % to 86.7 % (+4.0 points,
-  95 % interval 0.8 to 7.2), with the meaning correct in 96.6 % (was 95.0 %).
+  tuning: defined abbreviations found rose from 82.6 % to 88.6 % (+5.9 points,
+  95 % interval 2.7 to 9.0), with the meaning correct in 96.3 % (was 95.0 %).
   Undefined ones found through the glossary rose from 42.9 % to 53.5 %.
   Precision is 94.1 % (was 98.7 %), against labels that were checked only
   against the previous detector's output.
+- Definitions from other papers need a library, so they are not in these
+  figures. Simulated by giving each test paper the definitions of the other
+  38, they raise the undefined abbreviations found from 53.5 % to 60.0 %, at
+  0.3 points of precision.
 
 ### Fixed
 - **Meanings now come from the paper you are reading.** The plugin looked for

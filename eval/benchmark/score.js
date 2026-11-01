@@ -101,7 +101,8 @@ function norm(s) {
     .toLowerCase()
     .replace(/[α-ω]/g, c => ' ' + (GREEK[c] || '') + ' ')
     .normalize('NFD').replace(/\p{M}/gu, '')
-    .replace(/\(common term.*$|\(common possible meanings.*$/, '')
+    // the plugin's notes on where a meaning comes from are not part of it
+    .replace(/\((?:common term|common possible meanings|probable|possible meanings from|from (?:another paper|\d+ other papers))[^()]*\)\s*$/, '')
     .replace(/[‐-―]/g, '-')
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();

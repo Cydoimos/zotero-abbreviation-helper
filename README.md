@@ -37,6 +37,16 @@ abbreviation to see its meaning. Only the PDF in the reader tab you are looking 
 scanned, and switching tabs switches the meanings with it. Tooltips also work in Zotero
 10's Reading Mode for PDFs, which shows the same paper as reflowed text.
 
+Under each meaning, the tooltip says how sure it is:
+
+| Line in the tooltip | Where the meaning comes from |
+|---|---|
+| Defined in this paper | The paper defines it, and the abbreviation's letters match the words |
+| Probable meaning: the words before the bracketed abbreviation | The paper introduces the abbreviation in brackets, but the letters don't match the words before it ("a cytoprotective transcription factor (ATF4)") |
+| From 3 other papers in your library | The paper doesn't define it; your other papers do |
+| Common term; not explicitly defined in this paper | The paper doesn't define it; the built-in glossary does |
+| Your own definition | You defined it in Settings |
+
 ### Settings
 
 Everything is in **Zotero Settings → Abbreviation Helper** (or **Tools → Abbreviation
@@ -46,6 +56,14 @@ abbreviations** and the **ignore list**. Changes apply immediately.
 
 Definitions you add there are authoritative: they are shown even when a paper defines
 the short form differently.
+
+**Use definitions from my other papers** (on by default) remembers the definitions in
+the papers you open and offers them for papers that use an abbreviation without
+defining it. Researchers tend to read many papers from one field, where an abbreviation
+usually means the same thing. A meaning from your library is only used when the paper
+mentions what it is about, and never where the paper defines the abbreviation itself.
+Turning the setting off stops both remembering and using; delete
+`library-definitions.json` (next to your abbreviations file) to forget what was learned.
 
 ### Tools menu
 
@@ -131,12 +149,22 @@ Before that, reference-list lines are dropped one by one, so Methods sections pl
 after the references are still read. Running page headers and footers are removed too,
 so a definition split across two pages is still found.
 
-A curated glossary supplies well-known abbreviations that a paper uses at least twice
-but never defines. A definition the paper gives always wins. Entries whose meaning
-depends on the field (EM, NTA, MHC, ER, TCA) appear only when words from their field
-occur in the paper. They never appear where the paper defines the abbreviation itself,
-even when that definition cannot be read, unless the paper also writes the glossary
-meaning out.
+What the letters cannot confirm is filled in afterwards, less certain at each step and
+marked as such in the tooltip:
+
+1. **The words before the bracket.** When a paper introduces an abbreviation in brackets
+   on its first use and uses it again, the noun phrase just before the bracket is offered
+   as its probable meaning.
+2. **Your other papers.** For an abbreviation a paper uses at least twice without
+   defining it, the meaning your other papers define, if the paper mentions what that
+   meaning is about.
+3. **The curated glossary** of well-known abbreviations. Entries whose meaning depends
+   on the field (EM, NTA, MHC, ER, TCA) appear only when words from their field occur in
+   the paper; there, your other papers decide which of the glossary's meanings applies.
+
+A definition the paper gives always wins. A meaning from your library or a field-dependent
+glossary entry never appears where the paper defines the abbreviation itself, even in
+words the detector cannot read, unless the paper also writes that meaning out.
 
 Everything runs locally. No network requests are made except when you click a database
 link.
@@ -151,10 +179,12 @@ this one does:
 - The plugin makes **no network requests at all** during normal use. The only
   network activity is Zotero's own periodic check of `update_url`, and a request
   to a database site when *you* click one of its links.
-- The only file it writes is your own settings file, at
-  `<Zotero data directory>/abbreviation-helper/abbreviations.json`. It is written
-  through a temporary file in the same folder, so a crash cannot leave it
-  half-written.
+- It writes two files, both in `<Zotero data directory>/abbreviation-helper/`: your
+  settings file, `abbreviations.json`, and `library-definitions.json`, the
+  abbreviations and meanings defined in the papers you opened (with each paper's
+  Zotero item key), used by **Use definitions from my other papers**. Nothing else
+  from your papers is stored. Both are written through a temporary file, so a crash
+  cannot leave them half-written.
 
 ### Dictionary provenance
 
@@ -177,16 +207,21 @@ Measured with the benchmark in `eval/benchmark/`, which has its own labelling ru
 
 | | dev (36 papers) | test (39 papers) |
 |---|---|---|
-| Defined abbreviations found | 88.6 % | 86.7 % (82.8–90.4) |
-| Meaning correct, when found | 96.7 % | 96.6 % (94.5–98.3) |
-| Undefined ones found through the glossary | 91.6 % | 53.5 % (39.2–67.1) |
-| Outputs that are right (precision) | 99.9 % | 94.1 % (90.4–96.8) |
+| Defined abbreviations found | 90.7 % | 88.6 % (84.5–92.4) |
+| Meaning correct, when found | 95.8 % | 96.3 % (94.2–97.9) |
+| Undefined ones found through the glossary | 91.6 % | 53.5 % (39.4–67.1) |
+| Outputs that are right (precision) | 99.8 % | 94.1 % (90.4–96.9) |
 
 The ranges are 95 % intervals from resampling papers. Version 2.1.0 scored 82.6 %, 95.0 %,
 42.9 % and 98.7 % on the test set. The dev figures flatter this version: the glossary
 additions were chosen from dev misses, and the dev labels were checked against this
 detector's output. The test labels were checked against 2.1.0's output instead, which
 flatters 2.1.0's precision there.
+
+These figures leave out definitions from other papers, which need a library. Simulated
+by giving each test paper the definitions found in the other 38, they raise the
+undefined abbreviations found from 53.5 % to 60.0 %, with 95.1 % of those meanings
+correct, at a cost of 0.3 points of precision.
 
 Known limitations: long forms that do not contain the short form's letters in order
 ("dissociation constant (KD)", "NRF2 (NFE2L2)"), definitions that only describe ("a
@@ -206,6 +241,7 @@ node test/test-features.js   # menu features, modifiers, cross-platform paths
 node test/test-menu.js       # Tools menu structure and wording (fake XUL DOM)
 node test/test-settings.js   # Settings pane wiring, parsed from settings.xhtml
 node test/test-fixes.js      # active tab, settings file safety, background scan, tooltips
+node test/test-certainty.js  # probable meanings, definitions from other papers, tooltip origin line
 
 node eval/benchmark/score.js dev <dir>   # accuracy on the benchmark (needs the texts)
 node eval/benchmark/intervals.js dev <dir>   # 95 % intervals, and old-vs-new differences

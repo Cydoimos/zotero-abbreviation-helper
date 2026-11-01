@@ -346,7 +346,7 @@ const tick = () => new Promise(r => setTimeout(r, 0));
     hoverEnabled: 'true', tooltipModifier: '"none"',
     databaseLinksEnabled: 'true', databaseLinksModifier: '"shift"',
     databaseLinksOnAbbreviations: 'true',
-    tooltipFontSize: '12', tooltipTheme: '"dark"'
+    tooltipFontSize: '12', tooltipTheme: '"dark"', useLibraryDefinitions: 'true'
   };
   const mismatched = Object.entries(codeDefaults)
     .filter(([k, v]) => declared.get(H.PREF_BRANCH + k) !== v)
