@@ -4,11 +4,6 @@ A Zotero plugin that expands **acronyms, initialisms and other abbreviations** w
 read. It finds where a paper defines each short form and shows the meaning when you hover
 over it — so you can skim a PDF without scrolling back to hunt for the first use.
 
-"Abbreviation" is the umbrella term used throughout, and it is the accurate one: in the
-22-paper evaluation set only 42 % of the short forms are true acronyms or initialisms.
-The rest are mixed-case forms (`sgRNA`, `dCas9`), clippings (`Pfu`), blends (`cryo-EM`)
-and symbols — all of which this plugin handles.
-
 It can also offer database lookup links (gene, protein, cell line, chemical) for the
 name under the pointer, and list where any word is used in the paper, so you can jump to
 its first use.
@@ -35,8 +30,7 @@ Works on **macOS, Windows and Linux**. Requires **Zotero 7 or newer**
 
 Open a PDF in the Zotero reader. The plugin scans it in the background. Only the PDF in
 the reader tab you are looking at is scanned, and switching tabs switches the meanings
-with it. Everything also works in Zotero 10's Reading Mode for PDFs, which shows the same
-paper as reflowed text, including over highlighted text.
+with it. Everything also works in Zotero 10's Reading Mode for PDFs.
 
 The plugin shows three kinds of tooltips: **meanings**, **database links** and **where a
 word is used**. Only meanings are on at first; switch the others on in the settings. Each
@@ -45,38 +39,20 @@ while you hold a key over it (you choose which), and it goes when you move away 
 of the key.
 
 Tooltips that appear at the same moment, because they share a key or need none, are one
-tooltip: the meaning first, then the database links, then the uses, each part set off by
-a thin line. Set all three to the same key to see everything about a word at once.
-
-They look alike: the word in bold and what the tooltip says about it, quieter lines
-underneath, and, when there is something to choose, numbered choices, numbered on from
-one part to the next. Press a choice's number (**1–9**, then **0** for the tenth), while
-still holding the tooltip's key if it has one, or click it: a tooltip with choices stays
-put while you move the pointer onto it, even after you let go of the key.
-
-The number keys work on every keyboard layout and system. What counts is the key's
-place, not the character it types: on a German keyboard Shift+1 chooses the first entry
-although it types "!", and on a French one the 1 key works with or without Shift, and
-with ⌥ Option on a Mac. While you hold the key that shows a tooltip, even Ctrl, Cmd or
-Alt, its numbers go to the tooltip, ahead of Zotero's own shortcuts with that key
-(switching tabs, the reader's tools). Other combinations are left to Zotero, and so is
-AltGr, which types a character ("@" on a French keyboard). A key pressed while you type
-in a text field (an annotation, a note, the search box) never brings up a tooltip. On
-Windows and Linux, letting go of Alt after using it for a tooltip does not move the
-keyboard to the menu bar.
+tooltip. Set all three to the same key to see everything about a word at once.
 
 ### 1 · Meanings
 
 Point at an abbreviation to see its meaning. Under it, the tooltip can say how sure the
 meaning is:
 
-| Line in the tooltip | Where the meaning comes from |
-|---|---|
-| Defined in this paper | The paper defines it, and the abbreviation's letters match the words |
+| Line in the tooltip                                           | Where the meaning comes from                                                                                                                        |
+| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Defined in this paper                                         | The paper defines it, and the abbreviation's letters match the words                                                                                |
 | Probable meaning: the words before the bracketed abbreviation | The paper introduces the abbreviation in brackets, but the letters don't match the words before it ("a cytoprotective transcription factor (ATF4)") |
-| From 3 other papers in your library | The paper doesn't define it; your other papers do |
-| Common term; not explicitly defined in this paper | The paper doesn't define it; the built-in glossary does |
-| Your own definition | You defined it in Settings |
+| From X other papers in your library                           | The paper doesn't define it; your other papers do                                                                                                   |
+| Common term; not explicitly defined in this paper             | The paper doesn't define it; the built-in glossary does                                                                                             |
+| Your own definition                                           | You defined it in Settings                                                                                                                          |
 
 **Say where each meaning comes from** in the settings (on by default) turns this line on
 or off.
@@ -96,9 +72,10 @@ the settings.
 Once switched on in the settings, hold **Ctrl** (or **Cmd** on macOS; by default) over
 any word, and the tooltip lists the word's first uses in the paper: the page, and the
 sentence around each one. It works on every word, and is most useful for an abbreviation
-the plugin found no meaning for, since its first use usually defines it. Choose a use to go there: the reader turns to the page
-and marks the word for a moment, in the green of a search match (Ctrl/Cmd+F), and its
-Back button takes you back. In Reading Mode the jump goes to the page.
+the plugin found no meaning for, since its first use usually defines it. Choose a use to
+go there: the reader turns to the page and marks the word for a moment, in the green of a
+search match (Ctrl/Cmd+F), and its Back button takes you back. In Reading Mode the jump
+goes to the page.
 
 To choose, press a number while still holding the key, or move the pointer onto the
 list and click. The key can be Shift, Ctrl/Cmd or Alt (it cannot be "Always": a
@@ -175,7 +152,7 @@ entries stay easy to find and you still receive improvements to the shipped defa
 
 ```json
 {
-  "userDefs": { "MSA": "Mannitol Salt agar" },
+  "userDefs": { "MSA": "mannitol salt agar" },
   "ignore": ["NEB"],
   "databases": [
     { "group": "Gene/protein databases", "label": "UniProt",
@@ -236,23 +213,6 @@ words the detector cannot read, unless the paper also writes that meaning out.
 Everything runs locally. No network requests are made except when you click a database
 link.
 
-### Privacy
-
-Zotero plugins run with full access to your computer, so it is fair to ask what
-this one does:
-
-- PDF text is extracted and analysed **entirely on your machine**. Nothing is
-  uploaded, and no analytics or telemetry of any kind are collected.
-- The plugin makes **no network requests at all** during normal use. The only
-  network activity is Zotero's own periodic check of `update_url`, and a request
-  to a database site when *you* click one of its links.
-- It writes two files, both in `<Zotero data directory>/abbreviation-helper/`: your
-  settings file, `abbreviations.json`, and `library-definitions.json`, the
-  abbreviations and meanings defined in the papers you opened (with each paper's
-  Zotero item key), used by **Use definitions from my other papers**. Nothing else
-  from your papers is stored. Both are written through a temporary file, so a crash
-  cannot leave them half-written.
-
 ### Dictionary provenance
 
 The bundled dictionary in `data/abbreviations.json` was written by hand for this
@@ -295,6 +255,23 @@ Known limitations: long forms that do not contain the short form's letters in or
 Molekulare Biologie (ZMBH)"), and abbreviations missing from the glossary. Definitions
 that only describe ("a cytoprotective transcription factor (ATF4)") are offered as
 probable meanings only. The ignore list deals with wrong ones case by case.
+
+## Privacy
+
+Zotero plugins run with full access to your computer, so it is fair to ask what
+this one does:
+
+- PDF text is extracted and analysed **entirely on your machine**. Nothing is
+  uploaded, and no analytics or telemetry of any kind are collected.
+- The plugin makes **no network requests at all** during normal use. The only
+  network activity is Zotero's own periodic check of `update_url`, and a request
+  to a database site when *you* click one of its links.
+- It writes two files, both in `<Zotero data directory>/abbreviation-helper/`: your
+  settings file, `abbreviations.json`, and `library-definitions.json`, the
+  abbreviations and meanings defined in the papers you opened (with each paper's
+  Zotero item key), used by **Use definitions from my other papers**. Nothing else
+  from your papers is stored. Both are written through a temporary file, so a crash
+  cannot leave them half-written.
 
 ## Development
 
