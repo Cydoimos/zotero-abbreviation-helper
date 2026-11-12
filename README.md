@@ -4,6 +4,10 @@ A Zotero plugin that expands **acronyms, initialisms and other abbreviations** w
 read. It finds where a paper defines each short form and shows the meaning when you hover
 over it — so you can skim a PDF without scrolling back to hunt for the first use.
 
+![Hovering over "EV" in a paper shows "extracellular vesicles — defined in this paper"](docs/demo.gif)
+
+<sub>Paper shown: Hinestrosa et al., *Commun. Med.* 2, 29 (2022), open access.</sub>
+
 It can also offer database lookup links (gene, protein, cell line, chemical) for the
 name under the pointer, and list where any word is used in the paper, so you can jump to
 its first use.
